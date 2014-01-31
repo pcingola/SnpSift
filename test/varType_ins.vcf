@@ -1,0 +1,57 @@
+##fileformat=VCFv4.1
+##samtoolsVersion=0.1.16 (r963:234)
+##INFO=<ID=DP,Number=1,Type=Integer,Description="Raw read depth">
+##INFO=<ID=DP4,Number=4,Type=Integer,Description="# high-quality ref-forward bases, ref-reverse, alt-forward and alt-reverse bases">
+##INFO=<ID=MQ,Number=1,Type=Integer,Description="Root-mean-square mapping quality of covering reads">
+##INFO=<ID=FQ,Number=1,Type=Float,Description="Phred probability of all samples being the same">
+##INFO=<ID=AF1,Number=1,Type=Float,Description="Max-likelihood estimate of the site allele frequency of the first ALT allele">
+##INFO=<ID=G3,Number=3,Type=Float,Description="ML estimate of genotype frequencies">
+##INFO=<ID=HWE,Number=1,Type=Float,Description="Chi^2 based HWE test P-value based on G3">
+##INFO=<ID=CI95,Number=2,Type=Float,Description="Equal-tail Bayesian credible interval of the site allele frequency at the 95% level">
+##INFO=<ID=PV4,Number=4,Type=Float,Description="P-values for strand bias, baseQ bias, mapQ bias and tail distance bias">
+##INFO=<ID=INDEL,Number=0,Type=Flag,Description="Indicates that the variant is an INDEL.">
+##INFO=<ID=PC2,Number=2,Type=Integer,Description="Phred probability of the nonRef allele frequency in group1 samples being larger (,smaller) than in group2.">
+##INFO=<ID=PCHI2,Number=1,Type=Float,Description="Posterior weighted chi^2 P-value for testing the association between group1 and group2 samples.">
+##INFO=<ID=QCHI2,Number=1,Type=Integer,Description="Phred scaled PCHI2.">
+##INFO=<ID=PR,Number=1,Type=Integer,Description="# permutations yielding a smaller PCHI2.">
+##FORMAT=<ID=GT,Number=1,Type=String,Description="Genotype">
+##FORMAT=<ID=GQ,Number=1,Type=Integer,Description="Genotype Quality">
+##FORMAT=<ID=GL,Number=3,Type=Float,Description="Likelihoods for RR,RA,AA genotypes (R=ref,A=alt)">
+##FORMAT=<ID=DP,Number=1,Type=Integer,Description="# high-quality bases">
+##FORMAT=<ID=SP,Number=1,Type=Integer,Description="Phred-scaled strand bias P-value">
+##FORMAT=<ID=PL,Number=-1,Type=Integer,Description="List of Phred-scaled genotype likelihoods, number of values is (#ALT+1)*(#ALT+2)/2">
+#CHROM	POS	ID	REF	ALT	QUAL	FILTER	INFO	FORMAT	s_1_BcA2.sort.rmdup.Q20.noMh.bam
+NT_166462	26762	.	CAA	CAAA	207	.	INDEL;DP=10;AF1=1;CI95=1,1;DP4=0,0,6,4;MQ=36;FQ=-64.5	GT:PL:GQ	1/1:248,30,0:57
+NT_165754	300742	.	AGG	AGGG	3.8	.	INDEL;DP=19;AF1=0.5;CI95=0.5,0.5;DP4=2,7,3,0;MQ=37;FQ=5.8;PV4=0.045,0.32,1,1	GT:PL:GQ	0/1:39,0,152:38
+NT_165754	304284	.	T	TC	12.7	.	INDEL;DP=6;AF1=0.5;CI95=0.5,0.5;DP4=1,2,2,0;MQ=37;FQ=15.6;PV4=0.4,1,1,0.41	GT:PL:GQ	0/1:50,0,89:53
+NT_165754	311521	.	A	AT	6.36	.	INDEL;DP=3;AF1=1;CI95=0.5,1;DP4=0,0,2,0;MQ=32;FQ=-40.5	GT:PL:GQ	1/1:44,6,0:7
+Y	601401	.	C	CAG	24.5	.	INDEL;DP=10;AF1=0.5;CI95=0.5,0.5;DP4=5,1,2,1;MQ=37;FQ=27.5;PV4=1,0.061,1,0.00024	GT:PL:GQ	0/1:62,0,144:65
+Y	602418	.	T	TGC	21.3	.	INDEL;DP=2;AF1=1;CI95=0.5,1;DP4=0,0,1,1;MQ=37;FQ=-40.5	GT:PL:GQ	1/1:60,6,0:10
+19	3356313	.	AC	ACC	39.5	.	INDEL;DP=4;AF1=0.5016;CI95=0.5,0.5;DP4=1,0,0,3;MQ=37;FQ=-12.8;PV4=0.25,1,1,0.27	GT:PL:GQ	0/1:77,0,22:25
+19	3375209	.	A	AT	54	.	INDEL;DP=4;AF1=1;CI95=0.5,1;DP4=0,0,4,0;MQ=37;FQ=-46.5	GT:PL:GQ	1/1:94,12,0:21
+19	3457052	.	CT	CTTT	4.42	.	INDEL;DP=8;AF1=0.5;CI95=0.5,0.5;DP4=2,0,2,0;MQ=34;FQ=6.48;PV4=1,0.051,0.21,0.38	GT:PL:GQ	0/1:40,0,56:40
+19	3610237	.	CG	CGGG	28.2	.	INDEL;DP=3;AF1=1;CI95=0.5,1;DP4=0,0,2,0;MQ=37;FQ=-40.5	GT:PL:GQ	1/1:67,6,0:10
+19	3612197	.	CGG	CGGG	12.7	.	INDEL;DP=3;AF1=0.5013;CI95=0.5,0.5;DP4=1,0,1,1;MQ=33;FQ=-11.8;PV4=1,0.43,0.33,0.33	GT:PL:GQ	0/1:50,0,23:26
+19	3885854	.	TT	TTAT	8.18	.	INDEL;DP=4;AF1=0.5;CI95=0.5,0.5;DP4=0,2,0,2;MQ=37;FQ=10.5;PV4=1,0.26,1,0.36	GT:PL:GQ	0/1:45,0,56:46
+19	3897463	.	C	CA	23.5	.	INDEL;DP=12;AF1=0.5;CI95=0.5,0.5;DP4=4,3,0,4;MQ=37;FQ=26.5;PV4=0.19,0.02,1,2.5e-05	GT:PL:GQ	0/1:61,0,178:64
+19	3903506	.	G	GCC	30.5	.	INDEL;DP=7;AF1=0.5;CI95=0.5,0.5;DP4=1,2,0,3;MQ=35;FQ=33.4;PV4=1,1,0.19,1	GT:PL:GQ	0/1:68,0,87:71
+19	3909282	.	CTG	CTGTG	22.5	.	INDEL;DP=6;AF1=0.5004;CI95=0.5,0.5;DP4=0,1,1,1;MQ=37;FQ=-7.4;PV4=1,0.4,1,0.33	GT:PL:GQ	0/1:60,0,28:31
+19	4036683	.	C	CCAT	16.6	.	INDEL;DP=5;AF1=0.5;CI95=0.5,0.5;DP4=2,1,1,1;MQ=37;FQ=19.5;PV4=1,0.12,1,0.04	GT:PL:GQ	0/1:54,0,90:57
+19	4097507	.	G	GCC	45.5	.	INDEL;DP=5;AF1=0.5032;CI95=0.5,0.5;DP4=1,0,4,0;MQ=35;FQ=-15.6;PV4=1,1,0.34,0.34	GT:PL:GQ	0/1:83,0,19:22
+19	4103486	.	GT	GTCT	21.5	.	INDEL;DP=6;AF1=0.5004;CI95=0.5,0.5;DP4=0,1,2,0;MQ=37;FQ=-7.4;PV4=0.33,0.41,1,0.016	GT:PL:GQ	0/1:59,0,28:31
+19	4150222	.	T	TG	16.6	.	INDEL;DP=9;AF1=0.5;CI95=0.5,0.5;DP4=3,3,2,1;MQ=36;FQ=19.5;PV4=1,0.35,0.085,4e-05	GT:PL:GQ	0/1:54,0,140:57
+19	4192878	.	T	TG	159	.	INDEL;DP=17;AF1=1;CI95=0.5,1;DP4=0,1,9,3;MQ=37;FQ=-40.5;PV4=0.31,0.48,1,0.4	GT:PL:GQ	1/1:198,6,0:10
+19	4319284	.	G	GCCA	39.4	.	INDEL;DP=4;AF1=1;CI95=0.5,1;DP4=0,0,3,0;MQ=33;FQ=-43.5	GT:PL:GQ	1/1:79,9,0:16
+19	4619199	.	G	GACA	28.2	.	INDEL;DP=3;AF1=1;CI95=0.5,1;DP4=0,0,2,0;MQ=37;FQ=-40.5	GT:PL:GQ	1/1:67,6,0:10
+19	4746969	.	G	GA	21.3	.	INDEL;DP=2;AF1=1;CI95=0.5,1;DP4=0,0,1,1;MQ=37;FQ=-40.5	GT:PL:GQ	1/1:60,6,0:10
+19	4918151	.	CT	CTT	17.3	.	INDEL;DP=4;AF1=1;CI95=0.5,1;DP4=0,0,1,1;MQ=37;FQ=-40.5	GT:PL:GQ	1/1:56,6,0:10
+19	5045349	.	G	GT	11.8	.	INDEL;DP=4;AF1=0.5008;CI95=0.5,0.5;DP4=1,0,1,1;MQ=37;FQ=-10;PV4=1,0.47,1,1	GT:PL:GQ	0/1:49,0,25:29
+19	5046911	.	G	GA	35.2	.	INDEL;DP=3;AF1=1;CI95=0.5,1;DP4=0,0,1,1;MQ=37;FQ=-40.5	GT:PL:GQ	1/1:74,6,0:10
+19	5111720	.	C	CAG	28.2	.	INDEL;DP=2;AF1=1;CI95=0.5,1;DP4=0,0,2,0;MQ=37;FQ=-40.5	GT:PL:GQ	1/1:67,6,0:10
+19	5113937	.	TC	TCC	21.3	.	INDEL;DP=3;AF1=1;CI95=0.5,1;DP4=0,0,0,2;MQ=37;FQ=-40.5	GT:PL:GQ	1/1:60,6,0:10
+19	5152822	.	T	TC	77.5	.	INDEL;DP=8;AF1=0.5064;CI95=0.5,0.5;DP4=1,0,6,0;MQ=37;FQ=-18.6;PV4=1,0.48,1,0.0022	GT:PL:GQ	0/1:115,0,16:19
+19	5274978	.	C	CG	99.7	.	INDEL;DP=10;AF1=1;CI95=0.5,1;DP4=0,0,4,1;MQ=37;FQ=-49.5	GT:PL:GQ	1/1:140,15,0:27
+19	5275059	.	C	CA	30.2	.	INDEL;DP=6;AF1=1;CI95=0.5,1;DP4=0,0,1,1;MQ=37;FQ=-40.5	GT:PL:GQ	1/1:69,6,0:10
+19	5279268	.	C	CTT	40.5	.	INDEL;DP=5;AF1=0.5008;CI95=0.5,0.5;DP4=1,0,3,0;MQ=37;FQ=-9.98;PV4=1,0.46,1,0.0034	GT:PL:GQ	0/1:78,0,25:28
+19	5279373	.	GT	GTCT	115	.	INDEL;DP=11;AF1=0.5263;CI95=0.5,1;DP4=1,0,7,1;MQ=35;FQ=-24.5;PV4=1,1,0.31,0.44	GT:PL:GQ	0/1:152,0,10:13
+19	5279469	.	C	CG	12.7	.	INDEL;DP=6;AF1=0.5;CI95=0.5,0.5;DP4=1,1,0,3;MQ=35;FQ=13.9;PV4=0.4,0.027,0.25,0.25	GT:PL:GQ	0/1:50,0,53:51

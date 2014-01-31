@@ -1,0 +1,38 @@
+##fileformat=VCFv4.0
+##fileDate=20110907
+##source=CGA Tools v1.3 listvariants/testvariants
+##reference=../../ref/build37.crr
+##INFO=<ID=NS,Number=1,Type=Integer,Description="Number of Samples with Fully Called Data">
+##INFO=<ID=AF,Number=A,Type=Float,Description="Allele Frequency">
+##INFO=<ID=DB,Number=0,Type=Flag,Description="dbSNP Membership">
+##INFO=<ID=RSID,Number=A,Type=String,Description="dbSNP rs ids">
+##FILTER=<ID=s50,Description="Less than 50% of samples are fully called">
+##FORMAT=<ID=GT,Number=1,Type=String,Description="Genotype">
+##annotated=by Fusion::Annotator::IO::VCF v0.75, Fri Oct  7 11:40:02 2011
+##INFO=<ID=taPN,Number=.,Type=Integer,Description="Predicted functional impact of each allele">
+##INFO=<ID=taWT,Number=.,Type=Integer,Description="'Worst' transcript: number of transcript (numbered in order, starting with 1) with most damaging functional consequence">
+##INFO=<ID=tdP0,Number=.,Type=Integer,Description="Predicted functional impact on each transcript by each allele. Values: -40 for stop/nonsense, -30 for stop/nonsense in final exon, -1 for all other non-synonymous SNPs, 0 for synonymous SNPs, . for non-coding SNPs">
+##INFO=<ID=tdP1,Number=.,Type=Integer,Description="Predicted functional impact by CDpred (range -30 to +12)">
+##INFO=<ID=tdP2,Number=.,Type=Integer,Description="Predicted functional impact by PolyPhen">
+##INFO=<ID=tdP3,Number=.,Type=Integer,Description="Predicted functional impact by Sift">
+##INFO=<ID=tdPC,Number=.,Type=String,Description="Protein change, e.g. 'C345Y'. Includes synonymous changes.">
+##INFO=<ID=tdRC,Number=.,Type=String,Description="mRNA change, e.g. '1035A>T'; any value here (except '.') indicates that SNP is in an exon of the corresponding transcript">
+##INFO=<ID=tdSP,Number=.,Type=String,Description="Indicates whether variant falls in 1) splice donor (first two bases of intron), 2) splice acceptor (last two bases of an intron), 4) creates an alternate splice acceptor within 15bp of the end of an intron, or 8) one of the previous types, but in 5' or 3' UTR; binary combinations allowed, e.g.  2+4=6">
+##INFO=<ID=txDN,Number=1,Type=Integer,Description="Distance upstream (-) or downstream (+) of transcript">
+##INFO=<ID=txGN,Number=1,Type=String,Description="Gene symbol">
+##INFO=<ID=txID,Number=1,Type=String,Description="Transcript name">
+##INFO=<ID=txST,Number=1,Type=String,Description="Orientation of transcript relative to reference (+ or -)">
+##INFO=<ID=txTE,Number=1,Type=String,Description="Transcript element (exon or intron number)">
+##INFO=<ID=txUT,Number=1,Type=String,Description="UTR, will be one of [5, 3, 0] to indicate 5'UTR, 3'UTR, or not in UTR of specified transcript">
+##SnpEffVersion="3.3f (build 2013-07-29), by Pablo Cingolani"
+##SnpEffCmd="SnpEff  hg19 test.1K.vcf "
+##INFO=<ID=EFF,Number=.,Type=String,Description="Predicted effects for this variant.Format: 'Effect ( Effect_Impact | Functional_Class | Codon_Change | Amino_Acid_change| Amino_Acid_length | Gene_Name | Transcript_BioType | Gene_Coding | Transcript_ID | Exon  | GenotypeNum [ | ERRORS | WARNINGS ] )' ">
+##SnpSiftVersion="SnpSift 3.4 (build 2013-11-27), by Pablo Cingolani"
+##SnpSiftCmd="SnpSift dbnsfp -a -f Ensembl_transcriptid,Polyphen2_HDIV_score,Polyphen2_HDIV_pred,aaref,aaalt j.txt j.vcf "
+##INFO=<ID=dbNSFP_Polyphen2_HDIV_pred,Number=A,Type=Character,Description="Field 'Polyphen2_HDIV_pred' from dbNSFP">
+##INFO=<ID=dbNSFP_aaref,Number=A,Type=Character,Description="Field 'aaref' from dbNSFP">
+##INFO=<ID=dbNSFP_Ensembl_transcriptid,Number=A,Type=String,Description="Field 'Ensembl_transcriptid' from dbNSFP">
+##INFO=<ID=dbNSFP_Polyphen2_HDIV_score,Number=A,Type=Float,Description="Field 'Polyphen2_HDIV_score' from dbNSFP">
+##INFO=<ID=dbNSFP_aaalt,Number=A,Type=Character,Description="Field 'aaalt' from dbNSFP">
+#CHROM	POS	ID	REF	ALT	QUAL	FILTER	INFO
+12	88900914	.	C	G	.	.	AC=1;dbNSFP_Polyphen2_HDIV_pred=B,.;dbNSFP_aaref=G,R;dbNSFP_Ensembl_transcriptid=ENST00000347404,ENST00000537835,ENST00000378535,ENST00000228280;dbNSFP_Polyphen2_HDIV_score=0.449,.,0.192;dbNSFP_aaalt=A,R,T

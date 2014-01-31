@@ -1,0 +1,4 @@
+##fileformat=VCFv4.0
+##INFO=<ID=ALL_NUM,Number=A,Type=String,Description="Allele specific annotation (test)">
+#CHROM	POS	ID	REF	ALT	QUAL	FILTER	INFO
+2	47703500	rs2303428	T	A,C,G	.	.	ALL_NUM=1,2,3

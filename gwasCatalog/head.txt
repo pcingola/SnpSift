@@ -1,0 +1,76 @@
+public String dateAddedtoCatalog;
+public String pubmedId;
+public String firstAuthor;
+public String date;
+public String journal;
+public String link;
+public String study;
+public String trait;
+public String initialSampleSize;
+public String replicationSampleSize;
+public String region;
+public String chrId;
+public int chrPos;
+public String reportedGene;
+public String mappedGene;
+public String upstreamGeneId;
+public String downstreamGeneId;
+public String snpGeneIds;
+public String upstreamGeneDistance;
+public String downstreamGeneDistance;
+public String strongestSNP-RiskAllele;
+public String snps;
+public String merged;
+public String snpIdCurrent;
+public String context;
+public String intergenic;
+public String riskAlleleFrequency;
+public double pValue;
+public String PvalueMlog;
+public String pValueText;
+public String orBeta;
+public String ci95;
+public String platform;
+public String cnv;
+
+
+
+
+dateAddedtoCatalog;pubmedId;firstAuthor;date;journal;link;study;trait;initialSampleSize;replicationSampleSize;region;chrId;chrPos;reportedGene;mappedGene;upstreamGeneId;downstreamGeneId;snpGeneIds;upstreamGeneDistance;downstreamGeneDistance;strongestSNP-RiskAllele;snps;merged;snpIdCurrent;context;intergenic;riskAlleleFrequency;pValue;PvalueMlog;pValueText;orBeta;ci95;platform;cnv;
+
+
+
+"dateAddedtoCatalog: " + dateAddedtoCatalog + "\n"  //
++ "pubmedId: " + pubmedId + "\n"  //
++ "firstAuthor: " + firstAuthor + "\n"  //
++ "date: " + date + "\n"  //
++ "journal: " + journal + "\n"  //
++ "link: " + link + "\n"  //
++ "study: " + study + "\n"  //
++ "trait: " + trait + "\n"  //
++ "initialSampleSize: " + initialSampleSize + "\n"  //
++ "replicationSampleSize: " + replicationSampleSize + "\n"  //
++ "region: " + region + "\n"  //
++ "chrId: " + chrId + "\n"  //
++ "chrPos: " + chrPos + "\n"  //
++ "reportedGene: " + reportedGene + "\n"  //
++ "mappedGene: " + mappedGene + "\n"  //
++ "upstreamGeneId: " + upstreamGeneId + "\n"  //
++ "downstreamGeneId: " + downstreamGeneId + "\n"  //
++ "snpGeneIds: " + snpGeneIds + "\n"  //
++ "upstreamGeneDistance: " + upstreamGeneDistance + "\n"  //
++ "downstreamGeneDistance: " + downstreamGeneDistance + "\n"  //
++ "strongestSNP-RiskAllele: " + strongestSNP-RiskAllele + "\n"  //
++ "snps: " + snps + "\n"  //
++ "merged: " + merged + "\n"  //
++ "snpIdCurrent: " + snpIdCurrent + "\n"  //
++ "context: " + context + "\n"  //
++ "intergenic: " + intergenic + "\n"  //
++ "riskAlleleFrequency: " + riskAlleleFrequency + "\n"  //
++ "pValue: " + pValue + "\n"  //
++ "PvalueMlog: " + PvalueMlog + "\n"  //
++ "pValueText: " + pValueText + "\n"  //
++ "orBeta: " + orBeta + "\n"  //
++ "ci95: " + ci95 + "\n"  //
++ "platform: " + platform + "\n"  //
++ "cnv: " + cnv + "\n"  //

@@ -1,0 +1,3 @@
+##INFO=<ID=GMAF,Number=1,Type=Float,Description="Global Minor Allele Frequency [0, 0.5]; ORIGINAL HEADER">
+#CHROM	POS	ID	REF	ALT	QUAL	FILTER	INFO
+1	734462	.	G	A	.	s50	ZZ=348

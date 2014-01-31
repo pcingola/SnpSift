@@ -1,0 +1,13 @@
+##fileformat=VCFv4.0
+##fileDate=20110907
+##source=CGA Tools v1.3 listvariants/testvariants
+##reference=../../ref/build37.crr
+##FILTER=<ID=s50,Description="Less than 50% of samples are fully called">
+##FORMAT=<ID=GT,Number=1,Type=String,Description="Genotype">
+##SnpEffVersion="SnpEff 3.1 (build 2012-10-10), by Pablo Cingolani"
+##SnpEffCmd="SnpEff  -lof testHg3766Chr1 s.vcf "
+##INFO=<ID=EFF,Number=.,Type=String,Description="Predicted effects for this variant.Format: 'Effect ( Effect_Impact | Functional_Class | Codon_Change | Amino_Acid_change| Amino_Acid_length | Gene_Name | Gene_BioType | Coding | Transcript | Exon [ | ERRORS | WARNINGS ] )' ">
+##INFO=<ID=LOF,Number=.,Type=String,Description="Predicted loss of function effects for this variant. Format: 'Gene_Name | Gene_ID | Number_of_transcripts_in_gene | Percent_of_transcripts_affected' ">
+##INFO=<ID=NMD,Number=.,Type=String,Description="Predicted nonsense mediated decay effects for this variant. Format: 'Gene_Name | Gene_ID | Number_of_transcripts_in_gene | Percent_of_transcripts_affected' ">
+#CHROM	POS	ID	REF	ALT	QUAL	FILTER	INFO	FORMAT	T2DG0800561	
+1	902133	id_1_902133	C	T	0.0	PASS	AF=0.001;EFF=STOP_GAINED(HIGH|NONSENSE|Cga/Tga|R45*|611|PLEKHN1|protein_coding|CODING|ENST00000379410|1);LOF=PLEKHN1|ENSG00000187583|5|0.60;NMD=PLEKHN1|ENSG00000187583|5|0.60	GT	1/1
