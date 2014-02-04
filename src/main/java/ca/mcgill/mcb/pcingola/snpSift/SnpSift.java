@@ -109,7 +109,7 @@ public class SnpSift {
 	 * @param message
 	 */
 	public void fatalError(String message) {
-		System.err.println(message);
+		System.err.println("Fatal error: " + message);
 		System.exit(-1);
 	}
 

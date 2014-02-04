@@ -25,6 +25,7 @@ public class TestCasesDbNsfp extends TestCase {
 		SnpSiftCmdDbNsfp cmd = new SnpSiftCmdDbNsfp(args);
 		cmd.setVerbose(verbose);
 		cmd.setDebug(debug);
+		cmd.setTabixCheck(false);
 
 		try {
 			cmd.initAnnotate();
@@ -64,6 +65,7 @@ public class TestCasesDbNsfp extends TestCase {
 		SnpSiftCmdDbNsfp cmd = new SnpSiftCmdDbNsfp(args);
 		cmd.setVerbose(verbose);
 		cmd.setDebug(debug);
+		cmd.setTabixCheck(false);
 
 		try {
 			cmd.initAnnotate();
@@ -100,6 +102,7 @@ public class TestCasesDbNsfp extends TestCase {
 		SnpSiftCmdDbNsfp cmd = new SnpSiftCmdDbNsfp(args);
 		cmd.setVerbose(verbose);
 		cmd.setDebug(debug);
+		cmd.setTabixCheck(false);
 
 		try {
 			cmd.initAnnotate();

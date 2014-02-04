@@ -36,13 +36,15 @@ public class SnpSiftCmdDbNsfp extends SnpSift {
 	public static final String VCF_INFO_PREFIX = "dbNSFP_";
 	public static final String DEFAULT_FIELDS_NAMES_TO_ADD = "Ensembl_transcriptid,Uniprot_acc,Interpro_domain,SIFT_score,Polyphen2_HVAR_pred,GERP++_NR,GERP++_RS,29way_logOdds,1000Gp1_AF,1000Gp1_AFR_AF,1000Gp1_EUR_AF,1000Gp1_AMR_AF,1000Gp1_ASN_AF,ESP6500_AA_AF,ESP6500_EA_AF";
 
-	public static final int MIN_JUMP = 1000;
+	public static final int MIN_JUMP = 100;
+	public static final int SHOW_ANNOTATED = 1;
 
 	protected Map<String, String> fieldsToAdd;
 	protected Map<String, String> fieldsDescription;
 	protected Map<String, String> fieldsType;
 	protected boolean annotateAll; // Annotate empty fields as well?
 	protected boolean collapseRepeatedValues; // Collapse values if repeated?
+	protected boolean tabixCheck = true;
 	protected String dbNsfpFileName;
 	protected String vcfFileName;
 	protected int count = 0;
@@ -124,7 +126,16 @@ public class SnpSiftCmdDbNsfp extends SnpSift {
 			}
 		}
 
-		if (annotated) countAnnotated++;
+		if (annotated) {
+			countAnnotated++;
+			if (debug) Gpr.debug("Annotated: " + vcf.getChromosomeName() + ":" + vcf.getStart());
+			else if (verbose) {
+				if (countAnnotated % SHOW_ANNOTATED == 0) {
+					if (countAnnotated % (100 * SHOW_ANNOTATED) == 0) System.err.print(".\n" + countAnnotated + "\t" + vcf.getChromosomeName() + ":" + vcf.getStart() + "\t");
+					else System.err.print('.');
+				}
+			}
+		}
 	}
 
 	/**
@@ -133,8 +144,10 @@ public class SnpSiftCmdDbNsfp extends SnpSift {
 	 */
 	public void checkFieldsToAdd() throws IOException {
 		// Check that all fields have a descriptor (used in VCF header)
-		for (String filedName : dbNsfpFile.getFieldNames())
-			if (fieldsDescription.get(filedName) == null) System.err.println("WARNING: Field (column) '" + filedName + "' does not have an approriate file descriptor.");
+		if (verbose) {
+			for (String filedName : dbNsfpFile.getFieldNames())
+				if (fieldsDescription.get(filedName) == null) System.err.println("WARNING: Field (column) '" + filedName + "' does not have an approriate field descriptor.");
+		}
 
 		// Check that all "field to add" are in the database
 		for (String fieldKey : fieldsToAdd.keySet())
@@ -167,26 +180,34 @@ public class SnpSiftCmdDbNsfp extends SnpSift {
 
 			if (debug) Gpr.debug("Current Db Entry:" + currentDbEntry.getChromosomeName() + ":" + currentDbEntry.getStart() + "\tLooking for: " + vcfEntry.getChromosomeName() + ":" + vcfEntry.getStart());
 
-			// Found the entry?
-			if (currentDbEntry.getChromosomeName().equals(vcfEntry.getChromosomeName()) && (vcfEntry.getStart() == currentDbEntry.getStart())) {
-				// Found db entry! Break loop and proceed with annotations
-				return currentDbEntry;
+			// Find entry
+			if (currentDbEntry.getChromosomeName().equals(vcfEntry.getChromosomeName())) {
+				// Same chromosome
+
+				// Same position? => Found
+				if (vcfEntry.getStart() == currentDbEntry.getStart()) {
+					// Found db entry! Break loop and proceed with annotations
+					if (debug) Gpr.debug("Found Db Entry:" + currentDbEntry.getChromosomeName() + ":" + currentDbEntry.getStart());
+					return currentDbEntry;
+				} else if (vcfEntry.getStart() < currentDbEntry.getStart()) {
+					// Same chromosome, but positioned after => No db entry found
+					if (debug) Gpr.debug("No db entry found:\t" + vcfEntry.getChromosomeName() + ":" + vcfEntry.getStart());
+					return null;
+				} else if ((vcfEntry.getStart() - currentDbEntry.getStart()) > MIN_JUMP) {
+					// Is it far enough? Don't iterate, jump
+					if (debug) Gpr.debug("Position jump:\t" + currentDbEntry.getChromosomeName() + ":" + currentDbEntry.getStart() + "\t->\t" + vcfEntry.getChromosomeName() + ":" + vcfEntry.getStart());
+					dbNsfpFile.seek(vcfEntry.getChromosomeName(), vcfEntry.getStart());
+					currentDbEntry = dbNsfpFile.next();
+				} else {
+					// Just read next entry to get closer
+					currentDbEntry = dbNsfpFile.next();
+				}
 			} else if (!currentDbEntry.getChromosomeName().equals(vcfEntry.getChromosomeName())) {
 				// Different chromosome? => Jump to chromosome
 				if (debug) Gpr.debug("Chromosome jump:\t" + currentDbEntry.getChromosomeName() + ":" + currentDbEntry.getStart() + "\t->\t" + vcfEntry.getChromosomeName() + ":" + vcfEntry.getStart());
 				dbNsfpFile.seek(vcfEntry.getChromosomeName(), vcfEntry.getStart());
-			} else if (vcfEntry.getStart() < currentDbEntry.getStart()) {
-				// Same chromosome, but positioned after => No annotations
-				if (debug) Gpr.debug("No db entry found:\t" + currentDbEntry.getChromosomeName() + ":" + currentDbEntry.getStart());
-				currentDbEntry = null;
-				return null;
-			} else if ((vcfEntry.getStart() - currentDbEntry.getStart()) > MIN_JUMP) {
-				// Is it far enough? Don't iterate, jump
-				if (debug) Gpr.debug("Position jump:\t" + currentDbEntry.getChromosomeName() + ":" + currentDbEntry.getStart() + "\t->\t" + vcfEntry.getChromosomeName() + ":" + vcfEntry.getStart());
-				dbNsfpFile.seek(vcfEntry.getChromosomeName(), vcfEntry.getStart());
+				currentDbEntry = dbNsfpFile.next();
 			}
-
-			currentDbEntry = dbNsfpFile.next();
 		}
 	}
 
@@ -211,6 +232,7 @@ public class SnpSiftCmdDbNsfp extends SnpSift {
 		GuessTableTypes guessTableTypes = new GuessTableTypes(dbNsfpFileName);
 		guessTableTypes.guessTypes();
 		if (!guessTableTypes.parsedHeader()) throw new RuntimeException("Could not parse header from file '" + dbNsfpFileName + "'");
+
 		VcfInfoType types[] = guessTableTypes.getTypes();
 		String fieldNames[] = guessTableTypes.getFieldNames();
 		for (int i = 0; i < fieldNames.length; i++) {
@@ -225,6 +247,7 @@ public class SnpSiftCmdDbNsfp extends SnpSift {
 		// Check and open dbNsfp
 		dbNsfpFile = new DbNsfpFileIterator(dbNsfpFileName);
 		dbNsfpFile.setCollapseRepeatedValues(collapseRepeatedValues);
+		if (tabixCheck && !dbNsfpFile.isTabix()) fatalError("Tabix index not found for database '" + dbNsfpFileName + "'.\n\t\tSnpSift dbNSFP only works with tabix indexed databases, please create or download index.");
 
 		currentDbEntry = null;
 
@@ -309,6 +332,10 @@ public class SnpSiftCmdDbNsfp extends SnpSift {
 					+ "\n\tPercent                 : " + String.format("%.2f%%", perc) //
 			);
 		}
+	}
+
+	public void setTabixCheck(boolean tabixCheck) {
+		this.tabixCheck = tabixCheck;
 	}
 
 	/**
