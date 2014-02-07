@@ -56,6 +56,8 @@ public class FieldLof extends FieldSub {
 
 		// Find sub-field
 		String lof = lofEntries[idx];
+		if (lof.startsWith("(")) lof = lof.substring(1);
+		if (lof.endsWith(")")) lof = lof.substring(0, lof.length() - 1);
 		String subField[] = lof.split("\\|");
 
 		if (fieldNum >= subField.length) return null;
