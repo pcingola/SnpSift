@@ -37,10 +37,10 @@ public class SnpSiftCmdDbNsfp extends SnpSift {
 	public static final String DEFAULT_FIELDS_NAMES_TO_ADD = "" // Default fields to add
 			+ "Uniprot_acc," //
 			+ "Interpro_domain," // Domain
-			+ "SIFT_pred" // SIFT predictions
-			+ "Polyphen2_HDIV_pred,Polyphen2_HVAR_pred" // Polyphen predictions
-			+ "LRT_pred" // LRT predictions
-			+ "MutationTaster_pred" // MutationTaser predictions		
+			+ "SIFT_pred," // SIFT predictions
+			+ "Polyphen2_HDIV_pred,Polyphen2_HVAR_pred," // Polyphen predictions
+			+ "LRT_pred," // LRT predictions
+			+ "MutationTaster_pred," // MutationTaser predictions		
 			+ "GERP++_NR,GERP++_RS," // GERP 
 			+ "29way_logOdds," // Conservation
 			+ "1000Gp1_AF,1000Gp1_AFR_AF,1000Gp1_EUR_AF,1000Gp1_AMR_AF,1000Gp1_ASN_AF," // Allele frequencies 1000 Genomes project 
