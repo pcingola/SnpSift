@@ -34,7 +34,18 @@ import ca.mcgill.mcb.pcingola.vcf.VcfInfoType;
 public class SnpSiftCmdDbNsfp extends SnpSift {
 
 	public static final String VCF_INFO_PREFIX = "dbNSFP_";
-	public static final String DEFAULT_FIELDS_NAMES_TO_ADD = "Ensembl_transcriptid,Uniprot_acc,Interpro_domain,SIFT_score,Polyphen2_HVAR_pred,GERP++_NR,GERP++_RS,29way_logOdds,1000Gp1_AF,1000Gp1_AFR_AF,1000Gp1_EUR_AF,1000Gp1_AMR_AF,1000Gp1_ASN_AF,ESP6500_AA_AF,ESP6500_EA_AF";
+	public static final String DEFAULT_FIELDS_NAMES_TO_ADD = "" // Default fields to add
+			+ "Uniprot_acc," //
+			+ "Interpro_domain," // Domain
+			+ "SIFT_pred" // SIFT predictions
+			+ "Polyphen2_HDIV_pred,Polyphen2_HVAR_pred" // Polyphen predictions
+			+ "LRT_pred" // LRT predictions
+			+ "MutationTaster_pred" // MutationTaser predictions		
+			+ "GERP++_NR,GERP++_RS," // GERP 
+			+ "29way_logOdds," // Conservation
+			+ "1000Gp1_AF,1000Gp1_AFR_AF,1000Gp1_EUR_AF,1000Gp1_AMR_AF,1000Gp1_ASN_AF," // Allele frequencies 1000 Genomes project 
+			+ "ESP6500_AA_AF,ESP6500_EA_AF" // Allele frequencies Exome sequencing project
+	;
 
 	public static final int MIN_JUMP = 100;
 	public static final int SHOW_ANNOTATED = 1;
@@ -355,7 +366,8 @@ public class SnpSiftCmdDbNsfp extends SnpSift {
 
 		// Show error
 		showVersion();
-		System.err.println("Usage: java -jar " + SnpSift.class.getSimpleName() + ".jar " + command + " [-q|-v] [-a] dbNSFP.txt file.vcf > newFile.vcf\n" //
+		System.err.println("Usage: java -jar " + SnpSift.class.getSimpleName() + ".jar " + command + " [-q|-v] [-a] dbNSFP.txt.gz file.vcf > newFile.vcf\n" //
+				+ "Note: dbNSFP.txt.gz must be bgzip and tabix indexed file. The corresponding index file (dbNSFP.txt.gz.tbi) must be present.\n" //
 				+ "Options:\n" //
 				+ "\t-a            : Annotate fields, even if the database has an empty value (annotates using '.' for empty).\n" //
 				+ "\t-noCollapse   : Switch off 'collapsing' repeated values from dbNSFP (implies '-a').\n" //
