@@ -65,6 +65,8 @@ public class SnpSiftCmdDbNsfp extends SnpSift {
 	protected DbNsfpEntry currentDbEntry;
 	protected String fieldsNamesToAdd;
 
+	String latestChromo = "";
+
 	public SnpSiftCmdDbNsfp(String args[]) {
 		super(args, "dbnsfp");
 	}
@@ -184,9 +186,27 @@ public class SnpSiftCmdDbNsfp extends SnpSift {
 		//---
 		if (debug) System.err.println("Looking for " + vcfEntry.getChromosomeName() + ":" + vcfEntry.getStart() + ". Current DB: " + (currentDbEntry == null ? "null" : currentDbEntry.getChromosomeName() + ":" + currentDbEntry.getStart()));
 		while (true) {
+
 			if (currentDbEntry == null) {
+				// Null entry, try getting next entry
 				currentDbEntry = dbNsfpFile.next(); // Read next DB entry
-				if (currentDbEntry == null) return null; // End of database?
+
+				// Still null? May be we run out of DB entries for this chromosome
+				if (currentDbEntry == null) {
+					// Is vcfEntry still in 'latestChromo'? Then we have no DbEntry, return null
+					if (latestChromo.equals(vcfEntry.getChromosomeName())) return null; // End of 'latestChromo' section in database?
+
+					// VCfEntry is in another chromosome? Jump to 'new' chromosome
+					if (debug) Gpr.debug("New chromosome '" + latestChromo + "' != '" + vcfEntry.getChromosomeName() + "': We should jump");
+					dbNsfpFile.seek(vcfEntry.getChromosomeName(), vcfEntry.getStart());
+					currentDbEntry = dbNsfpFile.next();
+
+					// Still null? well it looks like we don't have any dbEntry for this chromosome
+					if (currentDbEntry == null) {
+						latestChromo = vcfEntry.getChromosomeName(); // Make sure we don't try jumping again
+						return null;
+					}
+				}
 			}
 
 			if (debug) Gpr.debug("Current Db Entry:" + currentDbEntry.getChromosomeName() + ":" + currentDbEntry.getStart() + "\tLooking for: " + vcfEntry.getChromosomeName() + ":" + vcfEntry.getStart());
@@ -219,6 +239,8 @@ public class SnpSiftCmdDbNsfp extends SnpSift {
 				dbNsfpFile.seek(vcfEntry.getChromosomeName(), vcfEntry.getStart());
 				currentDbEntry = dbNsfpFile.next();
 			}
+
+			if (currentDbEntry != null) latestChromo = currentDbEntry.getChromosomeName();
 		}
 	}
 

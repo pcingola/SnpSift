@@ -1,12 +1,11 @@
 package ca.mcgill.mcb.pcingola.snpSift.testCases;
 
-import java.util.List;
-
 import junit.framework.Assert;
 import junit.framework.TestCase;
-import ca.mcgill.mcb.pcingola.snpSift.SnpSiftCmdFilter;
+import ca.mcgill.mcb.pcingola.fileIterator.VcfFileIterator;
+import ca.mcgill.mcb.pcingola.snpSift.SnpSiftCmdDbNsfp;
+import ca.mcgill.mcb.pcingola.util.Gpr;
 import ca.mcgill.mcb.pcingola.vcf.VcfEntry;
-import ca.mcgill.mcb.pcingola.vcf.VcfLof;
 
 /**
  * Try test cases in this class before adding them to long test cases
@@ -15,32 +14,41 @@ import ca.mcgill.mcb.pcingola.vcf.VcfLof;
  */
 public class TestCasesZzz extends TestCase {
 
-	public static boolean verbose = true;
+	public static boolean verbose = false;
+	public static boolean debug = false;
 
-	/**
-	 * LOF[*].PERC > 0.1
-	 */
-	public void test_45() {
-		// Filter data
-		SnpSiftCmdFilter snpSiftFilter = new SnpSiftCmdFilter();
-		String expression = "LOF[*].PERC > 0.1";
-		List<VcfEntry> list = snpSiftFilter.filter("test/test45.vcf", expression, true);
+	public void test_05() {
+		// We annotate something trivial: position
+		String vcfFileName = "test/test_dbNSFP_05.vcf";
+		String args[] = { "-f", "pos(1-coor)", "test/dbNSFP2.3.test.txt.gz", vcfFileName };
 
-		// Check that it satisfies the condition
-		System.out.println("Expression: '" + expression + "'");
-		Assert.assertNotNull(list);
+		SnpSiftCmdDbNsfp cmd = new SnpSiftCmdDbNsfp(args);
+		cmd.setVerbose(verbose);
+		cmd.setDebug(debug);
 
-		int count = 0;
-		for (VcfEntry ve : list) {
-			System.out.println(ve);
+		try {
+			cmd.initAnnotate();
 
-			for (VcfLof lof : ve.parseLof()) {
-				System.out.println("\t" + lof);
-				Assert.assertTrue(lof.getPercentAffected() >= 0.1);
-				count++;
+			// Get entry.
+			// Note: There is only one entry to annotate (the VCF file has one line)
+			VcfFileIterator vcfFile = new VcfFileIterator(vcfFileName);
+			for (VcfEntry vcfEntry : vcfFile) {
+				// Annotate vcf entry
+				cmd.annotate(vcfEntry);
+
+				// Check that position (annotated from dbNSFP) actually matches
+				String posDb = vcfEntry.getInfo("dbNSFP_pos(1-coor)"); // Get INFO field annotated from dbNSFP
+				int pos = vcfEntry.getStart() + 1; // Get position 
+				if (debug) Gpr.debug(vcfEntry.getChromosomeName() + ":" + pos + "\t" + posDb);
+
+				// Check
+				if (pos != 249213000) Assert.assertEquals("" + pos, posDb);
+				else Assert.assertEquals(null, posDb); // There is no dbNSFP for this entry. It should be 'null'
 			}
-		}
 
-		Assert.assertEquals(2, count);
+			cmd.endAnnotate();
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
 	}
 }
