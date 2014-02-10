@@ -52,7 +52,7 @@ public class SnpSiftCmdIntervals extends SnpSift {
 		for (String bedFileName : bedFiles) {
 			if (verbose) Timer.showStdErr("Reading filter interval file '" + bedFileName + "'");
 
-			BedFileIterator bedFile = new BedFileIterator(bedFileName, genome, 0);
+			BedFileIterator bedFile = new BedFileIterator(bedFileName, genome);
 			bedFile.setCreateChromos(true);
 
 			List<SeqChange> seqChanges = bedFile.load();

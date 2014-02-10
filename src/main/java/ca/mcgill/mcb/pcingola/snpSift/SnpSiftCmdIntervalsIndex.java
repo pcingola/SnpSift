@@ -53,7 +53,7 @@ public class SnpSiftCmdIntervalsIndex extends SnpSift {
 		// Read filter interval file
 		if (verbose) Timer.showStdErr("Reading BED file '" + bedFile + "'");
 
-		BedFileIterator bf = new BedFileIterator(bedFile, genome, inOffset);
+		BedFileIterator bf = new BedFileIterator(bedFile, genome);
 		bf.setCreateChromos(true);
 
 		seqChanges = bf.load();

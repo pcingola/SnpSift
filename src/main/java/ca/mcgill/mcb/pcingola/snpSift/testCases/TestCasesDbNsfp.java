@@ -21,7 +21,7 @@ public class TestCasesDbNsfp extends TestCase {
 
 	public void test_01() {
 		String vcfFileName = "test/test_dbNSFP_chr1_69134.vcf";
-		String args[] = { "test/dbNSFP2.0b3.chr1_69134.txt", vcfFileName };
+		String args[] = { "-f", "GERP++_RS,GERP++_NR,ESP6500_AA_AF,29way_logOdds,Polyphen2_HVAR_pred,SIFT_score,Uniprot_acc,Ensembl_transcriptid", "test/dbNSFP2.0b3.chr1_69134.txt", vcfFileName };
 		SnpSiftCmdDbNsfp cmd = new SnpSiftCmdDbNsfp(args);
 		cmd.setVerbose(verbose);
 		cmd.setDebug(debug);
