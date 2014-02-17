@@ -240,7 +240,7 @@ public class SnpSiftCmdDbNsfp extends SnpSift {
 				currentDbEntry = dbNsfpFile.next();
 
 				// Jump failed? The chromosome might not be present in database
-				if (!currentDbEntry.getChromosomeName().equals(vcfEntry.getChromosomeName())) return null;
+				if (currentDbEntry == null || !currentDbEntry.getChromosomeName().equals(vcfEntry.getChromosomeName())) return null;
 			}
 
 			if (currentDbEntry != null) latestChromo = currentDbEntry.getChromosomeName();

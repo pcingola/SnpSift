@@ -194,4 +194,27 @@ public class TestCasesDbNsfp extends TestCase {
 		}
 	}
 
+	public void test_06() {
+		// We annotate something trivial: position
+		String vcfFileName = "test/test_dbNSFP_06.vcf";
+		String args[] = { "-f", "pos(1-coor)", "test/dbNSFP2.3.test.txt.gz", vcfFileName };
+
+		SnpSiftCmdDbNsfp cmd = new SnpSiftCmdDbNsfp(args);
+		cmd.setVerbose(verbose);
+		cmd.setDebug(debug);
+
+		try {
+			cmd.initAnnotate();
+
+			// Note: There is only one entry to annotate (the VCF file has one line)
+			VcfFileIterator vcfFile = new VcfFileIterator(vcfFileName);
+			for (VcfEntry vcfEntry : vcfFile)
+				cmd.annotate(vcfEntry); // Chromosome not present in database. Check that no exception is thrown.
+
+			cmd.endAnnotate();
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+	}
+
 }
