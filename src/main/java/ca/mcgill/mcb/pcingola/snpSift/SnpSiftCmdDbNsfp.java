@@ -238,6 +238,9 @@ public class SnpSiftCmdDbNsfp extends SnpSift {
 				if (debug) Gpr.debug("Chromosome jump:\t" + currentDbEntry.getChromosomeName() + ":" + currentDbEntry.getStart() + "\t->\t" + vcfEntry.getChromosomeName() + ":" + vcfEntry.getStart());
 				dbNsfpFile.seek(vcfEntry.getChromosomeName(), vcfEntry.getStart());
 				currentDbEntry = dbNsfpFile.next();
+
+				// Jump failed? The chromosome might not be present in database
+				if (!currentDbEntry.getChromosomeName().equals(vcfEntry.getChromosomeName())) return null;
 			}
 
 			if (currentDbEntry != null) latestChromo = currentDbEntry.getChromosomeName();
