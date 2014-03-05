@@ -335,4 +335,20 @@ public class TestCasesAnnotate extends TestCase {
 		Assert.assertEquals("value_C", allNum);
 	}
 
+	public void test_16() {
+		String dbFileName = "./test/db_test_16.vcf";
+		String fileName = "./test/annotate_16.vcf";
+		String infoName = "PREPEND_";
+		String args[] = { "-name", infoName, dbFileName, fileName };
+
+		SnpSiftCmdAnnotateSorted vcfAnnotate = new SnpSiftCmdAnnotateSorted(args);
+		List<VcfEntry> ves = vcfAnnotate.run(true);
+
+		VcfEntry ve = ves.get(0);
+		String aa = ve.getInfo(infoName + "AA");
+		String bb = ve.getInfo(infoName + "BB");
+		Assert.assertEquals("Field_Value", aa);
+		Assert.assertEquals("AnotherValue", bb);
+	}
+
 }

@@ -1,11 +1,10 @@
 package ca.mcgill.mcb.pcingola.snpSift.testCases;
 
+import java.util.List;
+
+import junit.framework.Assert;
 import junit.framework.TestCase;
-
-import org.junit.Assert;
-
-import ca.mcgill.mcb.pcingola.fileIterator.VcfFileIterator;
-import ca.mcgill.mcb.pcingola.snpSift.SnpSiftCmdDbNsfp;
+import ca.mcgill.mcb.pcingola.snpSift.SnpSiftCmdAnnotateSorted;
 import ca.mcgill.mcb.pcingola.vcf.VcfEntry;
 
 /**
@@ -18,36 +17,20 @@ public class TestCasesZzz extends TestCase {
 	public static boolean verbose = false;
 	public static boolean debug = false;
 
-	public void test_04() {
-		// We annotate something trivial: position
-		String vcfFileName = "test/test_dbNSFP_04.vcf";
-		String args[] = { "-f", "pos(1-coor)", "test/dbNSFP2.3.test.txt.gz", vcfFileName };
+	public void test_16() {
+		String dbFileName = "./test/db_test_16.vcf";
+		String fileName = "./test/annotate_16.vcf";
+		String infoName = "PREPEND_";
+		String args[] = { "-name", infoName, dbFileName, fileName };
 
-		SnpSiftCmdDbNsfp cmd = new SnpSiftCmdDbNsfp(args);
-		cmd.setVerbose(verbose);
-		cmd.setDebug(debug);
+		SnpSiftCmdAnnotateSorted vcfAnnotate = new SnpSiftCmdAnnotateSorted(args);
+		List<VcfEntry> ves = vcfAnnotate.run(true);
 
-		try {
-			cmd.initAnnotate();
-
-			// Get entry.
-			// Note: There is only one entry to annotate (the VCF file has one line)
-			VcfFileIterator vcfFile = new VcfFileIterator(vcfFileName);
-			for (VcfEntry vcfEntry : vcfFile) {
-				// Annotate vcf entry
-				cmd.annotate(vcfEntry);
-				System.out.println(vcfEntry);
-
-				// Check that position (annotated from dbNSFP) actually matches
-				String posDb = vcfEntry.getInfo("dbNSFP_pos(1-coor)"); // Get INFO field annotated from dbNSFP
-				int pos = vcfEntry.getStart() + 1; // Get position 
-				Assert.assertEquals("" + pos, posDb); // Compare
-			}
-
-			cmd.endAnnotate();
-		} catch (Exception e) {
-			throw new RuntimeException(e);
-		}
+		VcfEntry ve = ves.get(0);
+		String aa = ve.getInfo(infoName + "AA");
+		String bb = ve.getInfo(infoName + "BB");
+		Assert.assertEquals("Field_Value", aa);
+		Assert.assertEquals("AnotherValue", bb);
 	}
 
 }

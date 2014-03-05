@@ -30,19 +30,20 @@ public class SnpSiftCmdAnnotateSorted extends SnpSift {
 	public static final int SHOW = 10000;
 	public static final int SHOW_LINES = 100 * SHOW;
 
-	protected String chrPrev = "";
+	protected boolean useId; // Annotate ID fields
+	protected boolean useInfoField; // Use all info fields
+	protected boolean useRefAlt;
 	protected int countBadRef = 0;
+	protected String vcfDbFileName;
+	protected String vcfFileName;
+	protected String chrPrev = "";
+	protected String prependInfoFieldName;
 	protected HashMap<String, String> dbId = new HashMap<String, String>();
 	protected HashMap<String, String> dbInfo = new HashMap<String, String>();
 	protected FileIndexChrPos indexDb;
 	protected ArrayList<String> infoFields; // Use only info fields
 	protected VcfEntry latestVcfDb = null;
-	protected boolean useId; // Annotate ID fields
-	protected boolean useInfoField; // Use all info fields
-	protected boolean useRefAlt;
-	protected String vcfDbFileName;
 	protected VcfFileIterator vcfFile, vcfDbFile;
-	protected String vcfFileName;
 
 	public SnpSiftCmdAnnotateSorted(String args[]) {
 		super(args, "annotate");
@@ -77,6 +78,7 @@ public class SnpSiftCmdAnnotateSorted extends SnpSift {
 
 		// Add INFO fields (if any)
 		if (infoStr != null) {
+			if (prependInfoFieldName != null) infoStr = prependInfoName(infoStr);
 			vcf.addInfo(infoStr);
 			annotated = true;
 		}
@@ -347,6 +349,7 @@ public class SnpSiftCmdAnnotateSorted extends SnpSift {
 					for (String infoField : args[++i].split(","))
 						infoFields.add(infoField);
 				} else if (arg.equals("-noId")) useId = false;
+				else if (arg.equals("-name")) prependInfoFieldName = args[++i];
 				else if (arg.equals("-noAlt")) useRefAlt = false;
 				else usage("Unknown command line option '" + arg + "'");
 			} else if (vcfDbFileName == null) vcfDbFileName = arg;
@@ -356,6 +359,21 @@ public class SnpSiftCmdAnnotateSorted extends SnpSift {
 		// Sanity check
 		if (vcfDbFileName == null) usage("Missing 'database.vcf'");
 		if (vcfFileName == null) usage("Missing 'file.vcf'");
+	}
+
+	/**
+	 * Prepend 'prependInfoFieldName' to all info fields
+	 * @param infoStr
+	 * @return
+	 */
+	String prependInfoName(String infoStr) {
+		if (infoStr == null || infoStr.isEmpty()) return infoStr;
+
+		StringBuilder sb = new StringBuilder();
+		for (String f : infoStr.split(";"))
+			sb.append((sb.length() > 0 ? ";" : "") + prependInfoFieldName + f);
+		return sb.toString();
+
 	}
 
 	/**
@@ -510,6 +528,7 @@ public class SnpSiftCmdAnnotateSorted extends SnpSift {
 		System.err.println("\t-noAlt       : Do not use REF and ALT fields when comparing database.vcf entries to file.vcf entries. Default: " + !useRefAlt);
 		System.err.println("\t-noId        : Do not annotate ID field. Defaul: " + !useId);
 		System.err.println("\t-info <list> : Annotate using a list of info fields (list is a comma separated list of fields). Default: ALL.");
+		System.err.println("\t-name str    : Prepend 'str' to all annotated INFO fields. Default: ''.");
 
 		System.exit(1);
 	}
