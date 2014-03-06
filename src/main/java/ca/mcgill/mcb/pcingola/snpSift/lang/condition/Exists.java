@@ -27,10 +27,10 @@ public class Exists extends OpUnary {
 			;
 		} catch (Throwable t) {
 			// Exception while trying to find it? => false
+			if (debug) t.printStackTrace();
 			retVal = false;
 		}
 
 		return negated ? !retVal : retVal;
 	}
-
 }

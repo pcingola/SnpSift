@@ -328,6 +328,9 @@ public class SnpSiftCmdFilter extends SnpSift {
 	 * @return If 'createList' is true, return a list containing all vcfEntries that passed the filter. Otherwise return null.
 	 */
 	public List<VcfEntry> run(boolean createList) {
+		// Debug mode?
+		if (debug) Condition.debug = true;
+
 		// Parse expression
 		try {
 			parseExpression(expression);

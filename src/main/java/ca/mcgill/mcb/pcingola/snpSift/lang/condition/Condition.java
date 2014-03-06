@@ -9,7 +9,7 @@ import ca.mcgill.mcb.pcingola.vcf.VcfEntry;
  */
 public abstract class Condition {
 
-	protected static boolean debug = false;
+	public static boolean debug = false;
 
 	protected boolean negated = false;
 	protected String operator;

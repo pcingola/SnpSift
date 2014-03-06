@@ -1019,4 +1019,14 @@ public class TestCasesFilter extends TestCase {
 		Assert.assertEquals(2, count);
 	}
 
+	public void test_46() {
+		String fileName = "./test/test46.vcf";
+		String args[] = { "-f", fileName, "exists dbNSFP_SIFT_pred" };
+
+		SnpSiftCmdFilter snpSiftFilter = new SnpSiftCmdFilter(args);
+		List<VcfEntry> ves = snpSiftFilter.run(true);
+
+		Assert.assertEquals(1, ves.size());
+	}
+
 }

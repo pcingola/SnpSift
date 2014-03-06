@@ -51,13 +51,18 @@ public class Field extends Expression {
 	public Comparable get(VcfEntry vcfEntry) {
 		calcReturnType(vcfEntry);
 		switch (returnType) {
+
 		case Integer:
 			return getFieldInt(vcfEntry);
+
 		case Float:
 			return getFieldFloat(vcfEntry);
+
+		case Character:
 		case String:
 		case Flag:
 			return getFieldString(vcfEntry);
+
 		default:
 			throw new RuntimeException("Unknow return type '" + returnType + "'");
 		}
