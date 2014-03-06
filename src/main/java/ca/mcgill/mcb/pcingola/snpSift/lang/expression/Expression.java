@@ -24,7 +24,7 @@ public abstract class Expression {
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public int compareTo(Expression expr, VcfEntry vcfEntry) {
-		VcfInfoType exprT = expr.getReturnType();
+		VcfInfoType exprType = expr.getReturnType();
 
 		// Same data type? Just compare them
 		Comparable o1 = get(vcfEntry);
@@ -32,11 +32,11 @@ public abstract class Expression {
 		if ((o1 == null) && (o2 == null)) return 0;
 		if ((o1 == null) && (o2 != null)) return -1;
 		if ((o1 != null) && (o2 == null)) return 1;
-		if (returnType == exprT) return o1.compareTo(o2);
+		if (returnType == exprType) return o1.compareTo(o2);
 
 		// One Integer one Float?
 		if (((returnType == VcfInfoType.Integer) || (returnType == VcfInfoType.Float)) //
-				&& ((exprT == VcfInfoType.Integer) || (exprT == VcfInfoType.Float)) //
+				&& ((exprType == VcfInfoType.Integer) || (exprType == VcfInfoType.Float)) //
 		) {
 			// Convert to Float and compare
 			double d1 = getFloat(vcfEntry);
@@ -45,10 +45,17 @@ public abstract class Expression {
 			if (d1 == d2) return 0;
 			if (d1 < d2) return -1;
 			return 1;
+		} else if (((returnType == VcfInfoType.String) || (returnType == VcfInfoType.Character)) //
+				&& ((exprType == VcfInfoType.Character) || (exprType == VcfInfoType.String)) //
+		) {
+			String s1 = getString(vcfEntry);
+			String s2 = expr.getString(vcfEntry);
+
+			return s1.compareTo(s2);
 		}
 
 		// Not comparable types
-		throw new RuntimeException("Cannot compare '" + returnType + "' to '" + exprT + "'");
+		throw new RuntimeException("Cannot compare '" + returnType + "' to '" + exprType + "'");
 	}
 
 	/**
