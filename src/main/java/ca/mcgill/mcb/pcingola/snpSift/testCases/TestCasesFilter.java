@@ -1029,4 +1029,16 @@ public class TestCasesFilter extends TestCase {
 		Assert.assertEquals(1, ves.size());
 	}
 
+	public void test_47() {
+		String fileName = "./test/test46.vcf";
+		String args[] = { "-f", fileName, "dbNSFP_SIFT_pred != 'D'" };
+
+		SnpSiftCmdFilter snpSiftFilter = new SnpSiftCmdFilter(args);
+		List<VcfEntry> ves = snpSiftFilter.run(true);
+
+		Assert.assertEquals(1, ves.size());
+		String field = ves.get(0).getInfo("dbNSFP_SIFT_pred");
+		Assert.assertEquals("T", field);
+	}
+
 }
