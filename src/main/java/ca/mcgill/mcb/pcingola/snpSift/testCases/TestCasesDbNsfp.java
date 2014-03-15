@@ -217,4 +217,39 @@ public class TestCasesDbNsfp extends TestCase {
 		}
 	}
 
+	/**
+	 * Check header values are correctly inferred.
+	 * 
+	 * E.g. If the first value in the table is '0', we may infer 
+	 * 		that data type is INT, but if another value '0.5' 
+	 * 		appears, we change it to FLOAT
+	 * 
+	 */
+	public void test_07() {
+		// We annotate something trivial: position
+		String dbnsfpFileName = "test/dbNSFP2.4.head_100.txt.gz";
+		String vcfFileName = "test/test.dbnsfp.07.vcf";
+		String args[] = { "-f", "SIFT_score", dbnsfpFileName, vcfFileName };
+
+		SnpSiftCmdDbNsfp cmd = new SnpSiftCmdDbNsfp(args);
+		cmd.setVerbose(verbose);
+		cmd.setDebug(debug);
+
+		try {
+			cmd.initAnnotate();
+
+			// Make sure we get the right type
+			Assert.assertEquals("Float", cmd.getFieldsType().get("SIFT_score"));
+
+			// Note: There is only one entry to annotate (the VCF file has one line)
+			VcfFileIterator vcfFile = new VcfFileIterator(vcfFileName);
+			for (VcfEntry vcfEntry : vcfFile)
+				cmd.annotate(vcfEntry); // Chromosome not present in database. Check that no exception is thrown.
+
+			cmd.endAnnotate();
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+	}
+
 }

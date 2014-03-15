@@ -64,7 +64,6 @@ public class SnpSiftCmdDbNsfp extends SnpSift {
 	protected VcfFileIterator vcfFile;
 	protected DbNsfpEntry currentDbEntry;
 	protected String fieldsNamesToAdd;
-
 	String latestChromo = "";
 
 	public SnpSiftCmdDbNsfp(String args[]) {
@@ -245,6 +244,11 @@ public class SnpSiftCmdDbNsfp extends SnpSift {
 
 			if (currentDbEntry != null) latestChromo = currentDbEntry.getChromosomeName();
 		}
+	}
+
+	public Map<String, String> getFieldsType() {
+		return fieldsType;
+
 	}
 
 	/**
