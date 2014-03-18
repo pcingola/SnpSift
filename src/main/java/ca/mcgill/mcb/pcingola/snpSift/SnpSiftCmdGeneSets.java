@@ -3,6 +3,7 @@ package ca.mcgill.mcb.pcingola.snpSift;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 
 import ca.mcgill.mcb.pcingola.fileIterator.VcfFileIterator;
@@ -114,6 +115,12 @@ public class SnpSiftCmdGeneSets extends SnpSift {
 	 */
 	@Override
 	public void run() {
+		run(false);
+	}
+
+	public List<VcfEntry> run(boolean createList) {
+		LinkedList<VcfEntry> results = new LinkedList<VcfEntry>();
+
 		if (verbose) Timer.showStdErr("Reading MSigDb from file: '" + msigdb + "'");
 		geneSets = new GeneSets(msigdb);
 		if (verbose) Timer.showStdErr("Done. Total:\n\t" + geneSets.getGeneSetCount() + " gene sets\n\t" + geneSets.getGeneCount() + " genes");
@@ -130,6 +137,8 @@ public class SnpSiftCmdGeneSets extends SnpSift {
 
 			annotate(vcfEntry);
 			System.out.println(vcfEntry);
+
+			if (createList) results.add(vcfEntry);
 		}
 
 		if (verbose) {
@@ -139,6 +148,8 @@ public class SnpSiftCmdGeneSets extends SnpSift {
 			for (String gs : countByGeneSet.keysSorted())
 				System.err.println("#\t" + gs + "\t" + geneSets.getGeneSet(gs).size() + "\t" + countByGeneSet.get(gs));
 		}
+
+		return results;
 	}
 
 	/**
