@@ -1041,4 +1041,17 @@ public class TestCasesFilter extends TestCase {
 		Assert.assertEquals("T", field);
 	}
 
+	public void test_48() {
+		// Filter data
+		SnpSiftCmdFilter vcfFilter = new SnpSiftCmdFilter();
+		String expression = "( ZZZ = NaN ) ";
+		List<VcfEntry> list = vcfFilter.filter("test/test48.vcf", expression, true);
+
+		// Check that it satisfies the condition
+		System.out.println("Expression: '" + expression + "'");
+		Assert.assertNotNull(list);
+		Assert.assertTrue(list.size() == 1);
+		Assert.assertEquals(list.get(0).getInfo("ZZZ"), "NaN");
+	}
+
 }

@@ -1,0 +1,6 @@
+##fileformat=VCFv4.1
+##INFO=<ID=ZZZ,Number=1,Type=Float,Description="Phred probability of all samples being the same">
+#CHROM	POS	ID	REF	ALT	QUAL	FILTER	INFO	FORMAT	s_1_BcA2.sort.rmdup.Q20.noMh.bam
+NT_166464	100	.	G	C	.	.	DP=1;ZZZ=0.1
+NT_166464	200	.	G	C	.	.	DP=1;ZZZ=1.1
+NT_166464	300	.	G	C	.	.	DP=1;ZZZ=NaN

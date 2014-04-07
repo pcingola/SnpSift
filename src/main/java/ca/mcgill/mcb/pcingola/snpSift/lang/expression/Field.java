@@ -1,5 +1,6 @@
 package ca.mcgill.mcb.pcingola.snpSift.lang.expression;
 
+import ca.mcgill.mcb.pcingola.snpSift.lang.expression.FieldConstant.FieldConstantNames;
 import ca.mcgill.mcb.pcingola.util.Gpr;
 import ca.mcgill.mcb.pcingola.vcf.VcfEntry;
 import ca.mcgill.mcb.pcingola.vcf.VcfInfo;
@@ -37,9 +38,16 @@ public class Field extends Expression {
 
 	public VcfInfoType calcReturnType(VcfEntry vcfEntry) {
 		if (returnType == VcfInfoType.UNKNOWN) {
+
 			// Is there a filed 'name'
 			VcfInfo vcfInfo = vcfEntry.getVcfFileIterator().getVcfHeader().getVcfInfo(name);
-			if (vcfInfo == null) throw new RuntimeException("No such field '" + name + "'");
+			if (vcfInfo == null) {
+				// Is this a special field name?
+				if (FieldConstant.isConstantField(name)) return FieldConstantNames.valueOf(name).getType();
+
+				// Error: Not found
+				throw new RuntimeException("No such field '" + name + "'");
+			}
 			returnType = vcfInfo.getVcfInfoType();
 		}
 

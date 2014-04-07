@@ -26,6 +26,7 @@ import ca.mcgill.mcb.pcingola.snpSift.lang.condition.NotMatch;
 import ca.mcgill.mcb.pcingola.snpSift.lang.condition.Or;
 import ca.mcgill.mcb.pcingola.snpSift.lang.expression.Expression;
 import ca.mcgill.mcb.pcingola.snpSift.lang.expression.Field;
+import ca.mcgill.mcb.pcingola.snpSift.lang.expression.FieldConstant;
 import ca.mcgill.mcb.pcingola.snpSift.lang.expression.FieldEff;
 import ca.mcgill.mcb.pcingola.snpSift.lang.expression.FieldGenotype;
 import ca.mcgill.mcb.pcingola.snpSift.lang.expression.FieldGenotypeSub;
@@ -208,7 +209,8 @@ public class LangFactory {
 
 		if (leaveName.equalsIgnoreCase("VAR_FIELD")) {
 			String name = tree.getChild(0).getText();
-			field = new Field(name);
+			if (FieldConstant.isConstantField(name)) field = FieldConstant.factory(name);
+			else field = new Field(name);
 		} else if (leaveName.equalsIgnoreCase("VAR_SUBFIELD")) {
 			String name = tree.getChild(0).getText();
 			int index = parseIndexField(tree.getChild(1).getText(), IteratorType.VAR);
