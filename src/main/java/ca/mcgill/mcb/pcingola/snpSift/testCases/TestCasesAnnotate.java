@@ -7,7 +7,6 @@ import junit.framework.Assert;
 import junit.framework.TestCase;
 import ca.mcgill.mcb.pcingola.fileIterator.VcfFileIterator;
 import ca.mcgill.mcb.pcingola.snpSift.SnpSiftCmdAnnotateSorted;
-import ca.mcgill.mcb.pcingola.util.Gpr;
 import ca.mcgill.mcb.pcingola.vcf.VcfEntry;
 
 /**
@@ -258,7 +257,7 @@ public class TestCasesAnnotate extends TestCase {
 		VcfFileIterator vcfFile = new VcfFileIterator(fileName);
 		VcfEntry vcfEntry = vcfFile.next();
 		vcfAnnotate.annotate(vcfEntry);
-		Gpr.debug(vcfEntry);
+		// Gpr.debug(vcfEntry);
 
 		// Check that new ID was NOT added
 		Assert.assertEquals("NEW_ID", vcfEntry.getId());
