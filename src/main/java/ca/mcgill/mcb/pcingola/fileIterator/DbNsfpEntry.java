@@ -1,6 +1,7 @@
 package ca.mcgill.mcb.pcingola.fileIterator;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 
 import ca.mcgill.mcb.pcingola.collections.AutoHashMap;
@@ -26,42 +27,43 @@ public class DbNsfpEntry extends Marker {
 	 * Add a value
 	 * @param alt
 	 * @param columnName
-	 * @param value
+	 * @param valuesToAdd
 	 */
-	public void add(String alt, String columnName, String value) {
+	public void add(String alt, String columnName, String valuesToAdd) {
 		// Get map by alt
 		HashMap<String, String> altVals = values.getOrCreate(alt);
 
-		// We cannot use comma or semicolon, so we replace them by ','
-		value = value.replace(';', ',');
-		// value = value.replace(';', '|');
-		// value = value.replace(',', '|');
-
 		// Represent empty values as '.'
-		if (value.isEmpty()) value = ".";
+		if (valuesToAdd.isEmpty()) valuesToAdd = ".";
+		else valuesToAdd = valuesToAdd.replace(';', '\t'); // Split values
 
 		if (!altVals.containsKey(columnName)) {
 			// No previous values => Simply insert new value
-			altVals.put(columnName, value);
+			altVals.put(columnName, valuesToAdd);
 			return;
 		}
 
-		// Append new value, but first make sure we are not repeating values
-		boolean shouldAdd = true;
+		// Remove repeated values?
 		if (collapseRepeatedValues) {
-			String currvals[] = altVals.get(columnName).split("\t");
-			for (String v : currvals)
-				if (v.equalsIgnoreCase(value)) {
-					shouldAdd = false;
-					break;
+			// Create a set of current values
+			HashSet<String> currVals = new HashSet<String>();
+			for (String cv : altVals.get(columnName).split("\t"))
+				currVals.add(cv);
+
+			// Add unique values
+			for (String nv : valuesToAdd.split("\t"))
+				if (!currVals.contains(nv)) {
+					altVals.put(columnName, altVals.get(columnName) + "\t" + nv);
+					currVals.add(nv);
 				}
+
+			return;
 		}
 
-		// Value already in the map? don't add twice
-		if (shouldAdd) {
-			String newValue = altVals.get(columnName) + "\t" + value;
-			altVals.put(columnName, newValue);
-		}
+		// Just add new value
+		String newValue = altVals.get(columnName) + "\t" + valuesToAdd;
+		altVals.put(columnName, newValue);
+
 	}
 
 	/**

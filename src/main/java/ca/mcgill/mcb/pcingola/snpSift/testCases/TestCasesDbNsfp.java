@@ -21,7 +21,7 @@ public class TestCasesDbNsfp extends TestCase {
 
 	public void test_01() {
 		String vcfFileName = "test/test_dbNSFP_chr1_69134.vcf";
-		String args[] = { "-f", "GERP++_RS,GERP++_NR,ESP6500_AA_AF,29way_logOdds,Polyphen2_HVAR_pred,SIFT_score,Uniprot_acc,Ensembl_transcriptid", "test/dbNSFP2.0b3.chr1_69134.txt", vcfFileName };
+		String args[] = { "-collapse", "-f", "GERP++_RS,GERP++_NR,ESP6500_AA_AF,29way_logOdds,Polyphen2_HVAR_pred,SIFT_score,Uniprot_acc,Ensembl_transcriptid", "test/dbNSFP2.0b3.chr1_69134.txt", vcfFileName };
 		SnpSiftCmdDbNsfp cmd = new SnpSiftCmdDbNsfp(args);
 		cmd.setVerbose(verbose);
 		cmd.setDebug(debug);
@@ -46,7 +46,7 @@ public class TestCasesDbNsfp extends TestCase {
 			Assert.assertEquals("B", vcfEntry.getInfo(SnpSiftCmdDbNsfp.VCF_INFO_PREFIX + "Polyphen2_HVAR_pred"));
 			Assert.assertEquals("0.090000", vcfEntry.getInfo(SnpSiftCmdDbNsfp.VCF_INFO_PREFIX + "SIFT_score"));
 			Assert.assertEquals("Q8NH21", vcfEntry.getInfo(SnpSiftCmdDbNsfp.VCF_INFO_PREFIX + "Uniprot_acc"));
-			Assert.assertEquals("ENST00000534990|ENST00000335137", vcfEntry.getInfo(SnpSiftCmdDbNsfp.VCF_INFO_PREFIX + "Ensembl_transcriptid"));
+			Assert.assertEquals("ENST00000534990,ENST00000335137", vcfEntry.getInfo(SnpSiftCmdDbNsfp.VCF_INFO_PREFIX + "Ensembl_transcriptid"));
 
 			cmd.endAnnotate();
 		} catch (Exception e) {
@@ -60,7 +60,7 @@ public class TestCasesDbNsfp extends TestCase {
 	public void test_02() {
 		String vcfFileName = "test/test_dbnsfp_multiple.vcf";
 		String fields = "genename,Ensembl_geneid,Ensembl_transcriptid,aaref,aaalt";
-		String args[] = { "-f", fields, "test/test_dbnsfp_multiple_lines.txt", vcfFileName };
+		String args[] = { "-collapse", "-f", fields, "test/test_dbnsfp_multiple_lines.txt", vcfFileName };
 
 		SnpSiftCmdDbNsfp cmd = new SnpSiftCmdDbNsfp(args);
 		cmd.setVerbose(verbose);
@@ -117,7 +117,7 @@ public class TestCasesDbNsfp extends TestCase {
 
 			// Check all values
 			// dbNSFP_Ensembl_transcriptid=ENST00000347404,ENST00000537835,ENST00000378535,ENST00000228280;dbNSFP_Polyphen2_HDIV_score=0.449,.,0.192;dbNSFP_Polyphen2_HVAR_pred=B,.,B;dbNSFP_aaalt=A,R,T
-			Assert.assertEquals("ENST00000347404,ENST00000537835,ENST00000378535|ENST00000228280", vcfEntry.getInfo("dbNSFP_Ensembl_transcriptid"));
+			Assert.assertEquals("ENST00000347404,ENST00000537835,ENST00000378535,ENST00000228280", vcfEntry.getInfo("dbNSFP_Ensembl_transcriptid"));
 			Assert.assertEquals("0.449,.,0.192", vcfEntry.getInfo("dbNSFP_Polyphen2_HDIV_score"));
 			Assert.assertEquals("B,.,B", vcfEntry.getInfo("dbNSFP_Polyphen2_HVAR_pred"));
 			Assert.assertEquals("A,R,T", vcfEntry.getInfo("dbNSFP_aaalt"));
@@ -131,7 +131,7 @@ public class TestCasesDbNsfp extends TestCase {
 	public void test_04() {
 		// We annotate something trivial: position
 		String vcfFileName = "test/test_dbNSFP_04.vcf";
-		String args[] = { "-f", "pos(1-coor)", "test/dbNSFP2.3.test.txt.gz", vcfFileName };
+		String args[] = { "-collapse", "-f", "pos(1-coor)", "test/dbNSFP2.3.test.txt.gz", vcfFileName };
 
 		SnpSiftCmdDbNsfp cmd = new SnpSiftCmdDbNsfp(args);
 		cmd.setVerbose(verbose);
