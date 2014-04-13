@@ -53,7 +53,7 @@ public class SnpSiftCmdDbNsfp extends SnpSift {
 	protected Map<String, String> fieldsToAdd;
 	protected Map<String, String> fieldsDescription;
 	protected Map<String, String> fieldsType;
-	protected boolean annotateAll; // Annotate empty fields as well?
+	protected boolean annotateEmpty; // Annotate empty fields as well?
 	protected boolean collapseRepeatedValues; // Collapse values if repeated?
 	protected boolean tabixCheck = true;
 	protected String dbNsfpFileName;
@@ -117,7 +117,7 @@ public class SnpSiftCmdDbNsfp extends SnpSift {
 
 					if (val == null) {
 						// No value: Don't add		
-					} else if (val.isEmpty() || val.equals(".")) {
+					} else if (isDbNsfpValueEmpty(val)) {
 						// Empty: Mark as 'empty'
 						empty = true;
 					} else {
@@ -128,7 +128,7 @@ public class SnpSiftCmdDbNsfp extends SnpSift {
 				}
 			}
 
-			if (annotateAll || !empty) {
+			if (annotateEmpty || !empty) {
 				String infoStr = info.toString();
 				if (infoStr.isEmpty()) infoStr = ".";
 				infoStr = infoStr.replace(';', ',').replace('\t', '_').replace(' ', '_'); // Make sure all characters are valid for VCF field
@@ -259,8 +259,8 @@ public class SnpSiftCmdDbNsfp extends SnpSift {
 		fieldsToAdd = new HashMap<String, String>();
 		fieldsType = new HashMap<String, String>();
 		fieldsDescription = new HashMap<String, String>();
-		annotateAll = false;
-		collapseRepeatedValues = true;
+		annotateEmpty = false;
+		collapseRepeatedValues = false;
 	}
 
 	/**
@@ -300,6 +300,23 @@ public class SnpSiftCmdDbNsfp extends SnpSift {
 	}
 
 	/**
+	 * Are all values empty?
+	 * @param values
+	 * @return
+	 */
+	boolean isDbNsfpValueEmpty(String values) {
+		// Single value
+		if (values.isEmpty()) return true;
+		if (values.equals(".")) return true;
+
+		// Multiple values? Are all of them empty?
+		for (String val : values.split(","))
+			if (!val.isEmpty() && !val.equals(".")) return false;
+
+		return true;
+	}
+
+	/**
 	 * Parse command line arguments
 	 */
 	@Override
@@ -309,12 +326,11 @@ public class SnpSiftCmdDbNsfp extends SnpSift {
 		for (int i = 0; i < args.length; i++) {
 			String arg = args[i];
 
-			if (arg.equals("-a")) annotateAll = true;
+			if (arg.equals("-a")) annotateEmpty = true;
 			else if (arg.equals("-f")) fieldsNamesToAdd = args[++i]; // Filed to be used
-			else if (arg.equalsIgnoreCase("-noCollapse")) {
-				collapseRepeatedValues = false;
-				annotateAll = true;
-			} else if (dbNsfpFileName == null) dbNsfpFileName = arg;
+			else if (arg.equalsIgnoreCase("-noCollapse")) collapseRepeatedValues = false;
+			else if (arg.equalsIgnoreCase("-collapse")) collapseRepeatedValues = true;
+			else if (dbNsfpFileName == null) dbNsfpFileName = arg;
 			else if (vcfFileName == null) vcfFileName = arg;
 		}
 
@@ -399,7 +415,8 @@ public class SnpSiftCmdDbNsfp extends SnpSift {
 				+ "Note: dbNSFP.txt.gz must be bgzip and tabix indexed file. The corresponding index file (dbNSFP.txt.gz.tbi) must be present.\n" //
 				+ "Options:\n" //
 				+ "\t-a            : Annotate fields, even if the database has an empty value (annotates using '.' for empty).\n" //
-				+ "\t-noCollapse   : Switch off 'collapsing' repeated values from dbNSFP (implies '-a').\n" //
+				+ "\t-collapse     : Collapse repeated values from dbNSFP. Default: " + collapseRepeatedValues + "\n" //
+				+ "\t-noCollapse   : Switch off 'collapsing' repeated values from dbNSFP. Default: " + !collapseRepeatedValues + "\n" //
 				+ "\t-f            : A comma sepparated list of fields to add.\n" //
 				+ "\t                Default fields to add:\n" + sb //
 				+ "\n" //

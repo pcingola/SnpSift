@@ -32,9 +32,10 @@ public class DbNsfpEntry extends Marker {
 		// Get map by alt
 		HashMap<String, String> altVals = values.getOrCreate(alt);
 
-		// We cannot use comma or semicolon, so we replace them by '|'
-		value = value.replace(';', '|');
-		value = value.replace(',', '|');
+		// We cannot use comma or semicolon, so we replace them by ','
+		value = value.replace(';', ',');
+		// value = value.replace(';', '|');
+		// value = value.replace(',', '|');
 
 		// Represent empty values as '.'
 		if (value.isEmpty()) value = ".";
