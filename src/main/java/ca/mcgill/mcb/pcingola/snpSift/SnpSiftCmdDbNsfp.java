@@ -352,6 +352,8 @@ public class SnpSiftCmdDbNsfp extends SnpSift {
 
 		// Annotate VCF file
 		boolean showHeader = true;
+		int pos = -1;
+		String chr = "";
 		for (VcfEntry vcfEntry : vcfFile) {
 			try {
 				// Show header?
@@ -366,12 +368,24 @@ public class SnpSiftCmdDbNsfp extends SnpSift {
 					checkFieldsToAdd();
 				}
 
+				// Check if file is sorted
+				if (vcfEntry.getChromosomeName().equals(chr) && vcfEntry.getStart() < pos) {
+					fatalError("Your VCF file should be sorted!" //
+							+ "\n\tPrevious entry " + chr + ":" + pos//
+							+ "\n\tCurrent entry  " + vcfEntry.getChromosomeName() + ":" + (vcfEntry.getStart() + 1)//
+					);
+				}
+
 				// Annotate
 				annotate(vcfEntry);
 
 				// Show
 				System.out.println(vcfEntry);
 				count++;
+
+				// Update chr:pos
+				chr = vcfEntry.getChromosomeName();
+				pos = vcfEntry.getStart();
 			} catch (IOException e) {
 				throw new RuntimeException(e);
 			}
@@ -417,7 +431,7 @@ public class SnpSiftCmdDbNsfp extends SnpSift {
 				+ "\t-a            : Annotate fields, even if the database has an empty value (annotates using '.' for empty).\n" //
 				+ "\t-collapse     : Collapse repeated values from dbNSFP. Default: " + collapseRepeatedValues + "\n" //
 				+ "\t-noCollapse   : Switch off 'collapsing' repeated values from dbNSFP. Default: " + !collapseRepeatedValues + "\n" //
-				+ "\t-f            : A comma sepparated list of fields to add.\n" //
+				+ "\t-f            : A comma separated list of fields to add.\n" //
 				+ "\t                Default fields to add:\n" + sb //
 				+ "\n" //
 		);
