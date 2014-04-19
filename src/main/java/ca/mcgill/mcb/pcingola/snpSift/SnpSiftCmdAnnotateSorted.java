@@ -441,6 +441,9 @@ public class SnpSiftCmdAnnotateSorted extends SnpSift {
 
 		int countAnnotated = 0, count = 0;
 		boolean showHeader = true;
+		int pos = -1;
+		String chr = "";
+
 		for (VcfEntry vcfEntry : vcfFile) {
 			try {
 				// Show header?
@@ -449,6 +452,14 @@ public class SnpSiftCmdAnnotateSorted extends SnpSift {
 					addHeader(vcfFile);
 					String headerStr = vcfFile.getVcfHeader().toString();
 					if (!headerStr.isEmpty()) print(headerStr);
+				}
+
+				// Check if file is sorted
+				if (vcfEntry.getChromosomeName().equals(chr) && vcfEntry.getStart() < pos) {
+					fatalError("Your VCF file should be sorted!" //
+							+ "\n\tPrevious entry " + chr + ":" + pos//
+							+ "\n\tCurrent entry  " + vcfEntry.getChromosomeName() + ":" + (vcfEntry.getStart() + 1)//
+					);
 				}
 
 				// Annotate
@@ -460,6 +471,10 @@ public class SnpSiftCmdAnnotateSorted extends SnpSift {
 
 				if (annotated) countAnnotated++;
 				count++;
+
+				// Update chr:pos
+				chr = vcfEntry.getChromosomeName();
+				pos = vcfEntry.getStart();
 
 			} catch (Exception e) {
 				e.printStackTrace();
