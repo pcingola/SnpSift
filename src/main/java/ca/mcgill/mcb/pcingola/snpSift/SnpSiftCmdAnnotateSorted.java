@@ -382,15 +382,18 @@ public class SnpSiftCmdAnnotateSorted extends SnpSift {
 	 */
 	void readDb(VcfEntry vcf) {
 		String chr = vcf.getChromosomeName();
-		clear();
 
 		// Add latest to db?
 		if (latestVcfDb != null) {
 			if (latestVcfDb.getChromosomeName().equals(chr)) {
-				if (vcf.getStart() < latestVcfDb.getStart()) return;
+				if (vcf.getStart() < latestVcfDb.getStart()) {
+					clear();
+					return;
+				}
+
 				if (vcf.getStart() == latestVcfDb.getStart()) addDb(latestVcfDb);
 			}
-		}
+		} else clear();
 
 		// Read more entries from db
 		for (VcfEntry vcfDb : vcfDbFile) {
@@ -410,7 +413,7 @@ public class SnpSiftCmdAnnotateSorted extends SnpSift {
 					countBadRef++;
 				}
 
-				addDb(vcfDb); // Same position: Add all keys to 'db'
+				addDb(vcfDb); // Same position: Add all keys to 'db'. Note: VCF allows more than one line with the same position
 			}
 		}
 	}

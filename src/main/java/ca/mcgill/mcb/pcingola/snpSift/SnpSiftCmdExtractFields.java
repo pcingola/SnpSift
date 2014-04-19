@@ -20,6 +20,8 @@ public class SnpSiftCmdExtractFields extends SnpSift {
 	public static final int SHOW = 10000;
 
 	String vcfFile;
+	String sameFieldSeparator; // Separate within field
+	String emptyFieldString; // Use this string in case of empty results
 	ArrayList<String> fieldNames;
 	ArrayList<Field> fields;
 
@@ -40,16 +42,27 @@ public class SnpSiftCmdExtractFields extends SnpSift {
 		do {
 			// Get value
 			String value = field.getFieldString(vcfEntry);
-			if (value != null) values.append(value);
 
-			// End of iteration?
-			if (fieldIterator.hasNext()) {
-				values.append("\t");
-				fieldIterator.next();
-			} else break;
+			// Separate
+			if (values.length() > 0) values.append(sameFieldSeparator);
+
+			// Append values
+			if (value == null || value.isEmpty()) values.append(emptyFieldString);
+			else values.append(value);
+
+			// Iterate?
+			if (fieldIterator.hasNext()) fieldIterator.next();
+			else break;
+
 		} while (true);
 
 		return values.toString();
+	}
+
+	@Override
+	public void init() {
+		sameFieldSeparator = "\t";
+		emptyFieldString = "";
 	}
 
 	/**
@@ -57,16 +70,21 @@ public class SnpSiftCmdExtractFields extends SnpSift {
 	 */
 	@Override
 	public void parse(String[] args) {
-		int argNum = 0;
 		if (args.length == 0) usage(null);
 
-		if (args.length >= argNum) vcfFile = args[argNum++];
-		else usage("Missing 'file.vcf'");
-
-		// Read all field named
 		fieldNames = new ArrayList<String>();
-		for (int i = argNum; i < args.length; i++)
-			fieldNames.add(args[i]);
+		for (int i = 0; i < args.length; i++) {
+			String arg = args[i];
+
+			if (isOpt(arg)) {
+				if (arg.equals("-s")) sameFieldSeparator = args[++i];
+				else if (arg.equals("-e")) emptyFieldString = args[++i];
+			} else {
+				// Non-option parameters
+				if (vcfFile == null) vcfFile = arg; // VCF file
+				else fieldNames.add(arg); // Read all field names expressions
+			}
+		}
 
 		if (fieldNames.isEmpty()) usage("Missing field names");
 	}
@@ -151,7 +169,12 @@ public class SnpSiftCmdExtractFields extends SnpSift {
 
 		showVersion();
 
-		System.err.println("Usage: java -jar " + SnpSift.class.getSimpleName() + ".jar extractFields file.vcf filedName1 filedName2 ... filedNameN > tabFile.txt");
+		System.err.println("Usage: java -jar " + SnpSift.class.getSimpleName() + ".jar extractFields [options] file.vcf filedName1 filedName2 ... filedNameN > tabFile.txt\n" //
+				+ "\nOptions:" //
+				+ "\n\t-s     : Same field separator. Default: '" + sameFieldSeparator + "'" //
+				+ "\n\t-e     : Empty field. Default: '" + emptyFieldString + "'" //
+		);
+
 		System.exit(1);
 	}
 }

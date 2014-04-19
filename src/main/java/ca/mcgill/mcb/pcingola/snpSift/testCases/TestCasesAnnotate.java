@@ -1,6 +1,7 @@
 package ca.mcgill.mcb.pcingola.snpSift.testCases;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
 
 import junit.framework.Assert;
@@ -348,6 +349,31 @@ public class TestCasesAnnotate extends TestCase {
 		String bb = ve.getInfo(infoName + "BB");
 		Assert.assertEquals("Field_Value", aa);
 		Assert.assertEquals("AnotherValue", bb);
+	}
+
+	public void test_17() {
+		String dbFileName = "./test/annotate_oder_db.vcf";
+		String fileName = "./test/annotate_oder_snp.vcf";
+		String args[] = { dbFileName, fileName };
+
+		// Fake annotations (in files)
+		HashMap<String, String> types = new HashMap<String, String>();
+		types.put("0", "zero");
+		types.put("1", "first");
+		types.put("2", "second");
+
+		// Annotate
+		SnpSiftCmdAnnotateSorted vcfAnnotate = new SnpSiftCmdAnnotateSorted(args);
+		List<VcfEntry> ves = vcfAnnotate.run(true);
+
+		// Check that our "fake annotations" are matched as expected
+		for (VcfEntry ve : ves) {
+			String type = ve.getInfo("TYPE");
+			String ann = ve.getInfo("ANN");
+
+			System.out.println(ve.toStr() + "\t" + type + "\t" + ann);
+			Assert.assertEquals(types.get(type), ann);
+		}
 	}
 
 }
