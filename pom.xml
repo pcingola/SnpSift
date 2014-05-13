@@ -68,9 +68,9 @@
       <version>4.4</version>
     </dependency>
     <dependency>
-    	<groupId>net.sf.samtools</groupId>
-    	<artifactId>Sam</artifactId>
-    	<version>1.97</version>
+      <groupId>samtools</groupId>
+      <artifactId>samtools</artifactId>
+      <version>1.107</version>
     </dependency>
      
   </dependencies>
@@ -85,6 +85,11 @@
       <id>typesafe</id>
       <name>Typesafe Repository</name>
       <url>http://repo.typesafe.com/typesafe/releases/</url>
+    </repository>
+    <repository>
+      <id>hadoop-bam</id>
+      <name>Hadoop-BAM</name>
+      <url>http://hadoop-bam.sourceforge.net/maven/</url>
     </repository>
   </repositories>
 
