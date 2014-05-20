@@ -6,7 +6,6 @@ import java.util.Map;
 
 import ca.mcgill.mcb.pcingola.fileIterator.DbNsfpEntry;
 import ca.mcgill.mcb.pcingola.fileIterator.DbNsfpFileIterator;
-import ca.mcgill.mcb.pcingola.fileIterator.GuessTableTypes;
 import ca.mcgill.mcb.pcingola.fileIterator.VcfFileIterator;
 import ca.mcgill.mcb.pcingola.util.Gpr;
 import ca.mcgill.mcb.pcingola.util.Timer;
@@ -14,22 +13,22 @@ import ca.mcgill.mcb.pcingola.vcf.VcfEntry;
 import ca.mcgill.mcb.pcingola.vcf.VcfInfoType;
 
 /**
- * Annotate a VCF file with dbNSFP. 
- * 
- * The dbNSFP is an integrated database of functional predictions from multiple algorithms for the comprehensive 
- * collection of human non-synonymous SNPs (NSs). Its current version (ver 1.1) is based on CCDS version 20090327 
- * and includes a total of 75,931,005 NSs. It compiles prediction scores from four prediction algorithms (SIFT, 
+ * Annotate a VCF file with dbNSFP.
+ *
+ * The dbNSFP is an integrated database of functional predictions from multiple algorithms for the comprehensive
+ * collection of human non-synonymous SNPs (NSs). Its current version (ver 1.1) is based on CCDS version 20090327
+ * and includes a total of 75,931,005 NSs. It compiles prediction scores from four prediction algorithms (SIFT,
  * Polyphen2, LRT and MutationTaster), two conservation scores (PhyloP and GERP++) and other related information.
- *   
+ *
  * References:
- *  
+ *
  * 		http://sites.google.com/site/jpopgen/dbNSFP
- * 
+ *
  * 		Paper: Liu X, Jian X, and Boerwinkle E. 2011. dbNSFP: a lightweight database of human non-synonymous SNPs and their
  * 		functional predictions. Human Mutation. 32:894-899.
- * 
+ *
  * @author lletourn
- * 
+ *
  */
 public class SnpSiftCmdDbNsfp extends SnpSift {
 
@@ -40,10 +39,10 @@ public class SnpSiftCmdDbNsfp extends SnpSift {
 			+ "SIFT_pred," // SIFT predictions
 			+ "Polyphen2_HDIV_pred,Polyphen2_HVAR_pred," // Polyphen predictions
 			+ "LRT_pred," // LRT predictions
-			+ "MutationTaster_pred," // MutationTaser predictions		
-			+ "GERP++_NR,GERP++_RS," // GERP 
+			+ "MutationTaster_pred," // MutationTaser predictions
+			+ "GERP++_NR,GERP++_RS," // GERP
 			+ "phastCons100way_vertebrate," // Conservation
-			+ "1000Gp1_AF,1000Gp1_AFR_AF,1000Gp1_EUR_AF,1000Gp1_AMR_AF,1000Gp1_ASN_AF," // Allele frequencies 1000 Genomes project 
+			+ "1000Gp1_AF,1000Gp1_AFR_AF,1000Gp1_EUR_AF,1000Gp1_AMR_AF,1000Gp1_ASN_AF," // Allele frequencies 1000 Genomes project
 			+ "ESP6500_AA_AF,ESP6500_EA_AF" // Allele frequencies Exome sequencing project
 	;
 
@@ -72,7 +71,7 @@ public class SnpSiftCmdDbNsfp extends SnpSift {
 
 	/**
 	 * Add some lines to header before showing it
-	 * 
+	 *
 	 * @param vcfFile
 	 */
 	@Override
@@ -116,7 +115,7 @@ public class SnpSiftCmdDbNsfp extends SnpSift {
 					String val = dbEntry.getCsv(alt, fieldKey);
 
 					if (val == null) {
-						// No value: Don't add		
+						// No value: Don't add
 					} else if (isDbNsfpValueEmpty(val)) {
 						// Empty: Mark as 'empty'
 						empty = true;
@@ -181,7 +180,7 @@ public class SnpSiftCmdDbNsfp extends SnpSift {
 	 */
 	public DbNsfpEntry findDbEntry(VcfEntry vcfEntry) throws IOException {
 		//---
-		// Find db entry 
+		// Find db entry
 		//---
 		if (debug) System.err.println("Looking for " + vcfEntry.getChromosomeName() + ":" + vcfEntry.getStart() + ". Current DB: " + (currentDbEntry == null ? "null" : currentDbEntry.getChromosomeName() + ":" + currentDbEntry.getStart()));
 		while (true) {
@@ -268,19 +267,6 @@ public class SnpSiftCmdDbNsfp extends SnpSift {
 	 * @throws IOException
 	 */
 	public void initAnnotate() throws IOException {
-		// Guess data types from table information
-		GuessTableTypes guessTableTypes = new GuessTableTypes(dbNsfpFileName);
-		guessTableTypes.guessTypes();
-		if (!guessTableTypes.parsedHeader()) throw new RuntimeException("Could not parse header from file '" + dbNsfpFileName + "'");
-
-		VcfInfoType types[] = guessTableTypes.getTypes();
-		String fieldNames[] = guessTableTypes.getFieldNames();
-		for (int i = 0; i < fieldNames.length; i++) {
-			String type = (types[i] != null ? types[i].toString() : "String");
-			fieldsType.put(fieldNames[i], type);
-			fieldsDescription.put(fieldNames[i], "Field '" + fieldNames[i] + "' from dbNSFP");
-		}
-
 		// Open VCF file
 		vcfFile = new VcfFileIterator(vcfFileName);
 
@@ -288,6 +274,16 @@ public class SnpSiftCmdDbNsfp extends SnpSift {
 		dbNsfpFile = new DbNsfpFileIterator(dbNsfpFileName);
 		dbNsfpFile.setCollapseRepeatedValues(collapseRepeatedValues);
 		if (tabixCheck && !dbNsfpFile.isTabix()) fatalError("Tabix index not found for database '" + dbNsfpFileName + "'.\n\t\tSnpSift dbNSFP only works with tabix indexed databases, please create or download index.");
+
+		// Guess data types
+		dbNsfpFile.guessVcfTypes();
+		VcfInfoType types[] = dbNsfpFile.getTypes();
+		String fieldNames[] = dbNsfpFile.getFieldNamesSorted();
+		for (int i = 0; i < fieldNames.length; i++) {
+			String type = (types[i] != null ? types[i].toString() : "String");
+			fieldsType.put(fieldNames[i], type);
+			fieldsDescription.put(fieldNames[i], "Field '" + fieldNames[i] + "' from dbNSFP");
+		}
 
 		currentDbEntry = null;
 
