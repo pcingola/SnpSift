@@ -247,8 +247,10 @@ public class DbNsfpFileIterator extends MarkerFileIterator<DbNsfpEntry> {
 						multipleValues = new boolean[fieldNames.length];
 
 						names2index = new HashMap<String, Integer>();
-						for (int i = 0; i < fieldNames.length; i++)
+						for (int i = 0; i < fieldNames.length; i++) {
+							fieldNames[i] = fieldNames[i].trim();
 							names2index.put(fieldNames[i], i);
+						}
 					} else {
 						// Cannot parse header!
 						return false;
