@@ -11,7 +11,7 @@ import ca.mcgill.mcb.pcingola.vcf.VcfEntry;
 
 /**
  * Test GWAS catalog classes
- * 
+ *
  * @author pcingola
  */
 public class TestCasesDbNsfp extends TestCase {
@@ -149,7 +149,7 @@ public class TestCasesDbNsfp extends TestCase {
 
 				// Check that position (annotated from dbNSFP) actually matches
 				String posDb = vcfEntry.getInfo("dbNSFP_pos(1-coor)"); // Get INFO field annotated from dbNSFP
-				int pos = vcfEntry.getStart() + 1; // Get position 
+				int pos = vcfEntry.getStart() + 1; // Get position
 				Assert.assertEquals("" + pos, posDb); // Compare
 			}
 
@@ -180,7 +180,7 @@ public class TestCasesDbNsfp extends TestCase {
 
 				// Check that position (annotated from dbNSFP) actually matches
 				String posDb = vcfEntry.getInfo("dbNSFP_pos(1-coor)"); // Get INFO field annotated from dbNSFP
-				int pos = vcfEntry.getStart() + 1; // Get position 
+				int pos = vcfEntry.getStart() + 1; // Get position
 				if (debug) Gpr.debug(vcfEntry.getChromosomeName() + ":" + pos + "\t" + posDb);
 
 				// Check
@@ -219,11 +219,11 @@ public class TestCasesDbNsfp extends TestCase {
 
 	/**
 	 * Check header values are correctly inferred.
-	 * 
-	 * E.g. If the first value in the table is '0', we may infer 
-	 * 		that data type is INT, but if another value '0.5' 
+	 *
+	 * E.g. If the first value in the table is '0', we may infer
+	 * 		that data type is INT, but if another value '0.5'
 	 * 		appears, we change it to FLOAT
-	 * 
+	 *
 	 */
 	public void test_07() {
 		// We annotate something trivial: position
@@ -245,6 +245,36 @@ public class TestCasesDbNsfp extends TestCase {
 			VcfFileIterator vcfFile = new VcfFileIterator(vcfFileName);
 			for (VcfEntry vcfEntry : vcfFile)
 				cmd.annotate(vcfEntry); // Chromosome not present in database. Check that no exception is thrown.
+
+			cmd.endAnnotate();
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	/**
+	 * Missing annotations
+	 */
+	public void test_08() {
+		String vcfFileName = "test/test_dbNSFP_8.vcf";
+		String args[] = { "-collapse", "-a", "-f", "Polyphen2_HDIV_score", "test/dbNSFP2.4.chr4_55946200_55946300.txt.gz", vcfFileName };
+		SnpSiftCmdDbNsfp cmd = new SnpSiftCmdDbNsfp(args);
+		cmd.setVerbose(verbose);
+		cmd.setDebug(debug);
+
+		try {
+			cmd.initAnnotate();
+
+			// Get entry.
+			// Note: There is only one entry to annotate (the VCF file has one line)
+			VcfFileIterator vcfFile = new VcfFileIterator(vcfFileName);
+			VcfEntry vcfEntry = vcfFile.next();
+
+			cmd.annotate(vcfEntry);
+			if (verbose) System.out.println(vcfEntry);
+
+			// Check all values
+			Assert.assertEquals(".,1.0,1.0", vcfEntry.getInfo(SnpSiftCmdDbNsfp.VCF_INFO_PREFIX + "Polyphen2_HDIV_score"));
 
 			cmd.endAnnotate();
 		} catch (Exception e) {
