@@ -103,31 +103,29 @@ public class SnpSiftCmdDbNsfp extends SnpSift {
 		boolean annotated = false;
 		StringBuilder info = new StringBuilder();
 		for (String fieldKey : fieldsToAdd.keySet()) {
-			boolean empty = true;
 			info.setLength(0);
 
-			// For each ALT
+			// Find annotations for each ALT in our VcfEntry
 			for (String alt : vcf.getAlts()) {
 				// Are there any values to annotate?
-				if (dbEntry.hasValues(alt)) {
+				String val = dbEntry.getCsv(alt, fieldKey);
 
-					// Map<String, String> values = currentDbEntry.getAltAlelleValues(alt);
-					String val = dbEntry.getCsv(alt, fieldKey);
+				// Missing or empty?
+				if (annotateEmpty) {
+					if (val == null) val = ".";
+				} else if (isDbNsfpValueEmpty(val)) {
+					val = null;
+				}
 
-					if (val == null) {
-						// No value: Don't add
-					} else if (isDbNsfpValueEmpty(val)) {
-						// Empty: Mark as 'empty'
-						empty = true;
-					} else {
-						if (info.length() > 0) info.append(',');
-						info.append(val);
-						empty = false;
-					}
+				// Add value to "info"
+				if (val != null) {
+					if (info.length() > 0) info.append(',');
+					info.append(val);
 				}
 			}
 
-			if (annotateEmpty || !empty) {
+			// Add annotations
+			if (annotateEmpty || info.length() > 0) {
 				String infoStr = info.toString();
 				if (infoStr.isEmpty()) infoStr = ".";
 				infoStr = infoStr.replace(';', ',').replace('\t', '_').replace(' ', '_'); // Make sure all characters are valid for VCF field
@@ -137,6 +135,7 @@ public class SnpSiftCmdDbNsfp extends SnpSift {
 			}
 		}
 
+		// Show progress
 		if (annotated) {
 			countAnnotated++;
 			if (debug) Gpr.debug("Annotated: " + vcf.getChromosomeName() + ":" + vcf.getStart());
@@ -301,9 +300,8 @@ public class SnpSiftCmdDbNsfp extends SnpSift {
 	 * @return
 	 */
 	boolean isDbNsfpValueEmpty(String values) {
-		// Single value
-		if (values.isEmpty()) return true;
-		if (values.equals(".")) return true;
+		// Single value check
+		if (values == null || values.isEmpty() || values.equals(".")) return true;
 
 		// Multiple values? Are all of them empty?
 		for (String val : values.split(","))

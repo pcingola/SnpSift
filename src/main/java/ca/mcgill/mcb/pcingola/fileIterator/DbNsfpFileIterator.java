@@ -392,6 +392,7 @@ public class DbNsfpFileIterator extends MarkerFileIterator<DbNsfpEntry> {
 		// Read another entry from the file
 		try {
 			List<String[]> valuesForEntry = new ArrayList<String[]>();
+
 			while (ready()) {
 				line = readLine();
 				if (line == null) return null; // End of file?
