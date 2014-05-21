@@ -74,7 +74,7 @@ public class DbNsfpEntry extends Marker {
 	 */
 	public String get(String alt, String key) {
 		HashMap<String, String> altVals = values.get(alt);
-		if (alt == null) return null;
+		if (altVals == null) return null;
 		return altVals.get(key);
 	}
 
