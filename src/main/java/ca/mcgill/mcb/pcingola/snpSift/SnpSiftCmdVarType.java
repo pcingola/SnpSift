@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import ca.mcgill.mcb.pcingola.fileIterator.VcfFileIterator;
-import ca.mcgill.mcb.pcingola.interval.SeqChange;
+import ca.mcgill.mcb.pcingola.interval.Variant;
 import ca.mcgill.mcb.pcingola.util.Timer;
 import ca.mcgill.mcb.pcingola.vcf.VcfEntry;
 
@@ -59,7 +59,7 @@ public class SnpSiftCmdVarType extends SnpSift {
 
 		// Add vartype according to alleles
 		StringBuilder sb = new StringBuilder();
-		for (SeqChange sq : vcfEntry.seqChanges()) {
+		for (Variant sq : vcfEntry.variants()) {
 			if (sb.length() > 0) sb.append(",");
 			sb.append(sq.getChangeType());
 		}

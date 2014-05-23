@@ -8,7 +8,7 @@ import ca.mcgill.mcb.pcingola.fileIterator.BedFileIterator;
 import ca.mcgill.mcb.pcingola.fileIterator.VcfFileIterator;
 import ca.mcgill.mcb.pcingola.interval.Chromosome;
 import ca.mcgill.mcb.pcingola.interval.Genome;
-import ca.mcgill.mcb.pcingola.interval.SeqChange;
+import ca.mcgill.mcb.pcingola.interval.Variant;
 import ca.mcgill.mcb.pcingola.util.Gpr;
 import ca.mcgill.mcb.pcingola.util.Timer;
 import ca.mcgill.mcb.pcingola.vcf.FileIndexChrPos;
@@ -25,7 +25,7 @@ import ca.mcgill.mcb.pcingola.vcf.FileIndexChrPos;
 public class SnpSiftCmdIntervalsIndex extends SnpSift {
 
 	boolean listCommandLine;
-	List<SeqChange> seqChanges;
+	List<Variant> seqChanges;
 	Genome genome;
 	int inOffset;
 	String vcfFile;
@@ -39,7 +39,7 @@ public class SnpSiftCmdIntervalsIndex extends SnpSift {
 	public void init() {
 		genome = new Genome("genome");
 		listCommandLine = false;
-		seqChanges = new ArrayList<SeqChange>();
+		seqChanges = new ArrayList<Variant>();
 		inOffset = 0;
 		vcfFile = null;
 		bedFile = null;
@@ -102,7 +102,7 @@ public class SnpSiftCmdIntervalsIndex extends SnpSift {
 	 * @param pos
 	 * @return
 	 */
-	SeqChange parsePos(String pos) {
+	Variant parsePos(String pos) {
 		String recs[] = pos.split(":");
 		if (recs.length != 2) usage("Invalid interval '" + pos + "'. Format 'chr:start-end'");
 		String chr = recs[0];
@@ -113,7 +113,7 @@ public class SnpSiftCmdIntervalsIndex extends SnpSift {
 		int end = Gpr.parseIntSafe(p[1]) - inOffset;
 
 		Chromosome chromo = new Chromosome(genome, 0, 0, 1, chr);
-		return new SeqChange(chromo, start, end, "");
+		return new Variant(chromo, start, end, "");
 	}
 
 	/**
@@ -146,7 +146,7 @@ public class SnpSiftCmdIntervalsIndex extends SnpSift {
 
 		// Find all intervals
 		int scNum = 1;
-		for (SeqChange sc : seqChanges) {
+		for (Variant sc : seqChanges) {
 			try {
 				if (verbose) Timer.showStdErr(scNum + " / " + seqChanges.size() + "\t\tFinding interval: " + sc.getChromosomeName() + ":" + (sc.getStart() + 1) + "-" + (sc.getEnd() + 1));
 				fileIndexChrPos.dump(sc.getChromosomeName(), sc.getStart(), sc.getEnd(), false);

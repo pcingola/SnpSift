@@ -11,7 +11,7 @@ import ca.mcgill.mcb.pcingola.fileIterator.LineFileIterator;
 import ca.mcgill.mcb.pcingola.fileIterator.VcfFileIterator;
 import ca.mcgill.mcb.pcingola.interval.Chromosome;
 import ca.mcgill.mcb.pcingola.interval.Marker;
-import ca.mcgill.mcb.pcingola.interval.SeqChange;
+import ca.mcgill.mcb.pcingola.interval.Variant;
 import ca.mcgill.mcb.pcingola.util.Gpr;
 import ca.mcgill.mcb.pcingola.util.Timer;
 import ca.mcgill.mcb.pcingola.vcf.VcfEntry;
@@ -49,7 +49,7 @@ public class SnpSiftCmdPhastCons extends SnpSift {
 	 * Annotate and show in BED format
 	 * @param seqChange
 	 */
-	void annotateBed(SeqChange seqChange) {
+	void annotateBed(Variant seqChange) {
 		float score = score(seqChange);
 		printBed(seqChange, score);
 	}
@@ -77,10 +77,10 @@ public class SnpSiftCmdPhastCons extends SnpSift {
 	 * Extract sub-intervals having at least 'minBases' and 'minScore' average conservation
 	 * @param seqChange
 	 */
-	void extractBed(SeqChange seqChange) {
+	void extractBed(Variant seqChange) {
 		for (int start = seqChange.getStart(); start <= (seqChange.getEnd() - minBases); start++) {
 			// Find best interval starting at 'start'
-			SeqChange sc = extractBed(seqChange, start);
+			Variant sc = extractBed(seqChange, start);
 			if (sc == null) continue; // Nothing found
 
 			// Show interval
@@ -97,12 +97,12 @@ public class SnpSiftCmdPhastCons extends SnpSift {
 	 * @param start
 	 * @return
 	 */
-	SeqChange extractBed(SeqChange seqChange, int start) {
+	Variant extractBed(Variant seqChange, int start) {
 		int prevEnd = -1;
 		int end = start + minBases - 1;
 
-		SeqChange scPrev = new SeqChange(seqChange.getParent(), start, end, seqChange.getId());
-		SeqChange sc = scPrev;
+		Variant scPrev = new Variant(seqChange.getParent(), start, end, seqChange.getId());
+		Variant sc = scPrev;
 		float score = score(sc);
 		if (score < minScore) return null;
 
@@ -113,7 +113,7 @@ public class SnpSiftCmdPhastCons extends SnpSift {
 
 			// Prepare for next iteration
 			end++;
-			sc = new SeqChange(seqChange.getParent(), start, end, seqChange.getId());
+			sc = new Variant(seqChange.getParent(), start, end, seqChange.getId());
 			score = score(sc);
 		}
 
@@ -270,7 +270,7 @@ public class SnpSiftCmdPhastCons extends SnpSift {
 	 * @param seqChange
 	 * @param score
 	 */
-	void printBed(SeqChange seqChange, float score) {
+	void printBed(Variant seqChange, float score) {
 		System.out.print(seqChange.getChromosomeName() //
 				+ "\t" + (seqChange.getStart()) //
 				+ "\t" + (seqChange.getEnd() + 1) // End base is not included in BED format
@@ -316,7 +316,7 @@ public class SnpSiftCmdPhastCons extends SnpSift {
 	void runBed() {
 		BedFileIterator bedFile = new BedFileIterator(vcfFile);
 		String chrPrev = "";
-		for (SeqChange sc : bedFile) {
+		for (Variant sc : bedFile) {
 			// Do we need to load a database?
 			if (!chrPrev.equals(sc.getChromosomeName())) {
 				chrPrev = sc.getChromosomeName();

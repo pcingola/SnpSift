@@ -11,7 +11,7 @@ import ca.mcgill.mcb.pcingola.fileIterator.BedFileIterator;
 import ca.mcgill.mcb.pcingola.fileIterator.VcfFileIterator;
 import ca.mcgill.mcb.pcingola.interval.Marker;
 import ca.mcgill.mcb.pcingola.interval.Markers;
-import ca.mcgill.mcb.pcingola.interval.SeqChange;
+import ca.mcgill.mcb.pcingola.interval.Variant;
 import ca.mcgill.mcb.pcingola.interval.tree.IntervalForest;
 import ca.mcgill.mcb.pcingola.ped.PedPedigree;
 import ca.mcgill.mcb.pcingola.ped.TfamEntry;
@@ -43,7 +43,7 @@ public class SnpSiftCmdCaseControlSummary extends SnpSift {
 	String tfamFile, bedFile, vcfFile; // File names
 	HashMap<String, Boolean> caseControls; // Cases and controls 
 	HashMap<String, String> groups; // ID -> Group map
-	List<SeqChange> intervals; // Intervals to summarize
+	List<Variant> intervals; // Intervals to summarize
 	ArrayList<String> groupNamesSorted; // Group names sorted alphabetically
 	IntervalForest intForest; // Intervals
 	List<String> sampleIds; // Sample IDs
@@ -114,7 +114,7 @@ public class SnpSiftCmdCaseControlSummary extends SnpSift {
 		// Create interval forest
 		Timer.showStdErr("Building interval forest.");
 		intForest = new IntervalForest();
-		for (SeqChange sc : intervals)
+		for (Variant sc : intervals)
 			intForest.add(sc);
 		intForest.build();
 	}
@@ -326,7 +326,7 @@ public class SnpSiftCmdCaseControlSummary extends SnpSift {
 		// Show summaries by interval
 		System.err.println("#Summary by interval\n");
 		System.err.println("chr\tstart\tend\tname\t" + (new Summary()).toStringTitle(groupNamesSorted));
-		for (SeqChange sc : intervals) {
+		for (Variant sc : intervals) {
 			Summary summary = summaryByInterval.get(sc);
 			if (summary != null) {
 				System.err.println(sc.getChromosomeName() //

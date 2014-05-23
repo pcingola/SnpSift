@@ -8,7 +8,7 @@ import ca.mcgill.mcb.pcingola.fileIterator.BedFileIterator;
 import ca.mcgill.mcb.pcingola.fileIterator.VcfFileIterator;
 import ca.mcgill.mcb.pcingola.interval.Genome;
 import ca.mcgill.mcb.pcingola.interval.Markers;
-import ca.mcgill.mcb.pcingola.interval.SeqChange;
+import ca.mcgill.mcb.pcingola.interval.Variant;
 import ca.mcgill.mcb.pcingola.interval.tree.IntervalForest;
 import ca.mcgill.mcb.pcingola.util.Timer;
 import ca.mcgill.mcb.pcingola.vcf.VcfEntry;
@@ -46,7 +46,7 @@ public class SnpSiftCmdIntervals extends SnpSift {
 	 * @param bedFileNames
 	 */
 	void loadIntervals() {
-		LinkedList<SeqChange> seqChangesAll = new LinkedList<SeqChange>();
+		LinkedList<Variant> seqChangesAll = new LinkedList<Variant>();
 
 		// Read filter interval files
 		for (String bedFileName : bedFiles) {
@@ -55,7 +55,7 @@ public class SnpSiftCmdIntervals extends SnpSift {
 			BedFileIterator bedFile = new BedFileIterator(bedFileName, genome);
 			bedFile.setCreateChromos(true);
 
-			List<SeqChange> seqChanges = bedFile.load();
+			List<Variant> seqChanges = bedFile.load();
 			seqChangesAll.addAll(seqChanges);
 		}
 
