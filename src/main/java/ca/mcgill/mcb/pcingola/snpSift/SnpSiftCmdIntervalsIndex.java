@@ -112,7 +112,7 @@ public class SnpSiftCmdIntervalsIndex extends SnpSift {
 		int start = Gpr.parseIntSafe(p[0]) - inOffset;
 		int end = Gpr.parseIntSafe(p[1]) - inOffset;
 
-		Chromosome chromo = new Chromosome(genome, 0, 0, 1, chr);
+		Chromosome chromo = new Chromosome(genome, 0, 0, chr);
 		return new Variant(chromo, start, end, "");
 	}
 

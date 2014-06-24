@@ -124,7 +124,7 @@ public class ZzzHapMap {
 	 */
 	void zzz(String hapMapFileName, String fastaFile, String chrName, String ldFile) {
 		// Initialize
-		Chromosome chr = new Chromosome(genome, 0, 0, 1, "22");
+		Chromosome chr = new Chromosome(genome, 0, 0, "22");
 		genome.add(chr);
 
 		// Read hapmap file/s

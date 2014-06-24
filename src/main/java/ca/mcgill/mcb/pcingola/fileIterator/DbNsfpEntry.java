@@ -20,7 +20,7 @@ public class DbNsfpEntry extends Marker {
 	boolean collapseRepeatedValues = true;
 
 	public DbNsfpEntry(Marker parent, int start) {
-		super(parent, start, start, 1, "");
+		super(parent, start, start, false, "");
 	}
 
 	/**

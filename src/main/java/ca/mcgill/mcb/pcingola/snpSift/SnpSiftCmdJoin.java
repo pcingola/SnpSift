@@ -256,7 +256,7 @@ public class SnpSiftCmdJoin extends SnpSift {
 
 			// Need to create chromosome?
 			if (chromo == null) {
-				chromo = new Chromosome(genome, 0, 0, 1, chr);
+				chromo = new Chromosome(genome, 0, 0, chr);
 				genome.add(chromo); // Add chromosome if missing
 			}
 
