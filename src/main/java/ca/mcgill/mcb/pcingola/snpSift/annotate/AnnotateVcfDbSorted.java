@@ -1,4 +1,4 @@
-package ca.mcgill.mcb.pcingola.snpSift;
+package ca.mcgill.mcb.pcingola.snpSift.annotate;
 
 import java.io.IOException;
 
@@ -22,7 +22,7 @@ public class AnnotateVcfDbSorted extends AnnotateVcfDb {
 
 	protected FileIndexChrPos indexDb;
 
-	protected AnnotateVcfDbSorted(String dbFileName) {
+	public AnnotateVcfDbSorted(String dbFileName) {
 		super(dbFileName);
 	}
 
@@ -106,7 +106,7 @@ public class AnnotateVcfDbSorted extends AnnotateVcfDb {
 				if (!ve.getRef().equals(vcfDb.getRef()) //
 						&& !ve.getRef().startsWith(vcfDb.getRef()) //
 						&& !vcfDb.getRef().startsWith(ve.getRef()) //
-						) {
+				) {
 					System.err.println("WARNING: Reference in database file '" + dbFileName + "' is '" + vcfDb.getRef() + "' and reference in input file is " + ve.getRef() + "' at " + chr + ":" + (ve.getStart() + 1));
 					countBadRef++;
 				}

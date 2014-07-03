@@ -20,6 +20,11 @@ public class TestCasesAnnotate extends TestCase {
 	public static boolean debug = false;
 	public static boolean verbose = true || debug;
 
+	protected String[] defaultExtraArgs = null;
+
+	public TestCasesAnnotate() {
+	}
+
 	/**
 	 * Annotate
 	 */
@@ -28,6 +33,10 @@ public class TestCasesAnnotate extends TestCase {
 
 		// Create command line
 		ArrayList<String> argsList = new ArrayList<String>();
+		if (defaultExtraArgs != null) {
+			for (String arg : defaultExtraArgs)
+				argsList.add(arg);
+		}
 		if (extraArgs != null) {
 			for (String arg : extraArgs)
 				argsList.add(arg);

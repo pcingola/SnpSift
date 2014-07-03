@@ -5,6 +5,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import ca.mcgill.mcb.pcingola.fileIterator.VcfFileIterator;
+import ca.mcgill.mcb.pcingola.snpSift.annotate.AnnotateVcfDb;
+import ca.mcgill.mcb.pcingola.snpSift.annotate.AnnotateVcfDbMem;
+import ca.mcgill.mcb.pcingola.snpSift.annotate.AnnotateVcfDbSorted;
 import ca.mcgill.mcb.pcingola.util.Timer;
 import ca.mcgill.mcb.pcingola.vcf.VcfEntry;
 import ca.mcgill.mcb.pcingola.vcf.VcfHeader;
@@ -25,6 +28,7 @@ public class SnpSiftCmdAnnotate extends SnpSift {
 	protected boolean useId; // Annotate ID fields
 	protected boolean useInfoField; // Use all info fields
 	protected boolean useRefAlt;
+	protected boolean inMemory;
 	protected int countBadRef = 0;
 	protected String vcfFileName;
 	protected String chrPrev = "";
@@ -165,7 +169,11 @@ public class SnpSiftCmdAnnotate extends SnpSift {
 	public void initAnnotate() throws IOException {
 		vcfFile = new VcfFileIterator(vcfFileName); // Open input VCF
 
-		annotateDb = new AnnotateVcfDbSorted(dbFileName); // Open database
+		// Type of database
+		if (inMemory) annotateDb = new AnnotateVcfDbMem(dbFileName);
+		else annotateDb = new AnnotateVcfDbSorted(dbFileName);
+
+		// Set parameters
 		annotateDb.setUseId(useId);
 		annotateDb.setUseInfoField(useInfoField);
 		annotateDb.setUseRefAlt(useRefAlt);
@@ -173,7 +181,8 @@ public class SnpSiftCmdAnnotate extends SnpSift {
 		annotateDb.setPrependInfoFieldName(prependInfoFieldName);
 		annotateDb.setDebug(debug);
 		annotateDb.setVerbose(verbose);
-		annotateDb.open();
+
+		annotateDb.open();// Open database
 	}
 
 	/**
@@ -215,6 +224,7 @@ public class SnpSiftCmdAnnotate extends SnpSift {
 				else if (arg.equalsIgnoreCase("-noAlt")) useRefAlt = false;
 				else if (arg.equalsIgnoreCase("-dbSnp")) dbType = "dbsnp";
 				else if (arg.equalsIgnoreCase("-clinVar")) dbType = "clinvar";
+				else if (arg.equalsIgnoreCase("-mem")) inMemory = true;
 				else usage("Unknown command line option '" + arg + "'");
 			} else if (vcfFileName == null) vcfFileName = arg;
 		}
@@ -273,6 +283,7 @@ public class SnpSiftCmdAnnotate extends SnpSift {
 		System.err.println("\t-dbsnp       : Use Db database.");
 		System.err.println("\t-clinvar     : Use ClinVar database.");
 		System.err.println("\t-id          : Only annotate ID field (do not add INFO field). Default: " + !useInfoField);
+		System.err.println("\t-mem         : Load database VCF file in memory. Default: " + inMemory);
 		System.err.println("\t-noAlt       : Do not use REF and ALT fields when comparing database.vcf entries to file.vcf entries. Default: " + !useRefAlt);
 		System.err.println("\t-noId        : Do not annotate ID field. Defaul: " + !useId);
 		System.err.println("\t-info <list> : Annotate using a list of info fields (list is a comma separated list of fields). Default: ALL.");

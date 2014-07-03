@@ -1,4 +1,4 @@
-package ca.mcgill.mcb.pcingola.snpSift;
+package ca.mcgill.mcb.pcingola.snpSift.annotate;
 
 import java.io.IOException;
 
@@ -15,7 +15,7 @@ import ca.mcgill.mcb.pcingola.vcf.VcfEntry;
  */
 public class AnnotateVcfDbMem extends AnnotateVcfDb {
 
-	protected AnnotateVcfDbMem(String dbFileName) {
+	public AnnotateVcfDbMem(String dbFileName) {
 		super(dbFileName);
 	}
 

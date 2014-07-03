@@ -1,4 +1,4 @@
-package ca.mcgill.mcb.pcingola.snpSift;
+package ca.mcgill.mcb.pcingola.snpSift.annotate;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -38,7 +38,7 @@ public abstract class AnnotateVcfDb {
 	protected VcfFileIterator vcfDbFile;
 	protected HashMap<String, Integer> errCount;
 
-	protected AnnotateVcfDb(String dbFileName) {
+	public AnnotateVcfDb(String dbFileName) {
 		this.dbFileName = dbFileName;
 	}
 
