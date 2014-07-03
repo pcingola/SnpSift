@@ -233,8 +233,6 @@ public class SnpSiftCmdDbNsfp extends SnpSift {
 
 	/**
 	 * Find a matching db entry for a vcf entry
-	 * @param vcfEntry
-	 * @throws IOException
 	 */
 	public DbNsfpEntry findDbEntry(VcfEntry vcfEntry) throws IOException {
 		//---

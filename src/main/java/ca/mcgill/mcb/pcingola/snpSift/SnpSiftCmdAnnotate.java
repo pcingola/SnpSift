@@ -8,6 +8,7 @@ import ca.mcgill.mcb.pcingola.fileIterator.VcfFileIterator;
 import ca.mcgill.mcb.pcingola.snpSift.annotate.AnnotateVcfDb;
 import ca.mcgill.mcb.pcingola.snpSift.annotate.AnnotateVcfDbMem;
 import ca.mcgill.mcb.pcingola.snpSift.annotate.AnnotateVcfDbSorted;
+import ca.mcgill.mcb.pcingola.snpSift.annotate.AnnotateVcfDbTabix;
 import ca.mcgill.mcb.pcingola.util.Timer;
 import ca.mcgill.mcb.pcingola.vcf.VcfEntry;
 import ca.mcgill.mcb.pcingola.vcf.VcfHeader;
@@ -22,13 +23,17 @@ import ca.mcgill.mcb.pcingola.vcf.VcfInfo;
  */
 public class SnpSiftCmdAnnotate extends SnpSift {
 
+	enum AnnotationMethod {
+		SORTED_VCF, MEMORY, TABIX,
+	}
+
 	public static final int SHOW = 10000;
 	public static final int SHOW_LINES = 100 * SHOW;
 
 	protected boolean useId; // Annotate ID fields
 	protected boolean useInfoField; // Use all info fields
 	protected boolean useRefAlt;
-	protected boolean inMemory;
+	protected AnnotationMethod method;
 	protected int countBadRef = 0;
 	protected String vcfFileName;
 	protected String chrPrev = "";
@@ -155,6 +160,7 @@ public class SnpSiftCmdAnnotate extends SnpSift {
 		useInfoField = true; // Default: Use INFO fields
 		useId = true; // Annotate ID fields
 		useRefAlt = true; // Use REF and ALT fields when comparing
+		method = AnnotationMethod.SORTED_VCF;
 
 		needsConfig = true;
 		needsDb = true;
@@ -170,8 +176,23 @@ public class SnpSiftCmdAnnotate extends SnpSift {
 		vcfFile = new VcfFileIterator(vcfFileName); // Open input VCF
 
 		// Type of database
-		if (inMemory) annotateDb = new AnnotateVcfDbMem(dbFileName);
-		else annotateDb = new AnnotateVcfDbSorted(dbFileName);
+		switch (method) {
+
+		case MEMORY:
+			annotateDb = new AnnotateVcfDbMem(dbFileName);
+			break;
+
+		case SORTED_VCF:
+			annotateDb = new AnnotateVcfDbSorted(dbFileName);
+			break;
+
+		case TABIX:
+			annotateDb = new AnnotateVcfDbTabix(dbFileName);
+			break;
+
+		default:
+			throw new RuntimeException("Unknwon method '" + method + "'");
+		}
 
 		// Set parameters
 		annotateDb.setUseId(useId);
@@ -222,9 +243,15 @@ public class SnpSiftCmdAnnotate extends SnpSift {
 				} else if (arg.equalsIgnoreCase("-noId")) useId = false;
 				else if (arg.equalsIgnoreCase("-name")) prependInfoFieldName = args[++i];
 				else if (arg.equalsIgnoreCase("-noAlt")) useRefAlt = false;
-				else if (arg.equalsIgnoreCase("-dbSnp")) dbType = "dbsnp";
-				else if (arg.equalsIgnoreCase("-clinVar")) dbType = "clinvar";
-				else if (arg.equalsIgnoreCase("-mem")) inMemory = true;
+				else if (arg.equalsIgnoreCase("-dbSnp")) {
+					dbType = "dbsnp";
+					method = AnnotationMethod.SORTED_VCF;
+				} else if (arg.equalsIgnoreCase("-clinVar")) {
+					dbType = "clinvar";
+					method = AnnotationMethod.TABIX;
+				} else if (arg.equalsIgnoreCase("-mem")) method = AnnotationMethod.MEMORY;
+				else if (arg.equalsIgnoreCase("-sorted")) method = AnnotationMethod.SORTED_VCF;
+				else if (arg.equalsIgnoreCase("-tabix")) method = AnnotationMethod.TABIX;
 				else usage("Unknown command line option '" + arg + "'");
 			} else if (vcfFileName == null) vcfFileName = arg;
 		}
@@ -283,7 +310,9 @@ public class SnpSiftCmdAnnotate extends SnpSift {
 		System.err.println("\t-dbsnp       : Use Db database.");
 		System.err.println("\t-clinvar     : Use ClinVar database.");
 		System.err.println("\t-id          : Only annotate ID field (do not add INFO field). Default: " + !useInfoField);
-		System.err.println("\t-mem         : Load database VCF file in memory. Default: " + inMemory);
+		System.err.println("\t-mem         : VCF database is loaded in memory. Default: " + (method == AnnotationMethod.MEMORY));
+		System.err.println("\t-sorted      : VCF database is sorted and uncompressed. Default: " + (method == AnnotationMethod.SORTED_VCF));
+		System.err.println("\t-tabix       : VCF database is tabix-indexed. Default: " + (method == AnnotationMethod.TABIX));
 		System.err.println("\t-noAlt       : Do not use REF and ALT fields when comparing database.vcf entries to file.vcf entries. Default: " + !useRefAlt);
 		System.err.println("\t-noId        : Do not annotate ID field. Defaul: " + !useId);
 		System.err.println("\t-info <list> : Annotate using a list of info fields (list is a comma separated list of fields). Default: ALL.");
