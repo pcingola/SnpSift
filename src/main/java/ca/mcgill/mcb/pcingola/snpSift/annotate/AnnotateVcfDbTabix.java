@@ -25,7 +25,7 @@ public class AnnotateVcfDbTabix extends AnnotateVcfDb {
 	 */
 	@Override
 	public void open() throws IOException {
-		// Re-open VCF db file
+		// Open database
 		vcfDbFile = new VcfFileIterator(dbFileName);
 		if (!vcfDbFile.isTabix()) throw new RuntimeException("Could not open VCF file as TABIX-indexed: '" + dbFileName + "'");
 	}

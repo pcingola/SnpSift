@@ -9,6 +9,7 @@ import ca.mcgill.mcb.pcingola.snpSift.annotate.AnnotateVcfDb;
 import ca.mcgill.mcb.pcingola.snpSift.annotate.AnnotateVcfDbMem;
 import ca.mcgill.mcb.pcingola.snpSift.annotate.AnnotateVcfDbSorted;
 import ca.mcgill.mcb.pcingola.snpSift.annotate.AnnotateVcfDbTabix;
+import ca.mcgill.mcb.pcingola.util.Gpr;
 import ca.mcgill.mcb.pcingola.util.Timer;
 import ca.mcgill.mcb.pcingola.vcf.VcfEntry;
 import ca.mcgill.mcb.pcingola.vcf.VcfHeader;
@@ -187,6 +188,8 @@ public class SnpSiftCmdAnnotate extends SnpSift {
 			break;
 
 		case TABIX:
+			// If the 'gz' file exists, try opening that one
+			if (!dbFileName.endsWith(".gz") && Gpr.exists(dbFileName + ".gz")) dbFileName = dbFileName + ".gz";
 			annotateDb = new AnnotateVcfDbTabix(dbFileName);
 			break;
 

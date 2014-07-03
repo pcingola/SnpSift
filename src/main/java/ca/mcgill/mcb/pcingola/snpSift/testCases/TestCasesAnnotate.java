@@ -32,17 +32,7 @@ public class TestCasesAnnotate extends TestCase {
 		System.out.println("Annotate: " + dbFileName + "\t" + fileName);
 
 		// Create command line
-		ArrayList<String> argsList = new ArrayList<String>();
-		if (defaultExtraArgs != null) {
-			for (String arg : defaultExtraArgs)
-				argsList.add(arg);
-		}
-		if (extraArgs != null) {
-			for (String arg : extraArgs)
-				argsList.add(arg);
-		}
-		argsList.add(fileName);
-		String args[] = argsList.toArray(new String[0]);
+		String args[] = argsList(dbFileName, fileName, extraArgs);
 
 		// Iterate over VCF entries
 		SnpSiftCmdAnnotate snpSiftAnnotate = new SnpSiftCmdAnnotate(args);
@@ -61,13 +51,7 @@ public class TestCasesAnnotate extends TestCase {
 		System.out.println("Annotate: " + dbFileName + "\t" + fileName);
 
 		// Create command line
-		ArrayList<String> argsList = new ArrayList<String>();
-		if (extraArgs != null) {
-			for (String arg : extraArgs)
-				argsList.add(arg);
-		}
-		argsList.add(fileName);
-		String args[] = argsList.toArray(new String[0]);
+		String args[] = argsList(dbFileName, fileName, extraArgs);
 
 		// Iterate over VCF entries
 		SnpSiftCmdAnnotate snpSiftAnnotate = new SnpSiftCmdAnnotate(args);
@@ -106,6 +90,23 @@ public class TestCasesAnnotate extends TestCase {
 				Assert.assertEquals(expectedIds, idstr);
 			} else fail("EXP_IDS (expected ids) INFO field missing in " + fileName + ", entry:\n" + vcf);
 		}
+	}
+
+	protected String[] argsList(String dbFileName, String fileName, String[] extraArgs) {
+		ArrayList<String> argsList = new ArrayList<String>();
+
+		if (defaultExtraArgs != null) {
+			for (String arg : defaultExtraArgs)
+				argsList.add(arg);
+		}
+
+		if (extraArgs != null) {
+			for (String arg : extraArgs)
+				argsList.add(arg);
+		}
+
+		argsList.add(fileName);
+		return argsList.toArray(new String[0]);
 	}
 
 	public void test_01() {
