@@ -163,12 +163,14 @@ public class SnpSiftCmdAnnotate extends SnpSift {
 	 * @throws IOException
 	 */
 	public void initAnnotate() throws IOException {
-		vcfFile = new VcfFileIterator(vcfFileName); // Open input VCF 
+		vcfFile = new VcfFileIterator(vcfFileName); // Open input VCF
 
 		annotateDb = new AnnotateVcfDbSorted(dbFileName); // Open database
 		annotateDb.setUseId(useId);
 		annotateDb.setUseInfoField(useInfoField);
+		annotateDb.setUseRefAlt(useRefAlt);
 		annotateDb.setInfoFields(infoFields);
+		annotateDb.setPrependInfoFieldName(prependInfoFieldName);
 		annotateDb.setDebug(debug);
 		annotateDb.setVerbose(verbose);
 		annotateDb.open();

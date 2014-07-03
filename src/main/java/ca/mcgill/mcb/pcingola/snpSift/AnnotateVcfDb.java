@@ -23,13 +23,14 @@ public abstract class AnnotateVcfDb {
 	public static final int MAX_ERRORS = 10; // Report an error no more than X times
 
 	protected boolean verbose, debug;
-	protected boolean useId; // Annotate ID fields
-	protected boolean useInfoField; // Use all info fields
-	protected boolean useRefAlt;
+	protected boolean useId = true; // Annotate ID fields
+	protected boolean useInfoField = true; // Use all info fields
+	protected boolean useRefAlt = true;
 	protected int countBadRef = 0;
 	protected String chrPrev = "";
 	protected String prependInfoFieldName;
 	protected String dbFileName;
+	protected String latestChromo = "";
 	protected HashMap<String, String> dbCurrentId = new HashMap<String, String>();
 	protected HashMap<String, String> dbCurrentInfo = new HashMap<String, String>();
 	protected List<String> infoFields; // Use only info fields
@@ -45,6 +46,7 @@ public abstract class AnnotateVcfDb {
 	 * Add 'key->id' entries to 'dbCurrent'
 	 */
 	void addDbCurrent(VcfEntry vcfDb) {
+		latestChromo = vcfDb.getChromosomeName();
 		String alts[] = vcfDb.getAlts();
 		for (int i = 0; i < alts.length; i++) {
 			String key = key(vcfDb, i);
@@ -249,6 +251,10 @@ public abstract class AnnotateVcfDb {
 
 	public void setUseInfoField(boolean useInfoField) {
 		this.useInfoField = useInfoField;
+	}
+
+	public void setUseRefAlt(boolean useRefAlt) {
+		this.useRefAlt = useRefAlt;
 	}
 
 	public void setVerbose(boolean verbose) {

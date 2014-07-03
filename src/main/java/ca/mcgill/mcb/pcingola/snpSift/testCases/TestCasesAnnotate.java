@@ -1,18 +1,18 @@
 package ca.mcgill.mcb.pcingola.snpSift.testCases;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
 import junit.framework.Assert;
 import junit.framework.TestCase;
-import ca.mcgill.mcb.pcingola.fileIterator.VcfFileIterator;
 import ca.mcgill.mcb.pcingola.snpSift.SnpSiftCmdAnnotate;
 import ca.mcgill.mcb.pcingola.vcf.VcfEntry;
 
 /**
  * Annotate test case
- * 
+ *
  * @author pcingola
  */
 public class TestCasesAnnotate extends TestCase {
@@ -21,28 +21,70 @@ public class TestCasesAnnotate extends TestCase {
 	public static boolean verbose = true || debug;
 
 	/**
-	 * Re-annotate a file and check that the new annotation matches the previous one
+	 * Annotate
 	 */
-	public void annotateTest(String dbFileName, String fileName) {
+	public List<VcfEntry> annotate(String dbFileName, String fileName, String[] extraArgs) {
 		System.out.println("Annotate: " + dbFileName + "\t" + fileName);
 
 		// Create command line
-		String args[] = { fileName };
+		ArrayList<String> argsList = new ArrayList<String>();
+		if (extraArgs != null) {
+			for (String arg : extraArgs)
+				argsList.add(arg);
+		}
+		argsList.add(fileName);
+		String args[] = argsList.toArray(new String[0]);
 
 		// Iterate over VCF entries
-		SnpSiftCmdAnnotate vcfAnnotate = new SnpSiftCmdAnnotate(args);
-		vcfAnnotate.setDbFileName(dbFileName);
-		vcfAnnotate.setDebug(debug);
-		vcfAnnotate.setVerbose(verbose);
-		List<VcfEntry> results = vcfAnnotate.run(true);
+		SnpSiftCmdAnnotate snpSiftAnnotate = new SnpSiftCmdAnnotate(args);
+		snpSiftAnnotate.setDbFileName(dbFileName);
+		snpSiftAnnotate.setDebug(debug);
+		snpSiftAnnotate.setVerbose(verbose);
+		List<VcfEntry> results = snpSiftAnnotate.run(true);
 
 		// Check
 		Assert.assertTrue(results != null);
 		Assert.assertTrue(results.size() > 0);
+		return results;
+	}
+
+	public String annotateOut(String dbFileName, String fileName, String[] extraArgs) {
+		System.out.println("Annotate: " + dbFileName + "\t" + fileName);
+
+		// Create command line
+		ArrayList<String> argsList = new ArrayList<String>();
+		if (extraArgs != null) {
+			for (String arg : extraArgs)
+				argsList.add(arg);
+		}
+		argsList.add(fileName);
+		String args[] = argsList.toArray(new String[0]);
+
+		// Iterate over VCF entries
+		SnpSiftCmdAnnotate snpSiftAnnotate = new SnpSiftCmdAnnotate(args);
+		snpSiftAnnotate.setDbFileName(dbFileName);
+		snpSiftAnnotate.setDebug(debug);
+		snpSiftAnnotate.setVerbose(verbose);
+		snpSiftAnnotate.setSaveOutput(true);
+		snpSiftAnnotate.run();
+
+		// Check
+		return snpSiftAnnotate.getOutput();
+	}
+
+	public void annotateTest(String dbFileName, String fileName) {
+		annotateTest(dbFileName, fileName, null);
+	}
+
+	/**
+	 * Annotate a file and check that the new annotation matches the expected one
+	 */
+	public void annotateTest(String dbFileName, String fileName, String[] extraArgs) {
+		List<VcfEntry> results = annotate(dbFileName, fileName, extraArgs);
 
 		// Check each entry
 		for (VcfEntry vcf : results) {
-			// We expect the same annotation twice 
+			// We expect the same annotation twice
 			String idstr = vcf.getId();
 
 			// Get expected IDs
@@ -93,102 +135,54 @@ public class TestCasesAnnotate extends TestCase {
 
 	/**
 	 * Annotate info fields
-	 * @throws IOException 
+	 * @throws IOException
 	 */
 	public void test_06() throws IOException {
 		String dbFileName = "./test/db_test_06.vcf";
 		String fileName = "./test/annotate_06.vcf";
-		System.out.println("Annotate: " + dbFileName + "\t" + fileName);
+		List<VcfEntry> results = annotate(dbFileName, fileName, null);
 
-		// Create command line
-		String args[] = { dbFileName, fileName };
-
-		// Get SnpSift ready
-		SnpSiftCmdAnnotate vcfAnnotate = new SnpSiftCmdAnnotate(args);
-		vcfAnnotate.setSuppressOutput(true);
-		vcfAnnotate.initAnnotate();
-
-		// Get first VCF entrie and annotate it
-		VcfFileIterator vcfFile = new VcfFileIterator(fileName);
-		if (Math.random() < 2) throw new RuntimeException("CHECK THIS TEST!");
-		//		VcfEntry vcf = vcfFile.next();
-		//		vcfAnnotate.annotate(vcf);
-		//
-		//		// Check
-		//		//		Assert.assertEquals("PREVIOUS=annotation;TEST=yes;RSPOS=16346045;AF=0.002;OBS=4,1,1636,2011,3,1,6780,9441;IOD=0.000;AOI=-410.122;AOZ=-399.575;ABE=0.678;ABZ=47.762;AN=488", vcf.getInfoStr());
-		//		Assert.assertEquals("PREVIOUS=annotation;TEST=yes;ABE=0.678;ABZ=47.762;AF=0.002;AN=488;AOI=-410.122;AOZ=-399.575;IOD=0.000;OBS=4,1,1636,2011,3,1,6780,9441;RSPOS=16346045", vcf.getInfoStr());
+		// Check
+		Assert.assertEquals("PREVIOUS=annotation;TEST=yes;ABE=0.678;ABZ=47.762;AF=0.002;AN=488;AOI=-410.122;AOZ=-399.575;IOD=0.000;OBS=4,1,1636,2011,3,1,6780,9441;RSPOS=16346045", results.get(0).getInfoStr());
 	}
 
 	/**
 	 * Annotate only some info fields
-	 * @throws IOException 
 	 */
 	public void test_07() throws IOException {
 		String dbFileName = "./test/db_test_06.vcf";
 		String fileName = "./test/annotate_06.vcf";
-		System.out.println("Annotate: " + dbFileName + "\t" + fileName);
-
-		// Create command line
-		String args[] = { "-info", "AF,AN,ABE", dbFileName, fileName };
-
-		// Get SnpSift ready
-		SnpSiftCmdAnnotate vcfAnnotate = new SnpSiftCmdAnnotate(args);
-		// vcfAnnotate.setSuppressOutput(true);
-		List<VcfEntry> results = vcfAnnotate.run(true);
+		String extraArgs[] = { "-info", "AF,AN,ABE" };
+		List<VcfEntry> results = annotate(dbFileName, fileName, extraArgs);
 
 		// Check
-		Assert.assertTrue(results.size() > 0);
 		Assert.assertEquals("PREVIOUS=annotation;TEST=yes;AF=0.002;AN=488;ABE=0.678", results.get(0).getInfoStr());
 	}
 
 	/**
 	 * Do not annotate ID column
-	 * @throws IOException 
 	 */
 	public void test_08() throws IOException {
 		String dbFileName = "./test/db_test_06.vcf";
 		String fileName = "./test/annotate_06.vcf";
-		System.out.println("Annotate: " + dbFileName + "\t" + fileName);
-
-		// Create command line
-		String args[] = { "-noId", dbFileName, fileName };
-
-		// Get SnpSift ready
-		SnpSiftCmdAnnotate vcfAnnotate = new SnpSiftCmdAnnotate(args);
-		vcfAnnotate.setSuppressOutput(true);
-		vcfAnnotate.initAnnotate();
-
-		// Get first VCF entry and annotate it
-		VcfFileIterator vcfFile = new VcfFileIterator(fileName);
-		if (Math.random() < 2) throw new RuntimeException("CHECK THIS TEST!");
-		VcfEntry vcfEntry = vcfFile.next();
-		//		vcfAnnotate.annotate(vcfEntry);
-		//
-		//		// Check that new ID was NOT added
-		//		Assert.assertEquals("OLD_ID", vcfEntry.getId());
+		String extraArgs[] = { "-noId" };
+		List<VcfEntry> results = annotate(dbFileName, fileName, extraArgs);
+		Assert.assertEquals("OLD_ID", results.get(0).getId());
 	}
 
 	/**
 	 * Annotate only some info fields
-	 * @throws IOException 
 	 */
 	public void test_09() throws IOException {
 		String dbFileName = "./test/db_test_09.vcf";
 		String fileName = "./test/annotate_09.vcf";
-		System.out.println("Annotate: " + dbFileName + "\t" + fileName);
+		String extraArgs[] = { "-info", "GMAF,AC" };
 
-		// Create command line
-		String args[] = { "-info", "GMAF,AC", dbFileName, fileName };
-
-		// Get SnpSift ready
-		SnpSiftCmdAnnotate vcfAnnotate = new SnpSiftCmdAnnotate(args);
-		vcfAnnotate.setSuppressOutput(true);
-		vcfAnnotate.setSaveOutput(true);
-		vcfAnnotate.run();
+		// Annotate
+		String out = annotateOut(dbFileName, fileName, extraArgs);
 
 		// Make sure output header for "GMAF" is present.
 		// Also make sure implicit headers are not (e.g. AC)
-		String out = vcfAnnotate.getOutput();
 		boolean hasGmaf = false;
 		boolean hasAc = false;
 		for (String line : out.split("\n")) {
@@ -202,25 +196,18 @@ public class TestCasesAnnotate extends TestCase {
 
 	/**
 	 * Annotate only some info fields
-	 * @throws IOException 
+	 * @throws IOException
 	 */
 	public void test_11() throws IOException {
 		String dbFileName = "./test/db_test_11.vcf";
 		String fileName = "./test/annotate_11.vcf";
-		System.out.println("Annotate: " + dbFileName + "\t" + fileName);
+		String extraArgs[] = { "-info", "GMAF,AC" };
 
-		// Create command line
-		String args[] = { "-info", "GMAF,AC", dbFileName, fileName };
-
-		// Get SnpSift ready
-		SnpSiftCmdAnnotate vcfAnnotate = new SnpSiftCmdAnnotate(args);
-		vcfAnnotate.setSuppressOutput(true);
-		vcfAnnotate.setSaveOutput(true);
-		vcfAnnotate.run();
+		// Annotate
+		String out = annotateOut(dbFileName, fileName, extraArgs);
 
 		// Make sure output header for "GMAF" is present ONLY ONCE.
 		// Also make sure implicit headers are not (e.g. AC)
-		String out = vcfAnnotate.getOutput();
 		System.out.println(out);
 		int hasGmaf = 0;
 		int hasAc = 0;
@@ -235,56 +222,35 @@ public class TestCasesAnnotate extends TestCase {
 
 	/**
 	 * Annotate without REF/ALT fields
-	 * 
-	 * @throws IOException 
 	 */
 	public void test_12() throws IOException {
 		String dbFileName = "./test/db_test_12.vcf";
 		String fileName = "./test/annotate_12.vcf";
-		System.out.println("Annotate: " + dbFileName + "\t" + fileName);
+		String extraArgs[] = { "-noAlt", dbFileName, fileName };
 
-		// Create command line
-		String args[] = { "-noAlt", dbFileName, fileName };
+		// Annotate
+		List<VcfEntry> results = annotate(dbFileName, fileName, extraArgs);
 
-		// Get SnpSift ready
-		SnpSiftCmdAnnotate vcfAnnotate = new SnpSiftCmdAnnotate(args);
-		vcfAnnotate.setSuppressOutput(true);
-		vcfAnnotate.initAnnotate();
-
-		// Get first VCF entry and annotate it
-		VcfFileIterator vcfFile = new VcfFileIterator(fileName);
-		if (Math.random() < 2) throw new RuntimeException("CHECK THIS TEST!");
-		//		VcfEntry vcfEntry = vcfFile.next();
-		//		vcfAnnotate.annotate(vcfEntry);
-		//		// Gpr.debug(vcfEntry);
-		//
-		//		// Check that new ID was NOT added
-		//		Assert.assertEquals("NEW_ID", vcfEntry.getId());
+		// Check that new ID was NOT added
+		Assert.assertEquals("NEW_ID", results.get(0).getId());
 	}
 
 	/**
 	 * Annotate using "reserved" VCF fields (e.g. "AA" )
 	 * Header should be added if it doesn't exits.
-	 * 
-	 * @throws IOException 
+	 *
+	 * @throws IOException
 	 */
 	public void test_13() throws IOException {
 		String dbFileName = "./test/db_test_13.vcf";
 		String fileName = "./test/annotate_13.vcf";
-		System.out.println("Annotate: " + dbFileName + "\t" + fileName);
+		String extraArgs[] = { "-info", "AA", dbFileName, fileName };
 
-		// Create command line
-		String args[] = { "-info", "AA", dbFileName, fileName };
-
-		// Get SnpSift ready
-		SnpSiftCmdAnnotate vcfAnnotate = new SnpSiftCmdAnnotate(args);
-		vcfAnnotate.setSuppressOutput(true);
-		vcfAnnotate.setSaveOutput(true);
-		vcfAnnotate.run();
+		// Annotate
+		String out = annotateOut(dbFileName, fileName, extraArgs);
 
 		// Make sure output header for "AA" is present ONLY ONCE.
 		// Also make sure implicit headers are not (e.g. AC)
-		String out = vcfAnnotate.getOutput();
 		System.out.println(out);
 		int hasAa = 0;
 		for (String line : out.split("\n"))
@@ -296,18 +262,12 @@ public class TestCasesAnnotate extends TestCase {
 	public void test_14() {
 		String dbFileName = "./test/annotate_multiple_allele.db.vcf";
 		String fileName = "./test/annotate_multiple_allele.1.vcf";
-		System.out.println("Annotate: " + dbFileName + "\t" + fileName);
 
-		// Create command line
-		String args[] = { dbFileName, fileName };
-
-		// Get SnpSift ready
-		SnpSiftCmdAnnotate vcfAnnotate = new SnpSiftCmdAnnotate(args);
-		vcfAnnotate.setSuppressOutput(true);
-		List<VcfEntry> list = vcfAnnotate.run(true);
+		// Annotate
+		List<VcfEntry> results = annotate(dbFileName, fileName, null);
 
 		// Check results
-		VcfEntry ve = list.get(0);
+		VcfEntry ve = results.get(0);
 		System.out.println(ve);
 		String allNum = ve.getInfo("ALL_NUM");
 		Assert.assertEquals("2", allNum);
@@ -316,18 +276,12 @@ public class TestCasesAnnotate extends TestCase {
 	public void test_15() {
 		String dbFileName = "./test/annotate_multiple_allele_R.db.vcf";
 		String fileName = "./test/annotate_multiple_allele.2.vcf";
-		System.out.println("Annotate: " + dbFileName + "\t" + fileName);
 
-		// Create command line
-		String args[] = { dbFileName, fileName };
-
-		// Get SnpSift ready
-		SnpSiftCmdAnnotate vcfAnnotate = new SnpSiftCmdAnnotate(args);
-		vcfAnnotate.setSuppressOutput(true);
-		List<VcfEntry> list = vcfAnnotate.run(true);
+		// Annotate
+		List<VcfEntry> results = annotate(dbFileName, fileName, null);
 
 		// Check results
-		VcfEntry ve = list.get(0);
+		VcfEntry ve = results.get(0);
 		System.out.println(ve);
 		String allNum = ve.getInfo("ALL_NUM");
 		Assert.assertEquals("value_C", allNum);
@@ -337,12 +291,12 @@ public class TestCasesAnnotate extends TestCase {
 		String dbFileName = "./test/db_test_16.vcf";
 		String fileName = "./test/annotate_16.vcf";
 		String infoName = "PREPEND_";
-		String args[] = { "-name", infoName, dbFileName, fileName };
+		String extraArgs[] = { "-name", infoName };
 
-		SnpSiftCmdAnnotate vcfAnnotate = new SnpSiftCmdAnnotate(args);
-		List<VcfEntry> ves = vcfAnnotate.run(true);
+		// Annotate
+		List<VcfEntry> results = annotate(dbFileName, fileName, extraArgs);
 
-		VcfEntry ve = ves.get(0);
+		VcfEntry ve = results.get(0);
 		String aa = ve.getInfo(infoName + "AA");
 		String bb = ve.getInfo(infoName + "BB");
 		Assert.assertEquals("Field_Value", aa);
@@ -352,7 +306,6 @@ public class TestCasesAnnotate extends TestCase {
 	public void test_17() {
 		String dbFileName = "./test/annotate_oder_db.vcf";
 		String fileName = "./test/annotate_oder_snp.vcf";
-		String args[] = { dbFileName, fileName };
 
 		// Fake annotations (in files)
 		HashMap<String, String> types = new HashMap<String, String>();
@@ -361,11 +314,10 @@ public class TestCasesAnnotate extends TestCase {
 		types.put("2", "second");
 
 		// Annotate
-		SnpSiftCmdAnnotate vcfAnnotate = new SnpSiftCmdAnnotate(args);
-		List<VcfEntry> ves = vcfAnnotate.run(true);
+		List<VcfEntry> results = annotate(dbFileName, fileName, null);
 
 		// Check that our "fake annotations" are matched as expected
-		for (VcfEntry ve : ves) {
+		for (VcfEntry ve : results) {
 			String type = ve.getInfo("TYPE");
 			String ann = ve.getInfo("ANN");
 

@@ -61,15 +61,35 @@ public class AnnotateVcfDbSorted extends AnnotateVcfDb {
 	protected void readDb(VcfEntry ve) {
 		String chr = ve.getChromosomeName();
 
-		// Add latest to db?
+		// Do we have a DB entry from our previous iteration?
 		if (latestVcfDb != null) {
+			// Are we still in the same chromosome?
 			if (latestVcfDb.getChromosomeName().equals(chr)) {
+				latestChromo = chr;
 				if (ve.getStart() < latestVcfDb.getStart()) {
 					clearCurrent();
 					return;
 				}
 
 				if (ve.getStart() == latestVcfDb.getStart()) addDbCurrent(latestVcfDb);
+			} else {
+				// VCFentry and latestDb entry are in different chromosomes
+				if (latestChromo.equals(chr)) {
+					// This means that we finished reading all database entries from the previous chromosome.
+					// There is nothing else to do until ve reaches a new chromosome
+					return;
+				} else {
+					// This means that we should jump to a database position matching VcfEntry's chromosome
+					clearCurrent();
+
+					long filePos = indexDb.getStart(chr);
+					if (filePos < 0) return;
+					try {
+						vcfDbFile.seek(filePos);
+					} catch (IOException e) {
+						throw new RuntimeException(e);
+					}
+				}
 			}
 		} else clearCurrent();
 
@@ -86,7 +106,7 @@ public class AnnotateVcfDbSorted extends AnnotateVcfDb {
 				if (!ve.getRef().equals(vcfDb.getRef()) //
 						&& !ve.getRef().startsWith(vcfDb.getRef()) //
 						&& !vcfDb.getRef().startsWith(ve.getRef()) //
-				) {
+						) {
 					System.err.println("WARNING: Reference in database file '" + dbFileName + "' is '" + vcfDb.getRef() + "' and reference in input file is " + ve.getRef() + "' at " + chr + ":" + (ve.getStart() + 1));
 					countBadRef++;
 				}
