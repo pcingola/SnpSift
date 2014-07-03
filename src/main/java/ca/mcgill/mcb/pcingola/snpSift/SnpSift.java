@@ -291,7 +291,6 @@ public class SnpSift {
 		else if (command.startsWith("INTERS")) cmd = new SnpSiftCmdIntersect(args);
 		else if (command.startsWith("INTERV")) cmd = new SnpSiftCmdIntervals(args);
 		else if (command.startsWith("JOIN")) cmd = new SnpSiftCmdJoin(args);
-		else if (command.startsWith("SIF")) cmd = new SnpSiftCmdAnnotateSortedSift(args);
 		else if (command.startsWith("SPLIT")) cmd = new SnpSiftCmdSplit(args);
 		else if (command.startsWith("TS")) cmd = new SnpSiftCmdTsTv(args);
 		else if (command.startsWith("VARTYPE")) cmd = new SnpSiftCmdVarType(args);
@@ -427,12 +426,11 @@ public class SnpSift {
 				+ "\n\tprivate       : Annotate if a variant is private to a family or group." //
 				+ "\n\trmRefGen      : Remove reference genotypes." //
 				+ "\n\trmInfo        : Remove INFO fields." //
-				+ "\n\tsift          : Annotate using SIFT scores from a VCF file." //
 				+ "\n\tsplit         : Split VCF by chromosome." //
 				+ "\n\ttstv          : Calculate transiton to transversion ratio." //
 				+ "\n\tvarType       : Annotate variant type (SNP,MNP,INS,DEL or MIXED)." //
 				+ "\n\tvcf2tped      : Convert VCF to TPED." //
-		);
+				);
 
 		usageGenericAndDb();
 
@@ -449,7 +447,7 @@ public class SnpSift {
 				+ (needsDb ? "\t-db <file>           : Databse file name (for commands that require datbases).\n" : "") //
 				+ "\t-h                   : Help.\n" //
 				+ "\t-v                   : Verbose.\n" //
-		);
+				);
 	}
 
 	/**

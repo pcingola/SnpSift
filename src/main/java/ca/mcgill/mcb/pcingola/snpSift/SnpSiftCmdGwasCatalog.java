@@ -77,7 +77,7 @@ public class SnpSiftCmdGwasCatalog extends SnpSift {
 				+ "\n\tTotal annotated entries : " + countAnnotated //
 				+ "\n\tTotal entries           : " + count //
 				+ "\n\tPercent                 : " + String.format("%.2f%%", perc) //
-		);
+				);
 	}
 
 	/**
@@ -128,7 +128,7 @@ public class SnpSiftCmdGwasCatalog extends SnpSift {
 		if (verbose) Timer.showStdErr("Annotating\n" //
 				+ "\tInput file    : '" + vcfFile + "'\n" //
 				+ "\tDatabase file : '" + dbFileName + "'" //
-		);
+				);
 
 		annotate();
 	}

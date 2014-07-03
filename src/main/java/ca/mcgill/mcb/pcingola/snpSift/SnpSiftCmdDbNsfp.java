@@ -88,10 +88,70 @@ public class SnpSiftCmdDbNsfp extends SnpSift {
 		}
 	}
 
+	void annotate() {
+		// Initialize annotations
+		try {
+			initAnnotate();
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+
+		// Annotate VCF file
+		boolean showHeader = true;
+		int pos = -1;
+		String chr = "";
+		for (VcfEntry vcfEntry : vcfFile) {
+			try {
+				// Show header?
+				if (showHeader) {
+					// Add VCF header
+					addHeader(vcfFile);
+					String headerStr = vcfFile.getVcfHeader().toString();
+					if (!headerStr.isEmpty()) System.out.println(headerStr);
+					showHeader = false;
+
+					// Check that the fields we want to add are actually in the database
+					checkFieldsToAdd();
+				}
+
+				// Check if file is sorted
+				if (vcfEntry.getChromosomeName().equals(chr) && vcfEntry.getStart() < pos) {
+					fatalError("Your VCF file should be sorted!" //
+							+ "\n\tPrevious entry " + chr + ":" + pos//
+							+ "\n\tCurrent entry  " + vcfEntry.getChromosomeName() + ":" + (vcfEntry.getStart() + 1)//
+					);
+				}
+
+				// Annotate
+				annotate(vcfEntry);
+
+				// Show
+				System.out.println(vcfEntry);
+				count++;
+
+				// Update chr:pos
+				chr = vcfEntry.getChromosomeName();
+				pos = vcfEntry.getStart();
+			} catch (IOException e) {
+				throw new RuntimeException(e);
+			}
+		}
+
+		endAnnotate();
+
+		// Show some stats
+		if (verbose) {
+			double perc = (100.0 * countAnnotated) / count;
+			Timer.showStdErr("Done." //
+					+ "\n\tTotal annotated entries : " + countAnnotated //
+					+ "\n\tTotal entries           : " + count //
+					+ "\n\tPercent                 : " + String.format("%.2f%%", perc) //
+			);
+		}
+	}
+
 	/**
 	 * Annotate a vcf entry
-	 * @param vcf
-	 * @throws IOException
 	 */
 	public void annotate(VcfEntry vcf) throws IOException {
 		// Find in database
@@ -348,65 +408,7 @@ public class SnpSiftCmdDbNsfp extends SnpSift {
 				+ "\tDatabase file : '" + dbFileName + "'" //
 		);
 
-		// Initialize annotations
-		try {
-			initAnnotate();
-		} catch (Exception e) {
-			throw new RuntimeException(e);
-		}
-
-		// Annotate VCF file
-		boolean showHeader = true;
-		int pos = -1;
-		String chr = "";
-		for (VcfEntry vcfEntry : vcfFile) {
-			try {
-				// Show header?
-				if (showHeader) {
-					// Add VCF header
-					addHeader(vcfFile);
-					String headerStr = vcfFile.getVcfHeader().toString();
-					if (!headerStr.isEmpty()) System.out.println(headerStr);
-					showHeader = false;
-
-					// Check that the fields we want to add are actually in the database
-					checkFieldsToAdd();
-				}
-
-				// Check if file is sorted
-				if (vcfEntry.getChromosomeName().equals(chr) && vcfEntry.getStart() < pos) {
-					fatalError("Your VCF file should be sorted!" //
-							+ "\n\tPrevious entry " + chr + ":" + pos//
-							+ "\n\tCurrent entry  " + vcfEntry.getChromosomeName() + ":" + (vcfEntry.getStart() + 1)//
-					);
-				}
-
-				// Annotate
-				annotate(vcfEntry);
-
-				// Show
-				System.out.println(vcfEntry);
-				count++;
-
-				// Update chr:pos
-				chr = vcfEntry.getChromosomeName();
-				pos = vcfEntry.getStart();
-			} catch (IOException e) {
-				throw new RuntimeException(e);
-			}
-		}
-
-		endAnnotate();
-
-		// Show some stats
-		if (verbose) {
-			double perc = (100.0 * countAnnotated) / count;
-			Timer.showStdErr("Done." //
-					+ "\n\tTotal annotated entries : " + countAnnotated //
-					+ "\n\tTotal entries           : " + count //
-					+ "\n\tPercent                 : " + String.format("%.2f%%", perc) //
-			);
-		}
+		annotate();
 	}
 
 	public void setTabixCheck(boolean tabixCheck) {
@@ -428,8 +430,8 @@ public class SnpSiftCmdDbNsfp extends SnpSift {
 		for (String f : DEFAULT_FIELDS_NAMES_TO_ADD.split(","))
 			sb.append("\t                - " + f + "\n");
 
-		// Show error
 		showVersion();
+
 		System.err.println("Usage: java -jar " + SnpSift.class.getSimpleName() + ".jar " + command + " [options] file.vcf > newFile.vcf\n" //
 				+ "Options:\n" //
 				+ "\t-a            : Annotate fields, even if the database has an empty value (annotates using '.' for empty).\n" //

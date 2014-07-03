@@ -86,8 +86,8 @@ public class SnpSiftCmdAnnotateMem extends SnpSiftCmdAnnotateSorted {
 	 * Read database
 	 */
 	public void readDb() {
-		if (verbose) Timer.showStdErr("Loading database: '" + vcfDbFileName + "'");
-		VcfFileIterator dbFile = new VcfFileIterator(vcfDbFileName);
+		if (verbose) Timer.showStdErr("Loading database: '" + dbFileName + "'");
+		VcfFileIterator dbFile = new VcfFileIterator(dbFileName);
 
 		int count = 1;
 		for (VcfEntry vcfDbEntry : dbFile) {
