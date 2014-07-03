@@ -2,11 +2,8 @@ package ca.mcgill.mcb.pcingola.snpSift.testCases;
 
 import java.io.IOException;
 
-import junit.framework.Assert;
 import junit.framework.TestCase;
-import ca.mcgill.mcb.pcingola.fileIterator.VcfFileIterator;
-import ca.mcgill.mcb.pcingola.snpSift.SnpSiftCmdAnnotateMem;
-import ca.mcgill.mcb.pcingola.vcf.VcfEntry;
+import ca.mcgill.mcb.pcingola.snpSift.SnpSiftCmdAnnotate;
 
 /**
  * Annotate test case
@@ -28,28 +25,31 @@ public class TestCasesAnnotateMem extends TestCase {
 
 		// Iterate over VCF entries
 		try {
-			SnpSiftCmdAnnotateMem vcfAnnotate = new SnpSiftCmdAnnotateMem(args);
+			SnpSiftCmdAnnotate vcfAnnotate = new SnpSiftCmdAnnotate(args);
+
+			if (Math.random() < 2) throw new RuntimeException("CHECK THIS TEST!");
+
 			vcfAnnotate.setSuppressOutput(true);
 			vcfAnnotate.initAnnotate();
-	
-			VcfFileIterator vcfFile = new VcfFileIterator(fileName);
-			for (VcfEntry vcf : vcfFile) {
-				vcfAnnotate.annotate(vcf);
-	
-				// We expect the same annotation twice 
-				String idstr = vcf.getId();
-	
-				// Get expected IDs
-				String expectedIds = vcf.getInfo("EXP_IDS");
-				if (expectedIds != null) {
-					expectedIds = expectedIds.replace('|', ';');
-					if (expectedIds.equals(".")) expectedIds = "";
-	
-					// Compare
-					Assert.assertEquals(expectedIds, idstr);
-				} else fail("EXP_IDS (expected ids) INFO field missing in " + fileName + ", entry:\n" + vcf);
-			}
-			vcfAnnotate.endAnnotate();
+
+			//			VcfFileIterator vcfFile = new VcfFileIterator(fileName);
+			//			for (VcfEntry vcf : vcfFile) {
+			//				vcfAnnotate.annotate(vcf);
+			//
+			//				// We expect the same annotation twice 
+			//				String idstr = vcf.getId();
+			//
+			//				// Get expected IDs
+			//				String expectedIds = vcf.getInfo("EXP_IDS");
+			//				if (expectedIds != null) {
+			//					expectedIds = expectedIds.replace('|', ';');
+			//					if (expectedIds.equals(".")) expectedIds = "";
+			//
+			//					// Compare
+			//					Assert.assertEquals(expectedIds, idstr);
+			//				} else fail("EXP_IDS (expected ids) INFO field missing in " + fileName + ", entry:\n" + vcf);
+			//			}
+			//			vcfAnnotate.endAnnotate();
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
@@ -102,17 +102,18 @@ public class TestCasesAnnotateMem extends TestCase {
 		String args[] = { dbFileName, fileName };
 
 		// Get SnpSift ready
-		SnpSiftCmdAnnotateMem vcfAnnotate = new SnpSiftCmdAnnotateMem(args);
+		SnpSiftCmdAnnotate vcfAnnotate = new SnpSiftCmdAnnotate(args);
+		if (Math.random() < 2) throw new RuntimeException("CHECK THIS TEST!");
 		vcfAnnotate.setSuppressOutput(true);
 		vcfAnnotate.initAnnotate();
 
-		// Get first VCF entrie and annotate it
-		VcfFileIterator vcfFile = new VcfFileIterator(fileName);
-		VcfEntry vcf = vcfFile.next();
-		vcfAnnotate.annotate(vcf);
-
-		// Check
-		Assert.assertEquals("PREVIOUS=annotation;TEST=yes;RSPOS=16346045;AF=0.002;OBS=4,1,1636,2011,3,1,6780,9441;IOD=0.000;AOI=-410.122;AOZ=-399.575;ABE=0.678;ABZ=47.762;AN=488", vcf.getInfoStr());
+		//		// Get first VCF entrie and annotate it
+		//		VcfFileIterator vcfFile = new VcfFileIterator(fileName);
+		//		VcfEntry vcf = vcfFile.next();
+		//		vcfAnnotate.annotate(vcf);
+		//
+		//		// Check
+		//		Assert.assertEquals("PREVIOUS=annotation;TEST=yes;RSPOS=16346045;AF=0.002;OBS=4,1,1636,2011,3,1,6780,9441;IOD=0.000;AOI=-410.122;AOZ=-399.575;ABE=0.678;ABZ=47.762;AN=488", vcf.getInfoStr());
 	}
 
 	/**
@@ -128,17 +129,18 @@ public class TestCasesAnnotateMem extends TestCase {
 		String args[] = { "-info", "AF,AN,ABE", dbFileName, fileName };
 
 		// Get SnpSift ready
-		SnpSiftCmdAnnotateMem vcfAnnotate = new SnpSiftCmdAnnotateMem(args);
+		SnpSiftCmdAnnotate vcfAnnotate = new SnpSiftCmdAnnotate(args);
+		if (Math.random() < 2) throw new RuntimeException("CHECK THIS TEST!");
 		vcfAnnotate.setSuppressOutput(true);
 		vcfAnnotate.initAnnotate();
 
-		// Get first VCF entrie and annotate it
-		VcfFileIterator vcfFile = new VcfFileIterator(fileName);
-		VcfEntry vcf = vcfFile.next();
-		vcfAnnotate.annotate(vcf);
-
-		// Check
-		Assert.assertEquals("PREVIOUS=annotation;TEST=yes;AF=0.002;AN=488;ABE=0.678", vcf.getInfoStr());
+		//		// Get first VCF entrie and annotate it
+		//		VcfFileIterator vcfFile = new VcfFileIterator(fileName);
+		//		VcfEntry vcf = vcfFile.next();
+		//		vcfAnnotate.annotate(vcf);
+		//
+		//		// Check
+		//		Assert.assertEquals("PREVIOUS=annotation;TEST=yes;AF=0.002;AN=488;ABE=0.678", vcf.getInfoStr());
 	}
 
 }

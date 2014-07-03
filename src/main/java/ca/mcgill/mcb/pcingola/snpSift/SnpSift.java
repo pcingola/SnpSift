@@ -45,10 +45,10 @@ public class SnpSift {
 	public static final String REVISION = SnpEff.REVISION;
 	public static final String VERSION_SHORT = VERSION_MAJOR + REVISION;
 	public static final String VERSION_NO_NAME = VERSION_SHORT + " (build " + BUILD + "), by " + Pcingola.BY;
-
 	public static final String VERSION = SOFTWARE_NAME + " " + VERSION_NO_NAME;
 
 	public static final int MAX_ERRORS = 10; // Report an error no more than X times
+
 	protected boolean help; // Be verbose
 	protected boolean verbose; // Be verbose
 	protected boolean debug; // Debug mode
@@ -276,8 +276,7 @@ public class SnpSift {
 		SnpSift cmd = null;
 
 		if (command.startsWith("ALLELEMAT")) cmd = new SnpSiftCmdAlleleMatrix(args);
-		else if (command.startsWith("ANNM")) cmd = new SnpSiftCmdAnnotateMem(args);
-		else if (command.startsWith("ANN")) cmd = new SnpSiftCmdAnnotateSorted(args);
+		else if (command.startsWith("ANN")) cmd = new SnpSiftCmdAnnotate(args);
 		else if (command.startsWith("CA")) cmd = new SnpSiftCmdCaseControl(args);
 		else if (command.startsWith("CCS")) cmd = new SnpSiftCmdCaseControlSummary(args);
 		else if (command.startsWith("CONC")) cmd = new SnpSiftCmdConcordance(args);
@@ -430,7 +429,7 @@ public class SnpSift {
 				+ "\n\ttstv          : Calculate transiton to transversion ratio." //
 				+ "\n\tvarType       : Annotate variant type (SNP,MNP,INS,DEL or MIXED)." //
 				+ "\n\tvcf2tped      : Convert VCF to TPED." //
-				);
+		);
 
 		usageGenericAndDb();
 
@@ -447,7 +446,7 @@ public class SnpSift {
 				+ (needsDb ? "\t-db <file>           : Databse file name (for commands that require datbases).\n" : "") //
 				+ "\t-h                   : Help.\n" //
 				+ "\t-v                   : Verbose.\n" //
-				);
+		);
 	}
 
 	/**
@@ -461,6 +460,10 @@ public class SnpSift {
 		errCount.put(warn, count + 1);
 
 		if (count < MAX_ERRORS) System.err.println("WARNING: " + warn);
+	}
+
+	public void setDbFileName(String dbFileName) {
+		this.dbFileName = dbFileName;
 	}
 
 }

@@ -7,7 +7,7 @@ import java.util.List;
 import junit.framework.Assert;
 import junit.framework.TestCase;
 import ca.mcgill.mcb.pcingola.fileIterator.VcfFileIterator;
-import ca.mcgill.mcb.pcingola.snpSift.SnpSiftCmdAnnotateSorted;
+import ca.mcgill.mcb.pcingola.snpSift.SnpSiftCmdAnnotate;
 import ca.mcgill.mcb.pcingola.vcf.VcfEntry;
 
 /**
@@ -17,7 +17,8 @@ import ca.mcgill.mcb.pcingola.vcf.VcfEntry;
  */
 public class TestCasesAnnotate extends TestCase {
 
-	public static boolean verbose = false;
+	public static boolean debug = false;
+	public static boolean verbose = true || debug;
 
 	/**
 	 * Re-annotate a file and check that the new annotation matches the previous one
@@ -26,35 +27,33 @@ public class TestCasesAnnotate extends TestCase {
 		System.out.println("Annotate: " + dbFileName + "\t" + fileName);
 
 		// Create command line
-		String args[] = { dbFileName, fileName };
+		String args[] = { fileName };
 
 		// Iterate over VCF entries
-		try {
-			SnpSiftCmdAnnotateSorted vcfAnnotate = new SnpSiftCmdAnnotateSorted(args);
-			vcfAnnotate.setSuppressOutput(true);
-			vcfAnnotate.initAnnotate();
+		SnpSiftCmdAnnotate vcfAnnotate = new SnpSiftCmdAnnotate(args);
+		vcfAnnotate.setDbFileName(dbFileName);
+		vcfAnnotate.setDebug(debug);
+		vcfAnnotate.setVerbose(verbose);
+		List<VcfEntry> results = vcfAnnotate.run(true);
 
-			VcfFileIterator vcfFile = new VcfFileIterator(fileName);
-			for (VcfEntry vcf : vcfFile) {
-				vcfAnnotate.annotate(vcf);
+		// Check
+		Assert.assertTrue(results != null);
+		Assert.assertTrue(results.size() > 0);
 
-				// We expect the same annotation twice 
-				String idstr = vcf.getId();
+		// Check each entry
+		for (VcfEntry vcf : results) {
+			// We expect the same annotation twice 
+			String idstr = vcf.getId();
 
-				// Get expected IDs
-				String expectedIds = vcf.getInfo("EXP_IDS");
-				if (expectedIds != null) {
-					expectedIds = expectedIds.replace('|', ';');
-					if (expectedIds.equals(".")) expectedIds = "";
+			// Get expected IDs
+			String expectedIds = vcf.getInfo("EXP_IDS");
+			if (expectedIds != null) {
+				expectedIds = expectedIds.replace('|', ';');
+				if (expectedIds.equals(".")) expectedIds = "";
 
-					// Compare
-					Assert.assertEquals(expectedIds, idstr);
-				} else fail("EXP_IDS (expected ids) INFO field missing in " + fileName + ", entry:\n" + vcf);
-			}
-
-			vcfAnnotate.endAnnotate();
-		} catch (IOException e) {
-			throw new RuntimeException(e);
+				// Compare
+				Assert.assertEquals(expectedIds, idstr);
+			} else fail("EXP_IDS (expected ids) INFO field missing in " + fileName + ", entry:\n" + vcf);
 		}
 	}
 
@@ -105,18 +104,19 @@ public class TestCasesAnnotate extends TestCase {
 		String args[] = { dbFileName, fileName };
 
 		// Get SnpSift ready
-		SnpSiftCmdAnnotateSorted vcfAnnotate = new SnpSiftCmdAnnotateSorted(args);
+		SnpSiftCmdAnnotate vcfAnnotate = new SnpSiftCmdAnnotate(args);
 		vcfAnnotate.setSuppressOutput(true);
 		vcfAnnotate.initAnnotate();
 
 		// Get first VCF entrie and annotate it
 		VcfFileIterator vcfFile = new VcfFileIterator(fileName);
-		VcfEntry vcf = vcfFile.next();
-		vcfAnnotate.annotate(vcf);
-
-		// Check
-		//		Assert.assertEquals("PREVIOUS=annotation;TEST=yes;RSPOS=16346045;AF=0.002;OBS=4,1,1636,2011,3,1,6780,9441;IOD=0.000;AOI=-410.122;AOZ=-399.575;ABE=0.678;ABZ=47.762;AN=488", vcf.getInfoStr());
-		Assert.assertEquals("PREVIOUS=annotation;TEST=yes;ABE=0.678;ABZ=47.762;AF=0.002;AN=488;AOI=-410.122;AOZ=-399.575;IOD=0.000;OBS=4,1,1636,2011,3,1,6780,9441;RSPOS=16346045", vcf.getInfoStr());
+		if (Math.random() < 2) throw new RuntimeException("CHECK THIS TEST!");
+		//		VcfEntry vcf = vcfFile.next();
+		//		vcfAnnotate.annotate(vcf);
+		//
+		//		// Check
+		//		//		Assert.assertEquals("PREVIOUS=annotation;TEST=yes;RSPOS=16346045;AF=0.002;OBS=4,1,1636,2011,3,1,6780,9441;IOD=0.000;AOI=-410.122;AOZ=-399.575;ABE=0.678;ABZ=47.762;AN=488", vcf.getInfoStr());
+		//		Assert.assertEquals("PREVIOUS=annotation;TEST=yes;ABE=0.678;ABZ=47.762;AF=0.002;AN=488;AOI=-410.122;AOZ=-399.575;IOD=0.000;OBS=4,1,1636,2011,3,1,6780,9441;RSPOS=16346045", vcf.getInfoStr());
 	}
 
 	/**
@@ -132,17 +132,13 @@ public class TestCasesAnnotate extends TestCase {
 		String args[] = { "-info", "AF,AN,ABE", dbFileName, fileName };
 
 		// Get SnpSift ready
-		SnpSiftCmdAnnotateSorted vcfAnnotate = new SnpSiftCmdAnnotateSorted(args);
-		vcfAnnotate.setSuppressOutput(true);
-		vcfAnnotate.initAnnotate();
-
-		// Get first VCF entrie and annotate it
-		VcfFileIterator vcfFile = new VcfFileIterator(fileName);
-		VcfEntry vcf = vcfFile.next();
-		vcfAnnotate.annotate(vcf);
+		SnpSiftCmdAnnotate vcfAnnotate = new SnpSiftCmdAnnotate(args);
+		// vcfAnnotate.setSuppressOutput(true);
+		List<VcfEntry> results = vcfAnnotate.run(true);
 
 		// Check
-		Assert.assertEquals("PREVIOUS=annotation;TEST=yes;AF=0.002;AN=488;ABE=0.678", vcf.getInfoStr());
+		Assert.assertTrue(results.size() > 0);
+		Assert.assertEquals("PREVIOUS=annotation;TEST=yes;AF=0.002;AN=488;ABE=0.678", results.get(0).getInfoStr());
 	}
 
 	/**
@@ -158,17 +154,18 @@ public class TestCasesAnnotate extends TestCase {
 		String args[] = { "-noId", dbFileName, fileName };
 
 		// Get SnpSift ready
-		SnpSiftCmdAnnotateSorted vcfAnnotate = new SnpSiftCmdAnnotateSorted(args);
+		SnpSiftCmdAnnotate vcfAnnotate = new SnpSiftCmdAnnotate(args);
 		vcfAnnotate.setSuppressOutput(true);
 		vcfAnnotate.initAnnotate();
 
 		// Get first VCF entry and annotate it
 		VcfFileIterator vcfFile = new VcfFileIterator(fileName);
+		if (Math.random() < 2) throw new RuntimeException("CHECK THIS TEST!");
 		VcfEntry vcfEntry = vcfFile.next();
-		vcfAnnotate.annotate(vcfEntry);
-
-		// Check that new ID was NOT added
-		Assert.assertEquals("OLD_ID", vcfEntry.getId());
+		//		vcfAnnotate.annotate(vcfEntry);
+		//
+		//		// Check that new ID was NOT added
+		//		Assert.assertEquals("OLD_ID", vcfEntry.getId());
 	}
 
 	/**
@@ -184,7 +181,7 @@ public class TestCasesAnnotate extends TestCase {
 		String args[] = { "-info", "GMAF,AC", dbFileName, fileName };
 
 		// Get SnpSift ready
-		SnpSiftCmdAnnotateSorted vcfAnnotate = new SnpSiftCmdAnnotateSorted(args);
+		SnpSiftCmdAnnotate vcfAnnotate = new SnpSiftCmdAnnotate(args);
 		vcfAnnotate.setSuppressOutput(true);
 		vcfAnnotate.setSaveOutput(true);
 		vcfAnnotate.run();
@@ -216,7 +213,7 @@ public class TestCasesAnnotate extends TestCase {
 		String args[] = { "-info", "GMAF,AC", dbFileName, fileName };
 
 		// Get SnpSift ready
-		SnpSiftCmdAnnotateSorted vcfAnnotate = new SnpSiftCmdAnnotateSorted(args);
+		SnpSiftCmdAnnotate vcfAnnotate = new SnpSiftCmdAnnotate(args);
 		vcfAnnotate.setSuppressOutput(true);
 		vcfAnnotate.setSaveOutput(true);
 		vcfAnnotate.run();
@@ -250,18 +247,19 @@ public class TestCasesAnnotate extends TestCase {
 		String args[] = { "-noAlt", dbFileName, fileName };
 
 		// Get SnpSift ready
-		SnpSiftCmdAnnotateSorted vcfAnnotate = new SnpSiftCmdAnnotateSorted(args);
+		SnpSiftCmdAnnotate vcfAnnotate = new SnpSiftCmdAnnotate(args);
 		vcfAnnotate.setSuppressOutput(true);
 		vcfAnnotate.initAnnotate();
 
 		// Get first VCF entry and annotate it
 		VcfFileIterator vcfFile = new VcfFileIterator(fileName);
-		VcfEntry vcfEntry = vcfFile.next();
-		vcfAnnotate.annotate(vcfEntry);
-		// Gpr.debug(vcfEntry);
-
-		// Check that new ID was NOT added
-		Assert.assertEquals("NEW_ID", vcfEntry.getId());
+		if (Math.random() < 2) throw new RuntimeException("CHECK THIS TEST!");
+		//		VcfEntry vcfEntry = vcfFile.next();
+		//		vcfAnnotate.annotate(vcfEntry);
+		//		// Gpr.debug(vcfEntry);
+		//
+		//		// Check that new ID was NOT added
+		//		Assert.assertEquals("NEW_ID", vcfEntry.getId());
 	}
 
 	/**
@@ -279,7 +277,7 @@ public class TestCasesAnnotate extends TestCase {
 		String args[] = { "-info", "AA", dbFileName, fileName };
 
 		// Get SnpSift ready
-		SnpSiftCmdAnnotateSorted vcfAnnotate = new SnpSiftCmdAnnotateSorted(args);
+		SnpSiftCmdAnnotate vcfAnnotate = new SnpSiftCmdAnnotate(args);
 		vcfAnnotate.setSuppressOutput(true);
 		vcfAnnotate.setSaveOutput(true);
 		vcfAnnotate.run();
@@ -304,7 +302,7 @@ public class TestCasesAnnotate extends TestCase {
 		String args[] = { dbFileName, fileName };
 
 		// Get SnpSift ready
-		SnpSiftCmdAnnotateSorted vcfAnnotate = new SnpSiftCmdAnnotateSorted(args);
+		SnpSiftCmdAnnotate vcfAnnotate = new SnpSiftCmdAnnotate(args);
 		vcfAnnotate.setSuppressOutput(true);
 		List<VcfEntry> list = vcfAnnotate.run(true);
 
@@ -324,7 +322,7 @@ public class TestCasesAnnotate extends TestCase {
 		String args[] = { dbFileName, fileName };
 
 		// Get SnpSift ready
-		SnpSiftCmdAnnotateSorted vcfAnnotate = new SnpSiftCmdAnnotateSorted(args);
+		SnpSiftCmdAnnotate vcfAnnotate = new SnpSiftCmdAnnotate(args);
 		vcfAnnotate.setSuppressOutput(true);
 		List<VcfEntry> list = vcfAnnotate.run(true);
 
@@ -341,7 +339,7 @@ public class TestCasesAnnotate extends TestCase {
 		String infoName = "PREPEND_";
 		String args[] = { "-name", infoName, dbFileName, fileName };
 
-		SnpSiftCmdAnnotateSorted vcfAnnotate = new SnpSiftCmdAnnotateSorted(args);
+		SnpSiftCmdAnnotate vcfAnnotate = new SnpSiftCmdAnnotate(args);
 		List<VcfEntry> ves = vcfAnnotate.run(true);
 
 		VcfEntry ve = ves.get(0);
@@ -363,7 +361,7 @@ public class TestCasesAnnotate extends TestCase {
 		types.put("2", "second");
 
 		// Annotate
-		SnpSiftCmdAnnotateSorted vcfAnnotate = new SnpSiftCmdAnnotateSorted(args);
+		SnpSiftCmdAnnotate vcfAnnotate = new SnpSiftCmdAnnotate(args);
 		List<VcfEntry> ves = vcfAnnotate.run(true);
 
 		// Check that our "fake annotations" are matched as expected

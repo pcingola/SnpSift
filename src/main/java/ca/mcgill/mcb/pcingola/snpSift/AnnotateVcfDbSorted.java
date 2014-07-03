@@ -1,0 +1,98 @@
+package ca.mcgill.mcb.pcingola.snpSift;
+
+import java.io.IOException;
+
+import ca.mcgill.mcb.pcingola.fileIterator.SeekableBufferedReader;
+import ca.mcgill.mcb.pcingola.fileIterator.VcfFileIterator;
+import ca.mcgill.mcb.pcingola.vcf.FileIndexChrPos;
+import ca.mcgill.mcb.pcingola.vcf.VcfEntry;
+
+/**
+ * Annotate using a VCF "database"
+ *
+ * Note: Assumes that the VCF database file is sorted.
+ *       Each VCF entry should be sorted according to position.
+ *       Chromosome order does not matter (e.g. all entries for chr10 can be before entries for chr2).
+ *       But entries for the same chromosome should be together.
+ *
+ * @author pcingola
+ *
+ */
+public class AnnotateVcfDbSorted extends AnnotateVcfDb {
+
+	protected FileIndexChrPos indexDb;
+
+	protected AnnotateVcfDbSorted(String dbFileName) {
+		super(dbFileName);
+	}
+
+	/**
+	 * Index a VCF file
+	 */
+	FileIndexChrPos index(String fileName) {
+		if (verbose) System.err.println("Index: " + fileName);
+		FileIndexChrPos fileIndex = new FileIndexChrPos(fileName);
+		fileIndex.setVerbose(verbose);
+		fileIndex.setDebug(debug);
+		fileIndex.open();
+		fileIndex.index();
+		fileIndex.close();
+		return fileIndex;
+	}
+
+	/**
+	 * Open database annotation file
+	 */
+	@Override
+	public void open() throws IOException {
+		// Open and index database
+		indexDb = index(dbFileName);
+
+		// Re-open VCF db file
+		vcfDbFile = new VcfFileIterator(new SeekableBufferedReader(dbFileName));
+		latestVcfDb = vcfDbFile.next(); // Read first VCf entry from DB file (this also forces to read headers)
+		addDbCurrent(latestVcfDb);
+	}
+
+	/**
+	 * Read all DB entries up to 'vcf'
+	 */
+	@Override
+	protected void readDb(VcfEntry ve) {
+		String chr = ve.getChromosomeName();
+
+		// Add latest to db?
+		if (latestVcfDb != null) {
+			if (latestVcfDb.getChromosomeName().equals(chr)) {
+				if (ve.getStart() < latestVcfDb.getStart()) {
+					clearCurrent();
+					return;
+				}
+
+				if (ve.getStart() == latestVcfDb.getStart()) addDbCurrent(latestVcfDb);
+			}
+		} else clearCurrent();
+
+		// Read more entries from db
+		for (VcfEntry vcfDb : vcfDbFile) {
+			latestVcfDb = vcfDb;
+
+			String chrDb = vcfDb.getChromosomeName();
+			if (!chrDb.equals(chr)) return;
+
+			if (ve.getStart() < vcfDb.getStart()) return;
+			if (ve.getStart() == vcfDb.getStart()) {
+				// Sanity check: Check that references match
+				if (!ve.getRef().equals(vcfDb.getRef()) //
+						&& !ve.getRef().startsWith(vcfDb.getRef()) //
+						&& !vcfDb.getRef().startsWith(ve.getRef()) //
+				) {
+					System.err.println("WARNING: Reference in database file '" + dbFileName + "' is '" + vcfDb.getRef() + "' and reference in input file is " + ve.getRef() + "' at " + chr + ":" + (ve.getStart() + 1));
+					countBadRef++;
+				}
+
+				addDbCurrent(vcfDb); // Same position: Add all keys to 'db'. Note: VCF allows more than one line with the same position
+			}
+		}
+	}
+}

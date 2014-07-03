@@ -1,11 +1,10 @@
 package ca.mcgill.mcb.pcingola.snpSift.testCases;
 
+import java.util.List;
+
+import junit.framework.Assert;
 import junit.framework.TestCase;
-
-import org.junit.Assert;
-
-import ca.mcgill.mcb.pcingola.fileIterator.VcfFileIterator;
-import ca.mcgill.mcb.pcingola.snpSift.SnpSiftCmdDbNsfp;
+import ca.mcgill.mcb.pcingola.snpSift.SnpSiftCmdAnnotate;
 import ca.mcgill.mcb.pcingola.vcf.VcfEntry;
 
 /**
@@ -18,31 +17,47 @@ public class TestCasesZzz extends TestCase {
 	public static boolean debug = false;
 	public static boolean verbose = true || debug;
 
-	public void test_08() {
-		String vcfFileName = "test/test_dbNSFP_8.vcf";
-		String args[] = { "-collapse", "-a", "-f", "Polyphen2_HDIV_score", "test/dbNSFP2.4.chr4_55946200_55946300.txt.gz", vcfFileName };
-		SnpSiftCmdDbNsfp cmd = new SnpSiftCmdDbNsfp(args);
-		cmd.setVerbose(verbose);
-		cmd.setDebug(debug);
+	/**
+	 * Re-annotate a file and check that the new annotation matches the previous one
+	 */
+	public void annotateTest(String dbFileName, String fileName) {
+		System.out.println("Annotate: " + dbFileName + "\t" + fileName);
 
-		try {
-			cmd.initAnnotate();
+		// Create command line
+		String args[] = { fileName };
 
-			// Get entry.
-			// Note: There is only one entry to annotate (the VCF file has one line)
-			VcfFileIterator vcfFile = new VcfFileIterator(vcfFileName);
-			VcfEntry vcfEntry = vcfFile.next();
+		// Iterate over VCF entries
+		SnpSiftCmdAnnotate vcfAnnotate = new SnpSiftCmdAnnotate(args);
+		vcfAnnotate.setDbFileName(dbFileName);
+		vcfAnnotate.setDebug(debug);
+		vcfAnnotate.setVerbose(verbose);
+		List<VcfEntry> results = vcfAnnotate.run(true);
 
-			cmd.annotate(vcfEntry);
-			if (verbose) System.out.println(vcfEntry);
+		// Check
+		Assert.assertTrue(results != null);
+		Assert.assertTrue(results.size() > 0);
 
-			// Check all values
-			Assert.assertEquals(".,1.0,1.0", vcfEntry.getInfo(SnpSiftCmdDbNsfp.VCF_INFO_PREFIX + "Polyphen2_HDIV_score"));
+		// Check each entry
+		for (VcfEntry vcf : results) {
+			// We expect the same annotation twice 
+			String idstr = vcf.getId();
 
-			cmd.endAnnotate();
-		} catch (Exception e) {
-			throw new RuntimeException(e);
+			// Get expected IDs
+			String expectedIds = vcf.getInfo("EXP_IDS");
+			if (expectedIds != null) {
+				expectedIds = expectedIds.replace('|', ';');
+				if (expectedIds.equals(".")) expectedIds = "";
+
+				// Compare
+				Assert.assertEquals(expectedIds, idstr);
+			} else fail("EXP_IDS (expected ids) INFO field missing in " + fileName + ", entry:\n" + vcf);
 		}
+	}
+
+	public void test_02() {
+		String dbFileName = "./test/db_test_10.vcf";
+		String fileName = "./test/annotate_10.vcf";
+		annotateTest(dbFileName, fileName);
 	}
 
 }
