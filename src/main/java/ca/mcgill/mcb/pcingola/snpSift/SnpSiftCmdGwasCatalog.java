@@ -10,9 +10,9 @@ import ca.mcgill.mcb.pcingola.vcf.VcfEntry;
 
 /**
  * Annotate a VCF file using GWAS catalog database
- * 
+ *
  * Loads GWAS catalog in memory, thus it makes no assumption about order.
- * 
+ *
  * @author pablocingolani
  */
 public class SnpSiftCmdGwasCatalog extends SnpSift {
@@ -22,7 +22,6 @@ public class SnpSiftCmdGwasCatalog extends SnpSift {
 	public static final int SHOW = 10000;
 	public static final int SHOW_LINES = 100 * SHOW;
 
-	String gwasCatalogFile;
 	String vcfFile;
 	GwasCatalog gwasCatalog;
 
@@ -37,34 +36,7 @@ public class SnpSiftCmdGwasCatalog extends SnpSift {
 		return newHeaders;
 	}
 
-	/**
-	 * Parse command line arguments
-	 */
-	@Override
-	public void parse(String[] args) {
-		int argNum = 0;
-		if (args.length == 0) usage(null);
-
-		if (args.length >= argNum) gwasCatalogFile = args[argNum++];
-		else usage("Missing 'gwasCatalog.txt'");
-
-		if (args.length >= argNum) vcfFile = args[argNum++];
-		else usage("Missing 'file.vcf'");
-	}
-
-	/**
-	 * Read database
-	 */
-	public void readDb() {
-		if (verbose) Timer.showStdErr("Loading database: '" + gwasCatalogFile + "'");
-		gwasCatalog = new GwasCatalog(gwasCatalogFile);
-	}
-
-	/**
-	 * Annotate entries
-	 */
-	@Override
-	public void run() {
+	void annotate() {
 		readDb();
 
 		if (verbose) Timer.showStdErr("Annotating entries from: '" + vcfFile + "'");
@@ -109,6 +81,59 @@ public class SnpSiftCmdGwasCatalog extends SnpSift {
 	}
 
 	/**
+	 * Initialize default values
+	 */
+	@Override
+	public void init() {
+		needsConfig = true;
+		needsDb = true;
+		dbTabix = false;
+		dbType = "gwascatalog";
+	}
+
+	/**
+	 * Parse command line arguments
+	 */
+	@Override
+	public void parse(String[] args) {
+		if (args.length < 1) usage(null);
+
+		for (int i = 0; i < args.length; i++) {
+			String arg = args[i];
+			vcfFile = arg;
+		}
+
+		if (vcfFile == null) usage("Missing 'file.vcf'");
+	}
+
+	/**
+	 * Read database
+	 */
+	public void readDb() {
+		if (verbose) Timer.showStdErr("Loading database: '" + dbFileName + "'");
+		gwasCatalog = new GwasCatalog(dbFileName);
+	}
+
+	/**
+	 * Annotate entries
+	 */
+	@Override
+	public void run() {
+		// Read config
+		if (config == null) loadConfig();
+
+		// Find or download database
+		dbFileName = databaseFindOrDownload();
+
+		if (verbose) Timer.showStdErr("Annotating\n" //
+				+ "\tInput file    : '" + vcfFile + "'\n" //
+				+ "\tDatabase file : '" + dbFileName + "'" //
+		);
+
+		annotate();
+	}
+
+	/**
 	 * Show usage message
 	 * @param msg
 	 */
@@ -121,7 +146,10 @@ public class SnpSiftCmdGwasCatalog extends SnpSift {
 
 		showVersion();
 
-		System.err.println("Usage: java -jar " + SnpSift.class.getSimpleName() + ".jar gwasCat gwasCatalog.txt file.vcf > newFile.vcf.");
+		System.err.println("Usage: java -jar " + SnpSift.class.getSimpleName() + ".jar gwasCat file.vcf > newFile.vcf.");
+
+		usageGenericAndDb();
+
 		System.exit(1);
 	}
 

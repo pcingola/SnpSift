@@ -55,7 +55,6 @@ public class SnpSiftCmdDbNsfp extends SnpSift {
 	protected boolean annotateEmpty; // Annotate empty fields as well?
 	protected boolean collapseRepeatedValues; // Collapse values if repeated?
 	protected boolean tabixCheck = true;
-	protected String dbNsfpFileName;
 	protected String vcfFileName;
 	protected int count = 0;
 	protected int countAnnotated = 0;
@@ -161,7 +160,7 @@ public class SnpSiftCmdDbNsfp extends SnpSift {
 
 		// Check that all "field to add" are in the database
 		for (String fieldKey : fieldsToAdd.keySet())
-			if (!dbNsfpFile.hasField(fieldKey)) fatalError("dbNsfp does not have field '" + fieldKey + "' (file '" + dbNsfpFileName + "')");
+			if (!dbNsfpFile.hasField(fieldKey)) fatalError("dbNsfp does not have field '" + fieldKey + "' (file '" + dbFileName + "')");
 	}
 
 	/**
@@ -254,6 +253,11 @@ public class SnpSiftCmdDbNsfp extends SnpSift {
 	 */
 	@Override
 	public void init() {
+		needsConfig = true;
+		needsDb = true;
+		dbTabix = true;
+		dbType = "dbnsfp";
+
 		fieldsToAdd = new HashMap<String, String>();
 		fieldsType = new HashMap<String, String>();
 		fieldsDescription = new HashMap<String, String>();
@@ -270,9 +274,9 @@ public class SnpSiftCmdDbNsfp extends SnpSift {
 		vcfFile = new VcfFileIterator(vcfFileName);
 
 		// Check and open dbNsfp
-		dbNsfpFile = new DbNsfpFileIterator(dbNsfpFileName);
+		dbNsfpFile = new DbNsfpFileIterator(dbFileName);
 		dbNsfpFile.setCollapseRepeatedValues(collapseRepeatedValues);
-		if (tabixCheck && !dbNsfpFile.isTabix()) fatalError("Tabix index not found for database '" + dbNsfpFileName + "'.\n\t\tSnpSift dbNSFP only works with tabix indexed databases, please create or download index.");
+		if (tabixCheck && !dbNsfpFile.isTabix()) fatalError("Tabix index not found for database '" + dbFileName + "'.\n\t\tSnpSift dbNSFP only works with tabix indexed databases, please create or download index.");
 
 		// Guess data types
 		dbNsfpFile.guessVcfTypes();
@@ -324,18 +328,25 @@ public class SnpSiftCmdDbNsfp extends SnpSift {
 			else if (arg.equals("-f")) fieldsNamesToAdd = args[++i]; // Filed to be used
 			else if (arg.equalsIgnoreCase("-noCollapse")) collapseRepeatedValues = false;
 			else if (arg.equalsIgnoreCase("-collapse")) collapseRepeatedValues = true;
-			else if (dbNsfpFileName == null) dbNsfpFileName = arg;
 			else if (vcfFileName == null) vcfFileName = arg;
 		}
 
 		// Sanity check
-		if (dbNsfpFileName == null) usage("Missing dbNSFP file");
 		if (vcfFileName == null) usage("Missing 'file.vcf'");
 	}
 
 	@Override
 	public void run() {
-		if (verbose) Timer.showStdErr("Annotating entries from: '" + dbNsfpFileName + "'");
+		// Read config
+		if (config == null) loadConfig();
+
+		// Find or download database
+		dbFileName = databaseFindOrDownload();
+
+		if (verbose) Timer.showStdErr("Annotating\n" //
+				+ "\tInput file    : '" + vcfFileName + "'\n" //
+				+ "\tDatabase file : '" + dbFileName + "'" //
+		);
 
 		// Initialize annotations
 		try {
@@ -419,16 +430,19 @@ public class SnpSiftCmdDbNsfp extends SnpSift {
 
 		// Show error
 		showVersion();
-		System.err.println("Usage: java -jar " + SnpSift.class.getSimpleName() + ".jar " + command + " [-q|-v] [-a] dbNSFP.txt.gz file.vcf > newFile.vcf\n" //
-				+ "Note: dbNSFP.txt.gz must be bgzip and tabix indexed file. The corresponding index file (dbNSFP.txt.gz.tbi) must be present.\n" //
+		System.err.println("Usage: java -jar " + SnpSift.class.getSimpleName() + ".jar " + command + " [options] file.vcf > newFile.vcf\n" //
 				+ "Options:\n" //
 				+ "\t-a            : Annotate fields, even if the database has an empty value (annotates using '.' for empty).\n" //
 				+ "\t-collapse     : Collapse repeated values from dbNSFP. Default: " + collapseRepeatedValues + "\n" //
 				+ "\t-noCollapse   : Switch off 'collapsing' repeated values from dbNSFP. Default: " + !collapseRepeatedValues + "\n" //
 				+ "\t-f            : A comma separated list of fields to add.\n" //
 				+ "\t                Default fields to add:\n" + sb //
-				+ "\n" //
 		);
+
+		usageGenericAndDb();
+
+		System.err.println("Note: Databse (dbNSFP.txt.gz) must be bgzip and tabix indexed file.\n      The corresponding index file (dbNSFP.txt.gz.tbi) must be present.\n");
+
 		System.exit(1);
 	}
 }

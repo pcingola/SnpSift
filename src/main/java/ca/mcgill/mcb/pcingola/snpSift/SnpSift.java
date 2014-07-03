@@ -6,6 +6,7 @@ import java.util.List;
 
 import ca.mcgill.mcb.pcingola.Pcingola;
 import ca.mcgill.mcb.pcingola.fileIterator.VcfFileIterator;
+import ca.mcgill.mcb.pcingola.snpEffect.Config;
 import ca.mcgill.mcb.pcingola.snpEffect.commandLine.SnpEff;
 import ca.mcgill.mcb.pcingola.snpSift.caseControl.SnpSiftCmdCaseControl;
 import ca.mcgill.mcb.pcingola.snpSift.caseControl.SnpSiftCmdCaseControlSummary;
@@ -14,7 +15,9 @@ import ca.mcgill.mcb.pcingola.snpSift.hwe.SnpSiftCmdHwe;
 import ca.mcgill.mcb.pcingola.snpSift.matrix.SnpSiftCmdAlleleMatrix;
 import ca.mcgill.mcb.pcingola.snpSift.matrix.SnpSiftCmdCovarianceMatrix;
 import ca.mcgill.mcb.pcingola.snpSift.matrix.SnpSiftCmdGt;
+import ca.mcgill.mcb.pcingola.util.Download;
 import ca.mcgill.mcb.pcingola.util.Gpr;
+import ca.mcgill.mcb.pcingola.util.Timer;
 import flanagan.analysis.Stat;
 
 /**
@@ -23,31 +26,6 @@ import flanagan.analysis.Stat;
  * @author pablocingolani
  */
 public class SnpSift {
-
-	// Version info (in sync with SnpEff)
-	public static final String BUILD = SnpEff.BUILD;
-	public static final String SOFTWARE_NAME = "SnpSift";
-	public static final String VERSION_MAJOR = SnpEff.VERSION_MAJOR;
-	public static final String REVISION = SnpEff.REVISION;
-	public static final String VERSION_SHORT = VERSION_MAJOR + REVISION;
-	public static final String VERSION_NO_NAME = VERSION_SHORT + " (build " + BUILD + "), by " + Pcingola.BY;
-	public static final String VERSION = SOFTWARE_NAME + " " + VERSION_NO_NAME;
-
-	public static final int MAX_ERRORS = 10; // Report an error no more than X times
-
-	protected boolean help; // Be verbose
-	protected boolean verbose; // Be verbose
-	protected boolean debug; // Debug mode
-	protected boolean quiet; // Be quiet
-	protected boolean log; // Log to server (statistics)
-	protected boolean showHeader = true;
-	protected boolean saveOutput = false; // Save output to buffer (instead of printing it to STDOUT)
-	protected boolean suppressOutput = false; // Do not show output (used for debugging and test cases)
-	protected String args[];
-	protected String command;
-	protected int numWorkers = Gpr.NUM_CORES; // Max number of threads (if multi-threaded version is available)
-	protected StringBuilder output = new StringBuilder();
-	protected HashMap<String, Integer> errCount;
 
 	/**
 	 * Main
@@ -59,6 +37,39 @@ public class SnpSift {
 		SnpSift snpSift = new SnpSift(args, null);
 		snpSift.run();
 	}
+
+	// Version info (in sync with SnpEff)
+	public static final String BUILD = SnpEff.BUILD;
+	public static final String SOFTWARE_NAME = "SnpSift";
+	public static final String VERSION_MAJOR = SnpEff.VERSION_MAJOR;
+	public static final String REVISION = SnpEff.REVISION;
+	public static final String VERSION_SHORT = VERSION_MAJOR + REVISION;
+	public static final String VERSION_NO_NAME = VERSION_SHORT + " (build " + BUILD + "), by " + Pcingola.BY;
+
+	public static final String VERSION = SOFTWARE_NAME + " " + VERSION_NO_NAME;
+
+	public static final int MAX_ERRORS = 10; // Report an error no more than X times
+	protected boolean help; // Be verbose
+	protected boolean verbose; // Be verbose
+	protected boolean debug; // Debug mode
+	protected boolean quiet; // Be quiet
+	protected boolean log; // Log to server (statistics)
+	protected boolean showHeader = true;
+	protected boolean saveOutput = false; // Save output to buffer (instead of printing it to STDOUT)
+	protected boolean suppressOutput = false; // Do not show output (used for debugging and test cases)
+	protected boolean needsConfig; // Does this command need a config file?
+	protected boolean needsDb; // Does this command need a database file?
+	protected boolean dbTabix; // Is this database supposed to be in tabix indexed form?
+	protected String args[];
+	protected String command;
+	protected String dbFileName;
+	protected String dbType;
+	protected int numWorkers = Gpr.NUM_CORES; // Max number of threads (if multi-threaded version is available)
+	protected StringBuilder output = new StringBuilder();
+	protected HashMap<String, Integer> errCount;
+	protected String configFile; // Config file
+	protected Config config; // Configuration
+	protected String dataDir; // Override data_dir in config file
 
 	public SnpSift(String[] args, String command) {
 		this.args = args;
@@ -105,6 +116,65 @@ public class SnpSift {
 	}
 
 	/**
+	 * Download a database
+	 */
+	protected boolean databaseDownload() {
+		String dbUrl = config.getDatabaseRepository(dbType);
+		if (dbUrl == null) fatalError("Database URL name is missing (missing entry in config file?).");
+
+		Timer.showStdErr("Downlading database from " + dbUrl);
+		Download download = new Download();
+		download.setVerbose(verbose);
+		download.setDebug(debug);
+		boolean ok = download.download(dbUrl, dbFileName);
+
+		if (!ok) return false;
+
+		// Download tabix index?
+		if (dbTabix) {
+			String indexUrl = config.getDatabaseRepository(dbType) + ".tbi";
+			Timer.showStdErr("Downlading index from " + indexUrl);
+			download = new Download();
+			download.setVerbose(verbose);
+			download.setDebug(debug);
+			ok &= download.download(indexUrl, dbFileName + ".tbi");
+		}
+
+		return ok;
+	}
+
+	/**
+	 * Find database file name.
+	 * If local file does not exists, try to download
+	 */
+	protected String databaseFindOrDownload() {
+		if (dbType == null || dbType.isEmpty()) throw new RuntimeException("Database type not set: This should never happen!");
+
+		// Database file name
+		if (dbFileName == null || dbFileName.isEmpty()) {
+			dbFileName = config.getDatabaseLocal(dbType);
+
+			// Still empty: Something is wrong!
+			if (dbFileName == null || dbFileName.isEmpty()) fatalError("Database file name is empty ('dbFileName'): Missing entry in config file?");
+
+			if (!Gpr.exists(dbFileName)) {
+				Timer.showStdErr("Database file '" + dbFileName + "' not found.");
+				if (!databaseDownload()) fatalError("Could not download database.");
+			}
+		}
+
+		return dbFileName;
+	}
+
+	/**
+	 * Show an error (if not 'quiet' mode)
+	 */
+	public void error(Throwable e, String message) {
+		if (verbose && (e != null)) e.printStackTrace();
+		if (!quiet) System.err.println(message);
+	}
+
+	/**
 	 * Show an error message and exit
 	 * @param message
 	 */
@@ -136,11 +206,20 @@ public class SnpSift {
 
 	/**
 	 * Is this a command line option (e.g. "-tfam" is a command line option, but "-" means STDIN)
-	 * @param arg
-	 * @return
 	 */
 	protected boolean isOpt(String arg) {
 		return arg.startsWith("-") && (arg.length() > 1);
+	}
+
+	/**
+	 * Read config file
+	 */
+	protected void loadConfig() {
+		// Read config file
+		if (configFile == null || configFile.isEmpty()) configFile = Config.DEFAULT_CONFIG_FILE; // Default config file
+		if (verbose) Timer.showStdErr("Reading configuration file '" + configFile + "'");
+		config = new Config("", configFile, dataDir); // Read configuration
+		if (verbose) Timer.showStdErr("done");
 	}
 
 	/**
@@ -155,12 +234,24 @@ public class SnpSift {
 		// Create new array shifting everything 1 position
 		ArrayList<String> argsList = new ArrayList<String>();
 		for (int i = 1; i < args.length; i++) {
-			if (args[i].equalsIgnoreCase("-noLog")) log = false;
-			else if (args[i].equals("-h") || args[i].equalsIgnoreCase("-help")) help = true;
-			else if (args[i].equals("-v") || args[i].equalsIgnoreCase("-verbose")) verbose = true;
-			else if (args[i].equals("-q") || args[i].equalsIgnoreCase("-quiet")) quiet = true;
-			else if (args[i].equals("-d") || args[i].equalsIgnoreCase("-debug")) debug = true;
-			else if (args[i].equals("-cpus")) {
+			String arg = args[i];
+
+			if (arg.equalsIgnoreCase("-noLog")) log = false;
+			else if (arg.equals("-h") || arg.equalsIgnoreCase("-help")) help = true;
+			else if (arg.equals("-v") || arg.equalsIgnoreCase("-verbose")) verbose = true;
+			else if (arg.equals("-q") || arg.equalsIgnoreCase("-quiet")) quiet = true;
+			else if (arg.equals("-d") || arg.equalsIgnoreCase("-debug")) debug = true;
+			else if ((arg.equals("-c") || arg.equalsIgnoreCase("-config"))) {
+				if ((i + 1) < args.length) configFile = args[++i];
+				else usage("Option '-c' without config file argument");
+			} else if (arg.equalsIgnoreCase("-dataDir")) {
+				if ((i + 1) < args.length) dataDir = args[++i];
+				else usage("Option '-dataDir' without data_dir argument");
+			} else if (arg.equals("-db") || arg.equalsIgnoreCase("-database")) {
+				if (args.length <= i) usage("Missing argument for command line option '-db'");
+				dbFileName = args[++i];
+			} else if (arg.equals("-cpus")) {
+				if (args.length <= i) usage("Missing argument for command line option '-cpus'");
 				numWorkers = Gpr.parseIntSafe(args[++i]);
 				if (numWorkers <= 0) usage("Error: Number of cpus must be positive");
 			} else argsList.add(args[i]);
@@ -227,11 +318,18 @@ public class SnpSift {
 		cmd.quiet = quiet;
 		cmd.debug = debug;
 		cmd.help = help;
+
 		cmd.numWorkers = numWorkers;
+
+		cmd.needsConfig = needsConfig;
+		cmd.configFile = configFile;
+		cmd.config = config;
+
+		cmd.needsDb = needsDb;
+		cmd.dbFileName = dbFileName;
 
 		// Execute command
 		cmd.run();
-
 	}
 
 	public void setDebug(boolean debug) {
@@ -264,7 +362,7 @@ public class SnpSift {
 	 * Show version number
 	 */
 	public void showVersion() {
-		System.err.println(SnpSift.class.getSimpleName() + " version " + VERSION);
+		System.err.println(SnpSift.class.getSimpleName() + " version " + VERSION + "\n");
 	}
 
 	/**
@@ -334,8 +432,24 @@ public class SnpSift {
 				+ "\n\ttstv          : Calculate transiton to transversion ratio." //
 				+ "\n\tvarType       : Annotate variant type (SNP,MNP,INS,DEL or MIXED)." //
 				+ "\n\tvcf2tped      : Convert VCF to TPED." //
-				);
+		);
+
+		usageGenericAndDb();
+
 		System.exit(1);
+	}
+
+	/**
+	 * Options common to all commands
+	 */
+	protected void usageGenericAndDb() {
+		System.err.println("Common Options:\n" //
+				+ (needsConfig ? "\t-c , -config <file>  : Specify config file\n" : "") //
+				+ "\t-d                   : Debug.\n" //
+				+ (needsDb ? "\t-db <file>           : Databse file name (for commands that require datbases).\n" : "") //
+				+ "\t-h                   : Help.\n" //
+				+ "\t-v                   : Verbose.\n" //
+		);
 	}
 
 	/**
