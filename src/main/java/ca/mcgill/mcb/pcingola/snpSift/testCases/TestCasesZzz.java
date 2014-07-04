@@ -15,8 +15,15 @@ import ca.mcgill.mcb.pcingola.vcf.VcfEntry;
  */
 public class TestCasesZzz extends TestCase {
 
-	public static boolean debug = false;
+	public static boolean debug = true;
 	public static boolean verbose = true || debug;
+
+	protected String[] defaultExtraArgs;
+
+	public TestCasesZzz() {
+		String[] memExtraArgs = { "-tabix" };
+		defaultExtraArgs = memExtraArgs;
+	}
 
 	/**
 	 * Annotate
@@ -25,13 +32,7 @@ public class TestCasesZzz extends TestCase {
 		System.out.println("Annotate: " + dbFileName + "\t" + fileName);
 
 		// Create command line
-		ArrayList<String> argsList = new ArrayList<String>();
-		if (extraArgs != null) {
-			for (String arg : extraArgs)
-				argsList.add(arg);
-		}
-		argsList.add(fileName);
-		String args[] = argsList.toArray(new String[0]);
+		String args[] = argsList(dbFileName, fileName, extraArgs);
 
 		// Iterate over VCF entries
 		SnpSiftCmdAnnotate snpSiftAnnotate = new SnpSiftCmdAnnotate(args);
@@ -44,6 +45,24 @@ public class TestCasesZzz extends TestCase {
 		Assert.assertTrue(results != null);
 		Assert.assertTrue(results.size() > 0);
 		return results;
+	}
+
+	public String annotateOut(String dbFileName, String fileName, String[] extraArgs) {
+		System.out.println("Annotate: " + dbFileName + "\t" + fileName);
+
+		// Create command line
+		String args[] = argsList(dbFileName, fileName, extraArgs);
+
+		// Iterate over VCF entries
+		SnpSiftCmdAnnotate snpSiftAnnotate = new SnpSiftCmdAnnotate(args);
+		snpSiftAnnotate.setDbFileName(dbFileName);
+		snpSiftAnnotate.setDebug(debug);
+		snpSiftAnnotate.setVerbose(verbose);
+		snpSiftAnnotate.setSaveOutput(true);
+		snpSiftAnnotate.run();
+
+		// Check
+		return snpSiftAnnotate.getOutput();
 	}
 
 	public void annotateTest(String dbFileName, String fileName) {
@@ -73,20 +92,35 @@ public class TestCasesZzz extends TestCase {
 		}
 	}
 
-	public void test_16() {
-		String dbFileName = "./test/db_test_16.vcf";
-		String fileName = "./test/annotate_16.vcf";
-		String infoName = "PREPEND_";
-		String extraArgs[] = { "-name", infoName };
+	protected String[] argsList(String dbFileName, String fileName, String[] extraArgs) {
+		ArrayList<String> argsList = new ArrayList<String>();
+
+		if (defaultExtraArgs != null) {
+			for (String arg : defaultExtraArgs)
+				argsList.add(arg);
+		}
+
+		if (extraArgs != null) {
+			for (String arg : extraArgs)
+				argsList.add(arg);
+		}
+
+		argsList.add(fileName);
+		return argsList.toArray(new String[0]);
+	}
+
+	public void test_14() {
+		String dbFileName = "./test/annotate_multiple_allele.db.vcf";
+		String fileName = "./test/annotate_multiple_allele.1.vcf";
 
 		// Annotate
-		List<VcfEntry> results = annotate(dbFileName, fileName, extraArgs);
+		List<VcfEntry> results = annotate(dbFileName, fileName, null);
 
+		// Check results
 		VcfEntry ve = results.get(0);
-		String aa = ve.getInfo(infoName + "AA");
-		String bb = ve.getInfo(infoName + "BB");
-		Assert.assertEquals("Field_Value", aa);
-		Assert.assertEquals("AnotherValue", bb);
+		System.out.println(ve);
+		String allNum = ve.getInfo("ALL_NUM");
+		Assert.assertEquals("2", allNum);
 	}
 
 }

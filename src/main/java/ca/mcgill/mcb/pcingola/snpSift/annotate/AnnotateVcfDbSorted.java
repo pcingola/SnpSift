@@ -106,7 +106,7 @@ public class AnnotateVcfDbSorted extends AnnotateVcfDb {
 				if (!ve.getRef().equals(vcfDb.getRef()) //
 						&& !ve.getRef().startsWith(vcfDb.getRef()) //
 						&& !vcfDb.getRef().startsWith(ve.getRef()) //
-				) {
+						) {
 					System.err.println("WARNING: Reference in database file '" + dbFileName + "' is '" + vcfDb.getRef() + "' and reference in input file is " + ve.getRef() + "' at " + chr + ":" + (ve.getStart() + 1));
 					countBadRef++;
 				}

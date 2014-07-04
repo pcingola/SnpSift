@@ -188,8 +188,6 @@ public class SnpSiftCmdAnnotate extends SnpSift {
 			break;
 
 		case TABIX:
-			// If the 'gz' file exists, try opening that one
-			if (!dbFileName.endsWith(".gz") && Gpr.exists(dbFileName + ".gz")) dbFileName = dbFileName + ".gz";
 			annotateDb = new AnnotateVcfDbTabix(dbFileName);
 			break;
 
@@ -282,6 +280,12 @@ public class SnpSiftCmdAnnotate extends SnpSift {
 
 		// Find or download database
 		dbFileName = databaseFindOrDownload();
+
+		// For tabix databases, if the 'gz' file exists, try opening that one instead
+		if (method == AnnotationMethod.TABIX //
+				&& !dbFileName.endsWith(".gz") //
+				&& Gpr.exists(dbFileName + ".gz") //
+		) dbFileName = dbFileName + ".gz";
 
 		if (verbose) Timer.showStdErr("Annotating\n" //
 				+ "\tInput file    : '" + vcfFileName + "'\n" //

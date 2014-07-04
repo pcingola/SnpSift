@@ -28,6 +28,9 @@ public class AnnotateVcfDbTabix extends AnnotateVcfDb {
 		// Open database
 		vcfDbFile = new VcfFileIterator(dbFileName);
 		if (!vcfDbFile.isTabix()) throw new RuntimeException("Could not open VCF file as TABIX-indexed: '" + dbFileName + "'");
+
+		latestVcfDb = vcfDbFile.next(); // Read first VCf entry from DB file (this also forces to read headers)
+		addDbCurrent(latestVcfDb);
 	}
 
 	/**
@@ -50,7 +53,6 @@ public class AnnotateVcfDbTabix extends AnnotateVcfDb {
 					// Is vcfEntry still in 'latestChromo'? Then we have no DbEntry, return null
 					if (latestChromo.equals(vcfEntry.getChromosomeName())) {
 						// End of 'latestChromo' section in database?
-						clearCurrent();
 						return;
 					}
 
@@ -62,7 +64,6 @@ public class AnnotateVcfDbTabix extends AnnotateVcfDb {
 					// Still null? well it looks like we don't have any dbEntry for this chromosome
 					if (latestVcfDb == null) {
 						latestChromo = vcfEntry.getChromosomeName(); // Make sure we don't try jumping again
-						clearCurrent();
 						return;
 					}
 				}
