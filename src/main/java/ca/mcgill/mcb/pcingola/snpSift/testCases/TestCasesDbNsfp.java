@@ -1,10 +1,13 @@
 package ca.mcgill.mcb.pcingola.snpSift.testCases;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
 import junit.framework.TestCase;
 
 import org.junit.Assert;
 
-import ca.mcgill.mcb.pcingola.fileIterator.VcfFileIterator;
 import ca.mcgill.mcb.pcingola.snpSift.SnpSiftCmdDbNsfp;
 import ca.mcgill.mcb.pcingola.util.Gpr;
 import ca.mcgill.mcb.pcingola.vcf.VcfEntry;
@@ -19,39 +22,81 @@ public class TestCasesDbNsfp extends TestCase {
 	public static boolean verbose = false;
 	public static boolean debug = false;
 
-	public void test_01() {
-		String vcfFileName = "test/test_dbNSFP_chr1_69134.vcf";
-		String args[] = { "-collapse", "-f", "GERP++_RS,GERP++_NR,ESP6500_AA_AF,29way_logOdds,Polyphen2_HVAR_pred,SIFT_score,Uniprot_acc,Ensembl_transcriptid", "test/dbNSFP2.0b3.chr1_69134.txt", vcfFileName };
+	protected String[] defaultExtraArgs = null;
+
+	public List<VcfEntry> annotate(String dbFileName, String fileName, String[] extraArgs) {
+		System.out.println("Annotate: " + dbFileName + "\t" + fileName);
+
+		// Create command line
+		String args[] = argsList(dbFileName, fileName, extraArgs);
 		SnpSiftCmdDbNsfp cmd = new SnpSiftCmdDbNsfp(args);
+		cmd.setDbFileName(dbFileName);
 		cmd.setVerbose(verbose);
 		cmd.setDebug(debug);
 		cmd.setTabixCheck(false);
 
-		try {
-			cmd.initAnnotate();
+		List<VcfEntry> results = cmd.run(true);
 
-			// Get entry.
-			// Note: There is only one entry to annotate (the VCF file has one line)
-			VcfFileIterator vcfFile = new VcfFileIterator(vcfFileName);
-			VcfEntry vcfEntry = vcfFile.next();
+		Assert.assertTrue(results != null);
+		Assert.assertTrue(results.size() > 0);
 
-			cmd.annotate(vcfEntry);
-			if (debug) Gpr.debug(vcfEntry);
+		return results;
+	}
 
-			// Check all values
-			Assert.assertEquals("2.31", vcfEntry.getInfo(SnpSiftCmdDbNsfp.VCF_INFO_PREFIX + "GERP++_RS"));
-			Assert.assertEquals("2.31", vcfEntry.getInfo(SnpSiftCmdDbNsfp.VCF_INFO_PREFIX + "GERP++_NR"));
-			Assert.assertEquals("0.004785", vcfEntry.getInfo(SnpSiftCmdDbNsfp.VCF_INFO_PREFIX + "ESP6500_AA_AF"));
-			Assert.assertEquals("8.5094", vcfEntry.getInfo(SnpSiftCmdDbNsfp.VCF_INFO_PREFIX + "29way_logOdds"));
-			Assert.assertEquals("B", vcfEntry.getInfo(SnpSiftCmdDbNsfp.VCF_INFO_PREFIX + "Polyphen2_HVAR_pred"));
-			Assert.assertEquals("0.090000", vcfEntry.getInfo(SnpSiftCmdDbNsfp.VCF_INFO_PREFIX + "SIFT_score"));
-			Assert.assertEquals("Q8NH21", vcfEntry.getInfo(SnpSiftCmdDbNsfp.VCF_INFO_PREFIX + "Uniprot_acc"));
-			Assert.assertEquals("ENST00000534990,ENST00000335137", vcfEntry.getInfo(SnpSiftCmdDbNsfp.VCF_INFO_PREFIX + "Ensembl_transcriptid"));
+	public Map<String, String> annotateGetFiledTypes(String dbFileName, String fileName, String[] extraArgs) {
+		System.out.println("Annotate: " + dbFileName + "\t" + fileName);
 
-			cmd.endAnnotate();
-		} catch (Exception e) {
-			throw new RuntimeException(e);
+		// Create command line
+		String args[] = argsList(dbFileName, fileName, extraArgs);
+		SnpSiftCmdDbNsfp cmd = new SnpSiftCmdDbNsfp(args);
+		cmd.setDbFileName(dbFileName);
+		cmd.setVerbose(verbose);
+		cmd.setDebug(debug);
+		cmd.setTabixCheck(false);
+
+		List<VcfEntry> results = cmd.run(true);
+
+		Assert.assertTrue(results != null);
+		Assert.assertTrue(results.size() > 0);
+
+		return cmd.getFieldsType();
+	}
+
+	protected String[] argsList(String dbFileName, String fileName, String[] extraArgs) {
+		ArrayList<String> argsList = new ArrayList<String>();
+
+		if (defaultExtraArgs != null) {
+			for (String arg : defaultExtraArgs)
+				argsList.add(arg);
 		}
+
+		if (extraArgs != null) {
+			for (String arg : extraArgs)
+				argsList.add(arg);
+		}
+
+		argsList.add(fileName);
+		return argsList.toArray(new String[0]);
+	}
+
+	public void test_01() {
+		String vcfFileName = "test/test_dbNSFP_chr1_69134.vcf";
+		String dbFileName = "test/dbNSFP2.0b3.chr1_69134.txt";
+		String args[] = { "-collapse", "-f", "GERP++_RS,GERP++_NR,ESP6500_AA_AF,29way_logOdds,Polyphen2_HVAR_pred,SIFT_score,Uniprot_acc,Ensembl_transcriptid" };
+
+		List<VcfEntry> results = annotate(dbFileName, vcfFileName, args);
+		VcfEntry vcfEntry = results.get(0);
+
+		// Check all values
+		Assert.assertEquals("2.31", vcfEntry.getInfo(SnpSiftCmdDbNsfp.VCF_INFO_PREFIX + "GERP++_RS"));
+		Assert.assertEquals("2.31", vcfEntry.getInfo(SnpSiftCmdDbNsfp.VCF_INFO_PREFIX + "GERP++_NR"));
+		Assert.assertEquals("0.004785", vcfEntry.getInfo(SnpSiftCmdDbNsfp.VCF_INFO_PREFIX + "ESP6500_AA_AF"));
+		Assert.assertEquals("8.5094", vcfEntry.getInfo(SnpSiftCmdDbNsfp.VCF_INFO_PREFIX + "29way_logOdds"));
+		Assert.assertEquals("B", vcfEntry.getInfo(SnpSiftCmdDbNsfp.VCF_INFO_PREFIX + "Polyphen2_HVAR_pred"));
+		Assert.assertEquals("0.090000", vcfEntry.getInfo(SnpSiftCmdDbNsfp.VCF_INFO_PREFIX + "SIFT_score"));
+		Assert.assertEquals("Q8NH21", vcfEntry.getInfo(SnpSiftCmdDbNsfp.VCF_INFO_PREFIX + "Uniprot_acc"));
+		Assert.assertEquals("ENST00000534990,ENST00000335137", vcfEntry.getInfo(SnpSiftCmdDbNsfp.VCF_INFO_PREFIX + "Ensembl_transcriptid"));
+
 	}
 
 	/**
@@ -59,36 +104,19 @@ public class TestCasesDbNsfp extends TestCase {
 	 */
 	public void test_02() {
 		String vcfFileName = "test/test_dbnsfp_multiple.vcf";
+		String dbFileName = "test/test_dbnsfp_multiple_lines.txt";
 		String fields = "genename,Ensembl_geneid,Ensembl_transcriptid,aaref,aaalt";
-		String args[] = { "-collapse", "-f", fields, "test/test_dbnsfp_multiple_lines.txt", vcfFileName };
+		String args[] = { "-collapse", "-f", fields };
 
-		SnpSiftCmdDbNsfp cmd = new SnpSiftCmdDbNsfp(args);
-		cmd.setVerbose(verbose);
-		cmd.setDebug(debug);
-		cmd.setTabixCheck(false);
+		List<VcfEntry> results = annotate(dbFileName, vcfFileName, args);
+		VcfEntry vcfEntry = results.get(0);
 
-		try {
-			cmd.initAnnotate();
-
-			// Get entry.
-			// Note: There is only one entry to annotate (the VCF file has one line)
-			VcfFileIterator vcfFile = new VcfFileIterator(vcfFileName);
-			VcfEntry vcfEntry = vcfFile.next();
-
-			cmd.annotate(vcfEntry);
-			if (debug) Gpr.debug(vcfEntry);
-
-			// Check all values
-			Assert.assertEquals("ENST00000368485,ENST00000515190", vcfEntry.getInfo(SnpSiftCmdDbNsfp.VCF_INFO_PREFIX + "Ensembl_transcriptid"));
-			Assert.assertEquals("IL6R", vcfEntry.getInfo(SnpSiftCmdDbNsfp.VCF_INFO_PREFIX + "genename"));
-			Assert.assertEquals("ENSG00000160712", vcfEntry.getInfo(SnpSiftCmdDbNsfp.VCF_INFO_PREFIX + "Ensembl_geneid"));
-			Assert.assertEquals("A,L", vcfEntry.getInfo(SnpSiftCmdDbNsfp.VCF_INFO_PREFIX + "aaalt"));
-			Assert.assertEquals("D,I", vcfEntry.getInfo(SnpSiftCmdDbNsfp.VCF_INFO_PREFIX + "aaref"));
-
-			cmd.endAnnotate();
-		} catch (Exception e) {
-			throw new RuntimeException(e);
-		}
+		// Check all values
+		Assert.assertEquals("ENST00000368485,ENST00000515190", vcfEntry.getInfo(SnpSiftCmdDbNsfp.VCF_INFO_PREFIX + "Ensembl_transcriptid"));
+		Assert.assertEquals("IL6R", vcfEntry.getInfo(SnpSiftCmdDbNsfp.VCF_INFO_PREFIX + "genename"));
+		Assert.assertEquals("ENSG00000160712", vcfEntry.getInfo(SnpSiftCmdDbNsfp.VCF_INFO_PREFIX + "Ensembl_geneid"));
+		Assert.assertEquals("A,L", vcfEntry.getInfo(SnpSiftCmdDbNsfp.VCF_INFO_PREFIX + "aaalt"));
+		Assert.assertEquals("D,I", vcfEntry.getInfo(SnpSiftCmdDbNsfp.VCF_INFO_PREFIX + "aaref"));
 	}
 
 	/**
@@ -96,125 +124,68 @@ public class TestCasesDbNsfp extends TestCase {
 	 */
 	public void test_03() {
 		String vcfFileName = "test/test_dbnsfp_multiple_noCollapse.vcf";
+		String dbFileName = "test/test_dbnsfp_multiple_noCollapse.txt";
 		String fields = "aaalt,Ensembl_transcriptid,Polyphen2_HDIV_score,Polyphen2_HVAR_pred";
-		String args[] = { "-nocollapse", "-f", fields, "test/test_dbnsfp_multiple_noCollapse.txt", vcfFileName };
+		String args[] = { "-nocollapse", "-f", fields };
 
-		SnpSiftCmdDbNsfp cmd = new SnpSiftCmdDbNsfp(args);
-		cmd.setVerbose(verbose);
-		cmd.setDebug(debug);
-		cmd.setTabixCheck(false);
+		List<VcfEntry> results = annotate(dbFileName, vcfFileName, args);
+		VcfEntry vcfEntry = results.get(0);
 
-		try {
-			cmd.initAnnotate();
-
-			// Get entry.
-			// Note: There is only one entry to annotate (the VCF file has one line)
-			VcfFileIterator vcfFile = new VcfFileIterator(vcfFileName);
-			VcfEntry vcfEntry = vcfFile.next();
-
-			cmd.annotate(vcfEntry);
-			if (debug) Gpr.debug(vcfEntry);
-
-			// Check all values
-			// dbNSFP_Ensembl_transcriptid=ENST00000347404,ENST00000537835,ENST00000378535,ENST00000228280;dbNSFP_Polyphen2_HDIV_score=0.449,.,0.192;dbNSFP_Polyphen2_HVAR_pred=B,.,B;dbNSFP_aaalt=A,R,T
-			Assert.assertEquals("ENST00000347404,ENST00000537835,ENST00000378535,ENST00000228280", vcfEntry.getInfo("dbNSFP_Ensembl_transcriptid"));
-			Assert.assertEquals("0.449,.,0.192", vcfEntry.getInfo("dbNSFP_Polyphen2_HDIV_score"));
-			Assert.assertEquals("B,.,B", vcfEntry.getInfo("dbNSFP_Polyphen2_HVAR_pred"));
-			Assert.assertEquals("A,R,T", vcfEntry.getInfo("dbNSFP_aaalt"));
-
-			cmd.endAnnotate();
-		} catch (Exception e) {
-			throw new RuntimeException(e);
-		}
+		// Check all values
+		// dbNSFP_Ensembl_transcriptid=ENST00000347404,ENST00000537835,ENST00000378535,ENST00000228280;dbNSFP_Polyphen2_HDIV_score=0.449,.,0.192;dbNSFP_Polyphen2_HVAR_pred=B,.,B;dbNSFP_aaalt=A,R,T
+		Assert.assertEquals("ENST00000347404,ENST00000537835,ENST00000378535,ENST00000228280", vcfEntry.getInfo("dbNSFP_Ensembl_transcriptid"));
+		Assert.assertEquals("0.449,.,0.192", vcfEntry.getInfo("dbNSFP_Polyphen2_HDIV_score"));
+		Assert.assertEquals("B,.,B", vcfEntry.getInfo("dbNSFP_Polyphen2_HVAR_pred"));
+		Assert.assertEquals("A,R,T", vcfEntry.getInfo("dbNSFP_aaalt"));
 	}
 
 	public void test_04() {
 		// We annotate something trivial: position
 		String vcfFileName = "test/test_dbNSFP_04.vcf";
-		String args[] = { "-collapse", "-f", "pos(1-coor)", "test/dbNSFP2.3.test.txt.gz", vcfFileName };
+		String dbFileName = "test/dbNSFP2.3.test.txt.gz";
+		String args[] = { "-collapse", "-f", "pos(1-coor)" };
 
-		SnpSiftCmdDbNsfp cmd = new SnpSiftCmdDbNsfp(args);
-		cmd.setVerbose(verbose);
-		cmd.setDebug(debug);
+		List<VcfEntry> results = annotate(dbFileName, vcfFileName, args);
 
-		try {
-			cmd.initAnnotate();
+		// Get entry.
+		// Note: There is only one entry to annotate (the VCF file has one line)
+		for (VcfEntry vcfEntry : results) {
 
-			// Get entry.
-			// Note: There is only one entry to annotate (the VCF file has one line)
-			VcfFileIterator vcfFile = new VcfFileIterator(vcfFileName);
-			for (VcfEntry vcfEntry : vcfFile) {
-				// Annotate vcf entry
-				cmd.annotate(vcfEntry);
-
-				// Check that position (annotated from dbNSFP) actually matches
-				String posDb = vcfEntry.getInfo("dbNSFP_pos(1-coor)"); // Get INFO field annotated from dbNSFP
-				int pos = vcfEntry.getStart() + 1; // Get position
-				Assert.assertEquals("" + pos, posDb); // Compare
-			}
-
-			cmd.endAnnotate();
-		} catch (Exception e) {
-			throw new RuntimeException(e);
+			// Check that position (annotated from dbNSFP) actually matches
+			String posDb = vcfEntry.getInfo("dbNSFP_pos(1-coor)"); // Get INFO field annotated from dbNSFP
+			int pos = vcfEntry.getStart() + 1; // Get position
+			Assert.assertEquals("" + pos, posDb); // Compare
 		}
 	}
 
 	public void test_05() {
 		// We annotate something trivial: position
 		String vcfFileName = "test/test_dbNSFP_05.vcf";
-		String args[] = { "-f", "pos(1-coor)", "test/dbNSFP2.3.test.txt.gz", vcfFileName };
+		String dbFileName = "test/dbNSFP2.3.test.txt.gz";
+		String args[] = { "-f", "pos(1-coor)" };
 
-		SnpSiftCmdDbNsfp cmd = new SnpSiftCmdDbNsfp(args);
-		cmd.setVerbose(verbose);
-		cmd.setDebug(debug);
+		List<VcfEntry> results = annotate(dbFileName, vcfFileName, args);
 
-		try {
-			cmd.initAnnotate();
+		for (VcfEntry vcfEntry : results) {
+			// Check that position (annotated from dbNSFP) actually matches
+			String posDb = vcfEntry.getInfo("dbNSFP_pos(1-coor)"); // Get INFO field annotated from dbNSFP
+			int pos = vcfEntry.getStart() + 1; // Get position
+			if (debug) Gpr.debug(vcfEntry.getChromosomeName() + ":" + pos + "\t" + posDb);
 
-			// Get entry.
-			// Note: There is only one entry to annotate (the VCF file has one line)
-			VcfFileIterator vcfFile = new VcfFileIterator(vcfFileName);
-			for (VcfEntry vcfEntry : vcfFile) {
-				// Annotate vcf entry
-				cmd.annotate(vcfEntry);
-
-				// Check that position (annotated from dbNSFP) actually matches
-				String posDb = vcfEntry.getInfo("dbNSFP_pos(1-coor)"); // Get INFO field annotated from dbNSFP
-				int pos = vcfEntry.getStart() + 1; // Get position
-				if (debug) Gpr.debug(vcfEntry.getChromosomeName() + ":" + pos + "\t" + posDb);
-
-				// Check
-				if (pos != 249213000) Assert.assertEquals("" + pos, posDb);
-				else Assert.assertEquals(null, posDb); // There is no dbNSFP for this entry. It should be 'null'
-			}
-
-			cmd.endAnnotate();
-		} catch (Exception e) {
-			throw new RuntimeException(e);
+			// Check
+			if (pos != 249213000) Assert.assertEquals("" + pos, posDb);
+			else Assert.assertEquals(null, posDb); // There is no dbNSFP for this entry. It should be 'null'
 		}
+
 	}
 
 	public void test_06() {
 		// We annotate something trivial: position
 		String vcfFileName = "test/test_dbNSFP_06.vcf";
-		String args[] = { "-f", "pos(1-coor)", "test/dbNSFP2.3.test.txt.gz", vcfFileName };
+		String dbFileName = "test/dbNSFP2.3.test.txt.gz";
+		String args[] = { "-f", "pos(1-coor)" };
 
-		SnpSiftCmdDbNsfp cmd = new SnpSiftCmdDbNsfp(args);
-		cmd.setVerbose(verbose);
-		cmd.setDebug(debug);
-
-		try {
-			cmd.initAnnotate();
-
-			// Note: There is only one entry to annotate (the VCF file has one line)
-			VcfFileIterator vcfFile = new VcfFileIterator(vcfFileName);
-			for (VcfEntry vcfEntry : vcfFile)
-				cmd.annotate(vcfEntry); // Chromosome not present in database. Check that no exception is thrown.
-
-			cmd.endAnnotate();
-		} catch (Exception e) {
-			throw new RuntimeException(e);
-		}
+		annotate(dbFileName, vcfFileName, args);
 	}
 
 	/**
@@ -227,29 +198,13 @@ public class TestCasesDbNsfp extends TestCase {
 	 */
 	public void test_07() {
 		// We annotate something trivial: position
-		String dbnsfpFileName = "test/dbNSFP2.4.head_100.txt.gz";
 		String vcfFileName = "test/test.dbnsfp.07.vcf";
-		String args[] = { "-f", "SIFT_score", dbnsfpFileName, vcfFileName };
+		String dbFileName = "test/dbNSFP2.4.head_100.txt.gz";
+		String args[] = { "-f", "SIFT_score" };
 
-		SnpSiftCmdDbNsfp cmd = new SnpSiftCmdDbNsfp(args);
-		cmd.setVerbose(verbose);
-		cmd.setDebug(debug);
-
-		try {
-			cmd.initAnnotate();
-
-			// Make sure we get the right type
-			Assert.assertEquals("Float", cmd.getFieldsType().get("SIFT_score"));
-
-			// Note: There is only one entry to annotate (the VCF file has one line)
-			VcfFileIterator vcfFile = new VcfFileIterator(vcfFileName);
-			for (VcfEntry vcfEntry : vcfFile)
-				cmd.annotate(vcfEntry); // Chromosome not present in database. Check that no exception is thrown.
-
-			cmd.endAnnotate();
-		} catch (Exception e) {
-			throw new RuntimeException(e);
-		}
+		// Check field type
+		Map<String, String> fieldTypes = annotateGetFiledTypes(dbFileName, vcfFileName, args);
+		Assert.assertEquals("Float", fieldTypes.get("SIFT_score"));
 	}
 
 	/**
@@ -257,29 +212,14 @@ public class TestCasesDbNsfp extends TestCase {
 	 */
 	public void test_08() {
 		String vcfFileName = "test/test_dbNSFP_8.vcf";
-		String args[] = { "-collapse", "-a", "-f", "Polyphen2_HDIV_score", "test/dbNSFP2.4.chr4_55946200_55946300.txt.gz", vcfFileName };
-		SnpSiftCmdDbNsfp cmd = new SnpSiftCmdDbNsfp(args);
-		cmd.setVerbose(verbose);
-		cmd.setDebug(debug);
+		String dbFileName = "test/dbNSFP2.4.chr4_55946200_55946300.txt.gz";
+		String args[] = { "-collapse", "-a", "-f", "Polyphen2_HDIV_score" };
 
-		try {
-			cmd.initAnnotate();
+		List<VcfEntry> results = annotate(dbFileName, vcfFileName, args);
+		VcfEntry vcfEntry = results.get(0);
 
-			// Get entry.
-			// Note: There is only one entry to annotate (the VCF file has one line)
-			VcfFileIterator vcfFile = new VcfFileIterator(vcfFileName);
-			VcfEntry vcfEntry = vcfFile.next();
-
-			cmd.annotate(vcfEntry);
-			if (verbose) System.out.println(vcfEntry);
-
-			// Check all values
-			Assert.assertEquals(".,1.0,1.0", vcfEntry.getInfo(SnpSiftCmdDbNsfp.VCF_INFO_PREFIX + "Polyphen2_HDIV_score"));
-
-			cmd.endAnnotate();
-		} catch (Exception e) {
-			throw new RuntimeException(e);
-		}
+		// Check all values
+		Assert.assertEquals(".,1.0,1.0", vcfEntry.getInfo(SnpSiftCmdDbNsfp.VCF_INFO_PREFIX + "Polyphen2_HDIV_score"));
 	}
 
 }

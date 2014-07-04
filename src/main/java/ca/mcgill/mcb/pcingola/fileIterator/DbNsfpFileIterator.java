@@ -88,26 +88,6 @@ public class DbNsfpFileIterator extends MarkerFileIterator<DbNsfpEntry> {
 		}
 	}
 
-	public static final int MIN_LINES = 10 * 1000; // Analyze at least this many lines (because some types might change)
-	public static final String HEADER_PREFIX = "#";
-	public static final char COLUMN_SEPARATOR = '\t';
-	public static final String COLUMN_SEPARATOR_STR = "" + COLUMN_SEPARATOR;
-	public static final String SUBFIELD_SEPARATOR = ";";
-	public static final String SUBFIELD_SEPARATOR_ALT = ",";
-	public static final String COLUMN_CHR_NAME = "chr";
-	public static final String COLUMN_POS_NAME = "pos(1-coor)";
-	public static final String ALT_NAME = "alt";
-
-	private final TObjectIntHashMap<String> columnNames2Idx = new TObjectIntHashMap<String>();
-	boolean collapseRepeatedValues = true;
-	int chromosomeIdx;
-	int startIdx;
-	int altIdx;
-	String fieldNames[] = null; // Field names in same order as file columns
-	VcfInfoType types[] = null; // VCF data types
-	boolean multipleValues[] = null; // Does this column have multiple columns?
-	HashMap<String, Integer> names2index; // Map column name to index
-
 	/**
 	 * Splits a separated string into an array of <code>String</code> tokens. If
 	 * the input string is null, this method returns null.
@@ -134,6 +114,27 @@ public class DbNsfpFileIterator extends MarkerFileIterator<DbNsfpEntry> {
 		StringTokenizer st = new StringTokenizer(value, delim);
 		return st.tokens(String.class);
 	}
+
+	public static final int MIN_LINES = 10 * 1000; // Analyze at least this many lines (because some types might change)
+	public static final String HEADER_PREFIX = "#";
+	public static final char COLUMN_SEPARATOR = '\t';
+	public static final String COLUMN_SEPARATOR_STR = "" + COLUMN_SEPARATOR;
+	public static final String SUBFIELD_SEPARATOR = ";";
+	public static final String SUBFIELD_SEPARATOR_ALT = ",";
+	public static final String COLUMN_CHR_NAME = "chr";
+	public static final String COLUMN_POS_NAME = "pos(1-coor)";
+
+	public static final String ALT_NAME = "alt";
+	private final TObjectIntHashMap<String> columnNames2Idx = new TObjectIntHashMap<String>();
+	boolean collapseRepeatedValues = true;
+	int chromosomeIdx;
+	int startIdx;
+	int altIdx;
+	String fieldNames[] = null; // Field names in same order as file columns
+	VcfInfoType types[] = null; // VCF data types
+	boolean multipleValues[] = null; // Does this column have multiple columns?
+
+	HashMap<String, Integer> names2index; // Map column name to index
 
 	public DbNsfpFileIterator(String fileName) {
 		super(fileName, 1);

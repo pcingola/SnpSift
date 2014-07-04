@@ -1,7 +1,9 @@
 package ca.mcgill.mcb.pcingola.snpSift;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import ca.mcgill.mcb.pcingola.fileIterator.DbNsfpEntry;
@@ -44,7 +46,7 @@ public class SnpSiftCmdDbNsfp extends SnpSift {
 			+ "phastCons100way_vertebrate," // Conservation
 			+ "1000Gp1_AF,1000Gp1_AFR_AF,1000Gp1_EUR_AF,1000Gp1_AMR_AF,1000Gp1_ASN_AF," // Allele frequencies 1000 Genomes project
 			+ "ESP6500_AA_AF,ESP6500_EA_AF" // Allele frequencies Exome sequencing project
-	;
+			;
 
 	public static final int MIN_JUMP = 100;
 	public static final int SHOW_ANNOTATED = 1;
@@ -88,7 +90,9 @@ public class SnpSiftCmdDbNsfp extends SnpSift {
 		}
 	}
 
-	void annotate() {
+	ArrayList<VcfEntry> annotate(boolean createList) {
+		ArrayList<VcfEntry> list = (createList ? new ArrayList<VcfEntry>() : null);
+
 		// Initialize annotations
 		try {
 			initAnnotate();
@@ -119,7 +123,7 @@ public class SnpSiftCmdDbNsfp extends SnpSift {
 					fatalError("Your VCF file should be sorted!" //
 							+ "\n\tPrevious entry " + chr + ":" + pos//
 							+ "\n\tCurrent entry  " + vcfEntry.getChromosomeName() + ":" + (vcfEntry.getStart() + 1)//
-					);
+							);
 				}
 
 				// Annotate
@@ -127,6 +131,7 @@ public class SnpSiftCmdDbNsfp extends SnpSift {
 
 				// Show
 				System.out.println(vcfEntry);
+				if (list != null) list.add(vcfEntry);
 				count++;
 
 				// Update chr:pos
@@ -146,8 +151,10 @@ public class SnpSiftCmdDbNsfp extends SnpSift {
 					+ "\n\tTotal annotated entries : " + countAnnotated //
 					+ "\n\tTotal entries           : " + count //
 					+ "\n\tPercent                 : " + String.format("%.2f%%", perc) //
-			);
+					);
 		}
+
+		return list;
 	}
 
 	/**
@@ -325,7 +332,6 @@ public class SnpSiftCmdDbNsfp extends SnpSift {
 
 	/**
 	 * Initialize annotation process
-	 * @throws IOException
 	 */
 	public void initAnnotate() throws IOException {
 		// Open VCF file
@@ -386,7 +392,10 @@ public class SnpSiftCmdDbNsfp extends SnpSift {
 			else if (arg.equals("-f")) fieldsNamesToAdd = args[++i]; // Filed to be used
 			else if (arg.equalsIgnoreCase("-noCollapse")) collapseRepeatedValues = false;
 			else if (arg.equalsIgnoreCase("-collapse")) collapseRepeatedValues = true;
-			else if (vcfFileName == null) vcfFileName = arg;
+			else {
+				if (vcfFileName == null) vcfFileName = arg;
+				else usage("Unknown extra parameter '" + arg + "'");
+			}
 		}
 
 		// Sanity check
@@ -395,6 +404,10 @@ public class SnpSiftCmdDbNsfp extends SnpSift {
 
 	@Override
 	public void run() {
+		run(false);
+	}
+
+	public List<VcfEntry> run(boolean createList) {
 		// Read config
 		if (config == null) loadConfig();
 
@@ -404,9 +417,9 @@ public class SnpSiftCmdDbNsfp extends SnpSift {
 		if (verbose) Timer.showStdErr("Annotating\n" //
 				+ "\tInput file    : '" + vcfFileName + "'\n" //
 				+ "\tDatabase file : '" + dbFileName + "'" //
-		);
+				);
 
-		annotate();
+		return annotate(createList);
 	}
 
 	public void setTabixCheck(boolean tabixCheck) {
@@ -437,7 +450,7 @@ public class SnpSiftCmdDbNsfp extends SnpSift {
 				+ "\t-noCollapse   : Switch off 'collapsing' repeated values from dbNSFP. Default: " + !collapseRepeatedValues + "\n" //
 				+ "\t-f            : A comma separated list of fields to add.\n" //
 				+ "\t                Default fields to add:\n" + sb //
-		);
+				);
 
 		usageGenericAndDb();
 
