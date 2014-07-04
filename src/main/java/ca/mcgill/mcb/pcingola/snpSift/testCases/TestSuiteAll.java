@@ -5,12 +5,10 @@ import junit.framework.TestSuite;
 
 /**
  * Invoke all test cases
- * 
+ *
  * @author pcingola
  */
 public class TestSuiteAll {
-
-	public static boolean compareCdsTestsEnable = false;
 
 	public static void main(String args[]) {
 		junit.textui.TestRunner.run(suite());
@@ -26,6 +24,7 @@ public class TestSuiteAll {
 		suite.addTestSuite(TestCasesCaseControl.class);
 		suite.addTestSuite(TestCasesAnnotate.class);
 		suite.addTestSuite(TestCasesAnnotateMem.class);
+		suite.addTestSuite(TestCasesAnnotateTabix.class);
 		suite.addTestSuite(TestCasesVarType.class);
 		suite.addTestSuite(TestCasesGwasCatalog.class);
 		suite.addTestSuite(TestCasesDbNsfp.class);
