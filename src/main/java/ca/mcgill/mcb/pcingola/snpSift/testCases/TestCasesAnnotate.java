@@ -236,7 +236,7 @@ public class TestCasesAnnotate extends TestCase {
 	public void test_12() throws IOException {
 		String dbFileName = "./test/db_test_12.vcf";
 		String fileName = "./test/annotate_12.vcf";
-		String extraArgs[] = { "-noAlt", dbFileName, fileName };
+		String extraArgs[] = { "-noAlt" };
 
 		// Annotate
 		List<VcfEntry> results = annotate(dbFileName, fileName, extraArgs);
@@ -254,7 +254,7 @@ public class TestCasesAnnotate extends TestCase {
 	public void test_13() throws IOException {
 		String dbFileName = "./test/db_test_13.vcf";
 		String fileName = "./test/annotate_13.vcf";
-		String extraArgs[] = { "-info", "AA", dbFileName, fileName };
+		String extraArgs[] = { "-info", "AA" };
 
 		// Annotate
 		String out = annotateOut(dbFileName, fileName, extraArgs);
