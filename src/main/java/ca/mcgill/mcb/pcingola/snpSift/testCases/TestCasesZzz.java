@@ -15,15 +15,10 @@ import ca.mcgill.mcb.pcingola.vcf.VcfEntry;
  */
 public class TestCasesZzz extends TestCase {
 
-	public static boolean debug = true;
+	public static boolean debug = false;
 	public static boolean verbose = true || debug;
 
-	protected String[] defaultExtraArgs;
-
-	public TestCasesZzz() {
-		String[] memExtraArgs = { "-tabix" };
-		defaultExtraArgs = memExtraArgs;
-	}
+	protected String[] defaultExtraArgs = null;
 
 	/**
 	 * Annotate
@@ -109,18 +104,15 @@ public class TestCasesZzz extends TestCase {
 		return argsList.toArray(new String[0]);
 	}
 
-	public void test_14() {
-		String dbFileName = "./test/annotate_multiple_allele.db.vcf";
-		String fileName = "./test/annotate_multiple_allele.1.vcf";
+	public void test_18() {
+		String dbFileName = "./test/test_annotate_18_db.vcf";
+		String fileName = "./test/test_annotate_18.vcf";
 
-		// Annotate
 		List<VcfEntry> results = annotate(dbFileName, fileName, null);
-
-		// Check results
 		VcfEntry ve = results.get(0);
-		System.out.println(ve);
-		String allNum = ve.getInfo("ALL_NUM");
-		Assert.assertEquals("2", allNum);
+		String ukac = ve.getInfo("UK10KWES_AC");
+		System.out.println("Annotated value: " + ukac);
+		Assert.assertEquals("3727", ukac);
 	}
 
 }
