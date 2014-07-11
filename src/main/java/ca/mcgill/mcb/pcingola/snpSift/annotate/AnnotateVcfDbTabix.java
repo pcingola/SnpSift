@@ -29,7 +29,6 @@ public class AnnotateVcfDbTabix extends AnnotateVcfDb {
 		vcfDbFile = new VcfFileIterator(dbFileName);
 		vcfDbFile.setDebug(debug);
 		if (!vcfDbFile.isTabix()) throw new RuntimeException("Could not open VCF file as TABIX-indexed: '" + dbFileName + "'");
-
 		latestVcfDb = vcfDbFile.next(); // Read first VCf entry from DB file (this also forces to read headers)
 		dbCurrentEntry.addDbCurrent(latestVcfDb);
 	}

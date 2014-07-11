@@ -50,6 +50,7 @@ public class AnnotateVcfDbSorted extends AnnotateVcfDb {
 
 		// Re-open VCF db file
 		vcfDbFile = new VcfFileIterator(new SeekableBufferedReader(dbFileName));
+		vcfDbFile.setDebug(debug);
 		latestVcfDb = vcfDbFile.next(); // Read first VCf entry from DB file (this also forces to read headers)
 		dbCurrentEntry.addDbCurrent(latestVcfDb);
 	}
@@ -107,7 +108,7 @@ public class AnnotateVcfDbSorted extends AnnotateVcfDb {
 				if (!ve.getRef().equals(vcfDb.getRef()) //
 						&& !ve.getRef().startsWith(vcfDb.getRef()) //
 						&& !vcfDb.getRef().startsWith(ve.getRef()) //
-						) {
+				) {
 					System.err.println("WARNING: Reference in database file '" + dbFileName + "' is '" + vcfDb.getRef() + "' and reference in input file is " + ve.getRef() + "' at " + chr + ":" + (ve.getStart() + 1));
 					countBadRef++;
 				}
