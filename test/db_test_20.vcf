@@ -1,0 +1,3 @@
+##INFO=<ID=ANNOTATE_ONCE,Number=.,Type=Integer,Description="Allele count in genotypes in UK10KWES">
+#CHROM	POS	ID	REF	ALT	QUAL	FILTER	INFO
+3	148890105	.	G	T	.	.	ANNOTATE_ONCE=44,49

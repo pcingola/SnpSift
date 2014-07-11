@@ -17,8 +17,9 @@ public class DbVcfEntry {
 	protected boolean useInfoField = true; // Use all info fields
 	protected boolean useRefAlt = true;
 	protected HashMap<String, Map<String, String>> dbCurrentInfo = new HashMap<String, Map<String, String>>();
-	protected List<String> infoFields; // Use only info fields
-	protected HashMap<String, String> dbCurrentId = new HashMap<String, String>();
+	protected List<String> infoFields; // Use only these INFO fields
+	protected HashMap<String, String> dbCurrentId = new HashMap<String, String>(); // Current DB entries
+	protected HashMap<String, Boolean> vcfInfoPerAllele = new HashMap<String, Boolean>(); // Is a VCF INFO field annotated 'per allele' basis?
 
 	/**
 	 * Add 'key->id' entries to 'dbCurrent'
@@ -69,13 +70,8 @@ public class DbVcfEntry {
 		for (String fieldName : infoToRead) {
 			if (fieldName.isEmpty()) continue; // Empty INFO field may cause this
 
-			// Get VcfInfo
-			VcfInfo vcfInfo = vcfDb.getVcfInfo(fieldName);
-
 			// Make sure we get allele specific information (if INFO is allele specific)
-			String val = null;
-			if (vcfInfo != null && (vcfInfo.isNumberOnePerAllele() || vcfInfo.isNumberAllAlleles())) val = vcfDb.getInfo(fieldName, allele);
-			else val = vcfDb.getInfo(fieldName);
+			String val = isVcfInfoPerAllele(fieldName, vcfDb) ? vcfDb.getInfo(fieldName, allele) : vcfDb.getInfo(fieldName);
 
 			// Any value? => Add
 			if (val != null) info.put(fieldName, val);
@@ -112,13 +108,13 @@ public class DbVcfEntry {
 		//---
 		// Which INFO fields can we annotate?
 		//---
-		Set<String> infoToAdd = new HashSet<String>();
+		Set<String> infoFieldsToAdd = new HashSet<String>();
 		for (int i = 0; i < vcf.getAlts().length; i++) {
 			String key = key(vcf, i);
 			Map<String, String> info = dbCurrentInfo.get(key);
 			if (info != null) {
-				for (String ikey : info.keySet())
-					infoToAdd.add(ikey);
+				for (String infoFieldName : info.keySet())
+					infoFieldsToAdd.add(infoFieldName);
 			}
 		}
 
@@ -126,17 +122,20 @@ public class DbVcfEntry {
 		// Prepare INF field to add
 		//---
 		HashMap<String, String> results = new HashMap<>();
-		for (int i = 0; i < vcf.getAlts().length; i++) {
-			// Get info field annotations
-			String key = key(vcf, i);
-			Map<String, String> info = dbCurrentInfo.get(key);
+		for (String infoFieldName : infoFieldsToAdd) {
+			for (int i = 0; i < vcf.getAlts().length; i++) {
+				// Get info field annotations
+				String key = key(vcf, i);
+				Map<String, String> info = dbCurrentInfo.get(key);
 
-			// Add each INFO
-			for (String ikey : infoToAdd) {
-				String infoVal = info == null ? null : info.get(ikey);
-				String val = results.get(ikey);
+				// Add each INFO
+				String infoVal = info == null ? null : info.get(infoFieldName);
+				String val = results.get(infoFieldName);
 				val = (val == null ? "" : val + ",") + (infoVal == null ? "." : infoVal);
-				results.put(ikey, val);
+				results.put(infoFieldName, val);
+
+				// Not a 'per allele' INFO field? Then we are done (no need to annotate other alleles)
+				if (!isVcfInfoPerAllele(infoFieldName)) break;
 			}
 		}
 
@@ -145,6 +144,26 @@ public class DbVcfEntry {
 
 	public String getLatestChromo() {
 		return latestChromo;
+	}
+
+	boolean isVcfInfoPerAllele(String fieldName) {
+		return isVcfInfoPerAllele(fieldName, null);
+	}
+
+	/**
+	 * Is 'fieldName' a per-allele annotation
+	 */
+	boolean isVcfInfoPerAllele(String fieldName, VcfEntry vcfDb) {
+		// Look up information and cache it
+		if (vcfInfoPerAllele.get(fieldName) == null) {
+			if (vcfDb == null) return false; // No VCF information? I cannot look it up...nothing to do
+
+			VcfInfo vcfInfo = vcfDb.getVcfInfo(fieldName);
+			boolean isPerAllele = vcfInfo != null && (vcfInfo.isNumberOnePerAllele() || vcfInfo.isNumberAllAlleles());
+			vcfInfoPerAllele.put(fieldName, isPerAllele);
+		}
+
+		return vcfInfoPerAllele.get(fieldName);
 	}
 
 	/**

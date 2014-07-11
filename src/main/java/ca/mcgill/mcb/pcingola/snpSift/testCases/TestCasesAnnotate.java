@@ -351,4 +351,16 @@ public class TestCasesAnnotate extends TestCase {
 		annotateTest(dbFileName, fileName);
 	}
 
+	/**
+	 * Annotate info fields
+	 */
+	public void test_20() throws IOException {
+		String dbFileName = "./test/db_test_20.vcf";
+		String fileName = "./test/annotate_20.vcf";
+		List<VcfEntry> results = annotate(dbFileName, fileName, null);
+
+		// Check
+		Assert.assertEquals("44,49", results.get(0).getInfo("ANNOTATE_ONCE"));
+	}
+
 }

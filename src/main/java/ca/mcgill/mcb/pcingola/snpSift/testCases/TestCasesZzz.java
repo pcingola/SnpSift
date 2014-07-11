@@ -107,13 +107,13 @@ public class TestCasesZzz extends TestCase {
 	/**
 	 * Annotate info fields
 	 */
-	public void test_06() throws IOException {
-		String dbFileName = "./test/db_test_06.vcf";
-		String fileName = "./test/annotate_06.vcf";
+	public void test_20() throws IOException {
+		String dbFileName = "./test/db_test_20.vcf";
+		String fileName = "./test/annotate_20.vcf";
 		List<VcfEntry> results = annotate(dbFileName, fileName, null);
 
 		// Check
-		Assert.assertEquals("PREVIOUS=annotation;TEST=yes;ABE=0.678;ABZ=47.762;AF=0.002;AN=488;AOI=-410.122;AOZ=-399.575;IOD=0.000;OBS=4,1,1636,2011,3,1,6780,9441;RSPOS=16346045", results.get(0).getInfoStr());
+		Assert.assertEquals("44,49", results.get(0).getInfo("ANNOTATE_ONCE"));
 	}
 
 }
