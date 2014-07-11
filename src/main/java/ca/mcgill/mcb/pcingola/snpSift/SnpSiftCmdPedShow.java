@@ -13,8 +13,8 @@ import ca.mcgill.mcb.pcingola.vcf.VcfEntry;
 import ca.mcgill.mcb.pcingola.vcf.VcfGenotype;
 
 /**
- * Draws a pedigree using SVG according to a VCF file 
- * 
+ * Draws a pedigree using SVG according to a VCF file
+ *
  * @author pablocingolani
  */
 public class SnpSiftCmdPedShow extends SnpSift {
@@ -109,12 +109,13 @@ public class SnpSiftCmdPedShow extends SnpSift {
 		// Initialize
 		PedigreeDraw pedigree = null;
 		VcfFileIterator vcfFile = new VcfFileIterator(vcfFileName);
+		vcfFile.setDebug(debug);
 
 		// Create directory if it doesn't exist
 		new File(outputDir).mkdir();
 
 		//---
-		// Read VCF file 
+		// Read VCF file
 		//---
 		Timer.showStdErr("Reading vcf file '" + vcfFileName + "'");
 		for (VcfEntry vcfEntry : vcfFile) {
@@ -141,7 +142,7 @@ public class SnpSiftCmdPedShow extends SnpSift {
 		vcfFile.close();
 		Timer.showStdErr("Done");
 
-		// Show missing entries 
+		// Show missing entries
 		if (chrPos != null) {
 			for (Map.Entry<String, Boolean> me : chrPos.entrySet())
 				if (!me.getValue()) System.err.println("Entry '" + me.getKey() + "' not found.");

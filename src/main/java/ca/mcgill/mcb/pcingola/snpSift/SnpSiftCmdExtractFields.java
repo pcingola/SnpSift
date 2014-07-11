@@ -12,7 +12,7 @@ import ca.mcgill.mcb.pcingola.vcf.VcfEntry;
 
 /**
  * Extract fields from VCF file to a TXT (tab separated) format
- * 
+ *
  * @author pablocingolani
  */
 public class SnpSiftCmdExtractFields extends SnpSift {
@@ -140,6 +140,8 @@ public class SnpSiftCmdExtractFields extends SnpSift {
 		// Iterate on file
 		//---
 		VcfFileIterator vcf = new VcfFileIterator(vcfFile);
+		vcf.setDebug(debug);
+
 		for (VcfEntry ve : vcf) {
 			StringBuilder out = new StringBuilder();
 			for (Field f : fields) {

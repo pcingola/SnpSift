@@ -6,21 +6,21 @@ import ca.mcgill.mcb.pcingola.vcf.VcfEntry;
 
 /**
  * Simplify indels
- * 
+ *
  * E.g.
- * 		Instead of 
- * 
+ * 		Instead of
+ *
  * 		Chr1 13204566 . AATATATATATATATATATATGTATATATATAT AATATATATATATATATATGTATATATATAT
- * 
+ *
  * 		Writes
- * 
+ *
  * 		Chr1 13204585 . TAT T
- * 
+ *
  * 	Notice the real difference:
- * 		AATATATATATATATATATATGTATATATATAT 
+ * 		AATATATATATATATATATATGTATATATATAT
  * 		AATATATATATATATATAT--GTATATATATAT
- * 
- * 
+ *
+ *
  * @author pablocingolani
  */
 public class SnpSiftCmdSimplifyIndels extends SnpSift {
@@ -59,11 +59,13 @@ public class SnpSiftCmdSimplifyIndels extends SnpSift {
 	@Override
 	public void run() {
 		VcfFileIterator vcf = new VcfFileIterator(vcfFileName);
+		vcf.setDebug(debug);
+
 		for (VcfEntry ve : vcf) {
 			if (vcf.isHeadeSection()) System.out.println(vcf.getVcfHeader());
 
 			if (ve.isInDel()) {
-				// We simplify if there is only one InDel 
+				// We simplify if there is only one InDel
 				if (ve.isMultipleAlts()) System.out.println(ve); // Multi-allelic InDels? I'm too lazy to simplify it...(show as it is)
 				else System.out.println(simplifyInDel(ve)); // Simplify & Print
 			} else {

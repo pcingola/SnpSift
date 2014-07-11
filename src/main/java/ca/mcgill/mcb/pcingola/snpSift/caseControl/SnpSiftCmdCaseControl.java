@@ -16,7 +16,7 @@ import ca.mcgill.mcb.pcingola.vcf.VcfGenotype;
 
 /**
  * Count number of cases and controls
- * 
+ *
  * @author pablocingolani
  */
 public class SnpSiftCmdCaseControl extends SnpSift {
@@ -155,7 +155,7 @@ public class SnpSiftCmdCaseControl extends SnpSift {
 		// Sanity check
 		if (caseControl.length != vcf.getVcfHeader().getSampleNames().size()) throw new RuntimeException("Number of case control entries specified does not match number of samples in VCF file");
 
-		// Show details 
+		// Show details
 		if (debug) {
 			System.err.println("\tSample\tCase");
 			int idx = 0;
@@ -163,7 +163,7 @@ public class SnpSiftCmdCaseControl extends SnpSift {
 				System.err.println("\t" + sid + "\t" + caseControl[idx++]);
 		}
 
-		// Show overview 
+		// Show overview
 		if (verbose) {
 			int countCase = 0, countCtrl = 0, countIgnored = 0;
 			for (Boolean cc : caseControl) {
@@ -382,7 +382,7 @@ public class SnpSiftCmdCaseControl extends SnpSift {
 
 	/**
 	 * Load a file compare calls
-	 * 
+	 *
 	 * @param vcfFile
 	 */
 	@Override
@@ -391,7 +391,7 @@ public class SnpSiftCmdCaseControl extends SnpSift {
 	}
 
 	/**
-	 * Run 
+	 * Run
 	 * @param createList : Is true , create a list of VcfEntries (used in test cases)
 	 * @return A list of VcfEntry is createList is true
 	 */
@@ -405,6 +405,7 @@ public class SnpSiftCmdCaseControl extends SnpSift {
 
 		// Read all vcfEntries
 		VcfFileIterator vcf = new VcfFileIterator(vcfFileName);
+		vcf.setDebug(debug);
 
 		int i = 1;
 		for (VcfEntry vcfEntry : vcf) {

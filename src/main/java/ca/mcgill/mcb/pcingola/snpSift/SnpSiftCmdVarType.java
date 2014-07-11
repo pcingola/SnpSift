@@ -10,7 +10,7 @@ import ca.mcgill.mcb.pcingola.vcf.VcfEntry;
 
 /**
  * Annotate a VCF file with variant type
- * 
+ *
  * @author pablocingolani
  */
 public class SnpSiftCmdVarType extends SnpSift {
@@ -87,6 +87,7 @@ public class SnpSiftCmdVarType extends SnpSift {
 		if (verbose) Timer.showStdErr("Annotating variants type entries from: '" + vcfFile + "'");
 
 		VcfFileIterator vcf = new VcfFileIterator(vcfFile);
+		vcf.setDebug(debug);
 
 		boolean showHeader = true;
 		for (VcfEntry vcfEntry : vcf) {

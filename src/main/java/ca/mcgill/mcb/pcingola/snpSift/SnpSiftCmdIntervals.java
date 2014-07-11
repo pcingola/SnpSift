@@ -15,7 +15,7 @@ import ca.mcgill.mcb.pcingola.vcf.VcfEntry;
 
 /**
  * Filter variants that hit intervals
- * 
+ *
  * @author pablocingolani
  */
 public class SnpSiftCmdIntervals extends SnpSift {
@@ -90,7 +90,7 @@ public class SnpSiftCmdIntervals extends SnpSift {
 
 	/**
 	 * Load a file compare calls
-	 * 
+	 *
 	 * @param fileName
 	 */
 	public List<VcfEntry> run(boolean createList) {
@@ -100,6 +100,7 @@ public class SnpSiftCmdIntervals extends SnpSift {
 
 		// Read all vcfEntries
 		VcfFileIterator vcfFile = new VcfFileIterator(vcfFileName);
+		vcfFile.setDebug(debug);
 
 		boolean showHeader = true;
 		for (VcfEntry vcfEntry : vcfFile) {

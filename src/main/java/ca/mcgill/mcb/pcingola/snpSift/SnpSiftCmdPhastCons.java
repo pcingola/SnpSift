@@ -18,7 +18,7 @@ import ca.mcgill.mcb.pcingola.vcf.VcfEntry;
 
 /**
  * Annotate using PhastCons score files
- * 
+ *
  * @author pcingola
  */
 public class SnpSiftCmdPhastCons extends SnpSift {
@@ -55,7 +55,7 @@ public class SnpSiftCmdPhastCons extends SnpSift {
 	}
 
 	/**
-	 * Annotate VcfEntry 
+	 * Annotate VcfEntry
 	 * @param ve
 	 */
 	void annotateVcf(VcfEntry ve) {
@@ -86,13 +86,13 @@ public class SnpSiftCmdPhastCons extends SnpSift {
 			// Show interval
 			printBed(sc, score(sc));
 
-			start = sc.getEnd() + 1; // Move after interval's end 
+			start = sc.getEnd() + 1; // Move after interval's end
 		}
 	}
 
 	/**
 	 * Get the longest interval starting at 'start' that has at least 'minBases' and 'minScore'
-	 * 
+	 *
 	 * @param seqChange
 	 * @param start
 	 * @return
@@ -214,9 +214,9 @@ public class SnpSiftCmdPhastCons extends SnpSift {
 	}
 
 	/**
-	 * Load chromosome length file. 
+	 * Load chromosome length file.
 	 * This is a fasta index file created by "samtools faidx" command.
-	 * 
+	 *
 	 * @return
 	 */
 	void loadFaidx() {
@@ -291,9 +291,9 @@ public class SnpSiftCmdPhastCons extends SnpSift {
 
 	/**
 	 * Run annotations
-	 * 
+	 *
 	 * @param createList : If true, create a list of VcfEntries (used for test cases)
-	 * 
+	 *
 	 * @return
 	 */
 	public List<VcfEntry> run(boolean createList) {
@@ -338,6 +338,7 @@ public class SnpSiftCmdPhastCons extends SnpSift {
 		// Iterate over file
 		ArrayList<VcfEntry> list = new ArrayList<VcfEntry>();
 		VcfFileIterator vcf = new VcfFileIterator(vcfFile);
+		vcf.setDebug(debug);
 		String chrPrev = "";
 		for (VcfEntry ve : vcf) {
 			if (vcf.isHeadeSection()) {
@@ -377,7 +378,7 @@ public class SnpSiftCmdPhastCons extends SnpSift {
 		// Is this a SNP? i.e. only one base
 		if (marker.size() == 1) return score[marker.getStart()] / 1000.0f;
 
-		// More then one base length? 
+		// More then one base length?
 		// Return the average score of all those bases
 		int sum = 0;
 		for (int p = marker.getStart(); p <= marker.getEnd(); p++)

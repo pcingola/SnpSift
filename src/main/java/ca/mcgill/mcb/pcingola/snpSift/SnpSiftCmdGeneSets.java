@@ -16,7 +16,7 @@ import ca.mcgill.mcb.pcingola.vcf.VcfEntry;
 
 /**
  * Annotate a VCF file using Gene sets (MSigDb) or gene ontology (GO)
- * 
+ *
  * @author pablocingolani
  */
 public class SnpSiftCmdGeneSets extends SnpSift {
@@ -127,6 +127,8 @@ public class SnpSiftCmdGeneSets extends SnpSift {
 
 		if (verbose) Timer.showStdErr("Annotating variants from: '" + vcfFile + "'");
 		VcfFileIterator vcf = new VcfFileIterator(vcfFile);
+		vcf.setDebug(debug);
+
 		for (VcfEntry vcfEntry : vcf) {
 			// Show header?
 			if (vcf.isHeadeSection()) {

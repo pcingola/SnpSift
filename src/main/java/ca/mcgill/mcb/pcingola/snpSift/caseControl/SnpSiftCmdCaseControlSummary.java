@@ -29,7 +29,7 @@ import ca.mcgill.mcb.pcingola.vcf.VcfInfo;
 
 /**
  * Summarize a VCF annotated file
- *  
+ *
  * @author pcingola
  */
 public class SnpSiftCmdCaseControlSummary extends SnpSift {
@@ -41,7 +41,7 @@ public class SnpSiftCmdCaseControlSummary extends SnpSift {
 	PedPedigree pedPedigree;
 	boolean headerSummary = true;
 	String tfamFile, bedFile, vcfFile; // File names
-	HashMap<String, Boolean> caseControls; // Cases and controls 
+	HashMap<String, Boolean> caseControls; // Cases and controls
 	HashMap<String, String> groups; // ID -> Group map
 	List<Variant> intervals; // Intervals to summarize
 	ArrayList<String> groupNamesSorted; // Group names sorted alphabetically
@@ -77,7 +77,7 @@ public class SnpSiftCmdCaseControlSummary extends SnpSift {
 		Timer.showStdErr("Total : " + caseControls.size() + " entries. Cases: " + countCase + ", controls: " + countCtrl + ", missing: " + countMissing);
 
 		//---
-		// Parse groups (families) 
+		// Parse groups (families)
 		//---
 		groups = new HashMap<String, String>();
 		HashSet<String> groupNames = new HashSet<String>();
@@ -210,7 +210,7 @@ public class SnpSiftCmdCaseControlSummary extends SnpSift {
 	 * @param ve
 	 */
 	void parseVcfEntry(VcfEntry ve) {
-		// Parse effect fields. Get highest functional class 
+		// Parse effect fields. Get highest functional class
 		ChangeEffect.FunctionalClass funcClass = ChangeEffect.FunctionalClass.NONE;
 		VcfEffect effMax = null;
 		StringBuilder effAll = new StringBuilder();
@@ -253,7 +253,7 @@ public class SnpSiftCmdCaseControlSummary extends SnpSift {
 						// Update all intersecting intervals
 						for (Marker interval : intersect) {
 							Summary summaryInt = summaryByInterval.getOrCreate(interval); // Get (or create) summary
-							summaryInt.count(group, caseControl, funcClass, variantAf, count); // Update summary 
+							summaryInt.count(group, caseControl, funcClass, variantAf, count); // Update summary
 						}
 					}
 				}
@@ -313,6 +313,8 @@ public class SnpSiftCmdCaseControlSummary extends SnpSift {
 
 		// Read VCF
 		VcfFileIterator vcf = new VcfFileIterator(vcfFile);
+		vcf.setDebug(debug);
+
 		for (VcfEntry ve : vcf) {
 			if (headerVcf) {
 				// Read header info

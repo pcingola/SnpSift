@@ -15,11 +15,11 @@ import ca.mcgill.mcb.pcingola.vcf.FileIndexChrPos;
 
 /**
  * Filter variants that hit intervals
- * 
- * Use an indexed VCF file. 
- * 
+ *
+ * Use an indexed VCF file.
+ *
  * WARNIGN: File must be uncompressed
- * 
+ *
  * @author pablocingolani
  */
 public class SnpSiftCmdIntervalsIndex extends SnpSift {
@@ -118,7 +118,7 @@ public class SnpSiftCmdIntervalsIndex extends SnpSift {
 
 	/**
 	 * Load a file compare calls
-	 * 
+	 *
 	 * @param fileName
 	 */
 	@Override
@@ -127,13 +127,14 @@ public class SnpSiftCmdIntervalsIndex extends SnpSift {
 
 		// Read and show header
 		VcfFileIterator vcfFileIt = new VcfFileIterator(vcfFile);
+		vcfFileIt.setDebug(debug);
 		vcfFileIt.iterator().next(); // Read header (by reading first vcf entry)
 		addHeader(vcfFileIt);
 		String headerStr = vcfFileIt.getVcfHeader().toString();
 		if (!headerStr.isEmpty()) System.out.println(headerStr);
 		vcfFileIt.close();
 
-		// Open and index file		
+		// Open and index file
 		// VcfFileIndexIntervals vf = new VcfFileIndexIntervals(vcfFile);
 		FileIndexChrPos fileIndexChrPos = new FileIndexChrPos(vcfFile);
 

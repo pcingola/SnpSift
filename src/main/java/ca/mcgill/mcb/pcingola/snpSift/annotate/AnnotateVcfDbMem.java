@@ -25,6 +25,7 @@ public class AnnotateVcfDbMem extends AnnotateVcfDb {
 	void loadDatabase() {
 		if (verbose) Timer.showStdErr("Loading database: '" + dbFileName + "'");
 		VcfFileIterator dbFile = new VcfFileIterator(dbFileName);
+		dbFile.setDebug(debug);
 
 		int count = 1;
 		for (VcfEntry vcfDbEntry : dbFile) {

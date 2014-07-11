@@ -13,7 +13,7 @@ import ca.mcgill.mcb.pcingola.vcf.VcfGenotype;
 
 /**
  * Annotate if a variant is 'private'. I.e. only represented within a family (or group)
- *  
+ *
  * @author pcingola
  */
 public class SnpSiftCmdPrivate extends SnpSift {
@@ -104,7 +104,7 @@ public class SnpSiftCmdPrivate extends SnpSift {
 
 	/**
 	 * Name of the group, if this variant private. Null otherwise
-	 * 
+	 *
 	 * @param ve
 	 */
 	String privateGroup(VcfEntry ve) {
@@ -149,6 +149,7 @@ public class SnpSiftCmdPrivate extends SnpSift {
 		int countLines = 0, countAnnotated = 0;
 		ArrayList<VcfEntry> vcfEntries = new ArrayList<VcfEntry>();
 		VcfFileIterator vcf = new VcfFileIterator(vcfFile);
+		vcf.setDebug(debug);
 		for (VcfEntry ve : vcf) {
 			// Read header info
 			if (vcf.isHeadeSection()) {

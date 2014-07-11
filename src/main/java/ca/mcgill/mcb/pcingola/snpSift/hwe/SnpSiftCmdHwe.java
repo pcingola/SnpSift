@@ -15,7 +15,7 @@ import ca.mcgill.mcb.pcingola.vcf.VcfEntry;
 
 /**
  * Calculate Hardy-Weimberg equilibrium and goodness of fit for each entry in a VCF file
- * 
+ *
  * @author pablocingolani
  */
 public class SnpSiftCmdHwe extends SnpSift {
@@ -93,12 +93,12 @@ public class SnpSiftCmdHwe extends SnpSift {
 
 		Timer.showStdErr("Reading '" + vcfFileName + "'. Running multi-threaded mode (numThreads=" + numWorkers + ").");
 
-		// Master factory 
+		// Master factory
 		int batchSize = Master.DEFAULT_BATCH_SIZE;
 		Props props = new Props(new UntypedActorFactory() {
 
 			/**
-			 * 
+			 *
 			 */
 			private static final long serialVersionUID = 1L;
 
@@ -124,6 +124,8 @@ public class SnpSiftCmdHwe extends SnpSift {
 		Timer.showStdErr("Reading '" + vcfFileName + "'. Running single threaded mode.");
 
 		VcfFileIterator vcfFile = new VcfFileIterator(vcfFileName);
+		vcfFile.setDebug(debug);
+
 		VcfHwe vcfHwe = new VcfHwe();
 
 		// Read all vcfEntries

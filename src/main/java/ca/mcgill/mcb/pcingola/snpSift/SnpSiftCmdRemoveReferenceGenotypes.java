@@ -10,7 +10,7 @@ import ca.mcgill.mcb.pcingola.vcf.VcfGenotype;
 /**
  * Removes reference genotypes.
  * I.e. replaces the genotype string by the MISSING string ('.') if the genotype is just homozygous reference (e.g. '0/0')
- * 
+ *
  * @author pablocingolani
  */
 public class SnpSiftCmdRemoveReferenceGenotypes extends SnpSift {
@@ -38,6 +38,7 @@ public class SnpSiftCmdRemoveReferenceGenotypes extends SnpSift {
 	public void run() {
 		Timer.showStdErr("Reading STDIN");
 		VcfFileIterator vcfFile = new VcfFileIterator(vcfFileName);
+		vcfFile.setDebug(debug);
 		vcfFile.setCreateChromos(true); // Create chromosomes when needed
 
 		// Read all vcfEntries

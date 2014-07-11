@@ -9,7 +9,7 @@ import ca.mcgill.mcb.pcingola.vcf.VcfEntry;
 
 /**
  * Add genotype information to INFO fields
- * 
+ *
  * @author pcingola
  */
 public class SnpSiftCmdGt extends SnpSift {
@@ -72,6 +72,8 @@ public class SnpSiftCmdGt extends SnpSift {
 	@Override
 	public void run() {
 		VcfFileIterator vcf = new VcfFileIterator(vcfFile);
+		vcf.setDebug(debug);
+
 		if (save) showHeader = false; // No need to show header
 
 		int i = 1;

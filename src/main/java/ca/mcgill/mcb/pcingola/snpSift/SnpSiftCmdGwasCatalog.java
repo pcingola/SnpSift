@@ -42,6 +42,7 @@ public class SnpSiftCmdGwasCatalog extends SnpSift {
 		if (verbose) Timer.showStdErr("Annotating entries from: '" + vcfFile + "'");
 
 		VcfFileIterator vcf = new VcfFileIterator(vcfFile);
+		vcf.setDebug(debug);
 
 		int countAnnotated = 0, count = 0;
 		boolean showHeader = true;
@@ -77,7 +78,7 @@ public class SnpSiftCmdGwasCatalog extends SnpSift {
 				+ "\n\tTotal annotated entries : " + countAnnotated //
 				+ "\n\tTotal entries           : " + count //
 				+ "\n\tPercent                 : " + String.format("%.2f%%", perc) //
-				);
+		);
 	}
 
 	/**
@@ -128,7 +129,7 @@ public class SnpSiftCmdGwasCatalog extends SnpSift {
 		if (verbose) Timer.showStdErr("Annotating\n" //
 				+ "\tInput file    : '" + vcfFile + "'\n" //
 				+ "\tDatabase file : '" + dbFileName + "'" //
-				);
+		);
 
 		annotate();
 	}

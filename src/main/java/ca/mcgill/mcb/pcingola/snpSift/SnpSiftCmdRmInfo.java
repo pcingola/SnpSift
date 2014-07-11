@@ -8,7 +8,7 @@ import ca.mcgill.mcb.pcingola.vcf.VcfEntry;
 
 /**
  * Removes INFO fields
- * 
+ *
  * @author pablocingolani
  */
 public class SnpSiftCmdRmInfo extends SnpSift {
@@ -47,6 +47,7 @@ public class SnpSiftCmdRmInfo extends SnpSift {
 	public void run() {
 		Timer.showStdErr("Reading STDIN");
 		VcfFileIterator vcfFile = new VcfFileIterator(vcfFileName);
+		vcfFile.setDebug(debug);
 
 		// Read all vcfEntries
 		int entryNum = 1;

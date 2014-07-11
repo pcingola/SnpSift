@@ -12,7 +12,7 @@ import ca.mcgill.mcb.pcingola.util.Timer;
 
 /**
  * Split a large VCF file by chromosome or bby number of lines
- * 
+ *
  * @author pablocingolani
  */
 public class SnpSiftCmdSplit extends SnpSift {
@@ -41,7 +41,7 @@ public class SnpSiftCmdSplit extends SnpSift {
 
 	/**
 	 * Join files
-	 * @param createString : Create a string used for test cases) 
+	 * @param createString : Create a string used for test cases)
 	 * @return A string with the resulting file if createString is true. An empty string otherwise.
 	 */
 	public String join(boolean createString) {
@@ -53,6 +53,7 @@ public class SnpSiftCmdSplit extends SnpSift {
 			if (first) {
 				// Show header from first file
 				VcfFileIterator vcf = new VcfFileIterator(file);
+				vcf.setDebug(debug);
 				vcf.next();
 
 				if (createString) sb.append(vcf.getVcfHeader() + "\n");
@@ -124,7 +125,7 @@ public class SnpSiftCmdSplit extends SnpSift {
 					if (numLines <= 0) usage("Number of lines must be a positive number. num = '" + numStr + "'");
 				} else usage("Missing 'num' argument");
 			} else if (vcfFile == null) {
-				if (join) fileNames.add(args[i]); // Joining? 
+				if (join) fileNames.add(args[i]); // Joining?
 				else vcfFile = args[i]; // Splitting?
 			}
 		}
@@ -184,7 +185,7 @@ public class SnpSiftCmdSplit extends SnpSift {
 					// New file? Split file?
 					if ((out == null) // No file created?
 							|| ((numLines > 0) && (numLines < lineNum)) // Splitting by lines :  Number of lines reached?
-							|| ((numLines <= 0) && (!chr.equals(chrPrev))) // Splitting by chromosome split: Is this a new chromosome? 
+							|| ((numLines <= 0) && (!chr.equals(chrPrev))) // Splitting by chromosome split: Is this a new chromosome?
 					) {
 						// Split file
 						if (out != null) out.close();

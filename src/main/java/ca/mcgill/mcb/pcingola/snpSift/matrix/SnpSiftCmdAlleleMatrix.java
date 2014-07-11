@@ -9,14 +9,14 @@ import ca.mcgill.mcb.pcingola.vcf.VcfGenotype;
 
 /**
  * Convert VCf file to allele matrix
- * 
+ *
  * Note: Only use SNPs
- * 
+ *
  * Note: Only variants with two possible alleles. I.e. the matrix has three possible values in each cell:
  * 		- 0, for allele 0/0
  * 		- 1, for allele 0/1 or 1/0
  * 		- 2, for allele 1/1
- * 
+ *
  * @author pcingola
  */
 public class SnpSiftCmdAlleleMatrix extends SnpSift {
@@ -76,6 +76,8 @@ public class SnpSiftCmdAlleleMatrix extends SnpSift {
 
 		int i = 1;
 		VcfFileIterator vcf = new VcfFileIterator(vcfFile);
+		vcf.setDebug(debug);
+
 		for (VcfEntry ve : vcf) {
 			if (vcf.isHeadeSection()) {
 				System.out.print("#CHROM\tPOS\tREF\tALT");

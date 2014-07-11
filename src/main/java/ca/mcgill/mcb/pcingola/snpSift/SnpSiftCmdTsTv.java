@@ -8,7 +8,7 @@ import ca.mcgill.mcb.pcingola.vcf.VcfEntry;
 
 /**
  * Calculate Ts/Tv rations per sample (transitions vs transversions)
- * 
+ *
  * @author pablocingolani
  */
 public class SnpSiftCmdTsTv extends SnpSift {
@@ -28,6 +28,7 @@ public class SnpSiftCmdTsTv extends SnpSift {
 	 * Show an error (if not 'quiet' mode)
 	 * @param message
 	 */
+	@Override
 	public void error(Throwable e, String message) {
 		e.printStackTrace();
 		System.err.println(message);
@@ -57,7 +58,7 @@ public class SnpSiftCmdTsTv extends SnpSift {
 		// Create genome
 		genome = new Genome("genome");
 
-		// VCF file 
+		// VCF file
 		vcfFileName = args[argc++];
 	}
 
@@ -70,6 +71,7 @@ public class SnpSiftCmdTsTv extends SnpSift {
 
 		VcfFileIterator vcfFile = new VcfFileIterator(vcfFileName, genome);
 		vcfFile.setCreateChromos(true); // Create chromosomes when needed
+		vcfFile.setDebug(debug);
 
 		// Read all vcfEntries
 		int entryNum = 1;

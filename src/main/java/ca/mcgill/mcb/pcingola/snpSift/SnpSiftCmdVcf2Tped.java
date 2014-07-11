@@ -16,7 +16,7 @@ import ca.mcgill.mcb.pcingola.vcf.VcfGenotype;
 
 /**
  * Transform a VCF to a TPED file
- *  
+ *
  * @author pcingola
  */
 public class SnpSiftCmdVcf2Tped extends SnpSift {
@@ -108,7 +108,7 @@ public class SnpSiftCmdVcf2Tped extends SnpSift {
 
 	/**
 	 * Return REF anf ALT values as if they were a SNP
-	 * 
+	 *
 	 * Important: If the variant is NOT a SNP, we create a 'fake' snp ( A -> T ).
 	 * 			  This is done in order to be able to MAP InDels into PED files and keep compatibility with downstream programs (GenAble).
 	 * 			  Yes, it's an awful hack. YOu've been warned!
@@ -124,7 +124,7 @@ public class SnpSiftCmdVcf2Tped extends SnpSift {
 			// Indel, MNP or other subsitutions
 			// Create fake SNP "A -> T" and map InDel values to it
 			if (genoNum < 0) base = "A"; // Reference
-			else if (gen.getGenotype(genoNum).equals(ve.getRef())) base = "A"; // ALT[genoNum] == REF 
+			else if (gen.getGenotype(genoNum).equals(ve.getRef())) base = "A"; // ALT[genoNum] == REF
 			else base = "T"; // ALT[genoNum] != REF
 		}
 
@@ -170,11 +170,11 @@ public class SnpSiftCmdVcf2Tped extends SnpSift {
 	 * Convert a VCF to a TPED file
 	 * @param vcfFile
 	 * @param tpedFile
-	 * 
+	 *
 	 * Important: If the variant is NOT a SNP, we create a 'fake' snp ( A -> T ).
 	 * 			  This is done in order to be able to MAP InDels into PED files and keep compatibility with downstream programs (GenAble).
 	 * 			  Yes, it's an awful hack. YOu've been warned!
-	 * 
+	 *
 	 */
 	public void vcf2Tped(String vcfFile, String tfamFile, String outTfamFile, String outTpedFile) {
 		if (verbose) Timer.showStdErr("Converting file '" + vcfFile + "' to TPED format: '" + outTpedFile + "'");
@@ -185,6 +185,8 @@ public class SnpSiftCmdVcf2Tped extends SnpSift {
 		try {
 			// Open files
 			VcfFileIterator vcf = new VcfFileIterator(vcfFile);
+			vcf.setDebug(debug);
+
 			BufferedWriter tped = new BufferedWriter(new FileWriter(outTpedFile));
 
 			// Convert VCF to TPED
@@ -311,7 +313,7 @@ public class SnpSiftCmdVcf2Tped extends SnpSift {
 			use[i++] = stfam.contains(sampleNameVcf);
 
 		//---
-		// Now we have to create a new TFAM file containing ONLY the samples in both VCF and TFAM files 
+		// Now we have to create a new TFAM file containing ONLY the samples in both VCF and TFAM files
 		// Note: The new file is sorted in the same order as the VCF.
 		//---
 		PedPedigree newTfam = new PedPedigree();

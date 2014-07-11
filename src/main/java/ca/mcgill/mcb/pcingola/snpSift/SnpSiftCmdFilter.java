@@ -24,19 +24,19 @@ import ca.mcgill.mcb.pcingola.vcf.VcfEntry;
 
 /**
  * Generic SnpSift filter
- * 
+ *
  * Filter out data based on VCF attributes:
  * 		- Chromosome, Position, etc.
- * 
+ *
  * 		- Intersecting intervals (BED file)
- * 
+ *
  * 		- Quality, Coverage, etc.
- * 
+ *
  * 		- Any INFO field
  * 			- Parse expression
  * 			- Int, double fields: FiledZZ == N, FiledZZ < X, FiledZZ > X, FiledZZ <= X, FiledZZ >= X
  * 			- String: FiledZZ eq "someString", FiledZZ =~ "some*regex$"
- * 
+ *
  * 		- Samples informations
  * 			- s50 (SNPs that appear in 50% of samples or more)
  * 			- Singletons
@@ -44,11 +44,11 @@ import ca.mcgill.mcb.pcingola.vcf.VcfEntry;
  * 			- Tripletons
  * 			- negate all previous conditions
  * 			- pValue (Fisher exact test)
- * 
+ *
  * 		- Database information
  * 			- Known (e.g. in dbSnp)
  * 			- Novel (e.g. NOT in dbSnp)
- * 
+ *
  * Advanced features:
  * 		- Map-Reduce mode (easy integration with Hadoop pipes)
  * 		- Generic data partitioner (stats)
@@ -57,7 +57,7 @@ import ca.mcgill.mcb.pcingola.vcf.VcfEntry;
  * 			- Plots: Coverage, Quality, etc.
  * 			- SNPs vs Coverage
  * 			- Ts/Tv vs Coverage
- * 
+ *
  * @author pablocingolani
  */
 public class SnpSiftCmdFilter extends SnpSift {
@@ -90,7 +90,7 @@ public class SnpSiftCmdFilter extends SnpSift {
 		return addHeader;
 	}
 
-	/** 
+	/**
 	 * Read a file as a string set
 	 * @param fileName
 	 */
@@ -344,6 +344,8 @@ public class SnpSiftCmdFilter extends SnpSift {
 
 		// Open and read entries
 		VcfFileIterator vcfFile = new VcfFileIterator(inputFile);
+		vcfFile.setDebug(debug);
+
 		int entryNum = 0;
 		for (VcfEntry vcfEntry : vcfFile) {
 			// Show header before first entry

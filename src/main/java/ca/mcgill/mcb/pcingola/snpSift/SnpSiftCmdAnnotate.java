@@ -174,6 +174,7 @@ public class SnpSiftCmdAnnotate extends SnpSift {
 	 */
 	public void initAnnotate() throws IOException {
 		vcfFile = new VcfFileIterator(vcfFileName); // Open input VCF
+		vcfFile.setDebug(debug);
 
 		// Type of database
 		switch (method) {

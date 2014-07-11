@@ -18,9 +18,9 @@ import ca.mcgill.mcb.pcingola.vcf.VcfGenotype;
 
 /**
  * Calculate genotyping concordance between two VCF files.
- * 
+ *
  * Typical usage: Calculate concordance between sequencing experiment and genotypting experiment.
- *  
+ *
  * @author pcingola
  */
 public class SnpSiftCmdConcordance extends SnpSift {
@@ -95,7 +95,7 @@ public class SnpSiftCmdConcordance extends SnpSift {
 	}
 
 	/**
-	 * Calculate concordance 
+	 * Calculate concordance
 	 * @param ve1
 	 * @param ve2
 	 */
@@ -154,7 +154,7 @@ public class SnpSiftCmdConcordance extends SnpSift {
 
 	/**
 	 * Find an entry in 'vcfFile' that matches chromosome and position from 'vcfEntry'
-	 * 
+	 *
 	 * @param vcfFile
 	 * @param vcfEntry
 	 * @return A matching entry, null if not found
@@ -176,7 +176,7 @@ public class SnpSiftCmdConcordance extends SnpSift {
 				return null;
 			}
 
-			// Seek 
+			// Seek
 			vcfFile.seek(start);
 			latestVcfEntry = null;
 			if (verbose) Timer.showStdErr("Chromosome: '" + chr + "'");
@@ -184,7 +184,7 @@ public class SnpSiftCmdConcordance extends SnpSift {
 		chrPrev = chr;
 
 		//---
-		// Compare 'latestVcfEntry' 
+		// Compare 'latestVcfEntry'
 		//---
 		if (latestVcfEntry != null) {
 			// Sanity check
@@ -230,9 +230,9 @@ public class SnpSiftCmdConcordance extends SnpSift {
 	}
 
 	/**
-	 * Read headers and parse sample names. Create map from 
-	 * sample index in vcf2 to sample index in vcf1 
-	 * 
+	 * Read headers and parse sample names. Create map from
+	 * sample index in vcf2 to sample index in vcf1
+	 *
 	 * @param vcf1
 	 * @param vcf2
 	 */
@@ -308,8 +308,12 @@ public class SnpSiftCmdConcordance extends SnpSift {
 		try {
 			if (verbose) Timer.showStdErr("Open VCF file '" + vcfFileName1 + "'");
 			vcf1 = new VcfFileIterator(new SeekableBufferedReader(vcfFileName1));
+			vcf1.setDebug(debug);
+
 			if (verbose) Timer.showStdErr("Open VCF file '" + vcfFileName2 + "'");
 			vcf2 = new VcfFileIterator(vcfFileName2);
+			vcf2.setDebug(debug);
+
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
