@@ -1,5 +1,6 @@
 package ca.mcgill.mcb.pcingola.snpSift.testCases;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -31,7 +32,6 @@ public class TestCasesZzz extends TestCase {
 
 		// Iterate over VCF entries
 		SnpSiftCmdAnnotate snpSiftAnnotate = new SnpSiftCmdAnnotate(args);
-		snpSiftAnnotate.setDbFileName(dbFileName);
 		snpSiftAnnotate.setDebug(debug);
 		snpSiftAnnotate.setVerbose(verbose);
 		List<VcfEntry> results = snpSiftAnnotate.run(true);
@@ -50,7 +50,6 @@ public class TestCasesZzz extends TestCase {
 
 		// Iterate over VCF entries
 		SnpSiftCmdAnnotate snpSiftAnnotate = new SnpSiftCmdAnnotate(args);
-		snpSiftAnnotate.setDbFileName(dbFileName);
 		snpSiftAnnotate.setDebug(debug);
 		snpSiftAnnotate.setVerbose(verbose);
 		snpSiftAnnotate.setSaveOutput(true);
@@ -100,19 +99,21 @@ public class TestCasesZzz extends TestCase {
 				argsList.add(arg);
 		}
 
+		argsList.add(dbFileName);
 		argsList.add(fileName);
 		return argsList.toArray(new String[0]);
 	}
 
-	public void test_18() {
-		String dbFileName = "./test/test_annotate_18_db.vcf";
-		String fileName = "./test/test_annotate_18.vcf";
-
+	/**
+	 * Annotate info fields
+	 */
+	public void test_06() throws IOException {
+		String dbFileName = "./test/db_test_06.vcf";
+		String fileName = "./test/annotate_06.vcf";
 		List<VcfEntry> results = annotate(dbFileName, fileName, null);
-		VcfEntry ve = results.get(0);
-		String ukac = ve.getInfo("UK10KWES_AC");
-		System.out.println("Annotated value: " + ukac);
-		Assert.assertEquals("3727", ukac);
+
+		// Check
+		Assert.assertEquals("PREVIOUS=annotation;TEST=yes;ABE=0.678;ABZ=47.762;AF=0.002;AN=488;AOI=-410.122;AOZ=-399.575;IOD=0.000;OBS=4,1,1636,2011,3,1,6780,9441;RSPOS=16346045", results.get(0).getInfoStr());
 	}
 
 }

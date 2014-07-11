@@ -28,7 +28,7 @@ public class AnnotateVcfDbMem extends AnnotateVcfDb {
 
 		int count = 1;
 		for (VcfEntry vcfDbEntry : dbFile) {
-			addDbCurrent(vcfDbEntry);
+			dbCurrentEntry.addDbCurrent(vcfDbEntry);
 
 			count++;
 			if (verbose) {
@@ -40,7 +40,7 @@ public class AnnotateVcfDbMem extends AnnotateVcfDb {
 		// Show time
 		if (verbose) {
 			System.err.println("");
-			Timer.showStdErr("Done. Database size: " + dbCurrentId.size());
+			Timer.showStdErr("Done. Database size: " + dbCurrentEntry.size());
 		}
 	}
 

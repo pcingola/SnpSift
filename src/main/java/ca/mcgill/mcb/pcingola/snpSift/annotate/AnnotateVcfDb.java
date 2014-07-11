@@ -5,10 +5,10 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import ca.mcgill.mcb.pcingola.fileIterator.VcfFileIterator;
 import ca.mcgill.mcb.pcingola.vcf.VcfEntry;
-import ca.mcgill.mcb.pcingola.vcf.VcfInfo;
 
 /**
  * Annotate using a VCF "database"
@@ -23,63 +23,30 @@ public abstract class AnnotateVcfDb {
 	public static final int MAX_ERRORS = 10; // Report an error no more than X times
 
 	protected boolean verbose, debug;
-	protected boolean useId = true; // Annotate ID fields
-	protected boolean useInfoField = true; // Use all info fields
 	protected boolean useRefAlt = true;
 	protected int countBadRef = 0;
 	protected String chrPrev = "";
 	protected String prependInfoFieldName;
 	protected String dbFileName;
-	protected String latestChromo = "";
-	protected HashMap<String, String> dbCurrentId = new HashMap<String, String>();
-	protected HashMap<String, String> dbCurrentInfo = new HashMap<String, String>();
-	protected List<String> infoFields; // Use only info fields
+	protected DbVcfEntry dbCurrentEntry;
 	protected VcfEntry latestVcfDb = null;
 	protected VcfFileIterator vcfDbFile;
 	protected HashMap<String, Integer> errCount;
 
 	public AnnotateVcfDb(String dbFileName) {
 		this.dbFileName = dbFileName;
-	}
-
-	/**
-	 * Add 'key->id' entries to 'dbCurrent'
-	 */
-	void addDbCurrent(VcfEntry vcfDb) {
-		latestChromo = vcfDb.getChromosomeName();
-		String alts[] = vcfDb.getAlts();
-		for (int i = 0; i < alts.length; i++) {
-			String key = key(vcfDb, i);
-			dbCurrentId.put(key, vcfDb.getId()); // Add ID field
-
-			// Add INFO fields to DB?
-			if (useInfoField) {
-				// Add all INFO fields
-				String infoFieldsStr = dbInfoFields(vcfDb, alts[i]);
-				dbCurrentInfo.put(key, infoFieldsStr);
-			}
-		}
+		dbCurrentEntry = new DbVcfEntry();
 	}
 
 	/**
 	 * Annotate a VCF entry
 	 */
-	public boolean annotate(VcfEntry ve) throws IOException {
-		readDb(ve); // Read database up to this point
-		return annotateIdAndInfo(ve); // Add annotations to VCF entry
-	}
-
-	/**
-	 * Add annotation form database into VCF entry's INFO field
-	 */
-	public boolean annotateIdAndInfo(VcfEntry vcfEntry) {
-		// Find information in database
-		String id = useId ? findDbId(vcfEntry) : null;
-		String infoStr = useInfoField ? findDbInfo(vcfEntry) : null;
+	public boolean annotate(VcfEntry vcfEntry) throws IOException {
+		readDb(vcfEntry); // Read database up to this point
 
 		// Add information to vcfEntry
-		boolean annotated = annotateIds(vcfEntry, id);
-		annotated |= annotateInfo(vcfEntry, infoStr);
+		boolean annotated = annotateIds(vcfEntry, dbCurrentEntry.findDbId(vcfEntry));
+		annotated |= annotateInfo(vcfEntry, dbCurrentEntry.findDbInfo(vcfEntry));
 
 		return annotated;
 	}
@@ -108,16 +75,22 @@ public abstract class AnnotateVcfDb {
 	/**
 	 * Add INFO fields.
 	 */
-	protected boolean annotateInfo(VcfEntry vcfEntry, String infoStr) {
-		if (infoStr == null) return false;
-		if (prependInfoFieldName != null) infoStr = prependInfoName(infoStr);
-		vcfEntry.addInfo(infoStr);
-		return true;
-	}
+	protected boolean annotateInfo(VcfEntry vcfEntry, Map<String, String> info) {
+		if (info == null || info.isEmpty()) return false;
 
-	protected void clearCurrent() {
-		dbCurrentId.clear();
-		dbCurrentInfo.clear();
+		// Sort keys alphabetically
+		ArrayList<String> keys = new ArrayList<String>();
+		keys.addAll(info.keySet());
+		Collections.sort(keys);
+
+		// Add keys sorted alphabetically
+		for (String key : keys) {
+			String value = info.get(key);
+			if (prependInfoFieldName != null) key = prependInfoName(key);
+			vcfEntry.addInfo(key, value);
+		}
+
+		return true;
 	}
 
 	/**
@@ -128,86 +101,6 @@ public abstract class AnnotateVcfDb {
 			vcfDbFile.close(); // We have to close vcfDbFile because it was opened using a BufferedReader (this sets autoClose to 'false')
 			vcfDbFile = null;
 		}
-	}
-
-	/**
-	 * Extract corresponding info fields as a single string
-	 */
-	protected String dbInfoFields(VcfEntry vcfDb, String allele) {
-		// Add some INFO fields
-		StringBuilder infoSb = new StringBuilder();
-
-		// Which INFO fields should we read?
-		List<String> infoToRead = infoFields;
-		if (infoFields == null) {
-			// Add all INFO fields in alphabetical order
-			infoToRead = new ArrayList<String>();
-			infoToRead.addAll(vcfDb.getInfoKeys());
-			Collections.sort(infoToRead);
-		}
-
-		// Add each field
-		for (String fieldName : infoToRead) {
-			if (fieldName.isEmpty()) continue; // Empty INFO field may cause this
-
-			VcfInfo vcfInfo = vcfDb.getVcfInfo(fieldName);
-
-			String val = null;
-			if (vcfInfo != null && (vcfInfo.isNumberOnePerAllele() || vcfInfo.isNumberAllAlleles())) val = vcfDb.getInfo(fieldName, allele);
-
-			else val = vcfDb.getInfo(fieldName);
-
-			// Any value? => Add
-			if (val != null) {
-				if (infoSb.length() > 0) infoSb.append(";");
-				infoSb.append(fieldName + "=" + val);
-			}
-		}
-
-		return infoSb.toString();
-	}
-
-	/**
-	 * Find an ID for this VCF entry
-	 */
-	protected String findDbId(VcfEntry vcf) {
-		if (dbCurrentId.isEmpty()) return null;
-
-		// Find for each ALT
-		for (int i = 0; i < vcf.getAlts().length; i++) {
-			String key = key(vcf, i);
-			String id = dbCurrentId.get(key);
-			if (id != null) return id;
-		}
-		return null;
-	}
-
-	/**
-	 * Find INFO field for this VCF entry
-	 */
-	protected String findDbInfo(VcfEntry vcf) {
-		if (dbCurrentInfo.isEmpty()) return null;
-
-		// Find for each ALT
-		for (int i = 0; i < vcf.getAlts().length; i++) {
-			String key = key(vcf, i);
-
-			// Get info field annotations
-			String info = dbCurrentInfo.get(key);
-
-			// Any annotations?
-			if ((info != null) && (!info.isEmpty())) return info;
-		}
-
-		return null;
-	}
-
-	/**
-	 * Create a hash key
-	 */
-	String key(VcfEntry vcfDbEntry, int altIndex) {
-		if (useRefAlt) return vcfDbEntry.getChromosomeName() + ":" + vcfDbEntry.getStart() + "_" + vcfDbEntry.getRef() + "/" + vcfDbEntry.getAlts()[altIndex];
-		return vcfDbEntry.getChromosomeName() + ":" + vcfDbEntry.getStart();
 	}
 
 	/**
@@ -238,7 +131,7 @@ public abstract class AnnotateVcfDb {
 	}
 
 	public void setInfoFields(List<String> infoFields) {
-		this.infoFields = infoFields;
+		dbCurrentEntry.setInfoFields(infoFields);
 	}
 
 	public void setPrependInfoFieldName(String prependInfoFieldName) {
@@ -246,15 +139,15 @@ public abstract class AnnotateVcfDb {
 	}
 
 	public void setUseId(boolean useId) {
-		this.useId = useId;
+		dbCurrentEntry.setUseId(useId);
 	}
 
 	public void setUseInfoField(boolean useInfoField) {
-		this.useInfoField = useInfoField;
+		dbCurrentEntry.setUseInfoField(useInfoField);
 	}
 
 	public void setUseRefAlt(boolean useRefAlt) {
-		this.useRefAlt = useRefAlt;
+		dbCurrentEntry.setUseRefAlt(useRefAlt);
 	}
 
 	public void setVerbose(boolean verbose) {
@@ -284,7 +177,6 @@ public abstract class AnnotateVcfDb {
 
 	/**
 	 * Show a warning message (up to MAX_ERRORS times)
-	 * @param warn
 	 */
 	protected void warn(String warn) {
 		if (!errCount.containsKey(warn)) errCount.put(warn, 0);

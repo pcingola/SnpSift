@@ -73,7 +73,7 @@ public class SnpSiftCmdAnnotate extends SnpSift {
 				if (isAnnotateInfo(vcfInfoDb) // Add if it is being used to annotate
 						&& !vcfInfoDb.isImplicit() //  AND it is not an "implicit" header in Db (i.e. created automatically by VcfHeader class)
 						&& ((vcfInfoFile == null) || vcfInfoFile.isImplicit()) // AND it is not already added OR is already added, but it is implicit
-						) newHeaders.add(vcfInfoDb.toString());
+				) newHeaders.add(vcfInfoDb.toString());
 			}
 		}
 
@@ -115,7 +115,7 @@ public class SnpSiftCmdAnnotate extends SnpSift {
 					fatalError("Your VCF file should be sorted!" //
 							+ "\n\tPrevious entry " + chr + ":" + pos//
 							+ "\n\tCurrent entry  " + vcfEntry.getChromosomeName() + ":" + (vcfEntry.getStart() + 1)//
-							);
+					);
 				}
 
 				// Annotate
@@ -147,7 +147,7 @@ public class SnpSiftCmdAnnotate extends SnpSift {
 					+ "\n\tTotal entries           : " + count //
 					+ "\n\tPercent                 : " + String.format("%.2f%%", perc) //
 					+ "\n\tErrors (bad references) : " + countBadRef //
-					);
+			);
 		}
 
 		return list;
@@ -166,7 +166,6 @@ public class SnpSiftCmdAnnotate extends SnpSift {
 		needsConfig = true;
 		needsDb = true;
 		dbTabix = true;
-		dbType = "dbsnp";
 	}
 
 	/**
@@ -255,13 +254,15 @@ public class SnpSiftCmdAnnotate extends SnpSift {
 				else if (arg.equalsIgnoreCase("-tabix")) method = AnnotationMethod.TABIX;
 				else usage("Unknown command line option '" + arg + "'");
 			} else {
-				if (vcfFileName == null) vcfFileName = arg;
+				if (dbFileName == null) dbFileName = arg;
+				else if (vcfFileName == null) vcfFileName = arg;
 				else usage("Unknown extra parameter '" + arg + "'");
 			}
 		}
 
 		// Sanity check
 		if (vcfFileName == null) usage("Missing 'file.vcf'");
+		if (dbType == null && dbFileName == null) usage("Missing database option or file: [-dbSnp | -clinVar | database.vcf ]");
 	}
 
 	/**
@@ -288,12 +289,12 @@ public class SnpSiftCmdAnnotate extends SnpSift {
 		if (method == AnnotationMethod.TABIX //
 				&& !dbFileName.endsWith(".gz") //
 				&& Gpr.exists(dbFileName + ".gz") //
-				) dbFileName = dbFileName + ".gz";
+		) dbFileName = dbFileName + ".gz";
 
 		if (verbose) Timer.showStdErr("Annotating\n" //
 				+ "\tInput file    : '" + vcfFileName + "'\n" //
 				+ "\tDatabase file : '" + dbFileName + "'" //
-				);
+		);
 
 		return annotate(createList);
 	}
@@ -315,18 +316,20 @@ public class SnpSiftCmdAnnotate extends SnpSift {
 
 		showVersion();
 
-		System.err.println("Usage: java -jar " + SnpSift.class.getSimpleName() + ".jar " + command + " [options] database.vcf file.vcf > newFile.vcf");
-		System.err.println("Options:");
-		System.err.println("\t-dbsnp       : Use Db database.");
-		System.err.println("\t-clinvar     : Use ClinVar database.");
-		System.err.println("\t-id          : Only annotate ID field (do not add INFO field). Default: " + !useInfoField);
-		System.err.println("\t-mem         : VCF database is loaded in memory. Default: " + (method == AnnotationMethod.MEMORY));
-		System.err.println("\t-sorted      : VCF database is sorted and uncompressed. Default: " + (method == AnnotationMethod.SORTED_VCF));
-		System.err.println("\t-tabix       : VCF database is tabix-indexed. Default: " + (method == AnnotationMethod.TABIX));
-		System.err.println("\t-noAlt       : Do not use REF and ALT fields when comparing database.vcf entries to file.vcf entries. Default: " + !useRefAlt);
-		System.err.println("\t-noId        : Do not annotate ID field. Defaul: " + !useId);
-		System.err.println("\t-info <list> : Annotate using a list of info fields (list is a comma separated list of fields). Default: ALL.");
-		System.err.println("\t-name str    : Prepend 'str' to all annotated INFO fields. Default: ''.");
+		System.err.println("Usage: java -jar " + SnpSift.class.getSimpleName() + ".jar " + command + " [options] [-dbSnp | -clinvar | database.vcf] file.vcf > newFile.vcf");
+		System.err.println("\nDatabase options:");
+		System.err.println("\tdatabase.vcf         : Use 'database.vcf' file as annotations database. Note: The VCF file can be bgzipped and tabix-indexed.");
+		System.err.println("\t-dbsnp               : Use DbSnp database.");
+		System.err.println("\t-clinvar             : Use ClinVar database.");
+		System.err.println("\nCommand Options:");
+		System.err.println("\t-id                  : Only annotate ID field (do not add INFO field). Default: " + !useInfoField);
+		System.err.println("\t-mem                 : VCF database is loaded in memory. Default: " + (method == AnnotationMethod.MEMORY));
+		System.err.println("\t-sorted              : VCF database is sorted and uncompressed. Default: " + (method == AnnotationMethod.SORTED_VCF));
+		System.err.println("\t-tabix               : VCF database is tabix-indexed. Default: " + (method == AnnotationMethod.TABIX));
+		System.err.println("\t-noAlt               : Do not use REF and ALT fields when comparing database.vcf entries to file.vcf entries. Default: " + !useRefAlt);
+		System.err.println("\t-noId                : Do not annotate ID field. Defaul: " + !useId);
+		System.err.println("\t-info <list>         : Annotate using a list of info fields (list is a comma separated list of fields). Default: ALL.");
+		System.err.println("\t-name str            : Prepend 'str' to all annotated INFO fields. Default: ''.");
 
 		usageGenericAndDb();
 

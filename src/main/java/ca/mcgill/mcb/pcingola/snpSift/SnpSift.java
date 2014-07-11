@@ -27,33 +27,24 @@ import flanagan.analysis.Stat;
  */
 public class SnpSift {
 
-	/**
-	 * Main
-	 * @param args
-	 */
-	public static void main(String[] args) {
-		Stat.igSupress(); // Otherwise we can get error messages printed to STDOUT
-
-		SnpSift snpSift = new SnpSift(args, null);
-		snpSift.run();
-	}
-
 	// Version info (in sync with SnpEff)
 	public static final String BUILD = SnpEff.BUILD;
+
 	public static final String SOFTWARE_NAME = "SnpSift";
 	public static final String VERSION_MAJOR = SnpEff.VERSION_MAJOR;
 	public static final String REVISION = SnpEff.REVISION;
 	public static final String VERSION_SHORT = VERSION_MAJOR + REVISION;
 	public static final String VERSION_NO_NAME = VERSION_SHORT + " (build " + BUILD + "), by " + Pcingola.BY;
 	public static final String VERSION = SOFTWARE_NAME + " " + VERSION_NO_NAME;
-
 	public static final int MAX_ERRORS = 10; // Report an error no more than X times
 
 	protected boolean help; // Be verbose
+
 	protected boolean verbose; // Be verbose
 	protected boolean debug; // Debug mode
 	protected boolean quiet; // Be quiet
 	protected boolean log; // Log to server (statistics)
+	protected boolean download = true; // Download database, if not available
 	protected boolean showHeader = true;
 	protected boolean saveOutput = false; // Save output to buffer (instead of printing it to STDOUT)
 	protected boolean suppressOutput = false; // Do not show output (used for debugging and test cases)
@@ -70,6 +61,17 @@ public class SnpSift {
 	protected String configFile; // Config file
 	protected Config config; // Configuration
 	protected String dataDir; // Override data_dir in config file
+
+	/**
+	 * Main
+	 * @param args
+	 */
+	public static void main(String[] args) {
+		Stat.igSupress(); // Otherwise we can get error messages printed to STDOUT
+
+		SnpSift snpSift = new SnpSift(args, null);
+		snpSift.run();
+	}
 
 	public SnpSift(String[] args, String command) {
 		this.args = args;
@@ -119,6 +121,8 @@ public class SnpSift {
 	 * Download a database
 	 */
 	protected boolean databaseDownload() {
+		if (!download) return false;
+
 		String dbUrl = config.getDatabaseRepository(dbType);
 		if (dbUrl == null) fatalError("Database URL name is missing (missing entry in config file?).");
 
@@ -148,7 +152,7 @@ public class SnpSift {
 	 * If local file does not exists, try to download
 	 */
 	protected String databaseFindOrDownload() {
-		if (dbType == null || dbType.isEmpty()) throw new RuntimeException("Database type not set: This should never happen!");
+		if (dbType == null && dbFileName == null) throw new RuntimeException("Neither database type nor database file name set: This should never happen!");
 
 		// Database file name
 		if (dbFileName == null || dbFileName.isEmpty()) {
@@ -241,6 +245,8 @@ public class SnpSift {
 			else if (arg.equals("-v") || arg.equalsIgnoreCase("-verbose")) verbose = true;
 			else if (arg.equals("-q") || arg.equalsIgnoreCase("-quiet")) quiet = true;
 			else if (arg.equals("-d") || arg.equalsIgnoreCase("-debug")) debug = true;
+			else if (arg.equalsIgnoreCase("-noLog")) log = false;
+			else if (arg.equalsIgnoreCase("-noDownload")) download = false; // Do not download genome
 			else if ((arg.equals("-c") || arg.equalsIgnoreCase("-config"))) {
 				if ((i + 1) < args.length) configFile = args[++i];
 				else usage("Option '-c' without config file argument");
@@ -323,11 +329,19 @@ public class SnpSift {
 		cmd.configFile = configFile;
 		cmd.config = config;
 
+		cmd.download = download;
+		cmd.log = log;
+
 		cmd.needsDb = needsDb;
-		cmd.dbFileName = dbFileName;
+		if (cmd.dbFileName == null) cmd.dbFileName = dbFileName;
+		if (cmd.dbType == null) cmd.dbType = dbType;
 
 		// Execute command
 		cmd.run();
+	}
+
+	public void setDbFileName(String dbFileName) {
+		this.dbFileName = dbFileName;
 	}
 
 	public void setDebug(boolean debug) {
@@ -440,10 +454,13 @@ public class SnpSift {
 	 * Options common to all commands
 	 */
 	protected void usageGenericAndDb() {
-		System.err.println("Common Options:\n" //
+		System.err.println("\nOptions common to all SnpSift commands:\n" //
 				+ (needsConfig ? "\t-c , -config <file>  : Specify config file\n" : "") //
 				+ "\t-d                   : Debug.\n" //
 				+ (needsDb ? "\t-db <file>           : Databse file name (for commands that require datbases).\n" : "") //
+				+ "\t-download            : Download database, if not available locally. Default: " + download + ".\n" //
+				+ "\t-noDownload          : Do not download a database, if not available locally.\n" //
+				+ "\t-noLog               : Do not report usage statistics to server.\n" //
 				+ "\t-h                   : Help.\n" //
 				+ "\t-v                   : Verbose.\n" //
 		);
@@ -460,10 +477,6 @@ public class SnpSift {
 		errCount.put(warn, count + 1);
 
 		if (count < MAX_ERRORS) System.err.println("WARNING: " + warn);
-	}
-
-	public void setDbFileName(String dbFileName) {
-		this.dbFileName = dbFileName;
 	}
 
 }

@@ -36,7 +36,6 @@ public class TestCasesAnnotate extends TestCase {
 
 		// Iterate over VCF entries
 		SnpSiftCmdAnnotate snpSiftAnnotate = new SnpSiftCmdAnnotate(args);
-		snpSiftAnnotate.setDbFileName(dbFileName);
 		snpSiftAnnotate.setDebug(debug);
 		snpSiftAnnotate.setVerbose(verbose);
 		List<VcfEntry> results = snpSiftAnnotate.run(true);
@@ -55,7 +54,6 @@ public class TestCasesAnnotate extends TestCase {
 
 		// Iterate over VCF entries
 		SnpSiftCmdAnnotate snpSiftAnnotate = new SnpSiftCmdAnnotate(args);
-		snpSiftAnnotate.setDbFileName(dbFileName);
 		snpSiftAnnotate.setDebug(debug);
 		snpSiftAnnotate.setVerbose(verbose);
 		snpSiftAnnotate.setSaveOutput(true);
@@ -105,6 +103,7 @@ public class TestCasesAnnotate extends TestCase {
 				argsList.add(arg);
 		}
 
+		argsList.add(dbFileName);
 		argsList.add(fileName);
 		return argsList.toArray(new String[0]);
 	}
@@ -145,7 +144,6 @@ public class TestCasesAnnotate extends TestCase {
 
 	/**
 	 * Annotate info fields
-	 * @throws IOException
 	 */
 	public void test_06() throws IOException {
 		String dbFileName = "./test/db_test_06.vcf";
@@ -166,7 +164,7 @@ public class TestCasesAnnotate extends TestCase {
 		List<VcfEntry> results = annotate(dbFileName, fileName, extraArgs);
 
 		// Check
-		Assert.assertEquals("PREVIOUS=annotation;TEST=yes;AF=0.002;AN=488;ABE=0.678", results.get(0).getInfoStr());
+		Assert.assertEquals("PREVIOUS=annotation;TEST=yes;ABE=0.678;AF=0.002;AN=488", results.get(0).getInfoStr());
 	}
 
 	/**
@@ -334,6 +332,23 @@ public class TestCasesAnnotate extends TestCase {
 			System.out.println(ve.toStr() + "\t" + type + "\t" + ann);
 			Assert.assertEquals(types.get(type), ann);
 		}
+	}
+
+	public void test_18() {
+		String dbFileName = "./test/test_annotate_18_db.vcf";
+		String fileName = "./test/test_annotate_18.vcf";
+
+		List<VcfEntry> results = annotate(dbFileName, fileName, null);
+		VcfEntry ve = results.get(0);
+		String ukac = ve.getInfo("UK10KWES_AC");
+		System.out.println("Annotated value: " + ukac);
+		Assert.assertEquals(".,49,44,.,.,.,.,.,.,.,.", ukac);
+	}
+
+	public void test_19() {
+		String dbFileName = "./test/db_test_multiline.vcf";
+		String fileName = "./test/annotate_multiline.vcf";
+		annotateTest(dbFileName, fileName);
 	}
 
 }

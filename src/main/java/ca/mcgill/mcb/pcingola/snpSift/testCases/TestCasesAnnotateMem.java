@@ -75,7 +75,7 @@ public class TestCasesAnnotateMem extends TestCasesAnnotate {
 		List<VcfEntry> results = annotate(dbFileName, fileName, extraArgs); //
 
 		// Check
-		Assert.assertEquals("PREVIOUS=annotation;TEST=yes;AF=0.002;AN=488;ABE=0.678", results.get(0).getInfoStr());
+		Assert.assertEquals("PREVIOUS=annotation;TEST=yes;ABE=0.678;AF=0.002;AN=488", results.get(0).getInfoStr());
 	}
 
 }

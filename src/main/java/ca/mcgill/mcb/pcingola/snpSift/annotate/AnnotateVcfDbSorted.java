@@ -51,7 +51,7 @@ public class AnnotateVcfDbSorted extends AnnotateVcfDb {
 		// Re-open VCF db file
 		vcfDbFile = new VcfFileIterator(new SeekableBufferedReader(dbFileName));
 		latestVcfDb = vcfDbFile.next(); // Read first VCf entry from DB file (this also forces to read headers)
-		addDbCurrent(latestVcfDb);
+		dbCurrentEntry.addDbCurrent(latestVcfDb);
 	}
 
 	/**
@@ -65,22 +65,23 @@ public class AnnotateVcfDbSorted extends AnnotateVcfDb {
 		if (latestVcfDb != null) {
 			// Are we still in the same chromosome?
 			if (latestVcfDb.getChromosomeName().equals(chr)) {
-				latestChromo = chr;
+				dbCurrentEntry.updateChromo(ve);
 				if (ve.getStart() < latestVcfDb.getStart()) {
-					clearCurrent();
+					dbCurrentEntry.clear();
 					return;
 				}
 
-				if (ve.getStart() == latestVcfDb.getStart()) addDbCurrent(latestVcfDb);
+				if (ve.getStart() == latestVcfDb.getStart()) dbCurrentEntry.addDbCurrent(latestVcfDb);
 			} else {
 				// VCFentry and latestDb entry are in different chromosomes
-				if (latestChromo.equals(chr)) {
+				if (dbCurrentEntry.checkChromo(ve)) {
+					// Same chromosome.
 					// This means that we finished reading all database entries from the previous chromosome.
 					// There is nothing else to do until ve reaches a new chromosome
 					return;
 				} else {
 					// This means that we should jump to a database position matching VcfEntry's chromosome
-					clearCurrent();
+					dbCurrentEntry.clear();
 
 					long filePos = indexDb.getStart(chr);
 					if (filePos < 0) return;
@@ -91,7 +92,7 @@ public class AnnotateVcfDbSorted extends AnnotateVcfDb {
 					}
 				}
 			}
-		} else clearCurrent();
+		} else dbCurrentEntry.clear();
 
 		// Read more entries from db
 		for (VcfEntry vcfDb : vcfDbFile) {
@@ -111,7 +112,7 @@ public class AnnotateVcfDbSorted extends AnnotateVcfDb {
 					countBadRef++;
 				}
 
-				addDbCurrent(vcfDb); // Same position: Add all keys to 'db'. Note: VCF allows more than one line with the same position
+				dbCurrentEntry.addDbCurrent(vcfDb); // Same position: Add all keys to 'db'. Note: VCF allows more than one line with the same position
 			}
 		}
 	}
