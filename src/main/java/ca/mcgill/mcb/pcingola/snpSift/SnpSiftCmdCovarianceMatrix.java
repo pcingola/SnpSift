@@ -1,8 +1,7 @@
-package ca.mcgill.mcb.pcingola.snpSift.matrix;
+package ca.mcgill.mcb.pcingola.snpSift;
 
 import ca.mcgill.mcb.pcingola.fileIterator.MatrixEntry;
 import ca.mcgill.mcb.pcingola.fileIterator.MatrixEntryFileIterator;
-import ca.mcgill.mcb.pcingola.snpSift.SnpSift;
 import ca.mcgill.mcb.pcingola.util.Gpr;
 import ca.mcgill.mcb.pcingola.util.Timer;
 

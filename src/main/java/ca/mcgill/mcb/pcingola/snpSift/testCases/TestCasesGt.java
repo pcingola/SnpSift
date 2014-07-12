@@ -4,7 +4,7 @@ import java.util.ArrayList;
 
 import junit.framework.Assert;
 import junit.framework.TestCase;
-import ca.mcgill.mcb.pcingola.snpSift.matrix.SnpSiftCmdGt;
+import ca.mcgill.mcb.pcingola.snpSift.SnpSiftCmdGt;
 import ca.mcgill.mcb.pcingola.util.Gpr;
 
 /**

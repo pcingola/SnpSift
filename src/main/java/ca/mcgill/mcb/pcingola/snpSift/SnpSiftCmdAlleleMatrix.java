@@ -1,7 +1,6 @@
-package ca.mcgill.mcb.pcingola.snpSift.matrix;
+package ca.mcgill.mcb.pcingola.snpSift;
 
 import ca.mcgill.mcb.pcingola.fileIterator.VcfFileIterator;
-import ca.mcgill.mcb.pcingola.snpSift.SnpSift;
 import ca.mcgill.mcb.pcingola.util.Gpr;
 import ca.mcgill.mcb.pcingola.util.Timer;
 import ca.mcgill.mcb.pcingola.vcf.VcfEntry;

@@ -12,9 +12,6 @@ import ca.mcgill.mcb.pcingola.snpSift.caseControl.SnpSiftCmdCaseControl;
 import ca.mcgill.mcb.pcingola.snpSift.caseControl.SnpSiftCmdCaseControlSummary;
 import ca.mcgill.mcb.pcingola.snpSift.epistasis.SnpSiftCmdEpistasis;
 import ca.mcgill.mcb.pcingola.snpSift.hwe.SnpSiftCmdHwe;
-import ca.mcgill.mcb.pcingola.snpSift.matrix.SnpSiftCmdAlleleMatrix;
-import ca.mcgill.mcb.pcingola.snpSift.matrix.SnpSiftCmdCovarianceMatrix;
-import ca.mcgill.mcb.pcingola.snpSift.matrix.SnpSiftCmdGt;
 import ca.mcgill.mcb.pcingola.util.Download;
 import ca.mcgill.mcb.pcingola.util.Gpr;
 import ca.mcgill.mcb.pcingola.util.Timer;
@@ -309,6 +306,7 @@ public class SnpSift {
 		else if (command.startsWith("SIMPLIFYINDELS")) cmd = new SnpSiftCmdSimplifyIndels(args);
 		else if (command.startsWith("PEDSHOW")) cmd = new SnpSiftCmdPedShow(args);
 		else if (command.startsWith("EPISTASIS")) cmd = new SnpSiftCmdEpistasis(args);
+		else if (command.startsWith("VCFCHECK")) cmd = new SnpSiftCmdVcfCheck(args);
 		else usage("Unknown command '" + command + "'");
 
 		// Help? Show help and exit
@@ -442,6 +440,7 @@ public class SnpSift {
 				+ "\n\tsplit         : Split VCF by chromosome." //
 				+ "\n\ttstv          : Calculate transiton to transversion ratio." //
 				+ "\n\tvarType       : Annotate variant type (SNP,MNP,INS,DEL or MIXED)." //
+				+ "\n\tvcfCheck      : Check that VCF file is well formed." //
 				+ "\n\tvcf2tped      : Convert VCF to TPED." //
 		);
 
