@@ -33,7 +33,6 @@ public class TestSuiteAll {
 		suite.addTestSuite(TestCasesSplit.class);
 		suite.addTestSuite(TestCasesPrivate.class);
 		suite.addTestSuite(TestCasesGt.class);
-		suite.addTestSuite(TestCasesEpistasis.class);
 		suite.addTestSuite(TestCasesGeneSets.class);
 
 		return suite;

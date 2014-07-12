@@ -10,7 +10,6 @@ import ca.mcgill.mcb.pcingola.snpEffect.Config;
 import ca.mcgill.mcb.pcingola.snpEffect.commandLine.SnpEff;
 import ca.mcgill.mcb.pcingola.snpSift.caseControl.SnpSiftCmdCaseControl;
 import ca.mcgill.mcb.pcingola.snpSift.caseControl.SnpSiftCmdCaseControlSummary;
-import ca.mcgill.mcb.pcingola.snpSift.epistasis.SnpSiftCmdEpistasis;
 import ca.mcgill.mcb.pcingola.snpSift.hwe.SnpSiftCmdHwe;
 import ca.mcgill.mcb.pcingola.util.Download;
 import ca.mcgill.mcb.pcingola.util.Gpr;
@@ -305,7 +304,6 @@ public class SnpSift {
 		else if (command.startsWith("GT")) cmd = new SnpSiftCmdGt(args);
 		else if (command.startsWith("SIMPLIFYINDELS")) cmd = new SnpSiftCmdSimplifyIndels(args);
 		else if (command.startsWith("PEDSHOW")) cmd = new SnpSiftCmdPedShow(args);
-		else if (command.startsWith("EPISTASIS")) cmd = new SnpSiftCmdEpistasis(args);
 		else if (command.startsWith("VCFCHECK")) cmd = new SnpSiftCmdVcfCheck(args);
 		else usage("Unknown command '" + command + "'");
 
