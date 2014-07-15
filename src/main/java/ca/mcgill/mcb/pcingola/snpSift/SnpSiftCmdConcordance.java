@@ -44,7 +44,6 @@ public class SnpSiftCmdConcordance extends SnpSift {
 	FileIndexChrPos indexVcf;
 	StringBuilder summary = new StringBuilder();
 	HashSet<String> restrictSamples;
-
 	protected VcfEntry latestVcfEntry = null;
 
 	public SnpSiftCmdConcordance(String args[]) {
