@@ -7,7 +7,7 @@ import java.util.HashSet;
 import java.util.List;
 
 import ca.mcgill.mcb.pcingola.fileIterator.VcfFileIterator;
-import ca.mcgill.mcb.pcingola.snpEffect.ChangeEffect;
+import ca.mcgill.mcb.pcingola.snpEffect.VariantEffect;
 import ca.mcgill.mcb.pcingola.snpSift.caseControl.VariantCounter;
 import ca.mcgill.mcb.pcingola.util.Gpr;
 import ca.mcgill.mcb.pcingola.util.Timer;
@@ -69,7 +69,7 @@ public class ZzzAffectedSamples {
 			HashSet<String> genesCounted = new HashSet<String>();
 
 			for (VcfEffect veff : ve.parseEffects()) {
-				if ((veff.getImpact() == ChangeEffect.EffectImpact.HIGH) || (veff.getImpact() == ChangeEffect.EffectImpact.MODERATE)) {
+				if ((veff.getImpact() == VariantEffect.EffectImpact.HIGH) || (veff.getImpact() == VariantEffect.EffectImpact.MODERATE)) {
 					//if (veff.getImpact() == ChangeEffect.EffectImpact.HIGH) {
 					String geneName = ve.getChromosomeName() + "\t" + veff.getGene();
 

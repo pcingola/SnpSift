@@ -15,7 +15,7 @@ import ca.mcgill.mcb.pcingola.interval.Variant;
 import ca.mcgill.mcb.pcingola.interval.tree.IntervalForest;
 import ca.mcgill.mcb.pcingola.ped.PedPedigree;
 import ca.mcgill.mcb.pcingola.ped.TfamEntry;
-import ca.mcgill.mcb.pcingola.snpEffect.ChangeEffect;
+import ca.mcgill.mcb.pcingola.snpEffect.VariantEffect;
 import ca.mcgill.mcb.pcingola.snpSift.SnpSift;
 import ca.mcgill.mcb.pcingola.snpSift.SnpSiftCmdDbNsfp;
 import ca.mcgill.mcb.pcingola.stats.CountByType;
@@ -211,7 +211,7 @@ public class SnpSiftCmdCaseControlSummary extends SnpSift {
 	 */
 	void parseVcfEntry(VcfEntry ve) {
 		// Parse effect fields. Get highest functional class
-		ChangeEffect.FunctionalClass funcClass = ChangeEffect.FunctionalClass.NONE;
+		VariantEffect.FunctionalClass funcClass = VariantEffect.FunctionalClass.NONE;
 		VcfEffect effMax = null;
 		StringBuilder effAll = new StringBuilder();
 		StringBuilder otherInfo = new StringBuilder();
@@ -226,7 +226,7 @@ public class SnpSiftCmdCaseControlSummary extends SnpSift {
 		}
 
 		// Ignore 'NONE' functional class
-		if (funcClass != ChangeEffect.FunctionalClass.NONE) {
+		if (funcClass != VariantEffect.FunctionalClass.NONE) {
 			maf(ve);
 
 			// Variant type (based on allele frequency)
