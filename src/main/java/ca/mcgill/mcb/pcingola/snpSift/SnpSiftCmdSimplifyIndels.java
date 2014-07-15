@@ -66,7 +66,7 @@ public class SnpSiftCmdSimplifyIndels extends SnpSift {
 
 			if (ve.isInDel()) {
 				// We simplify if there is only one InDel
-				if (ve.isMultipleAlts()) System.out.println(ve); // Multi-allelic InDels? I'm too lazy to simplify it...(show as it is)
+				if (ve.isMultiallelic()) System.out.println(ve); // Multi-allelic InDels? I'm too lazy to simplify it...(show as it is)
 				else System.out.println(simplifyInDel(ve)); // Simplify & Print
 			} else {
 				// Not an indel? Cannot simplify: show as it is (I could try to simplify it, but I'm lazy)
