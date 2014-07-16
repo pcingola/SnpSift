@@ -7,7 +7,7 @@ import ca.mcgill.mcb.pcingola.vcf.VcfGenotype;
 /**
  * A field:
  * E.g.:  'GEN[2].GT'
- * 
+ *
  * @author pablocingolani
  */
 public class FieldGenotype extends FieldSub {
@@ -21,9 +21,6 @@ public class FieldGenotype extends FieldSub {
 
 	/**
 	 * Get a field (as a Float) from VcfEntry
-	 * @param vcfEntry
-	 * @param field
-	 * @return
 	 */
 	@Override
 	public String getFieldString(VcfEntry vcfEntry) {

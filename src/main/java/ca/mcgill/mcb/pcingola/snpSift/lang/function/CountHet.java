@@ -6,7 +6,7 @@ import ca.mcgill.mcb.pcingola.vcf.VcfInfoType;
 
 /**
  * Count number of heterozygous samples
- * 
+ *
  * @author pablocingolani
  */
 public class CountHet extends Function {
@@ -23,6 +23,12 @@ public class CountHet extends Function {
 			if (gen.isHeterozygous()) count++;
 
 		return new Long(count);
+	}
+
+	@SuppressWarnings("rawtypes")
+	@Override
+	public Comparable get(VcfGenotype vcfGenotype) {
+		return vcfGenotype.isHeterozygous() ? 1 : 0;
 	}
 
 }

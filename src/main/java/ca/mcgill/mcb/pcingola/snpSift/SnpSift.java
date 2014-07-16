@@ -301,6 +301,7 @@ public class SnpSift {
 		else if (command.startsWith("RMREF")) cmd = new SnpSiftCmdRemoveReferenceGenotypes(args);
 		else if (command.startsWith("VCF2TPED")) cmd = new SnpSiftCmdVcf2Tped(args);
 		else if (command.startsWith("GENESETS")) cmd = new SnpSiftCmdGeneSets(args);
+		else if (command.startsWith("GTF")) cmd = new SnpSiftCmdGtFilter(args);
 		else if (command.startsWith("GT")) cmd = new SnpSiftCmdGt(args);
 		else if (command.startsWith("SIMPLIFYINDELS")) cmd = new SnpSiftCmdSimplifyIndels(args);
 		else if (command.startsWith("PEDSHOW")) cmd = new SnpSiftCmdPedShow(args);

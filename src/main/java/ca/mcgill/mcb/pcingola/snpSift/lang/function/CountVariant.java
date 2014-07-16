@@ -6,7 +6,7 @@ import ca.mcgill.mcb.pcingola.vcf.VcfInfoType;
 
 /**
  * Count number of ALT samples
- * 
+ *
  * @author pablocingolani
  */
 public class CountVariant extends Function {
@@ -23,6 +23,12 @@ public class CountVariant extends Function {
 			if (gen.isVariant()) count++;
 
 		return new Long(count);
+	}
+
+	@SuppressWarnings("rawtypes")
+	@Override
+	public Comparable get(VcfGenotype vcfGenotype) {
+		return vcfGenotype.isVariant() ? 1 : 0;
 	}
 
 }

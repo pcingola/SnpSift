@@ -6,7 +6,7 @@ import ca.mcgill.mcb.pcingola.vcf.VcfInfoType;
 
 /**
  * Count number of refernces samples
- * 
+ *
  * @author pablocingolani
  */
 public class CountRef extends Function {
@@ -23,6 +23,12 @@ public class CountRef extends Function {
 			if (!gen.isVariant()) count++;
 
 		return new Long(count);
+	}
+
+	@SuppressWarnings("rawtypes")
+	@Override
+	public Comparable get(VcfGenotype vcfGenotype) {
+		return vcfGenotype.isRef() ? 1 : 0;
 	}
 
 }

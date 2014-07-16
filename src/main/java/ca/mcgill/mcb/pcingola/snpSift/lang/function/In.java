@@ -4,10 +4,11 @@ import java.util.HashSet;
 
 import ca.mcgill.mcb.pcingola.snpSift.lang.expression.Expression;
 import ca.mcgill.mcb.pcingola.vcf.VcfEntry;
+import ca.mcgill.mcb.pcingola.vcf.VcfGenotype;
 
 /**
  * Is an expression in a set?
- * 
+ *
  * @author pablocingolani
  */
 public class In extends FunctionBool {
@@ -25,6 +26,12 @@ public class In extends FunctionBool {
 	@Override
 	public boolean eval(VcfEntry vcfEntry) {
 		String res = expression.getString(vcfEntry);
+		return set.contains(res);
+	}
+
+	@Override
+	public boolean eval(VcfGenotype gt) {
+		String res = expression.getString(gt);
 		return set.contains(res);
 	}
 

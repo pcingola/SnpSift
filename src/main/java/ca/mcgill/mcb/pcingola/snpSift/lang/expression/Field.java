@@ -3,13 +3,15 @@ package ca.mcgill.mcb.pcingola.snpSift.lang.expression;
 import ca.mcgill.mcb.pcingola.snpSift.lang.expression.FieldConstant.FieldConstantNames;
 import ca.mcgill.mcb.pcingola.util.Gpr;
 import ca.mcgill.mcb.pcingola.vcf.VcfEntry;
+import ca.mcgill.mcb.pcingola.vcf.VcfGenotype;
 import ca.mcgill.mcb.pcingola.vcf.VcfInfo;
+import ca.mcgill.mcb.pcingola.vcf.VcfInfoGenotype;
 import ca.mcgill.mcb.pcingola.vcf.VcfInfoType;
 
 /**
  * A field:
  * E.g.:  'DP', 'CHROM'
- * 
+ *
  * @author pablocingolani
  */
 public class Field extends Expression {
@@ -30,12 +32,15 @@ public class Field extends Expression {
 				|| name.equals("ALT") //
 				|| name.equals("FILTER") //
 				|| name.equals("FORMAT") //
-		) returnType = VcfInfoType.String;
+				) returnType = VcfInfoType.String;
 		else if (name.equals("QUAL")) returnType = VcfInfoType.Float;
 		else if (name.equals("POS")) returnType = VcfInfoType.Integer;
 		else returnType = VcfInfoType.UNKNOWN;
 	}
 
+	/**
+	 * Calculate return 'type' for this field
+	 */
 	public VcfInfoType calcReturnType(VcfEntry vcfEntry) {
 		if (returnType == VcfInfoType.UNKNOWN) {
 
@@ -46,9 +51,27 @@ public class Field extends Expression {
 				if (FieldConstant.isConstantField(name)) return FieldConstantNames.valueOf(name).getType();
 
 				// Error: Not found
-				throw new RuntimeException("No such field '" + name + "'");
+				throw new RuntimeException("No such INFO field '" + name + "'");
 			}
 			returnType = vcfInfo.getVcfInfoType();
+		}
+
+		return returnType;
+	}
+
+	public VcfInfoType calcReturnType(VcfGenotype vcfGenotype) {
+		if (returnType == VcfInfoType.UNKNOWN) {
+
+			// Is there a filed 'name'
+			VcfInfoGenotype vcfInfoGenotype = vcfGenotype.getVcfEntry().getVcfFileIterator().getVcfHeader().getVcfInfoGenotype(name);
+			if (vcfInfoGenotype == null) {
+				// Is this a special field name?
+				if (FieldConstant.isConstantField(name)) return FieldConstantNames.valueOf(name).getType();
+
+				// Error: Not found
+				throw new RuntimeException("No such GENOTYPE field '" + name + "'");
+			}
+			returnType = vcfInfoGenotype.getVcfInfoType();
 		}
 
 		return returnType;
@@ -57,7 +80,7 @@ public class Field extends Expression {
 	@SuppressWarnings("rawtypes")
 	@Override
 	public Comparable get(VcfEntry vcfEntry) {
-		calcReturnType(vcfEntry);
+		returnType = calcReturnType(vcfEntry);
 		switch (returnType) {
 
 		case Integer:
@@ -76,14 +99,32 @@ public class Field extends Expression {
 		}
 	}
 
+	@Override
+	public Comparable get(VcfGenotype vcfGenotype) {
+		calcReturnType(vcfGenotype);
+
+		switch (returnType) {
+
+		case Integer:
+			return getFieldInt(vcfGenotype);
+
+		case Float:
+			return getFieldFloat(vcfGenotype);
+
+		case Character:
+		case String:
+		case Flag:
+			return getFieldString(vcfGenotype);
+
+		default:
+			throw new RuntimeException("Unknow return type '" + returnType + "'");
+		}
+	}
+
 	/**
 	 * Get a field (as a Float) from VcfEntry
-	 * 
+	 *
 	 * Note: 'Float' according to VCF spec., not according to java (that is why it returns a double)
-	 * 
-	 * @param vcfEntry
-	 * @param field
-	 * @return
 	 */
 	public Double getFieldFloat(VcfEntry vcfEntry) {
 		if (name.equals("QUAL")) return vcfEntry.getQuality();
@@ -94,28 +135,44 @@ public class Field extends Expression {
 	}
 
 	/**
+	 * Get a field (as a Float) from VcfGenotype
+	 *
+	 * Note: 'Float' according to VCF spec., not according to java (that is why it returns a double)
+	 */
+	public Double getFieldFloat(VcfGenotype vcfGenotype) {
+		String value = getFieldString(vcfGenotype);
+		if (value == null) return null;
+		return Gpr.parseDoubleSafe(value);
+	}
+
+	/**
 	 * Get a field (as an Integer) from VcfEntry
-	 * 
+	 *
 	 * Note: 'Int' according to VCF spec., not according to java (that is why it returns a long)
-	 * 
-	 * @param vcfEntry
-	 * @param key
-	 * @return
 	 */
 	public Long getFieldInt(VcfEntry vcfEntry) {
 		if (name.equals("POS")) return vcfEntry.getStart() + 1L;
 
 		String value = getFieldString(vcfEntry);
 		if (value == null) return null;
+		return Gpr.parseLongSafe(value);
+	}
 
+	/**
+	 * Get a field (as an Integer) from VcfEntry
+	 *
+	 * Note: 'Int' according to VCF spec., not according to java (that is why it returns a long)
+	 */
+	public Long getFieldInt(VcfGenotype vcfGenotype) {
+		if (name.equals("GT")) return (long) vcfGenotype.getGenotypeCode();
+
+		String value = getFieldString(vcfGenotype);
+		if (value == null) return null;
 		return Gpr.parseLongSafe(value);
 	}
 
 	/**
 	 * Get a field (as a String) from VcfEntry
-	 * @param vcfEntry
-	 * @param field
-	 * @return
 	 */
 	public String getFieldString(VcfEntry vcfEntry) {
 		// Field from first 10 columns
@@ -145,14 +202,22 @@ public class Field extends Expression {
 		return value;
 	}
 
+	public String getFieldString(VcfGenotype vcfGenotype) {
+		// Special fields
+		if (name.equals("GT")) return vcfGenotype.getGenotypeStr();
+
+		// Find field
+		String value = vcfGenotype.get(name);
+		if ((value == null) && exceptionIfNotFound) throw new RuntimeException("Error: Genotype field '" + name + "' not available in this entry.\n\t" + this);
+		return value;
+	}
+
 	public String getName() {
 		return name;
 	}
 
 	/**
 	 * Convert and index to a string
-	 * @param index
-	 * @return
 	 */
 	public String indexStr(int index) {
 		if (index == TYPE_ANY) return "*";

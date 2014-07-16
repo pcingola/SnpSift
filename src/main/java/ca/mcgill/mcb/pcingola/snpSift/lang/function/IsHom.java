@@ -5,7 +5,7 @@ import ca.mcgill.mcb.pcingola.vcf.VcfGenotype;
 
 /**
  * Is 'genotypeNum' homozygous?
- * 
+ *
  * @author pablocingolani
  */
 public class IsHom extends FunctionBoolGenotype {
@@ -18,6 +18,11 @@ public class IsHom extends FunctionBoolGenotype {
 	public boolean eval(VcfEntry vcfEntry) {
 		VcfGenotype gen = vcfEntry.getVcfGenotype(genotypeNum);
 		return gen.isHomozygous();
+	}
+
+	@Override
+	public boolean eval(VcfGenotype vcfGenotype) {
+		return vcfGenotype.isHomozygous();
 	}
 
 }

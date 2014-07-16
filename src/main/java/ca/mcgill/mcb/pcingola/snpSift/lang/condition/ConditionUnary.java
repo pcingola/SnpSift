@@ -1,10 +1,11 @@
 package ca.mcgill.mcb.pcingola.snpSift.lang.condition;
 
 import ca.mcgill.mcb.pcingola.vcf.VcfEntry;
+import ca.mcgill.mcb.pcingola.vcf.VcfGenotype;
 
 /**
  * Unary condition
- * 
+ *
  * @author pcingola
  */
 public class ConditionUnary extends Condition {
@@ -19,6 +20,11 @@ public class ConditionUnary extends Condition {
 	@Override
 	public boolean eval(VcfEntry vcfEntry) {
 		return !condition.eval(vcfEntry);
+	}
+
+	@Override
+	public boolean eval(VcfGenotype gt) {
+		return !eval(gt);
 	}
 
 	@Override

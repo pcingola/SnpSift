@@ -5,7 +5,7 @@ import ca.mcgill.mcb.pcingola.vcf.VcfGenotype;
 
 /**
  * Is 'genotypeNum' heterozygous?
- * 
+ *
  * @author pablocingolani
  */
 public class IsHet extends FunctionBoolGenotype {
@@ -18,6 +18,11 @@ public class IsHet extends FunctionBoolGenotype {
 	public boolean eval(VcfEntry vcfEntry) {
 		VcfGenotype gen = vcfEntry.getVcfGenotype(genotypeNum);
 		return gen.isHeterozygous();
+	}
+
+	@Override
+	public boolean eval(VcfGenotype vcfGenotype) {
+		return vcfGenotype.isHeterozygous();
 	}
 
 }

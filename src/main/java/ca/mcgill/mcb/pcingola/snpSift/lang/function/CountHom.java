@@ -6,7 +6,7 @@ import ca.mcgill.mcb.pcingola.vcf.VcfInfoType;
 
 /**
  * Count number of homozygous samples
- * 
+ *
  * @author pablocingolani
  */
 public class CountHom extends Function {
@@ -23,6 +23,12 @@ public class CountHom extends Function {
 			if (gen.isHomozygous()) count++;
 
 		return new Long(count);
+	}
+
+	@SuppressWarnings("rawtypes")
+	@Override
+	public Comparable get(VcfGenotype vcfGenotype) {
+		return vcfGenotype.isHomozygous() ? 1 : 0;
 	}
 
 }

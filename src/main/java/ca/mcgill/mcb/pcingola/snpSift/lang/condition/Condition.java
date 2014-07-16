@@ -1,10 +1,11 @@
 package ca.mcgill.mcb.pcingola.snpSift.lang.condition;
 
 import ca.mcgill.mcb.pcingola.vcf.VcfEntry;
+import ca.mcgill.mcb.pcingola.vcf.VcfGenotype;
 
 /**
  * A condition has a boolean result.
- * 
+ *
  * @author pcingola
  */
 public abstract class Condition {
@@ -20,9 +21,12 @@ public abstract class Condition {
 
 	/**
 	 * Evaluate this condition
-	 * @param vcfEntry
-	 * @return
 	 */
 	public abstract boolean eval(VcfEntry vcfEntry);
+
+	/**
+	 * Evaluate this condition
+	 */
+	public abstract boolean eval(VcfGenotype vcfGenotype);
 
 }

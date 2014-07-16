@@ -1,6 +1,7 @@
 package ca.mcgill.mcb.pcingola.snpSift.lang.expression;
 
 import ca.mcgill.mcb.pcingola.vcf.VcfEntry;
+import ca.mcgill.mcb.pcingola.vcf.VcfGenotype;
 import ca.mcgill.mcb.pcingola.vcf.VcfInfoType;
 
 public class Literal extends Expression {
@@ -30,6 +31,20 @@ public class Literal extends Expression {
 	@SuppressWarnings("rawtypes")
 	@Override
 	public Comparable get(VcfEntry vcfEntry) {
+		switch (returnType) {
+		case Integer:
+			return l;
+		case Float:
+			return d;
+		case String:
+			return str;
+		default:
+			throw new RuntimeException("Unknwon return type '" + returnType + "'");
+		}
+	}
+
+	@Override
+	public Comparable get(VcfGenotype vcfGenotype) {
 		switch (returnType) {
 		case Integer:
 			return l;
