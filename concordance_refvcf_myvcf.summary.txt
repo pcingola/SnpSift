@@ -1,0 +1,4 @@
+Number of samples:
+	9	File /home/pcingola/snpEff/refvcf.vcf
+	9	File /home/pcingola/snpEff/myvcf.vcf
+	9	Both files

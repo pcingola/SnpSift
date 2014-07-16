@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 
 import ca.mcgill.mcb.pcingola.collections.AutoHashMap;
 import ca.mcgill.mcb.pcingola.fileIterator.SeekableBufferedReader;
@@ -25,9 +26,10 @@ import ca.mcgill.mcb.pcingola.vcf.VcfGenotype;
  */
 public class SnpSiftCmdConcordance extends SnpSift {
 
-	public static final String GENOTYPE_MISSING = "missing_genotype";
-	public static final String GENOTYPE_CHANGE = "change_";
+	public static final String GENOTYPE_MISSING = "MISSING";
+	//		public static final String GENOTYPE_CHANGE = "change_";
 	public static final String SEP = "_";
+	public static final String SEP_GT = "/";
 	public static final int SHOW_EVERY = 10000;
 
 	int countEntries;
@@ -40,7 +42,7 @@ public class SnpSiftCmdConcordance extends SnpSift {
 	CountByType errors = new CountByType();
 	CountByType concordance = new CountByType();
 	AutoHashMap<String, CountByType> concordanceBySample = new AutoHashMap<String, CountByType>(new CountByType());
-	ArrayList<String> labels;
+	List<String> labels;
 	FileIndexChrPos indexVcf;
 	StringBuilder summary = new StringBuilder();
 	HashSet<String> restrictSamples;
@@ -109,15 +111,13 @@ public class SnpSiftCmdConcordance extends SnpSift {
 			// Does vcf1 also have this sample?
 			if (idx1 >= 0) {
 				// OK, we can calculate concordance
+				VcfGenotype gen1 = ve1.getVcfGenotype(idx1);
 				CountByType countBySample = concordanceBySample.get(sampleNameIdx2[idx2]);
-
-				if (gen2.isMissing()) concordanceCount(GENOTYPE_MISSING + SEP + name2, count, countBySample);
-				else {
-					VcfGenotype gen1 = ve1.getVcfGenotype(idx1);
-					if (gen1.isMissing()) concordanceCount(GENOTYPE_MISSING + SEP + name1, count, countBySample);
-					else concordanceCount(GENOTYPE_CHANGE + gen1.getGenotypeCode() + SEP + gen2.getGenotypeCode(), count, countBySample);
-				}
-			}
+				String gen1Str = genotypKey(gen1, name1);
+				String gen2Str = genotypKey(gen2, name2);
+				String key = gen1Str + SEP_GT + gen2Str;
+				concordanceCount(key, count, countBySample);
+			} else if (verbose) Gpr.debug("Unmatched sample '" + sampleNameIdx2[idx2] + "' (number " + idx2 + ") in file " + name2);
 			idx2++;
 		}
 
@@ -126,9 +126,6 @@ public class SnpSiftCmdConcordance extends SnpSift {
 
 	/**
 	 * Update counters
-	 * @param label
-	 * @param count
-	 * @param countBySample
 	 */
 	void concordanceCount(String label, CountByType count, CountByType countBySample) {
 		concordance.inc(label);
@@ -137,10 +134,20 @@ public class SnpSiftCmdConcordance extends SnpSift {
 	}
 
 	/**
+	 * Create a list of labels to show
+	 */
+	List<String> createLabels() {
+		ArrayList<String> labels = new ArrayList<String>();
+		for (int gtCode1 = -1; gtCode1 <= 2; gtCode1++)
+			for (int gtCode2 = -1; gtCode2 <= 2; gtCode2++) {
+				String label = genotypKey(gtCode1, name1) + SEP_GT + genotypKey(gtCode2, name2);
+				labels.add(label);
+			}
+		return labels;
+	}
+
+	/**
 	 * Log and show errors
-	 * @param ve1
-	 * @param ve2
-	 * @param message
 	 */
 	void errors(VcfEntry ve1, VcfEntry ve2, String message) {
 		errors.inc(message);
@@ -149,11 +156,6 @@ public class SnpSiftCmdConcordance extends SnpSift {
 
 	/**
 	 * Find an entry in 'vcfFile' that matches chromosome and position from 'vcfEntry'
-	 *
-	 * @param vcfFile
-	 * @param vcfEntry
-	 * @return A matching entry, null if not found
-	 * @throws IOException
 	 */
 	VcfEntry find(VcfFileIterator vcfFile, VcfEntry vcfEntry) throws IOException {
 		//---
@@ -205,6 +207,17 @@ public class SnpSiftCmdConcordance extends SnpSift {
 		return null;
 	}
 
+	String genotypKey(int gtCode, String name) {
+		if (gtCode < 0) return GENOTYPE_MISSING + SEP + name;
+		if (gtCode == 0) return "REF";
+		return "ALT" + SEP + gtCode;
+	}
+
+	String genotypKey(VcfGenotype gen, String name) {
+		if (gen.isMissing()) return GENOTYPE_MISSING + SEP + name;
+		return genotypKey(gen.getGenotypeCode(), name);
+	}
+
 	/**
 	 * Parse command line arguments
 	 */
@@ -227,9 +240,6 @@ public class SnpSiftCmdConcordance extends SnpSift {
 	/**
 	 * Read headers and parse sample names. Create map from
 	 * sample index in vcf2 to sample index in vcf1
-	 *
-	 * @param vcf1
-	 * @param vcf2
 	 */
 	void parseVcfSampleNames(VcfFileIterator vcf1, VcfFileIterator vcf2) {
 		// Read both headers
@@ -257,7 +267,7 @@ public class SnpSiftCmdConcordance extends SnpSift {
 					idx2toidx1[idx] = vcf1Name2Idx.get(sampleName); // Assign to index mapping array
 					sampleNameIdx2[idx] = sampleName;
 					concordanceBySample.getOrCreate(sampleName); // Initialize autoHash
-					if (debug) System.err.println("\tMap\tSamlple " + sampleName + "\tvcf2[" + idx + "]\t->\tvcf1[" + idx2toidx1[idx] + "]");
+					if (debug) System.err.println("\tMap\tSamlple " + sampleName + "\t" + name2 + "[" + idx + "]\t->\t" + name1 + "[" + idx2toidx1[idx] + "]");
 				} else idx2toidx1[idx] = -1;
 			} else idx2toidx1[idx] = -1;
 
@@ -281,9 +291,9 @@ public class SnpSiftCmdConcordance extends SnpSift {
 				restrictSamples.add(s.trim());
 		}
 
-		// Assign labels
-		name1 = Gpr.removeExt(Gpr.baseName(vcfFileName1));
-		name2 = Gpr.removeExt(Gpr.baseName(vcfFileName2));
+		// Assign labels based on file names
+		name1 = vcfFile2name(vcfFileName1);
+		name2 = vcfFile2name(vcfFileName2);
 
 		//---
 		// Index vcf1:  it is assumed to be the smaller of the two
@@ -325,18 +335,11 @@ public class SnpSiftCmdConcordance extends SnpSift {
 		StringBuilder titleBySample = new StringBuilder();
 		title.append("chr\tpos\tref\talt");
 		titleBySample.append("sample");
-		labels = new ArrayList<String>();
-		for (int s1 = 0; s1 <= 2; s1++)
-			for (int s2 = 0; s2 <= 2; s2++) {
-				String label = GENOTYPE_CHANGE + s1 + SEP + s2;
-				labels.add(label);
-				title.append("\t" + label);
-				titleBySample.append("\t" + label);
-			}
-		labels.add(GENOTYPE_MISSING + SEP + name1);
-		labels.add(GENOTYPE_MISSING + SEP + name2);
-		title.append("\t" + GENOTYPE_MISSING + SEP + name1 + "\t" + GENOTYPE_MISSING + SEP + name2);
-		titleBySample.append("\t" + GENOTYPE_MISSING + SEP + name1 + "\t" + GENOTYPE_MISSING + SEP + name2);
+		labels = createLabels();
+		for (String label : labels) {
+			title.append("\t" + label);
+			titleBySample.append("\t" + label);
+		}
 		System.out.println(title);
 
 		//---
@@ -392,8 +395,6 @@ public class SnpSiftCmdConcordance extends SnpSift {
 
 	/**
 	 * Show a counter
-	 * @param ve
-	 * @param count
 	 */
 	String showCounts(CountByType count, VcfEntry ve, String rowTitle) {
 		StringBuilder sb = new StringBuilder();
@@ -411,7 +412,6 @@ public class SnpSiftCmdConcordance extends SnpSift {
 
 	/**
 	 * Add to summary (and show in verbose mode)
-	 * @param message
 	 */
 	void summary(String message) {
 		summary.append(message + "\n");
@@ -420,7 +420,6 @@ public class SnpSiftCmdConcordance extends SnpSift {
 
 	/**
 	 * Show usage message
-	 * @param msg
 	 */
 	@Override
 	public void usage(String msg) {
@@ -434,6 +433,11 @@ public class SnpSiftCmdConcordance extends SnpSift {
 		System.err.println("Options:\n");
 		System.err.println("\t -s <file>  : Only use sample IDs in file (format: one sample ID per line).");
 		System.exit(1);
+	}
+
+	String vcfFile2name(String vcf) {
+		if (vcf.isEmpty() || vcf.equals("-")) return "stdin";
+		return Gpr.removeExt(Gpr.baseName(vcf));
 	}
 
 }
