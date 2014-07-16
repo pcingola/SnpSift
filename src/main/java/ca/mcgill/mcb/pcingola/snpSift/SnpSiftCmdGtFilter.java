@@ -140,15 +140,22 @@ public class SnpSiftCmdGtFilter extends SnpSift {
 	 * Evaluate all genotypes for this entry
 	 */
 	boolean evaluate(VcfEntry vcfEntry) {
-		Gpr.debug(vcfEntry.toStringNoGt());
+		if (debug) Gpr.debug(vcfEntry.toStringNoGt());
+
+		boolean ok = false;
 		for (VcfGenotype vgt : vcfEntry) {
 			boolean remove = evaluate(vcfEntry, vgt);
+
+			if (debug) Gpr.debug("\t\tevaluate:" + remove + "\t" + vgt);
+
 			if (remove) {
-				Gpr.debug("\tRM  \tGQ: " + vgt.get("GQ") + "\t\t" + vgt);
-			} else Gpr.debug("\t    \tGQ: " + vgt.get("GQ") + "\t\t" + vgt);
+				ok = true;
+				vgt.set("GT", "."); // Set genotype to missing
+			}
 		}
 
-		return true;
+		if (debug && ok) Gpr.debug("VCF entry changed:\t" + vcfEntry);
+		return ok;
 	}
 
 	/**
