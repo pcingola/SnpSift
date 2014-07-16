@@ -26,8 +26,8 @@ import ca.mcgill.mcb.pcingola.vcf.VcfGenotype;
  */
 public class SnpSiftCmdConcordance extends SnpSift {
 
-	public static final String GENOTYPE_MISSING = "MISSING";
-	//		public static final String GENOTYPE_CHANGE = "change_";
+	public static final String MISSING_GENOTYPE = "MISSING_GT";
+	public static final String MISSING_ENTRY = "MISSING_ENTRY";
 	public static final String SEP = "_";
 	public static final String SEP_GT = "/";
 	public static final int SHOW_EVERY = 10000;
@@ -57,6 +57,9 @@ public class SnpSiftCmdConcordance extends SnpSift {
 	 * @return
 	 */
 	boolean check(VcfEntry ve1, VcfEntry ve2) {
+		if (ve1 == null && ve2 == null) return false;
+		if (ve1 == null || ve2 == null) return true;
+
 		//---
 		// Sanity checks
 		//---
@@ -100,28 +103,26 @@ public class SnpSiftCmdConcordance extends SnpSift {
 		// Check that VCF entries match
 		if (!check(ve1, ve2)) return;
 
-		int idx2 = 0;
-		CountByType count = new CountByType();
-
 		// Compare all genotypes from ve2 to the corresponding genotype in ve1
-		for (VcfGenotype gen2 : ve2) {
+		CountByType count = new CountByType();
+		int gtMax = idx2toidx1.length;
+		for (int idx2 = 0; idx2 < gtMax; idx2++) {
 			// Get sample index on vcf1
 			int idx1 = idx2toidx1[idx2];
 
 			// Does vcf1 also have this sample?
 			if (idx1 >= 0) {
 				// OK, we can calculate concordance
-				VcfGenotype gen1 = ve1.getVcfGenotype(idx1);
 				CountByType countBySample = concordanceBySample.get(sampleNameIdx2[idx2]);
-				String gen1Str = genotypKey(gen1, name1);
-				String gen2Str = genotypKey(gen2, name2);
+				String gen1Str = genotypKey(ve1, idx1, name1);
+				String gen2Str = genotypKey(ve2, idx2, name2);
 				String key = gen1Str + SEP_GT + gen2Str;
 				concordanceCount(key, count, countBySample);
-			} else if (verbose) Gpr.debug("Unmatched sample '" + sampleNameIdx2[idx2] + "' (number " + idx2 + ") in file " + name2);
-			idx2++;
+			} else if (debug) Gpr.debug("Unmatched sample '" + sampleNameIdx2[idx2] + "' (number " + idx2 + ") in file " + name2);
 		}
 
-		System.out.print(showCounts(count, ve1, null));
+		// Show counts for this match
+		System.out.print(showCounts(count, (ve1 != null ? ve1 : ve2), null));
 	}
 
 	/**
@@ -138,8 +139,8 @@ public class SnpSiftCmdConcordance extends SnpSift {
 	 */
 	List<String> createLabels() {
 		ArrayList<String> labels = new ArrayList<String>();
-		for (int gtCode1 = -1; gtCode1 <= 2; gtCode1++)
-			for (int gtCode2 = -1; gtCode2 <= 2; gtCode2++) {
+		for (int gtCode1 = -2; gtCode1 <= 2; gtCode1++)
+			for (int gtCode2 = -2; gtCode2 <= 2; gtCode2++) {
 				String label = genotypKey(gtCode1, name1) + SEP_GT + genotypKey(gtCode2, name2);
 				labels.add(label);
 			}
@@ -202,20 +203,27 @@ public class SnpSiftCmdConcordance extends SnpSift {
 			if (!ve.getChromosomeName().equals(chr)) return null;
 			if (vcfEntry.getStart() < latestVcfEntry.getStart()) return null; // Not there yet
 			if (vcfEntry.getStart() == latestVcfEntry.getStart()) return latestVcfEntry; // Match!
+
+			concordance(latestVcfEntry, null);
 		}
 
 		return null;
 	}
 
 	String genotypKey(int gtCode, String name) {
-		if (gtCode < 0) return GENOTYPE_MISSING + SEP + name;
+		if (gtCode == -2) return MISSING_ENTRY + SEP + name;
+		if (gtCode == -1) return MISSING_GENOTYPE + SEP + name;
 		if (gtCode == 0) return "REF";
 		return "ALT" + SEP + gtCode;
 	}
 
-	String genotypKey(VcfGenotype gen, String name) {
-		if (gen.isMissing()) return GENOTYPE_MISSING + SEP + name;
-		return genotypKey(gen.getGenotypeCode(), name);
+	String genotypKey(VcfEntry ve, int gtIndx, String name) {
+		if (ve == null) return MISSING_ENTRY + SEP + name;
+
+		VcfGenotype gt = ve.getVcfGenotype(gtIndx);
+		if (gt.isMissing()) return MISSING_GENOTYPE + SEP + name;
+
+		return genotypKey(gt.getGenotypeCode(), name);
 	}
 
 	/**
@@ -348,7 +356,7 @@ public class SnpSiftCmdConcordance extends SnpSift {
 		for (VcfEntry ve2 : vcf2) {
 			try {
 				VcfEntry ve1 = find(vcf1, ve2);
-				if (ve1 != null) concordance(ve1, ve2);
+				concordance(ve1, ve2);
 			} catch (Exception e) {
 				throw new RuntimeException(e);
 			}
