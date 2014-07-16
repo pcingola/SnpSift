@@ -52,8 +52,6 @@ public class SnpSiftCmdConcordance extends SnpSift {
 
 	/**
 	 * Check that VCF entries match
-	 * @param ve1
-	 * @param ve2
 	 * @return
 	 */
 	boolean check(VcfEntry ve1, VcfEntry ve2) {
@@ -95,8 +93,6 @@ public class SnpSiftCmdConcordance extends SnpSift {
 
 	/**
 	 * Calculate concordance
-	 * @param ve1
-	 * @param ve2
 	 */
 	void concordance(VcfEntry ve1, VcfEntry ve2) {
 		// Check that VCF entries match
