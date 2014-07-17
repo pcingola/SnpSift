@@ -39,6 +39,7 @@ public class SnpSiftCmdGtFilter extends SnpSift {
 	boolean exceptionIfNotFound; // Throw an exception of a field is not found?
 	String inputFile; // Input file
 	String expression; // Expression (as a string)
+	String gtFieldName, gtFieldValue;
 	Condition condition; // Condition (parsed expression)
 	String filterId; // FilterID string to add to FILTER field if the filter does NOT pass.
 	ArrayList<HashSet<String>> sets;
@@ -144,13 +145,13 @@ public class SnpSiftCmdGtFilter extends SnpSift {
 
 		boolean ok = false;
 		for (VcfGenotype vgt : vcfEntry) {
-			boolean remove = evaluate(vcfEntry, vgt);
+			boolean change = evaluate(vcfEntry, vgt);
 
-			if (debug) Gpr.debug("\t\tevaluate:" + remove + "\t" + vgt);
+			if (debug) Gpr.debug("\t\tevaluate:" + change + "\t" + vgt);
 
-			if (remove) {
+			if (change) {
 				ok = true;
-				vgt.set("GT", "."); // Set genotype to missing
+				vgt.set(gtFieldName, gtFieldValue); // Set genotype to missing
 			}
 		}
 
@@ -231,6 +232,10 @@ public class SnpSiftCmdGtFilter extends SnpSift {
 		sets = new ArrayList<HashSet<String>>();
 		formatVersion = null; // VcfEffect.FormatVersion.FORMAT_SNPEFF_3;
 		exceptionIfNotFound = false;
+
+		// By default, replace genotype field by MISSING value (i.e. remove genotype field)
+		gtFieldName = "GT";
+		gtFieldValue = ".";
 	}
 
 	/**
@@ -248,6 +253,8 @@ public class SnpSiftCmdGtFilter extends SnpSift {
 				else if (arg.equals("-s") || arg.equalsIgnoreCase("--set")) addSet(args[++i]);
 				else if (arg.equalsIgnoreCase("--errMissing")) exceptionIfNotFound = true;
 				else if (arg.equals("-n") || arg.equalsIgnoreCase("--inverse")) inverse = true;
+				else if (arg.equals("-gn") || arg.equalsIgnoreCase("--field")) gtFieldName = args[++i];
+				else if (arg.equals("-gv") || arg.equalsIgnoreCase("--value")) gtFieldValue = args[++i];
 				else if (arg.equalsIgnoreCase("--format")) {
 					String formatVer = args[++i];
 					if (formatVer.equals("2")) formatVersion = FormatVersion.FORMAT_SNPEFF_2;
@@ -354,12 +361,14 @@ public class SnpSiftCmdGtFilter extends SnpSift {
 
 		System.err.println("Usage: java -jar " + SnpSift.class.getSimpleName() + "" + ".jar filter [options] 'expression'");
 		System.err.println("Options:");
-		System.err.println("\t-e|--exprFile <file>  : Read expression from a file");
-		System.err.println("\t-f|--file <file>      : VCF input file. Default: STDIN");
-		System.err.println("\t-n|--inverse          : Inverse. Show lines that do not match filter expression");
-		System.err.println("\t-s|--set <file>       : Create a SET using 'file'");
-		System.err.println("\t--errMissing          : Error is a field is missing. Default: " + exceptionIfNotFound);
-		System.err.println("\t--format <format>     : SnpEff format version: {2, 3}. Default: " + (formatVersion == null ? "Auto" : formatVersion));
+		System.err.println("\t-e  | --exprFile <file>    : Read expression from a file");
+		System.err.println("\t-f  | --file <file>        : VCF input file. Default: STDIN");
+		System.err.println("\t-gn | --field <name>       : Field name to replace if filter is true. Default: '" + gtFieldName + "'");
+		System.err.println("\t-gv | --value <value>      : Field value to replace if filter is true. Default: '" + gtFieldValue + "'");
+		System.err.println("\t-n  | --inverse            : Inverse. Show lines that do not match filter expression");
+		System.err.println("\t-s  | --set <file>         : Create a SET using 'file'");
+		System.err.println("\t--errMissing               : Error is a field is missing. Default: " + exceptionIfNotFound);
+		System.err.println("\t--format <format>          : SnpEff format version: {2, 3}. Default: " + (formatVersion == null ? "Auto" : formatVersion));
 		System.exit(-1);
 	}
 
