@@ -209,8 +209,6 @@ public class SnpSiftCmdAnnotate extends SnpSift {
 
 	/**
 	 * Are we annotating using this info field?
-	 * @param vcfInfo
-	 * @return
 	 */
 	boolean isAnnotateInfo(VcfInfo vcfInfo) {
 		// All fields selected?
@@ -268,7 +266,6 @@ public class SnpSiftCmdAnnotate extends SnpSift {
 
 	/**
 	 * Annotate each entry of a VCF file
-	 * @throws IOException
 	 */
 	@Override
 	public void run() {
@@ -324,13 +321,13 @@ public class SnpSiftCmdAnnotate extends SnpSift {
 		System.err.println("\t-clinvar             : Use ClinVar database.");
 		System.err.println("\nCommand Options:");
 		System.err.println("\t-id                  : Only annotate ID field (do not add INFO field). Default: " + !useInfoField);
+		System.err.println("\t-info <list>         : Annotate using a list of info fields (list is a comma separated list of fields). Default: ALL.");
 		System.err.println("\t-mem                 : VCF database is loaded in memory. Default: " + (method == AnnotationMethod.MEMORY));
-		System.err.println("\t-sorted              : VCF database is sorted and uncompressed. Default: " + (method == AnnotationMethod.SORTED_VCF));
-		System.err.println("\t-tabix               : VCF database is tabix-indexed. Default: " + (method == AnnotationMethod.TABIX));
+		System.err.println("\t-name str            : Prepend 'str' to all annotated INFO fields. Default: ''.");
 		System.err.println("\t-noAlt               : Do not use REF and ALT fields when comparing database.vcf entries to file.vcf entries. Default: " + !useRefAlt);
 		System.err.println("\t-noId                : Do not annotate ID field. Defaul: " + !useId);
-		System.err.println("\t-info <list>         : Annotate using a list of info fields (list is a comma separated list of fields). Default: ALL.");
-		System.err.println("\t-name str            : Prepend 'str' to all annotated INFO fields. Default: ''.");
+		System.err.println("\t-sorted              : VCF database is sorted and uncompressed. Default: " + (method == AnnotationMethod.SORTED_VCF));
+		System.err.println("\t-tabix               : VCF database is tabix-indexed. Default: " + (method == AnnotationMethod.TABIX));
 
 		usageGenericAndDb();
 
