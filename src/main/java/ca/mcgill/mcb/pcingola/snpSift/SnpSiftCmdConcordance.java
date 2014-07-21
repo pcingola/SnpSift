@@ -64,12 +64,12 @@ public class SnpSiftCmdConcordance extends SnpSift {
 		// Sanity checks
 		//---
 		if (ve1.getAlts().length > 1) {
-			errors(ve1, ve2, "Multiple ALT files in " + vcfFileName1);
+			errors(ve1, ve2, "Multiple ALT in file '" + vcfFileName1 + "'");
 			return false;
 		}
 
 		if (ve2.getAlts().length > 1) {
-			errors(ve1, ve2, "Multiple ALT files in " + vcfFileName2);
+			errors(ve1, ve2, "Multiple ALT in file '" + vcfFileName2 + "'S");
 			return false;
 		}
 
@@ -79,7 +79,7 @@ public class SnpSiftCmdConcordance extends SnpSift {
 		}
 
 		if (!ve1.getRef().equals(ve2.getRef())) {
-			errors(ve1, ve2, "REF field does not match");
+			errors(ve1, ve2, "REF fields does not match");
 			return false;
 		}
 
