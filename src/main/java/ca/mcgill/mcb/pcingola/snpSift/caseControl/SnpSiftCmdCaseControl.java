@@ -78,9 +78,9 @@ public class SnpSiftCmdCaseControl extends SnpSift {
 		if (debug) Gpr.debug(vcfEntry.toStringNoGt());
 		for (VcfGenotype gt : vcfEntry) {
 
+			int code = gt.getGenotypeCode();
 			if ((caseControl[idx] != null)) {
 
-				int code = gt.getGenotypeCode();
 				int codeMissing = gt.getGenotypeCodeIgnoreMissing();
 
 				if (code >= 0) {
@@ -106,14 +106,13 @@ public class SnpSiftCmdCaseControl extends SnpSift {
 						ctrl += codeMissing;
 					}
 				}
+			}
 
-				if (debug) //
-					Gpr.debug("\t" + idx + "\tcase: " + caseControl[idx] + "\tGT: " + gt + "\tcode: " + code //
-							+ "\t" + VCF_INFO_CASE + "=" + casesHom + "," + casesHet + "," + cases //
-							+ "\tnCase=[" + nCase[0] + "," + nCase[1] + "," + nCase[2] + "]"//
-							+ "\t" + VCF_INFO_CONTROL + "=" + ctrlHom + "," + ctrlHet + "," + ctrl //
-							+ "\tnControl=[" + nControl[0] + "," + nControl[1] + "," + nControl[2] + "]"//
-					);
+			// Show detailed information
+			if (debug) {
+				String cc = "Ignore";
+				if (caseControl[idx] != null) cc = caseControl[idx] ? "Case" : "Control";
+				System.err.printf("\tSample: %3d\tType: %-8s\tGT code: %+1d\tnCases: [%3d, %3d, %3d]\tnControls: [%3d, %3d, %3d]\tGT: %s\n", idx, cc, code, nCase[0], nCase[1], nCase[2], nControl[0], nControl[1], nControl[2], gt);
 			}
 
 			idx++;
@@ -123,21 +122,10 @@ public class SnpSiftCmdCaseControl extends SnpSift {
 		vcfEntry.addInfo(VCF_INFO_CASE + name, casesHom + "," + casesHet + "," + cases);
 		vcfEntry.addInfo(VCF_INFO_CONTROL + name, ctrlHom + "," + ctrlHet + "," + ctrl);
 
-		if (debug) //
-			Gpr.debug("\tBefore Swap minor allele:\t" //
-					+ "\tnCase=[" + nCase[0] + "," + nCase[1] + "," + nCase[2] + "]"//
-					+ "\tnControl=[" + nControl[0] + "," + nControl[1] + "," + nControl[2] + "]"//
-			);
-
 		// Annotate pValues
 		vcfEntry.addInfo(VCF_INFO_CC_TREND + name, pValueStr(vcfEntry, pTrend(nControl, nCase)));
 		vcfEntry.addInfo(VCF_INFO_CC_GENO + name, pValueStr(vcfEntry, pGenotypic(nControl, nCase)));
 		swapMinorAllele(nControl, nCase); // Swap if minor allele is reference
-		if (debug) //
-			Gpr.debug("\tAfter Swap minor allele:\t" //
-					+ "\tnCase=[" + nCase[0] + "," + nCase[1] + "," + nCase[2] + "]"//
-					+ "\tnControl=[" + nControl[0] + "," + nControl[1] + "," + nControl[2] + "]"//
-			);
 		vcfEntry.addInfo(VCF_INFO_CC_ALL + name, "" + pValueStr(vcfEntry, pAllelic(nControl, nCase, pvalueThreshold)));
 		vcfEntry.addInfo(VCF_INFO_CC_DOM + name, "" + pValueStr(vcfEntry, pDominant(nControl, nCase, pvalueThreshold)));
 		vcfEntry.addInfo(VCF_INFO_CC_REC + name, "" + pValueStr(vcfEntry, pRecessive(nControl, nCase, pvalueThreshold)));
@@ -270,8 +258,8 @@ public class SnpSiftCmdCaseControl extends SnpSift {
 	}
 
 	/**
-	* Dominant model: Either a/A or A/A causes the disease
-	*/
+	 * Dominant model: Either a/A or A/A causes the disease
+	 */
 	protected double pDominant(int nControl[], int nCase[], double pvalueTh) {
 		int k = nCase[2] + nCase[1]; // Cases a/a + A/a
 		int N = nControl[0] + nControl[1] + nControl[2] + nCase[0] + nCase[1] + nCase[2];
@@ -283,9 +271,7 @@ public class SnpSiftCmdCaseControl extends SnpSift {
 
 		// Use Fisher exact test
 		double pdown = FisherExactTest.get().pValueDown(k, N, D, n, pvalueTh);
-		if (debug) Gpr.debug("FisherExactTest: " + FisherExactTest.get().toR(k, N, D, n, true));
 		double pup = FisherExactTest.get().pValueUp(k, N, D, n, pvalueTh);
-		if (debug) Gpr.debug("FisherExactTest: " + FisherExactTest.get().toR(k, N, D, n, false));
 
 		return Math.min(pup, pdown);
 	}
