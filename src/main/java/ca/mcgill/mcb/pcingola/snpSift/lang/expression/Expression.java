@@ -31,7 +31,7 @@ public abstract class Expression {
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public int compareTo(Expression expr, VcfEntry vcfEntry) {
-		VcfInfoType exprType = expr.getReturnType();
+		VcfInfoType exprType = expr.getReturnType(vcfEntry);
 
 		// Same data type? Just compare them
 		Comparable o1 = get(vcfEntry);
@@ -67,7 +67,7 @@ public abstract class Expression {
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public int compareTo(Expression expr, VcfGenotype vcfGenotype) {
-		VcfInfoType exprType = expr.getReturnType();
+		VcfInfoType exprType = expr.getReturnType(vcfGenotype);
 
 		// Same data type? Just compare them
 		Comparable o1 = get(vcfGenotype);
@@ -102,9 +102,7 @@ public abstract class Expression {
 	}
 
 	/**
-	 * Get expresion value
-	 * @param vcfEntry
-	 * @return
+	 * Get expression value
 	 */
 	@SuppressWarnings("rawtypes")
 	public abstract Comparable get(VcfEntry vcfEntry);
@@ -121,7 +119,7 @@ public abstract class Expression {
 		case Float:
 			return (Double) o;
 		case Integer:
-			return (((Long) o));
+			return (Long) o;
 		default:
 			throw new RuntimeException("Cannot cast '" + returnType + "' to FLOAT");
 		}
@@ -134,13 +132,69 @@ public abstract class Expression {
 		case Float:
 			return (Double) o;
 		case Integer:
-			return (((Long) o));
+			return (Long) o;
 		default:
 			throw new RuntimeException("Cannot cast '" + returnType + "' to FLOAT");
 		}
 	}
 
-	public VcfInfoType getReturnType() {
+	/**
+	 * Get expression value as an 'Int'
+	 */
+	public long getInt(VcfEntry vcfEntry) {
+		Object o = get(vcfEntry);
+
+		switch (returnType) {
+		case Integer:
+			return ((Long) o);
+		default:
+			throw new RuntimeException("Cannot cast '" + returnType + "' to INT");
+		}
+	}
+
+	public long getInt(VcfGenotype vcfGenotype) {
+		Object o = get(vcfGenotype);
+
+		switch (returnType) {
+		case Integer:
+			return (Long) o;
+		default:
+			throw new RuntimeException("Cannot cast '" + returnType + "' to INT");
+		}
+	}
+
+	/**
+	 * Get expression value as a 'Flag'
+	 */
+	public boolean getFlag(VcfEntry vcfEntry) {
+		Object o = get(vcfEntry);
+
+		switch (returnType) {
+		case Flag:
+			if( o == null ) return false;
+			return (Boolean) o;
+		default:
+			throw new RuntimeException("Cannot cast '" + returnType + "' to FLAG");
+		}
+	}
+
+	public boolean getFlag(VcfGenotype vcfGenotype) {
+		Object o = get(vcfGenotype);
+
+		switch (returnType) {
+		case Flag:
+			if( o == null ) return false;
+			return (Boolean) o;
+		default:
+			throw new RuntimeException("Cannot cast '" + returnType + "' to FLAG");
+		}
+	}
+
+	public VcfInfoType getReturnType(VcfEntry vcfEntry) {
+		return returnType;
+	}
+
+	public VcfInfoType getReturnType(VcfGenotype vcfGenotype) {
 		return returnType;
 	}
 

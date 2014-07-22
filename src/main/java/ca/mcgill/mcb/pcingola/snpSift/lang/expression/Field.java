@@ -4,6 +4,7 @@ import ca.mcgill.mcb.pcingola.snpSift.lang.expression.FieldConstant.FieldConstan
 import ca.mcgill.mcb.pcingola.util.Gpr;
 import ca.mcgill.mcb.pcingola.vcf.VcfEntry;
 import ca.mcgill.mcb.pcingola.vcf.VcfGenotype;
+import ca.mcgill.mcb.pcingola.vcf.VcfHeader;
 import ca.mcgill.mcb.pcingola.vcf.VcfInfo;
 import ca.mcgill.mcb.pcingola.vcf.VcfInfoGenotype;
 import ca.mcgill.mcb.pcingola.vcf.VcfInfoType;
@@ -41,35 +42,39 @@ public class Field extends Expression {
 	/**
 	 * Calculate return 'type' for this field
 	 */
-	public VcfInfoType calcReturnType(VcfEntry vcfEntry) {
+	public VcfInfoType getReturnType(VcfEntry vcfEntry) {
 		if (returnType == VcfInfoType.UNKNOWN) {
+			VcfHeader vcfHeader = vcfEntry.getVcfFileIterator().getVcfHeader();
 
 			// Is there a filed 'name'
-			VcfInfo vcfInfo = vcfEntry.getVcfFileIterator().getVcfHeader().getVcfInfo(name);
-			if (vcfInfo == null) {
-				// Is this a special field name?
-				if (FieldConstant.isConstantField(name)) return FieldConstantNames.valueOf(name).getType();
-
-				// Error: Not found
-				throw new RuntimeException("No such INFO field '" + name + "'");
-			}
-			returnType = vcfInfo.getVcfInfoType();
+			VcfInfo vcfInfo = vcfHeader.getVcfInfo(name);
+			if (vcfInfo != null) returnType = vcfInfo.getVcfInfoType();
+			else {
+				// Is there a genotype 'name'
+				VcfInfoGenotype vcfInfoGenotype = vcfHeader.getVcfInfoGenotype(name);
+				if (vcfInfoGenotype != null)	returnType = vcfInfoGenotype.getVcfInfoType();
+				else {
+					// Is this a special field name?
+					if (FieldConstant.isConstantField(name)) returnType = FieldConstantNames.valueOf(name).getType();
+					else throw new RuntimeException("INFO field '" + name + "' not found in VCF header");
+				}
+			} 
 		}
 
 		return returnType;
 	}
 
-	public VcfInfoType calcReturnType(VcfGenotype vcfGenotype) {
+	public VcfInfoType getReturnType(VcfGenotype vcfGenotype) {
 		if (returnType == VcfInfoType.UNKNOWN) {
-
-			// Is there a filed 'name'
-			VcfInfoGenotype vcfInfoGenotype = vcfGenotype.getVcfEntry().getVcfFileIterator().getVcfHeader().getVcfInfoGenotype(name);
+			// Is there a field 'name'
+			VcfHeader vcfHeader = vcfGenotype.getVcfEntry().getVcfFileIterator().getVcfHeader();
+			VcfInfoGenotype vcfInfoGenotype = vcfHeader.getVcfInfoGenotype(name);
 			if (vcfInfoGenotype == null) {
 				// Is this a special field name?
 				if (FieldConstant.isConstantField(name)) return FieldConstantNames.valueOf(name).getType();
 
 				// Error: Not found
-				throw new RuntimeException("No such GENOTYPE field '" + name + "'");
+				throw new RuntimeException("Genotype field '" + name + "' not found in VCF header");
 			}
 			returnType = vcfInfoGenotype.getVcfInfoType();
 		}
@@ -80,8 +85,7 @@ public class Field extends Expression {
 	@SuppressWarnings("rawtypes")
 	@Override
 	public Comparable get(VcfEntry vcfEntry) {
-		returnType = calcReturnType(vcfEntry);
-		switch (returnType) {
+		switch ( getReturnType(vcfEntry) ) {
 
 		case Integer:
 			return getFieldInt(vcfEntry);
@@ -103,9 +107,8 @@ public class Field extends Expression {
 
 	@Override
 	public Comparable get(VcfGenotype vcfGenotype) {
-		calcReturnType(vcfGenotype);
 
-		switch (returnType) {
+		switch ( getReturnType(vcfGenotype) ) {
 
 		case Integer:
 			return getFieldInt(vcfGenotype);

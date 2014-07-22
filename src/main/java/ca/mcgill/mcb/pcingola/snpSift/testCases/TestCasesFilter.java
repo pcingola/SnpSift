@@ -27,9 +27,9 @@ public class TestCasesFilter extends TestCase {
 		double minQ = 50;
 
 		// Filter data
-		SnpSiftCmdFilter vcfFilter = new SnpSiftCmdFilter();
+		SnpSiftCmdFilter snpsiftFilter = new SnpSiftCmdFilter();
 		String expression = "QUAL >= " + minQ;
-		List<VcfEntry> list = vcfFilter.filter("test/test01.vcf", expression, true);
+		List<VcfEntry> list = snpsiftFilter.filter("test/test01.vcf", expression, true);
 
 		// Check that it satisfies the condition
 		System.out.println("Expression: '" + expression + "'");
@@ -46,9 +46,9 @@ public class TestCasesFilter extends TestCase {
 	 */
 	public void test_02() {
 		// Filter data
-		SnpSiftCmdFilter vcfFilter = new SnpSiftCmdFilter();
+		SnpSiftCmdFilter snpsiftFilter = new SnpSiftCmdFilter();
 		String expression = "(CHROM = '19')";
-		List<VcfEntry> list = vcfFilter.filter("test/test01.vcf", expression, true);
+		List<VcfEntry> list = snpsiftFilter.filter("test/test01.vcf", expression, true);
 
 		// Check that it satisfies the condition
 		System.out.println("Expression: '" + expression + "'");
@@ -67,9 +67,9 @@ public class TestCasesFilter extends TestCase {
 		int minPos = 20175;
 
 		// Filter data
-		SnpSiftCmdFilter vcfFilter = new SnpSiftCmdFilter();
+		SnpSiftCmdFilter snpsiftFilter = new SnpSiftCmdFilter();
 		String expression = "(POS > " + minPos + ")";
-		List<VcfEntry> list = vcfFilter.filter("test/test01.vcf", expression, true);
+		List<VcfEntry> list = snpsiftFilter.filter("test/test01.vcf", expression, true);
 
 		// Check that it satisfies the condition
 		System.out.println("Expression: '" + expression + "'");
@@ -88,9 +88,9 @@ public class TestCasesFilter extends TestCase {
 		int minPos = 20175;
 
 		// Filter data
-		SnpSiftCmdFilter vcfFilter = new SnpSiftCmdFilter();
+		SnpSiftCmdFilter snpsiftFilter = new SnpSiftCmdFilter();
 		String expression = "(POS >= " + minPos + ")";
-		List<VcfEntry> list = vcfFilter.filter("test/test01.vcf", expression, true);
+		List<VcfEntry> list = snpsiftFilter.filter("test/test01.vcf", expression, true);
 
 		// Check that it satisfies the condition
 		System.out.println("Expression: '" + expression + "'");
@@ -109,9 +109,9 @@ public class TestCasesFilter extends TestCase {
 		int maxPos = 20175;
 
 		// Filter data
-		SnpSiftCmdFilter vcfFilter = new SnpSiftCmdFilter();
+		SnpSiftCmdFilter snpsiftFilter = new SnpSiftCmdFilter();
 		String expression = "(POS < " + maxPos + ")";
-		List<VcfEntry> list = vcfFilter.filter("test/test01.vcf", expression, true);
+		List<VcfEntry> list = snpsiftFilter.filter("test/test01.vcf", expression, true);
 
 		// Check that it satisfies the condition
 		System.out.println("Expression: '" + expression + "'");
@@ -130,9 +130,9 @@ public class TestCasesFilter extends TestCase {
 		int maxPos = 20175;
 
 		// Filter data
-		SnpSiftCmdFilter vcfFilter = new SnpSiftCmdFilter();
+		SnpSiftCmdFilter snpsiftFilter = new SnpSiftCmdFilter();
 		String expression = "(POS <= " + maxPos + ")";
-		List<VcfEntry> list = vcfFilter.filter("test/test01.vcf", expression, true);
+		List<VcfEntry> list = snpsiftFilter.filter("test/test01.vcf", expression, true);
 
 		// Check that it satisfies the condition
 		System.out.println("Expression: '" + expression + "'");
@@ -152,9 +152,9 @@ public class TestCasesFilter extends TestCase {
 		int maxPos = 35549;
 
 		// Filter data
-		SnpSiftCmdFilter vcfFilter = new SnpSiftCmdFilter();
+		SnpSiftCmdFilter snpsiftFilter = new SnpSiftCmdFilter();
 		String expression = "(POS >= " + minPos + ") & (POS <= " + maxPos + ")";
-		List<VcfEntry> list = vcfFilter.filter("test/test01.vcf", expression, true);
+		List<VcfEntry> list = snpsiftFilter.filter("test/test01.vcf", expression, true);
 
 		// Check that it satisfies the condition
 		System.out.println("Expression: '" + expression + "'");
@@ -175,9 +175,9 @@ public class TestCasesFilter extends TestCase {
 		int maxPos = 35549;
 
 		// Filter data
-		SnpSiftCmdFilter vcfFilter = new SnpSiftCmdFilter();
+		SnpSiftCmdFilter snpsiftFilter = new SnpSiftCmdFilter();
 		String expression = "(POS >= " + minPos + ") | (POS <= " + maxPos + ")";
-		List<VcfEntry> list = vcfFilter.filter("test/test01.vcf", expression, true);
+		List<VcfEntry> list = snpsiftFilter.filter("test/test01.vcf", expression, true);
 
 		// Check that it satisfies the condition
 		System.out.println("Expression: '" + expression + "'");
@@ -197,9 +197,9 @@ public class TestCasesFilter extends TestCase {
 	 */
 	public void test_09() {
 		// Filter data
-		SnpSiftCmdFilter vcfFilter = new SnpSiftCmdFilter();
+		SnpSiftCmdFilter snpsiftFilter = new SnpSiftCmdFilter();
 		String expression = "( CHROM =~ 'NT_' )";
-		List<VcfEntry> list = vcfFilter.filter("test/test01.vcf", expression, true);
+		List<VcfEntry> list = snpsiftFilter.filter("test/test01.vcf", expression, true);
 
 		// Check that it satisfies the condition
 		System.out.println("Expression: '" + expression + "'");
@@ -216,9 +216,9 @@ public class TestCasesFilter extends TestCase {
 	 */
 	public void test_10() {
 		// Filter data
-		SnpSiftCmdFilter vcfFilter = new SnpSiftCmdFilter();
+		SnpSiftCmdFilter snpsiftFilter = new SnpSiftCmdFilter();
 		String expression = "( REF = 'C' ) & ( ALT = 'T') ";
-		List<VcfEntry> list = vcfFilter.filter("test/test01.vcf", expression, true);
+		List<VcfEntry> list = snpsiftFilter.filter("test/test01.vcf", expression, true);
 
 		// Check that it satisfies the condition
 		System.out.println("Expression: '" + expression + "'");
@@ -236,9 +236,9 @@ public class TestCasesFilter extends TestCase {
 	 */
 	public void test_11() {
 		// Filter data
-		SnpSiftCmdFilter vcfFilter = new SnpSiftCmdFilter();
+		SnpSiftCmdFilter snpsiftFilter = new SnpSiftCmdFilter();
 		String expression = "( DP >= 5 ) ";
-		List<VcfEntry> list = vcfFilter.filter("test/test01.vcf", expression, true);
+		List<VcfEntry> list = snpsiftFilter.filter("test/test01.vcf", expression, true);
 
 		// Check that it satisfies the condition
 		System.out.println("Expression: '" + expression + "'");
@@ -255,14 +255,15 @@ public class TestCasesFilter extends TestCase {
 	 */
 	public void test_12() {
 		// Filter data
-		SnpSiftCmdFilter vcfFilter = new SnpSiftCmdFilter();
+		SnpSiftCmdFilter snpsiftFilter = new SnpSiftCmdFilter();
 		String expression = "( exists INDEL ) ";
-		List<VcfEntry> list = vcfFilter.filter("test/test01.vcf", expression, true);
+		snpsiftFilter.setVerbose(verbose);
+		List<VcfEntry> list = snpsiftFilter.filter("test/test01.vcf", expression, true);
 
 		// Check that it satisfies the condition
 		System.out.println("Expression: '" + expression + "'");
 		Assert.assertNotNull(list);
-		Assert.assertTrue(list.size() > 0);
+		Assert.assertTrue(list.size() == 182);
 		for (VcfEntry vcfEntry : list) {
 			if (verbose) System.out.println("\t" + vcfEntry);
 			Assert.assertNotNull(vcfEntry.getInfo("INDEL"));
@@ -274,9 +275,9 @@ public class TestCasesFilter extends TestCase {
 	 */
 	public void test_13() {
 		// Filter data
-		SnpSiftCmdFilter vcfFilter = new SnpSiftCmdFilter();
+		SnpSiftCmdFilter snpsiftFilter = new SnpSiftCmdFilter();
 		String expression = "( exists INDEL ) ";
-		List<VcfEntry> list = vcfFilter.filter("test/test01.vcf", expression, true);
+		List<VcfEntry> list = snpsiftFilter.filter("test/test01.vcf", expression, true);
 
 		// Check that it satisfies the condition
 		System.out.println("Expression: '" + expression + "'");
@@ -293,9 +294,9 @@ public class TestCasesFilter extends TestCase {
 	 */
 	public void test_14() {
 		// Filter data
-		SnpSiftCmdFilter vcfFilter = new SnpSiftCmdFilter();
+		SnpSiftCmdFilter snpsiftFilter = new SnpSiftCmdFilter();
 		String expression = "( GEN[0].PL[1] > 10 ) ";
-		List<VcfEntry> list = vcfFilter.filter("test/test01.vcf", expression, true);
+		List<VcfEntry> list = snpsiftFilter.filter("test/test01.vcf", expression, true);
 
 		// Check that it satisfies the condition
 		System.out.println("Expression: '" + expression + "'");
@@ -318,9 +319,9 @@ public class TestCasesFilter extends TestCase {
 	 */
 	public void test_15() {
 		// Filter data
-		SnpSiftCmdFilter vcfFilter = new SnpSiftCmdFilter();
+		SnpSiftCmdFilter snpsiftFilter = new SnpSiftCmdFilter();
 		String expression = "( GEN[0].GT = '1/1' ) ";
-		List<VcfEntry> list = vcfFilter.filter("test/test01.vcf", expression, true);
+		List<VcfEntry> list = snpsiftFilter.filter("test/test01.vcf", expression, true);
 
 		// Check that it satisfies the condition
 		System.out.println("Expression: '" + expression + "'");
@@ -341,9 +342,9 @@ public class TestCasesFilter extends TestCase {
 	 */
 	public void test_16() {
 		// Filter data
-		SnpSiftCmdFilter vcfFilter = new SnpSiftCmdFilter();
+		SnpSiftCmdFilter snpsiftFilter = new SnpSiftCmdFilter();
 		String expression = "( isHom ( GEN[0] ) ) ";
-		List<VcfEntry> list = vcfFilter.filter("test/test02.vcf", expression, true);
+		List<VcfEntry> list = snpsiftFilter.filter("test/test02.vcf", expression, true);
 
 		// Check that it satisfies the condition
 		System.out.println("Expression: '" + expression + "'");
@@ -362,9 +363,9 @@ public class TestCasesFilter extends TestCase {
 	 */
 	public void test_17() {
 		// Filter data
-		SnpSiftCmdFilter vcfFilter = new SnpSiftCmdFilter();
+		SnpSiftCmdFilter snpsiftFilter = new SnpSiftCmdFilter();
 		String expression = "( isHet ( GEN[0] ) ) ";
-		List<VcfEntry> list = vcfFilter.filter("test/test02.vcf", expression, true);
+		List<VcfEntry> list = snpsiftFilter.filter("test/test02.vcf", expression, true);
 
 		// Check that it satisfies the condition
 		System.out.println("Expression: '" + expression + "'");
@@ -383,9 +384,9 @@ public class TestCasesFilter extends TestCase {
 	 */
 	public void test_18() {
 		// Filter data
-		SnpSiftCmdFilter vcfFilter = new SnpSiftCmdFilter();
+		SnpSiftCmdFilter snpsiftFilter = new SnpSiftCmdFilter();
 		String expression = "( isRef ( GEN[0] ) ) ";
-		List<VcfEntry> list = vcfFilter.filter("test/test02.vcf", expression, true);
+		List<VcfEntry> list = snpsiftFilter.filter("test/test02.vcf", expression, true);
 
 		// Check that it satisfies the condition
 		System.out.println("Expression: '" + expression + "'");
@@ -404,9 +405,9 @@ public class TestCasesFilter extends TestCase {
 	 */
 	public void test_19() {
 		// Filter data
-		SnpSiftCmdFilter vcfFilter = new SnpSiftCmdFilter();
+		SnpSiftCmdFilter snpsiftFilter = new SnpSiftCmdFilter();
 		String expression = "( isVariant ( GEN[0] ) ) ";
-		List<VcfEntry> list = vcfFilter.filter("test/test02.vcf", expression, true);
+		List<VcfEntry> list = snpsiftFilter.filter("test/test02.vcf", expression, true);
 
 		// Check that it satisfies the condition
 		System.out.println("Expression: '" + expression + "'");
@@ -425,9 +426,9 @@ public class TestCasesFilter extends TestCase {
 	 */
 	public void test_20() {
 		// Filter data
-		SnpSiftCmdFilter vcfFilter = new SnpSiftCmdFilter();
+		SnpSiftCmdFilter snpsiftFilter = new SnpSiftCmdFilter();
 		String expression = "isVariant ( GEN[0] ) & isHom( GEN[0] ) ";
-		List<VcfEntry> list = vcfFilter.filter("test/test02.vcf", expression, true);
+		List<VcfEntry> list = snpsiftFilter.filter("test/test02.vcf", expression, true);
 
 		// Check that it satisfies the condition
 		System.out.println("Expression: '" + expression + "'");
@@ -447,9 +448,9 @@ public class TestCasesFilter extends TestCase {
 	 */
 	public void test_21() {
 		// Filter data
-		SnpSiftCmdFilter vcfFilter = new SnpSiftCmdFilter();
+		SnpSiftCmdFilter snpsiftFilter = new SnpSiftCmdFilter();
 		String expression = "isVariant ( GEN[1] ) & isHom( GEN[1] ) & isRef( GEN[2] )";
-		List<VcfEntry> list = vcfFilter.filter("test/test02.vcf", expression, true);
+		List<VcfEntry> list = snpsiftFilter.filter("test/test02.vcf", expression, true);
 
 		// Check that it satisfies the condition
 		System.out.println("Expression: '" + expression + "'");
@@ -471,11 +472,11 @@ public class TestCasesFilter extends TestCase {
 	 */
 	public void test_22() {
 		// Filter data
-		SnpSiftCmdFilter vcfFilter = new SnpSiftCmdFilter();
-		vcfFilter.addSet("test/set_rs_test01.txt");
-		vcfFilter.addSet("test/set_rs_test02.txt");
+		SnpSiftCmdFilter snpsiftFilter = new SnpSiftCmdFilter();
+		snpsiftFilter.addSet("test/set_rs_test01.txt");
+		snpsiftFilter.addSet("test/set_rs_test02.txt");
 		String expression = "ID in SET[1]";
-		List<VcfEntry> list = vcfFilter.filter("test/test02.vcf", expression, true);
+		List<VcfEntry> list = snpsiftFilter.filter("test/test02.vcf", expression, true);
 
 		// Check that it satisfies the condition
 		System.out.println("Expression: '" + expression + "'");
@@ -496,9 +497,9 @@ public class TestCasesFilter extends TestCase {
 	 */
 	public void test_23() {
 		// Filter data
-		SnpSiftCmdFilter vcfFilter = new SnpSiftCmdFilter();
+		SnpSiftCmdFilter snpsiftFilter = new SnpSiftCmdFilter();
 		String expression = "GEN[*].GT = '1|1'";
-		List<VcfEntry> list = vcfFilter.filter("test/test02.vcf", expression, true);
+		List<VcfEntry> list = snpsiftFilter.filter("test/test02.vcf", expression, true);
 
 		// Check that it satisfies the condition
 		System.out.println("Expression: '" + expression + "'");
@@ -518,9 +519,9 @@ public class TestCasesFilter extends TestCase {
 	 */
 	public void test_24() {
 		// Filter data
-		SnpSiftCmdFilter vcfFilter = new SnpSiftCmdFilter();
+		SnpSiftCmdFilter snpsiftFilter = new SnpSiftCmdFilter();
 		String expression = "GEN[0].AP[*] > 0.8";
-		List<VcfEntry> list = vcfFilter.filter("test/test02.vcf", expression, true);
+		List<VcfEntry> list = snpsiftFilter.filter("test/test02.vcf", expression, true);
 
 		// Check that it satisfies the condition
 		System.out.println("Expression: '" + expression + "'");
@@ -542,9 +543,9 @@ public class TestCasesFilter extends TestCase {
 	 */
 	public void test_25() {
 		// Filter data
-		SnpSiftCmdFilter vcfFilter = new SnpSiftCmdFilter();
+		SnpSiftCmdFilter snpsiftFilter = new SnpSiftCmdFilter();
 		String expression = "GEN[*].AP[*] > 0.95";
-		List<VcfEntry> list = vcfFilter.filter("test/test02.vcf", expression, true);
+		List<VcfEntry> list = snpsiftFilter.filter("test/test02.vcf", expression, true);
 
 		// Check that it satisfies the condition
 		System.out.println("Expression: '" + expression + "'");
@@ -567,9 +568,9 @@ public class TestCasesFilter extends TestCase {
 	 */
 	public void test_26() {
 		// Filter data
-		SnpSiftCmdFilter vcfFilter = new SnpSiftCmdFilter();
+		SnpSiftCmdFilter snpsiftFilter = new SnpSiftCmdFilter();
 		String expression = "EFF[0].EFFECT = 'SYNONYMOUS_CODING'";
-		List<VcfEntry> list = vcfFilter.filter("test/test03.vcf", expression, true);
+		List<VcfEntry> list = snpsiftFilter.filter("test/test03.vcf", expression, true);
 
 		// Check that it satisfies the condition
 		System.out.println("Expression: '" + expression + "'");
@@ -586,9 +587,9 @@ public class TestCasesFilter extends TestCase {
 	 */
 	public void test_27() {
 		// Filter data
-		SnpSiftCmdFilter vcfFilter = new SnpSiftCmdFilter();
+		SnpSiftCmdFilter snpsiftFilter = new SnpSiftCmdFilter();
 		String expression = "EFF[*].EFFECT = 'SYNONYMOUS_CODING'";
-		List<VcfEntry> list = vcfFilter.filter("test/test03.vcf", expression, true);
+		List<VcfEntry> list = snpsiftFilter.filter("test/test03.vcf", expression, true);
 
 		// Check that it satisfies the condition
 		System.out.println("Expression: '" + expression + "'");
@@ -611,9 +612,9 @@ public class TestCasesFilter extends TestCase {
 	 */
 	public void test_28() {
 		// Filter data
-		SnpSiftCmdFilter vcfFilter = new SnpSiftCmdFilter();
+		SnpSiftCmdFilter snpsiftFilter = new SnpSiftCmdFilter();
 		String expression = "( countHom() = 3 ) ";
-		List<VcfEntry> list = vcfFilter.filter("test/test02.vcf", expression, true);
+		List<VcfEntry> list = snpsiftFilter.filter("test/test02.vcf", expression, true);
 
 		// Check that it satisfies the condition
 		System.out.println("Expression: '" + expression + "'");
@@ -636,9 +637,9 @@ public class TestCasesFilter extends TestCase {
 	 */
 	public void test_29() {
 		// Filter data
-		SnpSiftCmdFilter vcfFilter = new SnpSiftCmdFilter();
+		SnpSiftCmdFilter snpsiftFilter = new SnpSiftCmdFilter();
 		String expression = "( countHet() = 3 ) ";
-		List<VcfEntry> list = vcfFilter.filter("test/test02.vcf", expression, true);
+		List<VcfEntry> list = snpsiftFilter.filter("test/test02.vcf", expression, true);
 
 		// Check that it satisfies the condition
 		System.out.println("Expression: '" + expression + "'");
@@ -661,9 +662,9 @@ public class TestCasesFilter extends TestCase {
 	 */
 	public void test_30() {
 		// Filter data
-		SnpSiftCmdFilter vcfFilter = new SnpSiftCmdFilter();
+		SnpSiftCmdFilter snpsiftFilter = new SnpSiftCmdFilter();
 		String expression = "( countRef() = 3 ) ";
-		List<VcfEntry> list = vcfFilter.filter("test/test02.vcf", expression, true);
+		List<VcfEntry> list = snpsiftFilter.filter("test/test02.vcf", expression, true);
 
 		// Check that it satisfies the condition
 		System.out.println("Expression: '" + expression + "'");
@@ -686,9 +687,9 @@ public class TestCasesFilter extends TestCase {
 	 */
 	public void test_31() {
 		// Filter data
-		SnpSiftCmdFilter vcfFilter = new SnpSiftCmdFilter();
+		SnpSiftCmdFilter snpsiftFilter = new SnpSiftCmdFilter();
 		String expression = "( countVariant() = 3 ) ";
-		List<VcfEntry> list = vcfFilter.filter("test/test02.vcf", expression, true);
+		List<VcfEntry> list = snpsiftFilter.filter("test/test02.vcf", expression, true);
 
 		// Check that it satisfies the condition
 		System.out.println("Expression: '" + expression + "'");
@@ -711,9 +712,9 @@ public class TestCasesFilter extends TestCase {
 	 */
 	public void test_32() {
 		// Filter data
-		SnpSiftCmdFilter vcfFilter = new SnpSiftCmdFilter();
+		SnpSiftCmdFilter snpsiftFilter = new SnpSiftCmdFilter();
 		String expression = "EFF[*].CODING = 'CODING'";
-		List<VcfEntry> list = vcfFilter.filter("test/test03.vcf", expression, true);
+		List<VcfEntry> list = snpsiftFilter.filter("test/test03.vcf", expression, true);
 
 		// Check that it satisfies the condition
 		System.out.println("Expression: '" + expression + "'");
@@ -736,9 +737,9 @@ public class TestCasesFilter extends TestCase {
 	 */
 	public void test_33() {
 		// Filter data
-		SnpSiftCmdFilter vcfFilter = new SnpSiftCmdFilter();
+		SnpSiftCmdFilter snpsiftFilter = new SnpSiftCmdFilter();
 		String expression = "EFF[*].CODING = 'NON_CODING'";
-		List<VcfEntry> list = vcfFilter.filter("test/test03.vcf", expression, true);
+		List<VcfEntry> list = snpsiftFilter.filter("test/test03.vcf", expression, true);
 
 		// Check that it satisfies the condition
 		System.out.println("Expression: '" + expression + "'");
@@ -761,9 +762,9 @@ public class TestCasesFilter extends TestCase {
 	 */
 	public void test_34() {
 		// Filter data
-		SnpSiftCmdFilter vcfFilter = new SnpSiftCmdFilter();
+		SnpSiftCmdFilter snpsiftFilter = new SnpSiftCmdFilter();
 		String expression = "(EFF[ALL].EFFECT = 'DOWNSTREAM')";
-		List<VcfEntry> list = vcfFilter.filter("test/downstream.vcf", expression, true);
+		List<VcfEntry> list = snpsiftFilter.filter("test/downstream.vcf", expression, true);
 
 		// Check that it satisfies the condition
 		System.out.println("Expression: '" + expression + "'");
@@ -785,9 +786,9 @@ public class TestCasesFilter extends TestCase {
 	 */
 	public void test_35() {
 		// Filter data
-		SnpSiftCmdFilter vcfFilter = new SnpSiftCmdFilter();
+		SnpSiftCmdFilter snpsiftFilter = new SnpSiftCmdFilter();
 		String expression = "EFF[*].GENE = 'BICD1'";
-		List<VcfEntry> list = vcfFilter.filter("test/test_gene.vcf", expression, true);
+		List<VcfEntry> list = snpsiftFilter.filter("test/test_gene.vcf", expression, true);
 
 		// Check that it satisfies the condition
 		System.out.println("Expression: '" + expression + "'");
@@ -813,8 +814,8 @@ public class TestCasesFilter extends TestCase {
 		// Filter data
 		String expression = "QUAL >= " + minQ;
 		String args[] = { "-f", "test/test01.vcf", "-n", expression };
-		SnpSiftCmdFilter vcfFilter = new SnpSiftCmdFilter(args);
-		List<VcfEntry> list = vcfFilter.filter("test/test01.vcf", expression, true);
+		SnpSiftCmdFilter snpsiftFilter = new SnpSiftCmdFilter(args);
+		List<VcfEntry> list = snpsiftFilter.filter("test/test01.vcf", expression, true);
 
 		// Check that it satisfies the condition
 		System.out.println("Expression: '" + expression + "'");
@@ -835,8 +836,8 @@ public class TestCasesFilter extends TestCase {
 		// Filter data
 		String expression = "QUAL >= " + minQ;
 		String args[] = { "-f", "test/test01.vcf", "-p", expression };
-		SnpSiftCmdFilter vcfFilter = new SnpSiftCmdFilter(args);
-		List<VcfEntry> list = vcfFilter.filter("test/test01.vcf", expression, true);
+		SnpSiftCmdFilter snpsiftFilter = new SnpSiftCmdFilter(args);
+		List<VcfEntry> list = snpsiftFilter.filter("test/test01.vcf", expression, true);
 
 		// Check that it satisfies the condition
 		System.out.println("Expression: '" + expression + "'");
@@ -859,8 +860,8 @@ public class TestCasesFilter extends TestCase {
 		// Filter data
 		String expression = "QUAL >= " + minQ;
 		String args[] = { "-f", "test/test01.vcf", "-a", "ADD", expression };
-		SnpSiftCmdFilter vcfFilter = new SnpSiftCmdFilter(args);
-		List<VcfEntry> list = vcfFilter.filter("test/test01.vcf", expression, true);
+		SnpSiftCmdFilter snpsiftFilter = new SnpSiftCmdFilter(args);
+		List<VcfEntry> list = snpsiftFilter.filter("test/test01.vcf", expression, true);
 
 		// Check that it satisfies the condition
 		System.out.println("Expression: '" + expression + "'");
@@ -883,8 +884,8 @@ public class TestCasesFilter extends TestCase {
 		String expression = "REF = 'A'";
 		String vcfFile = "test/downstream.vcf";
 		String args[] = { "-f", vcfFile, "-r", "SVM", expression }; // Remove FILTER string 'SVM' from all reference = 'A'
-		SnpSiftCmdFilter vcfFilter = new SnpSiftCmdFilter(args);
-		List<VcfEntry> list = vcfFilter.filter(vcfFile, expression, true);
+		SnpSiftCmdFilter snpsiftFilter = new SnpSiftCmdFilter(args);
+		List<VcfEntry> list = snpsiftFilter.filter(vcfFile, expression, true);
 
 		// Check that it satisfies the condition
 		System.out.println("Expression: '" + expression + "'");
@@ -906,8 +907,8 @@ public class TestCasesFilter extends TestCase {
 		String expression = "( EFF[*].EFFECT = 'SPLICE_SITE_ACCEPTOR' )";
 		String vcfFile = "test/test_jim.vcf";
 		String args[] = { "-f", vcfFile, "-n", expression }; // FILTER iNverse 
-		SnpSiftCmdFilter vcfFilter = new SnpSiftCmdFilter(args);
-		List<VcfEntry> list = vcfFilter.filter(vcfFile, expression, true);
+		SnpSiftCmdFilter snpsiftFilter = new SnpSiftCmdFilter(args);
+		List<VcfEntry> list = snpsiftFilter.filter(vcfFile, expression, true);
 
 		// Check that it satisfies the condition
 		System.out.println("Expression: '" + expression + "'");
@@ -931,8 +932,8 @@ public class TestCasesFilter extends TestCase {
 		String expression = "( DP < 5 )";
 		String vcfFile = "test/test_rmfilter.vcf";
 		String args[] = { "-f", vcfFile, "--rmFilter", "DP_OK", expression }; // Remove 'PASS' if there is not enough depth  
-		SnpSiftCmdFilter vcfFilter = new SnpSiftCmdFilter(args);
-		List<VcfEntry> list = vcfFilter.filter(vcfFile, expression, true);
+		SnpSiftCmdFilter snpsiftFilter = new SnpSiftCmdFilter(args);
+		List<VcfEntry> list = snpsiftFilter.filter(vcfFile, expression, true);
 
 		// Check that it satisfies the condition
 		System.out.println("Expression: '" + expression + "'");
@@ -952,9 +953,9 @@ public class TestCasesFilter extends TestCase {
 	 */
 	public void test_42() {
 		// Filter data
-		SnpSiftCmdFilter vcfFilter = new SnpSiftCmdFilter();
+		SnpSiftCmdFilter snpsiftFilter = new SnpSiftCmdFilter();
 		String expression = "( ZZZ = 3 ) ";
-		List<VcfEntry> list = vcfFilter.filter("test/test42.vcf", expression, true);
+		List<VcfEntry> list = snpsiftFilter.filter("test/test42.vcf", expression, true);
 
 		// Check that it satisfies the condition
 		System.out.println("Expression: '" + expression + "'");
@@ -967,9 +968,9 @@ public class TestCasesFilter extends TestCase {
 	 */
 	public void test_43() {
 		// Filter data
-		SnpSiftCmdFilter vcfFilter = new SnpSiftCmdFilter();
+		SnpSiftCmdFilter snpsiftFilter = new SnpSiftCmdFilter();
 		String expression = "( ZZZ < 0 ) ";
-		List<VcfEntry> list = vcfFilter.filter("test/test42.vcf", expression, true);
+		List<VcfEntry> list = snpsiftFilter.filter("test/test42.vcf", expression, true);
 
 		// Check that it satisfies the condition
 		System.out.println("Expression: '" + expression + "'");
@@ -982,9 +983,9 @@ public class TestCasesFilter extends TestCase {
 	 */
 	public void test_44() {
 		// Filter data
-		SnpSiftCmdFilter vcfFilter = new SnpSiftCmdFilter();
+		SnpSiftCmdFilter snpsiftFilter = new SnpSiftCmdFilter();
 		String expression = "( ZZZ > 0 ) ";
-		List<VcfEntry> list = vcfFilter.filter("test/test42.vcf", expression, true);
+		List<VcfEntry> list = snpsiftFilter.filter("test/test42.vcf", expression, true);
 
 		// Check that it satisfies the condition
 		System.out.println("Expression: '" + expression + "'");
@@ -1043,9 +1044,9 @@ public class TestCasesFilter extends TestCase {
 
 	public void test_48() {
 		// Filter data
-		SnpSiftCmdFilter vcfFilter = new SnpSiftCmdFilter();
+		SnpSiftCmdFilter snpsiftFilter = new SnpSiftCmdFilter();
 		String expression = "( ZZZ = NaN ) ";
-		List<VcfEntry> list = vcfFilter.filter("test/test48.vcf", expression, true);
+		List<VcfEntry> list = snpsiftFilter.filter("test/test48.vcf", expression, true);
 
 		// Check that it satisfies the condition
 		System.out.println("Expression: '" + expression + "'");

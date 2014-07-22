@@ -167,8 +167,6 @@ public class SnpSiftCmdFilter extends SnpSift {
 
 	/**
 	 * Iterate over all possible 'FieldIterator' values until one 'true' is found, otherwise return false.
-	 * @param vcfEntry
-	 * @return
 	 */
 	boolean evaluate(VcfEntry vcfEntry) {
 		FieldIterator fieldIterator = FieldIterator.get();
