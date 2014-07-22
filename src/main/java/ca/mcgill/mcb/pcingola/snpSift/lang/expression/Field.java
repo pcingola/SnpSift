@@ -89,9 +89,11 @@ public class Field extends Expression {
 		case Float:
 			return getFieldFloat(vcfEntry);
 
+		case Flag:
+			return getFieldString(vcfEntry) != null;
+
 		case Character:
 		case String:
-		case Flag:
 			return getFieldString(vcfEntry);
 
 		default:
@@ -111,9 +113,11 @@ public class Field extends Expression {
 		case Float:
 			return getFieldFloat(vcfGenotype);
 
+		case Flag:
+			return getFieldString(vcfGenotype) != null;
+
 		case Character:
 		case String:
-		case Flag:
 			return getFieldString(vcfGenotype);
 
 		default:
@@ -130,7 +134,7 @@ public class Field extends Expression {
 		if (name.equals("QUAL")) return vcfEntry.getQuality();
 
 		String value = getFieldString(vcfEntry);
-		if (value == null) return null;
+		if (value == null) return (Double) fieldNotFound(vcfEntry);
 		return Gpr.parseDoubleSafe(value);
 	}
 
@@ -141,10 +145,25 @@ public class Field extends Expression {
 	 */
 	public Double getFieldFloat(VcfGenotype vcfGenotype) {
 		String value = getFieldString(vcfGenotype);
-		if (value == null) return null;
+		if (value == null) return (Double) gtFieldNotFound(vcfGenotype);
 		return Gpr.parseDoubleSafe(value);
 	}
 
+	protected Object fieldNotFound(VcfEntry vcfEntry) {
+		if( exceptionIfNotFound ) throw new RuntimeException("Error: Field '" + this + "' not available in this VCF entry.\n\t" + vcfEntry);
+		return null;
+	}
+	
+	protected Object fieldHeaderNotFound(VcfEntry vcfEntry) {
+		if( exceptionIfNotFound ) throw new RuntimeException("Error: Field '" + this + "' not available in this VCF entry.\n\t" + vcfEntry);
+		return null;
+	}
+
+	protected Object gtFieldNotFound(VcfGenotype vcfGenotype) {
+		if( exceptionIfNotFound ) throw new RuntimeException("Error: Field '" + this + "' not available in this VCF genotype.\n\tGenotype : " + vcfGenotype + "\n\tLine     : " + vcfGenotype.getVcfEntry());
+		return null;
+	}
+	
 	/**
 	 * Get a field (as an Integer) from VcfEntry
 	 *
@@ -154,7 +173,7 @@ public class Field extends Expression {
 		if (name.equals("POS")) return vcfEntry.getStart() + 1L;
 
 		String value = getFieldString(vcfEntry);
-		if (value == null) return null;
+		if (value == null) return (Long) fieldNotFound(vcfEntry);
 		return Gpr.parseLongSafe(value);
 	}
 
@@ -167,7 +186,7 @@ public class Field extends Expression {
 		if (name.equals("GT")) return (long) vcfGenotype.getGenotypeCode();
 
 		String value = getFieldString(vcfGenotype);
-		if (value == null) return null;
+		if (value == null) return (Long) gtFieldNotFound(vcfGenotype);
 		return Gpr.parseLongSafe(value);
 	}
 
@@ -186,18 +205,13 @@ public class Field extends Expression {
 		if (name.equals("POS")) return "" + (vcfEntry.getStart() + 1);
 		if (name.equals("QUAL")) return "" + vcfEntry.getQuality();
 
-		// Get field from INFO field
-		String value = null;
-
 		// Is there a filed 'name'
 		VcfInfo vcfInfo = vcfEntry.getVcfFileIterator().getVcfHeader().getVcfInfo(name);
-		if ((vcfInfo == null) && exceptionIfNotFound) throw new RuntimeException("No such field '" + name + "'");
+		if (vcfInfo == null) return (String) fieldHeaderNotFound(vcfEntry);
 
-		// Get field and parse it
-		value = vcfEntry.getInfo(name);
-
-		// Not found? Should we raise an exception?
-		if ((value == null) && exceptionIfNotFound) throw new RuntimeException("Error: Info field '" + name + "' not available in this entry.\n\t" + this);
+		// Get field value
+		String value = vcfEntry.getInfo(name);
+		if (value == null) return (String) fieldNotFound(vcfEntry);
 
 		return value;
 	}
@@ -208,7 +222,7 @@ public class Field extends Expression {
 
 		// Find field
 		String value = vcfGenotype.get(name);
-		if ((value == null) && exceptionIfNotFound) throw new RuntimeException("Error: Genotype field '" + name + "' not available in this entry.\n\t" + this);
+		if (value == null) return (String) gtFieldNotFound(vcfGenotype);
 		return value;
 	}
 

@@ -18,13 +18,13 @@ public class FieldGenotypeSub extends FieldGenotype {
 	}
 
 	/**
-	 * Get a field (as a Float) from VcfEntry
+	 * Get a field from VcfEntry
 	 * @return
 	 */
 	@Override
 	public String getFieldString(VcfEntry vcfEntry) {
 		String value = super.getFieldString(vcfEntry);
-		if( value ==null) return "";
+		if (value == null) return (String) fieldNotFound(vcfEntry);
 		
 		String sub[] = value.split(",");
 
@@ -41,12 +41,13 @@ public class FieldGenotypeSub extends FieldGenotype {
 	}
 
 	/**
-	 * Get a field (as a Float) from VcfEntry
+	 * Get a field from VcfGenotype
 	 * @return
 	 */
 	@Override
 	public String getFieldString(VcfGenotype vcfGenotype) {
 		String value = super.getFieldString(vcfGenotype);
+		if (value == null) return (String) gtFieldNotFound(vcfGenotype);
 		String sub[] = value.split(",");
 
 		// Is this field 'iterable'?

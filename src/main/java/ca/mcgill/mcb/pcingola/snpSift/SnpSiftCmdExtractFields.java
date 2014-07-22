@@ -31,8 +31,6 @@ public class SnpSiftCmdExtractFields extends SnpSift {
 
 	/**
 	 * Iterate over all possible 'FieldIterator' values until one 'true' is found, otherwise return false.
-	 * @param vcfEntry
-	 * @return
 	 */
 	String evaluate(Field field, VcfEntry vcfEntry) {
 		FieldIterator fieldIterator = FieldIterator.get();
@@ -91,8 +89,6 @@ public class SnpSiftCmdExtractFields extends SnpSift {
 
 	/**
 	 * Parse fields
-	 * @param fieldNames
-	 * @return
 	 */
 	ArrayList<Field> parseFields(ArrayList<String> fieldNames) {
 		ArrayList<Field> fields = new ArrayList<Field>();

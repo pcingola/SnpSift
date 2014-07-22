@@ -48,6 +48,16 @@ public class FieldGenotype extends FieldSub {
 		return value;
 	}
 
+	/**
+	 * Get a field (as a Float) from VcfEntry
+	 */
+	@Override
+	public String getFieldString(VcfGenotype vcfGenotype) {
+		String value = vcfGenotype.get(name);
+		if (value == null) return (String) gtFieldNotFound(vcfGenotype);
+		return value;
+	}
+
 	@Override
 	public String getName() {
 		return name;

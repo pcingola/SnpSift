@@ -23,8 +23,6 @@ public class FieldNmd extends FieldSub {
 
 	/**
 	 * Get field number by name
-	 * @param name
-	 * @return
 	 */
 	int fieldNum(String name) {
 		return VcfNmd.fieldNum(name);
@@ -32,16 +30,13 @@ public class FieldNmd extends FieldSub {
 
 	/**
 	 * Get a field from VcfEntry
-	 * @param vcfEntry
-	 * @param field
-	 * @return
 	 */
 	@Override
 	public String getFieldString(VcfEntry vcfEntry) {
 		// Genotype field => Look for genotype and then field
 		String nmdStr = vcfEntry.getInfo("NMD");
-		if (nmdStr == null) return null;
-
+		if (nmdStr == null) return (String) fieldNotFound(vcfEntry);
+		
 		// Find field
 		String effects[] = nmdStr.split(",");
 		if (index >= effects.length) return null;

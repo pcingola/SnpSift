@@ -23,8 +23,6 @@ public class FieldLof extends FieldSub {
 
 	/**
 	 * Get field number by name
-	 * @param name
-	 * @return
 	 */
 	int fieldNum(String name) {
 		return VcfLof.fieldNum(name);
@@ -32,15 +30,13 @@ public class FieldLof extends FieldSub {
 
 	/**
 	 * Get a field from VcfEntry
-	 * @param vcfEntry
-	 * @param field
-	 * @return
 	 */
 	@Override
 	public String getFieldString(VcfEntry vcfEntry) {
 		// Genotype field => Look for genotype and then field
 		String lofStr = vcfEntry.getInfo("LOF");
-		if (lofStr == null) return null;
+		if (lofStr == null) return (String) fieldNotFound(vcfEntry);
+
 
 		// Find field
 		String lofEntries[] = lofStr.split(",");

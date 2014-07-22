@@ -21,8 +21,6 @@ public class FieldEff extends FieldSub {
 
 	/**
 	 * Constructor
-	 * @param name
-	 * @param index
 	 * @param formatVersion : Can be null (it will be guessed)
 	 */
 	public FieldEff(String name, int index, FormatVersion formatVersion) {
@@ -32,8 +30,6 @@ public class FieldEff extends FieldSub {
 
 	/**
 	 * Get field number by name
-	 * @param name
-	 * @return
 	 */
 	int fieldNum(String name, VcfEffect eff) {
 		if (formatVersion == null) formatVersion = eff.formatVersion();
@@ -42,9 +38,6 @@ public class FieldEff extends FieldSub {
 
 	/**
 	 * Get a field from VcfEntry
-	 * @param vcfEntry
-	 * @param field
-	 * @return
 	 */
 	@Override
 	public String getFieldString(VcfEntry vcfEntry) {
@@ -65,6 +58,7 @@ public class FieldEff extends FieldSub {
 
 		// Find sub-field
 		VcfEffect eff = effects.get(idx);
+		if (eff == null) return (String) fieldNotFound(vcfEntry);
 
 		// Field number not set? Try to guess it
 		if (fieldNum < 0) {
@@ -74,7 +68,9 @@ public class FieldEff extends FieldSub {
 
 		eff.formatVersion();
 
-		return eff.get(fieldNum);
+		String value = eff.get(fieldNum);
+		if (value == null) return (String) fieldNotFound(vcfEntry);
+		return value;
 	}
 
 	@Override
