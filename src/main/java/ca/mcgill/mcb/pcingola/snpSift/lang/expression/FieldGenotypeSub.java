@@ -24,7 +24,8 @@ public class FieldGenotypeSub extends FieldGenotype {
 	@Override
 	public String getFieldString(VcfEntry vcfEntry) {
 		String value = super.getFieldString(vcfEntry);
-
+		if( value ==null) return "";
+		
 		String sub[] = value.split(",");
 
 		// Is this field 'iterable'?

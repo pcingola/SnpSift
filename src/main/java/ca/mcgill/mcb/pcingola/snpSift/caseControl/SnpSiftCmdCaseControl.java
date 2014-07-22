@@ -257,7 +257,8 @@ public class SnpSiftCmdCaseControl extends SnpSift {
 		for (int i = 0; i < chars.length; i++) {
 			if (chars[i] == '+') caseControl[i] = true;
 			else if (chars[i] == '-') caseControl[i] = false;
-			else caseControl[i] = null;
+			else if (chars[i] == '0') caseControl[i] = null;
+			else usage("Unknown character '"+chars[i]+"' (sample "+(i+1)+") in groups string");
 		}
 	}
 
