@@ -1,0 +1,4 @@
+Number of samples:
+	1	File test/concordance_ref_05.vcf
+	1	File test/concordance_test_05.vcf
+	1	Both files
