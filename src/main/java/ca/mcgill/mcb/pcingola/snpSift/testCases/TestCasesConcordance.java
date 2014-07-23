@@ -80,12 +80,21 @@ public class TestCasesConcordance extends TestCase {
 	//		checkConcordance("test/concordance_ref_04.vcf", "test/concordance_test_04.vcf", count);
 	//	}
 
-	public void test_05() {
-		CountByType count = new CountByType();
-		count.inc("ALT_2/ALT_2", 3);
-		count.inc("ALT_2/MISSING_ENTRY_concordance_test_05", 1);
+	//	public void test_05() {
+	//		CountByType count = new CountByType();
+	//		count.inc("ALT_2/ALT_2", 3);
+	//		count.inc("ALT_2/MISSING_ENTRY_concordance_test_05", 1);
+	//
+	//		checkConcordance("test/concordance_ref_05.vcf", "test/concordance_test_05.vcf", count);
+	//	}
 
-		checkConcordance("test/concordance_ref_05.vcf", "test/concordance_test_05.vcf", count);
+	public void test_06() {
+		CountByType count = new CountByType();
+		count.inc("ALT_2/ALT_2", 5);
+		count.inc("ALT_2/MISSING_ENTRY_concordance_test_06", 1);
+		count.inc("MISSING_ENTRY_concordance_ref_06/ALT_2", 1);
+
+		checkConcordance("test/concordance_ref_06.vcf", "test/concordance_test_06.vcf", count);
 	}
 
 }

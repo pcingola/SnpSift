@@ -105,6 +105,7 @@ public class SnpSiftCmdConcordance extends SnpSift {
 		// Check that VCF entries match
 		if (!check(ve1, ve2)) return;
 
+		// Debug
 		if (debug) {
 			String s1 = ve1 == null ? "null" : ve1.toStr();
 			String s2 = ve2 == null ? "null" : ve2.toStr();

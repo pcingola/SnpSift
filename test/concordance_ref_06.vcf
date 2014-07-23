@@ -1,0 +1,8 @@
+#CHROM	POS	ID	REF	ALT	QUAL	FILTER	INFO	FORMAT	Sample1
+20	10000	.	C	T	.	.	.	GT	1/1
+20	10001	.	C	T	.	.	.	GT	1/1
+20	10002	.	C	T	.	.	.	GT	1/1
+20	10003	.	C	T	.	.	.	GT	1/1
+20	10004	.	C	T	.	.	.	GT	1/1
+#20	10005	.	C	T	.	.	.	GT	1/1
+20	10006	.	C	T	.	.	.	GT	1/1
