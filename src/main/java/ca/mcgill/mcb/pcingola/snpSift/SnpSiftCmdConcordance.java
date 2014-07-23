@@ -47,6 +47,8 @@ public class SnpSiftCmdConcordance extends SnpSift {
 	StringBuilder summary = new StringBuilder();
 	HashSet<String> restrictSamples;
 	protected VcfEntry latestVcfEntry = null;
+	boolean writeSummaryFile;
+	boolean writeBySampleFile;
 
 	public SnpSiftCmdConcordance(String args[]) {
 		super(args, "concordance");
@@ -226,6 +228,23 @@ public class SnpSiftCmdConcordance extends SnpSift {
 		return genotypKey(gt.getGenotypeCode(), name);
 	}
 
+	public CountByType getConcordance() {
+		return concordance;
+	}
+
+	public AutoHashMap<String, CountByType> getConcordanceBySample() {
+		return concordanceBySample;
+	}
+
+	public int getCountEntries() {
+		return countEntries;
+	}
+
+	@Override
+	public void init() {
+		writeSummaryFile = writeBySampleFile = true;
+	}
+
 	/**
 	 * Parse command line arguments
 	 */
@@ -254,6 +273,10 @@ public class SnpSiftCmdConcordance extends SnpSift {
 		vcf1.readHeader();
 		vcf2.readHeader();
 
+		// Sanity check
+		if (vcf1.getSampleNames() == null) fatalError("Unable to parse sample names from file '" + vcfFileName1 + "'. Missing header line?");
+		if (vcf2.getSampleNames() == null) fatalError("Unable to parse sample names from file '" + vcfFileName2 + "'. Missing header line?");
+
 		// Map sample names to sample number
 		HashMap<String, Integer> vcf1Name2Idx = new HashMap<String, Integer>();
 		int idx = 0;
@@ -275,7 +298,7 @@ public class SnpSiftCmdConcordance extends SnpSift {
 					idx2toidx1[idx] = vcf1Name2Idx.get(sampleName); // Assign to index mapping array
 					sampleNameIdx2[idx] = sampleName;
 					concordanceBySample.getOrCreate(sampleName); // Initialize autoHash
-					if (debug) System.err.println("\tMap\tSamlple " + sampleName + "\t" + name2 + "[" + idx + "]\t->\t" + name1 + "[" + idx2toidx1[idx] + "]");
+					if (debug) System.err.println("\tMap\tSample " + sampleName + "\t" + name2 + "[" + idx + "]\t->\t" + name1 + "[" + idx2toidx1[idx] + "]");
 				} else idx2toidx1[idx] = -1;
 			} else idx2toidx1[idx] = -1;
 
@@ -377,28 +400,40 @@ public class SnpSiftCmdConcordance extends SnpSift {
 		System.out.print(showCounts(concordance, null, null));
 
 		// Write summary file
-		String summaryFile = "concordance_" + name1 + "_" + name2 + ".summary.txt"; // Write to file
-		Timer.showStdErr("Writing summary file '" + summaryFile + "'");
-		if (!errors.isEmpty()) { // Add errors (if any)
-			summary("# Errors:");
-			for (String l : errors.keySet())
-				summary("\t" + l + "\t" + errors.get(l));
+		if (writeSummaryFile) {
+			String summaryFile = "concordance_" + name1 + "_" + name2 + ".summary.txt"; // Write to file
+			Timer.showStdErr("Writing summary file '" + summaryFile + "'");
+			if (!errors.isEmpty()) { // Add errors (if any)
+				summary("# Errors:");
+				for (String l : errors.keySet())
+					summary("\t" + l + "\t" + errors.get(l));
+			}
+			Gpr.toFile(summaryFile, summary);
 		}
-		Gpr.toFile(summaryFile, summary);
 
 		// Write 'by sample' file
-		String bySampleFile = "concordance_" + name1 + "_" + name2 + ".by_sample.txt"; // Write to file
-		Timer.showStdErr("Writing concordance by sample to file '" + bySampleFile + "'");
+		if (writeBySampleFile) {
+			String bySampleFile = "concordance_" + name1 + "_" + name2 + ".by_sample.txt"; // Write to file
+			Timer.showStdErr("Writing concordance by sample to file '" + bySampleFile + "'");
 
-		StringBuilder bySample = new StringBuilder();
-		bySample.append(titleBySample + "\n"); // Add title
-		ArrayList<String> sampleNames = new ArrayList<String>(); // Sort samples by name
-		sampleNames.addAll(concordanceBySample.keySet());
-		Collections.sort(sampleNames);
-		for (String sample : sampleNames)
-			bySample.append(showCounts(concordanceBySample.get(sample), null, sample)); // Add all samples
+			StringBuilder bySample = new StringBuilder();
+			bySample.append(titleBySample + "\n"); // Add title
+			ArrayList<String> sampleNames = new ArrayList<String>(); // Sort samples by name
+			sampleNames.addAll(concordanceBySample.keySet());
+			Collections.sort(sampleNames);
+			for (String sample : sampleNames)
+				bySample.append(showCounts(concordanceBySample.get(sample), null, sample)); // Add all samples
 
-		Gpr.toFile(bySampleFile, bySample); // Write file
+			Gpr.toFile(bySampleFile, bySample); // Write file
+		}
+	}
+
+	public void setWriteBySampleFile(boolean writeBySampleFile) {
+		this.writeBySampleFile = writeBySampleFile;
+	}
+
+	public void setWriteSummaryFile(boolean writeSummaryFile) {
+		this.writeSummaryFile = writeSummaryFile;
 	}
 
 	/**
@@ -437,7 +472,7 @@ public class SnpSiftCmdConcordance extends SnpSift {
 		}
 
 		showVersion();
-		System.err.println("Usage: java -jar " + SnpSift.class.getSimpleName() + ".jar " + command + " [options] genotype.vcf sequencing.vcf\n");
+		System.err.println("Usage: java -jar " + SnpSift.class.getSimpleName() + ".jar " + command + " [options] reference.vcf sequencing.vcf\n");
 		System.err.println("Options:\n");
 		System.err.println("\t -s <file>  : Only use sample IDs in file (format: one sample ID per line).");
 		System.exit(1);
