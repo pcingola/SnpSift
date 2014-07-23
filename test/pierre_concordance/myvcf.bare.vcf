@@ -1,0 +1,999 @@
+##fileformat=VCFv4.1		.			.	.
+##ALT=<ID=NON_REF,Description="Represents	any	.	alternative	allele	.	.	location">
+##FILTER=<ID=LowQual,Description="Low	quality">	.			.	.
+##FILTER=<ID=NC,Description="Inconsistent	Genotype	.	For	At	.	.	Sample">
+##FILTER=<ID=VQSRTrancheINDEL95.00to96.00,Description="Truth	sensitivity	.	level	for	.	.	at	VQS	Lod	0.8583	<=	x	<	1.0455">
+##FILTER=<ID=VQSRTrancheINDEL96.00to97.00,Description="Truth	sensitivity	.	level	for	.	.	at	VQS	Lod	0.7111	<=	x	<	0.8583">
+##FILTER=<ID=VQSRTrancheINDEL97.00to99.00,Description="Truth	sensitivity	.	level	for	.	.	at	VQS	Lod	0.0955	<=	x	<	0.7111">
+##FILTER=<ID=VQSRTrancheINDEL99.00to99.50,Description="Truth	sensitivity	.	level	for	.	.	at	VQS	Lod	-0.5383	<=	x	<	0.0955">
+##FILTER=<ID=VQSRTrancheINDEL99.50to99.90,Description="Truth	sensitivity	.	level	for	.	.	at	VQS	Lod	-8.7058	<=	x	<	-0.5383">
+##FILTER=<ID=VQSRTrancheINDEL99.90to99.95,Description="Truth	sensitivity	.	level	for	.	.	at	VQS	Lod	-13.9145	<=	x	<	-8.7058">
+##FILTER=<ID=VQSRTrancheINDEL99.95to100.00+,Description="Truth	sensitivity	.	level	for	.	.	at	VQS	Lod	<	-37568.9596">
+##FILTER=<ID=VQSRTrancheINDEL99.95to100.00,Description="Truth	sensitivity	.	level	for	.	.	at	VQS	Lod	-37568.9596	<=	x	<	-13.9145">
+##FILTER=<ID=VQSRTrancheSNP99.60to99.80,Description="Truth	sensitivity	.	level	for	.	.	at	VQS	Lod	-5.2574	<=	x	<	-1.6756">
+##FILTER=<ID=VQSRTrancheSNP99.80to99.90,Description="Truth	sensitivity	.	level	for	.	.	at	VQS	Lod	-28.7184	<=	x	<	-5.2574">
+##FILTER=<ID=VQSRTrancheSNP99.90to99.95,Description="Truth	sensitivity	.	level	for	.	.	at	VQS	Lod	-185.5649	<=	x	<	-28.7184">
+##FILTER=<ID=VQSRTrancheSNP99.95to100.00+,Description="Truth	sensitivity	.	level	for	.	.	at	VQS	Lod	<	-37985.1664">
+##FILTER=<ID=VQSRTrancheSNP99.95to100.00,Description="Truth	sensitivity	.	level	for	.	.	at	VQS	Lod	-37985.1664	<=	x	<	-185.5649">
+##FORMAT=<ID=AD,Number=.,Type=Integer,Description="Allelic	depths	.	the	ref	.	.	alleles	in	the	order	listed">
+##FORMAT=<ID=DP,Number=1,Type=Integer,Description="Approximate	read	.	(reads	with	.	.	with	bad	mates	are	filtered)">
+##FORMAT=<ID=GQ,Number=1,Type=Integer,Description="Genotype	Quality">	.			.	.
+##FORMAT=<ID=GT,Number=1,Type=String,Description="Genotype">		.			.	.
+##FORMAT=<ID=MIN_DP,Number=1,Type=Integer,Description="Minimum	DP	.	within	the	.	.
+##FORMAT=<ID=PL,Number=G,Type=Integer,Description="Normalized,	Phred-scaled	.	for	genotypes	.	.	in	the	VCF	specification">
+##FORMAT=<ID=SB,Number=4,Type=Integer,Description="Per-sample	component	.	which	comprise	.	.	Exact	Test	to	detect	strand	bias.">
+##GATKCommandLine=<ID=ApplyRecalibration,Version=3.1-31-g26471b1,Date="Fri	Apr	.	21	EDT	.	.	showFullBamList=false	read_buffer_size=null	phone_home=AWS	gatk_key=null	tag=NA	read_filter=[]	intervals=[/seq/dax/t2d_genes/v7/scattered/temp_0001_of_1000/scattered.intervals]	excludeIntervals=null	interval_set_rule=UNION	interval_merging=ALL	interval_padding=0	reference_sequence=/seq/references/Homo_sapiens_assembly19/v1/Homo_sapiens_assembly19.fasta	nonDeterministicRandomSeed=false	disableDithering=false	maxRuntime=-1	maxRuntimeUnits=MINUTES	downsampling_type=BY_SAMPLE	downsample_to_fraction=null	downsample_to_coverage=1000	baq=OFF	baqGapOpenPenalty=40.0	fix_misencoded_quality_scores=false	allow_potentially_misencoded_quality_scores=false	useOriginalQualities=false	defaultBaseQualities=-1	performanceLog=null	BQSR=null	quantize_quals=0	disable_indel_quals=false	emit_original_quals=false	preserve_qscores_less_than=6	globalQScorePrior=-1.0	validation_strictness=SILENT	remove_program_records=false	keep_program_records=false	sample_rename_mapping_file=null	unsafe=null	disable_auto_index_creation_and_locking_when_reading_rods=true	num_threads=1	num_cpu_threads_per_data_thread=1	num_io_threads=0	monitorThreadEfficiency=false	num_bam_file_handles=null	read_group_black_list=null	pedigree=[]	pedigreeString=[]	pedigreeValidationType=STRICT	allow_intervals_with_unindexed_bam=false	generateShadowBCF=false	variant_index_type=DYNAMIC_SEEK	variant_index_parameter=-1	logging_level=INFO	log_to_file=null	help=false	version=false	input=[(RodBinding	name=input	source=/seq/dax/t2d_genes/v7/scattered/temp_0001_of_1000/genotypes.unfiltered.vcf.gz)]	recal_file=(RodBinding	name=recal_file	source=/seq/dax/t2d_genes/v7/t2d_genes.indels.recal)	tranches_file=/seq/dax/t2d_genes/v7/t2d_genes.indels.tranches	out=org.broadinstitute.sting.gatk.io.stubs.VariantContextWriterStub	no_cmdline_in_header=org.broadinstitute.sting.gatk.io.stubs.VariantContextWriterStub	sites_only=org.broadinstitute.sting.gatk.io.stubs.VariantContextWriterStub	bcf=org.broadinstitute.sting.gatk.io.stubs.VariantContextWriterStub	ts_filter_level=95.0	lodCutoff=null	ignore_filter=null	excludeFiltered=false	mode=INDEL	filter_reads_with_N_cigar=false	filter_mismatching_base_and_quals=false	filter_bases_not_stored=false">
+##GATKCommandLine=<ID=SelectVariants,Version=3.1-96-gcb2562e,Date="Wed	Apr	.	09	EDT	.	.	showFullBamList=false	read_buffer_size=null	phone_home=AWS	gatk_key=null	tag=NA	read_filter=[]	intervals=[/seq/dax/t2d_genes/v7/scattered/temp_0001_of_1000/scattered.intervals]	excludeIntervals=null	interval_set_rule=UNION	interval_merging=ALL	interval_padding=0	reference_sequence=/seq/references/Homo_sapiens_assembly19/v1/Homo_sapiens_assembly19.fasta	nonDeterministicRandomSeed=false	disableDithering=false	maxRuntime=-1	maxRuntimeUnits=MINUTES	downsampling_type=BY_SAMPLE	downsample_to_fraction=null	downsample_to_coverage=1000	baq=OFF	baqGapOpenPenalty=40.0	fix_misencoded_quality_scores=false	allow_potentially_misencoded_quality_scores=false	useOriginalQualities=false	defaultBaseQualities=-1	performanceLog=null	BQSR=null	quantize_quals=0	disable_indel_quals=false	emit_original_quals=false	preserve_qscores_less_than=6	globalQScorePrior=-1.0	validation_strictness=SILENT	remove_program_records=false	keep_program_records=false	sample_rename_mapping_file=null	unsafe=null	disable_auto_index_creation_and_locking_when_reading_rods=false	num_threads=1	num_cpu_threads_per_data_thread=1	num_io_threads=0	monitorThreadEfficiency=false	num_bam_file_handles=null	read_group_black_list=null	pedigree=[]	pedigreeString=[]	pedigreeValidationType=STRICT	allow_intervals_with_unindexed_bam=false	generateShadowBCF=false	variant_index_type=DYNAMIC_SEEK	variant_index_parameter=-1	logging_level=INFO	log_to_file=null	help=false	version=false	variant=(RodBinding	name=variant	source=/seq/dax/t2d_genes/v7/scattered/temp_0001_of_1000/genotypes.filtered.vcf.gz)	discordance=(RodBinding	name=	source=UNBOUND)	concordance=(RodBinding	name=	source=UNBOUND)	out=org.broadinstitute.sting.gatk.io.stubs.VariantContextWriterStub	no_cmdline_in_header=org.broadinstitute.sting.gatk.io.stubs.VariantContextWriterStub	sites_only=org.broadinstitute.sting.gatk.io.stubs.VariantContextWriterStub	bcf=org.broadinstitute.sting.gatk.io.stubs.VariantContextWriterStub	sample_name=[]	sample_expressions=null	sample_file=null	exclude_sample_name=[]	exclude_sample_file=[/seq/dax/t2d_genes/v7/scratch/autism_samples.txt]	select_expressions=[]	excludeNonVariants=true	excludeFiltered=false	restrictAllelesTo=ALL	keepOriginalAC=false	mendelianViolation=false	mendelianViolationQualThreshold=0.0	select_random_fraction=0.0	remove_fraction_genotypes=0.0	selectTypeToInclude=[]	keepIDs=null	fullyDecode=false	forceGenotypesDecode=false	justRead=false	maxIndelSize=2147483647	ALLOW_NONOVERLAPPING_COMMAND_LINE_SAMPLES=false	filter_reads_with_N_cigar=false	filter_mismatching_base_and_quals=false	filter_bases_not_stored=false">
+##GVCFBlock=minGQ=0(inclusive),maxGQ=5(exclusive)		.			.	.
+##INFO=<ID=AC,Number=A,Type=Integer,Description="Allele	count	.	genotypes,	for	.	.	allele,	in	the	same	order	as	listed">
+##INFO=<ID=AF,Number=A,Type=Float,Description="Allele	Frequency,	.	each	ALT	.	.	the	same	order	as	listed">
+##INFO=<ID=AN,Number=1,Type=Integer,Description="Total	number	.	alleles	in	.	.
+##INFO=<ID=ASP,Number=0,Type=Flag,Description="Is	Assembly	.	This	is	.	.	the	variant	only	maps	to	one	assembly">
+##INFO=<ID=ASS,Number=0,Type=Flag,Description="In	acceptor	.	site	FxnCode	.	.
+##INFO=<ID=BaseQRankSum,Number=1,Type=Float,Description="Z-score	from	.	rank	sum	.	.	Alt	Vs.	Ref	base	qualities">
+##INFO=<ID=CDA,Number=0,Type=Flag,Description="Variation	is	.	in	a	.	.	assay">
+##INFO=<ID=CFL,Number=0,Type=Flag,Description="Has	Assembly	.	This	is	.	.	1	and	2	variant	that	maps	to	different	chromosomes	on	different	assemblies.">
+##INFO=<ID=CLN,Number=0,Type=Flag,Description="Variant	is	.			.	.
+##INFO=<ID=ClippingRankSum,Number=1,Type=Float,Description="Z-score	From	.	rank	sum	.	.	Alt	vs.	Ref	number	of	hard	clipped	bases">
+##INFO=<ID=DB,Number=0,Type=Flag,Description="dbSNP	Membership">	.			.	.
+##INFO=<ID=DP,Number=1,Type=Integer,Description="Approximate	read	.	some	reads	.	.	been	filtered">
+##INFO=<ID=DS,Number=0,Type=Flag,Description="Were	any	.	the	samples	.	.
+##INFO=<ID=DSS,Number=0,Type=Flag,Description="In	donor	.	FxnCode	=	.	.
+##INFO=<ID=END,Number=1,Type=Integer,Description="Stop	position	.	the	interval">	.	.
+##INFO=<ID=FS,Number=1,Type=Float,Description="Phred-scaled	p-value	.	Fisher's	exact	.	.	detect	strand	bias">
+##INFO=<ID=G5,Number=0,Type=Flag,Description=">5%	minor	.	frequency	in	.	.
+##INFO=<ID=G5A,Number=0,Type=Flag,Description=">5%	minor	.	frequency	in	.	.	all	populations">
+##INFO=<ID=GCF,Number=0,Type=Flag,Description="Has	Genotype	.	Same	(rs,	.	.	genotype.	N/N	is	not	included.">
+##INFO=<ID=GENEINFO,Number=1,Type=String,Description="Pairs	each	.	gene	symbol	.	.	gene	symbol	and	id	are	delimited	by	a	colon	(	and	each	pair	is	delimited	by	a	vertical	bar	(|)">
+##INFO=<ID=GMAF,Number=1,Type=Float,Description="Global	Minor	.	Frequency	[0,	.	.	population	is	1000GenomesProject	phase	1	genotype	data	from	629	individuals,	released	in	the	08-04-2010	dataset">
+##INFO=<ID=GNO,Number=0,Type=Flag,Description="Genotypes	available.	.	variant	has	.	.	(in	SubInd	table).">
+##INFO=<ID=HD,Number=0,Type=Flag,Description="Marker	is	.	high	density	.	.	(50K	density	or	greater).	The	variant	may	have	phenotype	associations	present	in	dbGaP.">
+##INFO=<ID=HaplotypeScore,Number=1,Type=Float,Description="Consistency	of	.	site	with	.	.	two	segregating	haplotypes">
+##INFO=<ID=INT,Number=0,Type=Flag,Description="In	Intron	.	=	6">	.	.
+##INFO=<ID=InbreedingCoeff,Number=1,Type=Float,Description="Inbreeding	coefficient	.	estimated	from	.	.	likelihoods	per-sample	when	compared	against	the	Hardy-Weinberg	expectation">
+##INFO=<ID=KGPROD,Number=0,Type=Flag,Description="1000	Genome	.	phase">		.	.
+##INFO=<ID=KGPilot1,Number=0,Type=Flag,Description="1000	Genome	.	2009">		.	.
+##INFO=<ID=KGPilot123,Number=0,Type=Flag,Description="1000	Genome	.	all	pilots	.	.
+##INFO=<ID=KGVAL,Number=0,Type=Flag,Description="1000	Genome	.	by	second	.	.
+##INFO=<ID=LSD,Number=0,Type=Flag,Description="Submitted	from	.	locus-specific	database">	.	.
+##INFO=<ID=MLEAC,Number=A,Type=Integer,Description="Maximum	likelihood	.	(MLE)	for	.	.	counts	(not	necessarily	the	same	as	the	AC),	for	each	ALT	allele,	in	the	same	order	as	listed">
+##INFO=<ID=MLEAF,Number=A,Type=Float,Description="Maximum	likelihood	.	(MLE)	for	.	.	frequency	(not	necessarily	the	same	as	the	AF),	for	each	ALT	allele,	in	the	same	order	as	listed">
+##INFO=<ID=MQ,Number=1,Type=Float,Description="RMS	Mapping	.			.	.
+##INFO=<ID=MQ0,Number=1,Type=Integer,Description="Total	Mapping	.	Zero	Reads">	.	.
+##INFO=<ID=MQRankSum,Number=1,Type=Float,Description="Z-score	From	.	rank	sum	.	.	Alt	vs.	Ref	read	mapping	qualities">
+##INFO=<ID=MTP,Number=0,Type=Flag,Description="Microattribution/third-party	annotation(TPA	.			.	.
+##INFO=<ID=MUT,Number=0,Type=Flag,Description="Is	mutation	.	citation,	explicit	.	.	low	frequency	variation	that	is	cited	in	journal	and	other	reputable	sources">
+##INFO=<ID=NEGATIVE_TRAIN_SITE,Number=0,Type=Flag,Description="This	variant	.	used	to	.	.	negative	training	set	of	bad	variants">
+##INFO=<ID=NOC,Number=0,Type=Flag,Description="Contig	allele	.	present	in	.	.	list.	The	reference	sequence	allele	at	the	mapped	position	is	not	present	in	the	variant	allele	list,	adjusted	for	orientation.">
+##INFO=<ID=NOV,Number=0,Type=Flag,Description="Rs	cluster	.	non-overlapping	allele	.	.	when	rs	set	has	more	than	2	alleles	from	different	submissions	and	these	sets	share	no	alleles	in	common.">
+##INFO=<ID=NS,Number=1,Type=Integer,Description="Number	of	.	With	Data">	.	.
+##INFO=<ID=NSF,Number=0,Type=Flag,Description="Has	non-synonymous	.	A	coding	.	.	where	one	allele	in	the	set	changes	all	downstream	amino	acids.	FxnClass	=	44">
+##INFO=<ID=NSM,Number=0,Type=Flag,Description="Has	non-synonymous	.	A	coding	.	.	where	one	allele	in	the	set	changes	protein	peptide.	FxnClass	=	42">
+##INFO=<ID=NSN,Number=0,Type=Flag,Description="Has	non-synonymous	.	A	coding	.	.	where	one	allele	in	the	set	changes	to	STOP	codon	(TER).	FxnClass	=	41">
+##INFO=<ID=OM,Number=0,Type=Flag,Description="Has	OMIM/OMIA">	.			.	.
+##INFO=<ID=OTH,Number=0,Type=Flag,Description="Has	other	.	with	exactly	.	.	set	of	mapped	positions	on	NCBI	refernce	assembly.">
+##INFO=<ID=PH1,Number=0,Type=Flag,Description="Phase	1	.	filtered,	non-redundant">	.	.
+##INFO=<ID=PH2,Number=0,Type=Flag,Description="Phase	2	.	filtered,	non-redundant">	.	.
+##INFO=<ID=PH3,Number=0,Type=Flag,Description="Phase	3	.	filtered,	non-redundant">	.	.
+##INFO=<ID=PM,Number=0,Type=Flag,Description="Variant	is	.	Cited)">		.	.
+##INFO=<ID=PMC,Number=0,Type=Flag,Description="Links	exist	.	PubMed	Central	.	.
+##INFO=<ID=POSITIVE_TRAIN_SITE,Number=0,Type=Flag,Description="This	variant	.	used	to	.	.	positive	training	set	of	good	variants">
+##INFO=<ID=QD,Number=1,Type=Float,Description="Variant	Confidence/Quality	.	Depth">		.	.
+##INFO=<ID=R3,Number=0,Type=Flag,Description="In	3'	.	region	FxnCode	.	.
+##INFO=<ID=R5,Number=0,Type=Flag,Description="In	5'	.	region	FxnCode	.	.
+##INFO=<ID=REF,Number=0,Type=Flag,Description="Has	reference	.	coding	region	.	.	one	allele	in	the	set	is	identical	to	the	reference	sequence.	FxnCode	=	8">
+##INFO=<ID=RSPOS,Number=1,Type=Integer,Description="Chr	position	.	in	dbSNP">	.	.
+##INFO=<ID=RV,Number=0,Type=Flag,Description="RS	orientation	.	reversed">		.	.
+##INFO=<ID=ReadPosRankSum,Number=1,Type=Float,Description="Z-score	from	.	rank	sum	.	.	Alt	vs.	Ref	read	position	bias">
+##INFO=<ID=S3D,Number=0,Type=Flag,Description="Has	3D	.	-	SNP3D	.	.
+##INFO=<ID=SAO,Number=1,Type=Integer,Description="Variant	Allele	.	0	-	.	.	-	Germline,	2	-	Somatic,	3	-	Both">
+##INFO=<ID=SCS,Number=1,Type=Integer,Description="Variant	Clinical	.	0	-	.	.	-	untested,	2	-	non-pathogenic,	3	-	probable-non-pathogenic,	4	-	probable-pathogenic,	5	-	pathogenic,	6	-	drug-response,	7	-	histocompatibility,	255	-	other">
+##INFO=<ID=SLO,Number=0,Type=Flag,Description="Has	SubmitterLinkOut	.	From	SNP->SubSNP->Batch.link_out">	.	.
+##INFO=<ID=SSR,Number=1,Type=Integer,Description="Variant	Suspect	.	Code,	0	.	.	1	-	Paralog,	2	-	byEST,	3	-	Para_EST,	4	-	oldAlign,	5	-	other">
+##INFO=<ID=SYN,Number=0,Type=Flag,Description="Has	synonymous	.	coding	region	.	.	one	allele	in	the	set	does	not	change	the	encoded	amino	acid.	FxnCode	=	3">
+##INFO=<ID=TPA,Number=0,Type=Flag,Description="Provisional	Third	.	Annotation(TPA)	(currently	.	.	PHARMGKB	who	will	give	phenotype	data)">
+##INFO=<ID=U3,Number=0,Type=Flag,Description="In	3'	.	Location	is	.	.	untranslated	region	(UTR).	FxnCode	=	53">
+##INFO=<ID=U5,Number=0,Type=Flag,Description="In	5'	.	Location	is	.	.	untranslated	region	(UTR).	FxnCode	=	55">
+##INFO=<ID=VC,Number=1,Type=String,Description="Variation	Class">	.			.	.
+##INFO=<ID=VLD,Number=0,Type=Flag,Description="Is	Validated.	.	bit	is	.	.	the	variant	has	2+	minor	allele	count	based	on	frequency	or	genotype	data.">
+##INFO=<ID=VP,Number=1,Type=String,Description="Variation	Property">	.			.	.
+##INFO=<ID=VQSLOD,Number=1,Type=Float,Description="Log	odds	.	of	being	.	.	variant	versus	being	false	under	the	trained	gaussian	mixture	model">
+##INFO=<ID=WGT,Number=1,Type=Integer,Description="Weight,	00	.	unmapped,	1	.	.	1,	2	-	weight	2,	3	-	weight	3	or	more">
+##INFO=<ID=WTD,Number=0,Type=Flag,Description="Is	Withdrawn	.	submitter	If	.	.	ss	is	withdrawn	by	submitter,	then	this	bit	is	set.	If	all	member	ss'	are	withdrawn,	then	the	rs	is	deleted	to	SNPHistory">
+##INFO=<ID=culprit,Number=1,Type=String,Description="The	annotation	.	was	the	.	.	in	the	Gaussian	mixture	model,	likely	the	reason	why	the	variant	was	filtered	out">
+##INFO=<ID=dbSNPBuildID,Number=1,Type=Integer,Description="First	dbSNP	.	for	RS">	.	.
+##LeftAlignVariants="analysis_type=LeftAlignVariants	input_file=[]	.	phone_home=STANDARD	read_filter=[]	.	.	interval_set_rule=UNION	interval_merging=ALL	reference_sequence=/humgen/gsa-hpprojects/GATK/bundle/current/b37/human_g1k_v37.fasta	rodBind=[]	nonDeterministicRandomSeed=false	downsampling_type=BY_SAMPLE	downsample_to_fraction=null	downsample_to_coverage=1000	baq=OFF	baqGapOpenPenalty=40.0	performanceLog=null	useOriginalQualities=false	defaultBaseQualities=-1	validation_strictness=SILENT	unsafe=null	num_threads=1	read_group_black_list=null	pedigree=[]	pedigreeString=[]	pedigreeValidationType=STRICT	allow_intervals_with_unindexed_bam=false	disable_experimental_low_memory_sharding=false	logging_level=INFO	log_to_file=null	help=false	variant=(RodBinding	name=variant	source=00-All.vcf)	out=org.broadinstitute.sting.gatk.io.stubs.VCFWriterStub	NO_HEADER=org.broadinstitute.sting.gatk.io.stubs.VCFWriterStub	sites_only=org.broadinstitute.sting.gatk.io.stubs.VCFWriterStub	filter_mismatching_base_and_quals=false"
+##contig=<ID=1,length=249250621>		.			.	.
+##contig=<ID=2,length=243199373>		.			.	.
+##contig=<ID=3,length=198022430>		.			.	.
+##contig=<ID=4,length=191154276>		.			.	.
+##contig=<ID=5,length=180915260>		.			.	.
+##contig=<ID=6,length=171115067>		.			.	.
+##contig=<ID=7,length=159138663>		.			.	.
+##contig=<ID=8,length=146364022>		.			.	.
+##contig=<ID=9,length=141213431>		.			.	.
+##contig=<ID=10,length=135534747>		.			.	.
+##contig=<ID=11,length=135006516>		.			.	.
+##contig=<ID=12,length=133851895>		.			.	.
+##contig=<ID=13,length=115169878>		.			.	.
+##contig=<ID=14,length=107349540>		.			.	.
+##contig=<ID=15,length=102531392>		.			.	.
+##contig=<ID=16,length=90354753>		.			.	.
+##contig=<ID=17,length=81195210>		.			.	.
+##contig=<ID=18,length=78077248>		.			.	.
+##contig=<ID=19,length=59128983>		.			.	.
+##contig=<ID=20,length=63025520>		.			.	.
+##contig=<ID=21,length=48129895>		.			.	.
+##contig=<ID=22,length=51304566>		.			.	.
+##contig=<ID=X,length=155270560>		.			.	.
+##contig=<ID=Y,length=59373566>		.			.	.
+##contig=<ID=MT,length=16569>		.			.	.
+##contig=<ID=GL000207.1,length=4262>		.			.	.
+##contig=<ID=GL000226.1,length=15008>		.			.	.
+##contig=<ID=GL000229.1,length=19913>		.			.	.
+##contig=<ID=GL000231.1,length=27386>		.			.	.
+##contig=<ID=GL000210.1,length=27682>		.			.	.
+##contig=<ID=GL000239.1,length=33824>		.			.	.
+##contig=<ID=GL000235.1,length=34474>		.			.	.
+##contig=<ID=GL000201.1,length=36148>		.			.	.
+##contig=<ID=GL000247.1,length=36422>		.			.	.
+##contig=<ID=GL000245.1,length=36651>		.			.	.
+##contig=<ID=GL000197.1,length=37175>		.			.	.
+##contig=<ID=GL000203.1,length=37498>		.			.	.
+##contig=<ID=GL000246.1,length=38154>		.			.	.
+##contig=<ID=GL000249.1,length=38502>		.			.	.
+##contig=<ID=GL000196.1,length=38914>		.			.	.
+##contig=<ID=GL000248.1,length=39786>		.			.	.
+##contig=<ID=GL000244.1,length=39929>		.			.	.
+##contig=<ID=GL000238.1,length=39939>		.			.	.
+##contig=<ID=GL000202.1,length=40103>		.			.	.
+##contig=<ID=GL000234.1,length=40531>		.			.	.
+##contig=<ID=GL000232.1,length=40652>		.			.	.
+##contig=<ID=GL000206.1,length=41001>		.			.	.
+##contig=<ID=GL000240.1,length=41933>		.			.	.
+##contig=<ID=GL000236.1,length=41934>		.			.	.
+##contig=<ID=GL000241.1,length=42152>		.			.	.
+##contig=<ID=GL000243.1,length=43341>		.			.	.
+##contig=<ID=GL000242.1,length=43523>		.			.	.
+##contig=<ID=GL000230.1,length=43691>		.			.	.
+##contig=<ID=GL000237.1,length=45867>		.			.	.
+##contig=<ID=GL000233.1,length=45941>		.			.	.
+##contig=<ID=GL000204.1,length=81310>		.			.	.
+##contig=<ID=GL000198.1,length=90085>		.			.	.
+##contig=<ID=GL000208.1,length=92689>		.			.	.
+##contig=<ID=GL000191.1,length=106433>		.			.	.
+##contig=<ID=GL000227.1,length=128374>		.			.	.
+##contig=<ID=GL000228.1,length=129120>		.			.	.
+##contig=<ID=GL000214.1,length=137718>		.			.	.
+##contig=<ID=GL000221.1,length=155397>		.			.	.
+##contig=<ID=GL000209.1,length=159169>		.			.	.
+##contig=<ID=GL000218.1,length=161147>		.			.	.
+##contig=<ID=GL000220.1,length=161802>		.			.	.
+##contig=<ID=GL000213.1,length=164239>		.			.	.
+##contig=<ID=GL000211.1,length=166566>		.			.	.
+##contig=<ID=GL000199.1,length=169874>		.			.	.
+##contig=<ID=GL000217.1,length=172149>		.			.	.
+##contig=<ID=GL000216.1,length=172294>		.			.	.
+##contig=<ID=GL000215.1,length=172545>		.			.	.
+##contig=<ID=GL000205.1,length=174588>		.			.	.
+##contig=<ID=GL000219.1,length=179198>		.			.	.
+##contig=<ID=GL000224.1,length=179693>		.			.	.
+##contig=<ID=GL000223.1,length=180455>		.			.	.
+##contig=<ID=GL000195.1,length=182896>		.			.	.
+##contig=<ID=GL000212.1,length=186858>		.			.	.
+##contig=<ID=GL000222.1,length=186861>		.			.	.
+##contig=<ID=GL000200.1,length=187035>		.			.	.
+##contig=<ID=GL000193.1,length=189789>		.			.	.
+##contig=<ID=GL000194.1,length=191469>		.			.	.
+##contig=<ID=GL000225.1,length=211173>		.			.	.
+##contig=<ID=GL000192.1,length=547496>		.			.	.
+##contig=<ID=NC_007605,length=171823>		.			.	.
+##dbSNP_BUILD_ID=135		.			.	.
+##fileDate=20111104		.			.	.
+##phasing=partial		.			.	.
+##reference=file		.			.	.
+##source=SelectVariants		.			.	.
+##source=dbSNP		.			.	.
+##variationPropertyDocumentationUrl=ftp		.			.	.
+#CHROM	POS	ID	REF	ALT	QUAL	FILTER	INFO	FORMAT	NA12878	NA18525	NA18939	NA19017	NA19240	NA19625	NA19648	NA20502	NA20845
+20	68303	.	A	G	.	.	AC=18	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	68312	.	T	C	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	68336	.	T	G	.	.	AC=5	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	68337	.	C	G	.	.	AC=2	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	68340	.	T	C	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	68354	.	A	C	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	68363	.	A	T	.	.	AC=2	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	68375	.	A	G	.	.	AC=2	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	68396	.	C	T	.	.	AC=49	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	68397	.	G	A	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	68413	.	T	C	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	68422	.	A	C	.	.	AC=5	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	68427	.	G	A	.	.	AC=4	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	68446	.	T	A	.	.	AC=2	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	76595	.	G	T	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	76600	.	G	A	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	76623	.	G	A	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	76625	.	C	T	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	76629	.	T	C	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	76632	.	T	G	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	76635	.	A	T	.	.	AC=40	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	76640	.	C	T	.	.	AC=2	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	76649	.	G	T	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	76658	.	C	A	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	76661	.	A	C	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	76670	.	G	T	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	76689	.	T	C,A	.	.	AC=28,1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	76691	.	G	T	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	76699	.	C	T	.	.	AC=2	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	76700	.	G	A	.	.	AC=62	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	76702	.	T	C	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	76703	.	G	A	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	76716	.	A	C	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	76724	.	T	C	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	76734	.	T	C	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	76735	.	A	G	.	.	AC=3	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	76736	.	G	T	.	.	AC=4	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	76761	.	T	C	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	76766	.	T	C	.	.	AC=3	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	76771	.	C	T	.	.	AC=73	GT	0/1	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	76783	.	C	T	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	76784	.	G	A	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	76786	.	C	A,T,G	.	.	AC=1,2,2	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	76838	.	A	G	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	76870	.	A	C	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	76884	.	G	T	.	.	AC=2	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	76898	.	C	T	.	.	AC=2	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	76901	.	C	T	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	76912	.	G	T	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	76920	.	G	A	.	.	AC=29	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	76934	.	ATACTCCTGAGACTACTATGCCACCATCTGAGGCCAC	GTACTCCTGAGACTACTATGCCACCATCTGAGGCCAC,A	.	.	AC=3,1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	76935	.	T	C	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	76945	.	A	G	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	76961	.	C	G	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	76962	.	T	C	.	.	AC=40570	GT	1/1	1/1	1/1	1/1	1/1	1/1	0/1	1/1	0/1
+20	76975	.	C	T	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	76977	.	C	T	.	.	AC=6	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	76978	.	G	A	.	.	AC=4	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	77008	.	A	G	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	77013	.	C	T	.	.	AC=507	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	77014	.	G	A	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	77025	.	A	G	.	.	AC=17	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	77026	.	C	T	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	77030	.	C	T	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	77039	.	C	G	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	77041	.	G	A	.	.	AC=2	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	77044	.	C	T	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	77045	.	T	C	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	77050	.	C	T	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	77074	.	G	T	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	77082	.	A	C	.	.	AC=2	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	77089	.	G	C	.	.	AC=5	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	77105	.	T	C	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	123225	.	T	C	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	123227	.	C	G	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	123242	.	T	A	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	123251	.	T	C	.	.	AC=2	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	123257	.	C	T	.	.	AC=2	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	123290	.	C	A	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	123292	.	T	C	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	123296	.	A	G	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	123312	.	G	A	.	.	AC=22	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	123318	.	T	C	.	.	AC=197	GT	0/0	0/0	0/0	0/0	0/1	0/0	0/0	0/0	0/0
+20	123326	.	A	G	.	.	AC=2	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	123331	.	A	G	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	123338	.	T	C	.	.	AC=2	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	123344	.	G	A	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	123360	.	G	T	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	123369	.	A	G	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	123373	.	T	C	.	.	AC=3	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	126008	.	C	T	.	.	AC=152	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	126034	.	T	G	.	.	AC=2	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	126064	.	T	C	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	126077	.	G	A	.	.	AC=2	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	126079	.	C	T	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	126084	.	C	G	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	126085	.	G	A	.	.	AC=70	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	126087	.	C	T	.	.	AC=5	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	126090	.	TG	T	.	.	AC=3	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	126092	.	G	C	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	126099	.	CAAG	C,TAAG	.	.	AC=6,2	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	126100	.	A	T	.	.	AC=10	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	126104	.	A	G	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	126106	.	A	T	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	126111	.	C	T	.	.	AC=2	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	126142	.	T	C	.	.	AC=2	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	126149	.	T	C	.	.	AC=1540	GT	0/0	0/1	0/0	0/0	0/0	0/1	0/0	0/0	0/0
+20	126153	.	CGGCA	C	.	.	AC=1	GT	0/0	0/0	0/0	./.	0/0	0/0	0/0	0/0	0/0
+20	126154	.	G	A	.	.	AC=3	GT	0/0	0/0	0/0	./.	0/0	0/0	0/0	0/0	0/0
+20	126155	.	GCAAA	G	.	.	AC=8181	GT	0/1	0/0	0/0	1/1	0/1	0/1	0/0	0/0	0/0
+20	126159	.	A	G	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	126161	.	A	G	.	.	AC=11	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	126174	.	T	A	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	126184	.	G	A	.	.	AC=27	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	126190	.	C	T	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	126191	.	G	A	.	.	AC=19	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	126205	.	G	C	.	.	AC=4	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	126213	.	T	C	.	.	AC=506	GT	0/0	0/1	0/0	0/0	0/0	0/1	0/0	0/0	0/0
+20	126214	.	G	A	.	.	AC=54	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	126216	.	CCAGA	C	.	.	AC=11	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	126221	.	C	A	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	126224	.	A	G	.	.	AC=424	GT	0/0	0/1	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	126232	.	A	T	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	126237	.	T	C	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	126243	.	A	T	.	.	AC=13	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	126245	.	TAACAGCAAC	T	.	.	AC=2	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	126254	.	C	T	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	126259	.	GCAA	G	.	.	AC=11	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	126265	.	A	C	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	126267	.	A	T	.	.	AC=3	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	126285	.	T	C	.	.	AC=487	GT	0/0	0/1	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	126290	.	C	T	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	126291	.	G	A	.	.	AC=2	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	126299	.	C	T	.	.	AC=2	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	126305	.	C	T	.	.	AC=2	GT	0/0	0/0	0/0	./.	0/0	0/0	0/0	0/0	0/0
+20	126306	.	T	TC	.	.	AC=8	GT	0/0	0/0	0/0	./.	0/0	0/0	0/0	0/0	0/0
+20	126310	.	ACC	A	.	.	AC=28479	GT	0/1	0/1	0/1	1/1	0/1	0/1	0/0	0/0	0/1
+20	126316	.	G	A	.	.	AC=3	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	126320	.	CT	C	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	126327	.	T	A	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	126329	.	G	A	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	126330	.	T	C	.	.	AC=8	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	126337	.	T	C	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	126338	.	T	C	.	.	AC=70	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	126343	.	C	T	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	126344	.	C	T	.	.	AC=6	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	126358	.	C	T	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	126359	.	T	C	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	126362	.	G	T	.	.	AC=2	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	126368	.	C	T	.	.	AC=2	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	126369	.	G	C,A	.	.	AC=1,1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	126374	.	A	G	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	138148	.	C	T	.	.	AC=17865	GT	0/0	0/0	0/1	0/0	0/0	0/1	0/1	0/0	0/0
+20	138157	.	TGGCTGCA	T	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	138160	.	C	G	.	.	AC=2	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	138164	.	A	C	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	138165	.	C	T	.	.	AC=379	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	138171	.	C	T	.	.	AC=3	GT	./.	0/0	0/0	0/0	0/0	0/0	0/0	./.	0/0
+20	138178	.	GC	G	.	.	AC=25006	GT	1/1	0/1	0/1	0/1	0/0	0/0	0/1	1/1	0/1
+20	138182	.	G	A	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	138194	.	C	T	.	.	AC=42	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	138200	.	G	T	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	138214	.	T	C	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	138224	.	G	A	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	138226	.	A	G	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	138232	.	C	T	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	138234	.	G	A	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	138246	.	C	T	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	138251	.	G	A	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	138271	.	G	T	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	139400	.	C	T	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	139402	.	T	A	.	.	AC=2	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	139409	.	G	A	.	.	AC=17542	GT	0/0	0/0	0/1	0/0	0/0	0/0	0/1	0/0	0/0
+20	139411	.	A	T	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	139419	.	CGAACAACTTAAGAAGTGCTG	TGAACAACTTAAGAAGTGCTG,C	.	.	AC=441,1	GT	0/0	0/1	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	139420	.	G	A,T	.	.	AC=10,4	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	139434	.	G	A	.	.	AC=2	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	139456	.	G	A	.	.	AC=17595	GT	0/0	0/0	0/1	0/0	0/0	0/0	0/1	0/0	0/0
+20	139457	.	G	C	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	139492	.	C	T	.	.	AC=3	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	139504	.	T	C	.	.	AC=30	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	139526	.	G	C	.	.	AC=6	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	139531	.	A	G	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	139538	.	A	G	.	.	AC=160	GT	0/0	0/0	0/0	0/1	0/0	0/0	0/0	0/0	0/0
+20	139552	.	T	C	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	139555	.	A	T	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	139576	.	C	A	.	.	AC=17602	GT	0/0	0/0	0/1	0/0	0/0	0/0	0/1	0/0	0/0
+20	139577	.	G	A	.	.	AC=33	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	139594	.	C	G	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	139598	.	C	T	.	.	AC=3	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	139616	.	A	G	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	139617	.	T	C	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	139625	.	T	A	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	139630	.	G	T	.	.	AC=4	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	139635	.	T	A	.	.	AC=3	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	139644	.	C	T	.	.	AC=2	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	139649	.	A	C	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	139680	.	C	T	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	139681	.	G	A	.	.	AC=65	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	139682	.	T	C	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	139717	.	A	G,T	.	.	AC=2,1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	168476	.	C	G	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	168479	.	T	C	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	168493	.	G	A	.	.	AC=13	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	168504	.	C	T,A	.	.	AC=6,2	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	168505	.	G	C	.	.	AC=2	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	168508	.	A	T	.	.	AC=2	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	168511	.	A	G	.	.	AC=3	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	168513	.	G	C	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	168518	.	G	A	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	168521	.	T	A	.	.	AC=2	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	168539	.	A	T	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	168546	.	A	G	.	.	AC=366	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	168553	.	G	A	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	168558	.	A	G	.	.	AC=343	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/1
+20	168559	.	T	C	.	.	AC=2	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	168562	.	T	C	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	168584	.	C	T	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	168590	.	A	G	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	168591	.	C	T	.	.	AC=12	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	168607	.	G	T	.	.	AC=3	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	168611	.	C	T	.	.	AC=52	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	168614	.	A	T	.	.	AC=6	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	168622	.	CAT	C	.	.	AC=5	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	168623	.	A	C,G	.	.	AC=3,2	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	168624	.	TG	T	.	.	AC=2	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	168625	.	G	GT,A	.	.	AC=1324,2	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	168638	.	TTCA	T	.	.	AC=5	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	168653	.	A	G	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	168665	.	A	G	.	.	AC=3	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	168671	.	AC	A	.	.	AC=2	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	168676	.	C	T	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	168678	.	A	G	.	.	AC=5	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	168686	.	T	C	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	168694	.	C	T	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	168698	.	C	A	.	.	AC=4	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	168719	.	G	A	.	.	AC=20	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	168722	.	T	G	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	168723	.	G	T	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	168728	.	T	A	.	.	AC=31482	GT	1/1	1/1	0/1	1/1	0/1	1/1	0/1	1/1	1/1
+20	168731	.	A	T	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	168739	.	A	T	.	.	AC=137	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	168749	.	T	C	.	.	AC=6	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	168756	.	C	T	.	.	AC=2	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	168757	.	C	T	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	168758	.	G	A	.	.	AC=10	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	168781	.	G	T	.	.	AC=2583	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/1
+20	168796	.	C	T	.	.	AC=84	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	168797	.	G	A	.	.	AC=3	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	168801	.	G	A	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	170196	.	A	G	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	170198	.	T	C	.	.	AC=112	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	170206	.	G	A	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	170225	.	C	T	.	.	AC=8	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	170263	.	A	T	.	.	AC=86	GT	0/0	0/0	0/0	0/1	0/0	0/0	0/0	0/0	0/0
+20	170292	.	C	A	.	.	AC=2	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	170300	.	C	T	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	170307	.	CA	C	.	.	AC=2	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	170312	.	G	T	.	.	AC=2	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	207883	.	T	C	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	207886	.	G	T	.	.	AC=2	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	207889	.	G	A	.	.	AC=17537	GT	0/0	0/0	0/1	0/0	0/0	0/0	1/1	0/1	0/1
+20	207903	.	T	C	.	.	AC=7179	GT	0/0	0/0	0/0	0/1	0/1	1/1	0/0	0/0	0/1
+20	207923	.	C	T	.	.	AC=640	GT	0/0	0/0	0/0	0/1	0/0	0/0	0/0	0/0	0/0
+20	207928	.	C	T	.	.	AC=3	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	207945	.	C	T	.	.	AC=3	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	207946	.	C	T	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	207959	.	C	T	.	.	AC=6	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	207962	.	C	A	.	.	AC=2	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	207964	.	T	A	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	207967	.	T	C	.	.	AC=2	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	207980	.	G	A	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	208005	.	G	A	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	208024	.	G	C	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	208032	.	A	G	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	208036	.	A	T	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	209870	.	A	G	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	209871	.	T	C	.	.	AC=214	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	209874	.	C	T	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	209876	.	A	C	.	.	AC=2	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	209877	.	G	A	.	.	AC=12	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	209881	.	T	C	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	209891	.	C	A	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	209897	.	G	A	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	209905	.	CT	C	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	209906	.	T	TCTC	.	.	AC=7142	GT	0/0	0/0	0/0	0/1	0/1	0/1	0/0	0/0	0/1
+20	209918	.	G	A	.	.	AC=7	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	209932	.	G	T	.	.	AC=133	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	209933	.	A	C,T	.	.	AC=757,13	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	209936	.	C	T	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	209937	.	G	A	.	.	AC=2	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	209970	.	A	G	.	.	AC=2	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	209978	.	G	A	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	209989	.	A	C	.	.	AC=9	GT	0/0	0/0	0/0	0/0	0/0	0/1	0/0	0/0	0/0
+20	209994	.	T	TA	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	210040	.	T	A	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	210048	.	T	C	.	.	AC=122	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	210061	.	G	A	.	.	AC=17623	GT	0/0	0/0	0/1	0/0	0/0	0/0	1/1	0/1	0/1
+20	210070	.	A	G	.	.	AC=2	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	210072	.	C	G	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	210079	.	T	G	.	.	AC=8	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	210083	.	C	T	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	210094	.	C	T	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	210095	.	G	A	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	210096	.	T	C	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	210106	.	G	T	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	210125	.	T	C	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	210136	.	G	C	.	.	AC=3	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	210144	.	G	T	.	.	AC=34	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	210187	.	C	CT	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	210205	.	C	T	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	210209	.	G	T	.	.	AC=13	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	210225	.	C	T	.	.	AC=400	GT	0/0	0/1	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	210230	.	C	T	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	210232	.	T	C	.	.	AC=2	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	210249	.	T	C	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	210269	.	C	G	.	.	AC=762	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	210274	.	C	T	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	210281	.	A	G	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	210306	.	C	G	.	.	AC=8524	GT	0/0	0/0	0/0	0/1	0/1	0/1	0/0	0/0	0/1
+20	210322	.	T	C	.	.	AC=2	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	210329	.	A	ACT	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	210334	.	C	T	.	.	AC=3	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	210337	.	G	A	.	.	AC=2	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	210348	.	C	T	.	.	AC=2	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	210359	.	C	G	.	.	AC=2	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	210371	.	C	T	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	210394	.	G	C	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	210422	.	T	C	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	210425	.	C	A	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	210450	.	T	C	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	210458	.	A	G	.	.	AC=267	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	210459	.	T	A	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	210460	.	C	A	.	.	AC=5	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	238380	.	C	T	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	238388	.	C	T	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	238398	.	TC	T	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	238405	.	G	A	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	238415	.	C	T	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	238421	.	T	A,C	.	.	AC=112,4	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	238422	.	G	T	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	238435	.	CTGGTCT	C	.	.	AC=30067	GT	0/1	1/1	1/1	1/1	0/1	0/1	0/0	0/1	1/1
+20	238453	.	G	A	.	.	AC=3	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	238486	.	GA	G	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	238492	.	T	C	.	.	AC=582	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	238495	.	G	A	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	238502	.	G	A	.	.	AC=2	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	238507	.	A	C	.	.	AC=25385	GT	0/1	1/1	0/1	0/0	0/0	0/1	0/0	0/1	1/1
+20	238509	.	T	C	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	238515	.	C	T	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	238520	.	A	G	.	.	AC=4	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	238524	.	C	T	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	239667	.	C	T	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	239688	.	G	A	.	.	AC=30550	GT	0/1	1/1	0/1	0/1	0/1	0/1	0/0	0/1	1/1
+20	239695	.	CTG	C	.	.	AC=4	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	239697	.	G	C	.	.	AC=31794	GT	0/1	1/1	0/1	0/1	1/1	1/1	0/0	0/1	1/1
+20	239701	.	T	C	.	.	AC=4	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	239712	.	A	G	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	239716	.	A	G	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	239721	.	G	GT	.	.	AC=5	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	239724	.	C	T	.	.	AC=11	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	239725	.	A	T	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	239726	.	G	A,T	.	.	AC=1,2	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	239729	.	G	A	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	239740	.	TGTGA	T	.	.	AC=2	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	239749	.	C	T	.	.	AC=10	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	239757	.	G	T	.	.	AC=82	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	239767	.	G	A	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	239781	.	G	C	.	.	AC=5	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	239782	.	G	C	.	.	AC=6	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	239783	.	G	A	.	.	AC=2	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	239786	.	G	A	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	239795	.	T	C	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	239798	.	T	C	.	.	AC=3	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	239804	.	T	C	.	.	AC=149	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	239809	.	C	T	.	.	AC=2	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	239826	.	G	A	.	.	AC=4	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	239829	.	T	A	.	.	AC=14	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	239847	.	C	A,T	.	.	AC=194,1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	239848	.	G	A,C	.	.	AC=6,1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	239850	.	A	C	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	239867	.	C	T	.	.	AC=5	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	239872	.	C	T	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	239873	.	G	A	.	.	AC=7	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	239881	.	C	T	.	.	AC=434	GT	0/0	0/0	0/0	0/0	0/1	0/0	0/0	0/0	0/0
+20	239885	.	C	T	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	239917	.	C	T	.	.	AC=3	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	239922	.	A	G	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	239923	.	G	C	.	.	AC=2	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	239931	.	C	T	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	239932	.	G	A,T	.	.	AC=50,2	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	239935	.	C	T	.	.	AC=41	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	239936	.	G	A	.	.	AC=1442	GT	0/0	0/0	0/1	0/0	0/0	0/0	0/0	0/0	0/0
+20	239937	.	T	C	.	.	AC=1105	GT	0/0	0/0	0/1	0/0	0/1	0/0	0/0	0/0	0/0
+20	239940	.	C	T	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	239946	.	A	C	.	.	AC=59	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	239951	.	C	T	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	239956	.	G	A	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	239961	.	C	A	.	.	AC=4	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	239995	.	A	C	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	251803	.	G	A	.	.	AC=3	GT	0/0	./.	0/0	0/0	0/0	./.	0/0	0/0	0/0
+20	251830	.	G	A	.	.	AC=60	GT	0/0	0/0	0/0	./.	0/0	0/0	0/0	0/0	0/0
+20	251857	.	T	C	.	.	AC=24	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	251883	.	G	C	.	.	AC=6	GT	0/0	./.	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	251884	.	G	A	.	.	AC=1	GT	0/0	./.	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	251894	.	A	G	.	.	AC=1	GT	0/0	./.	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	251949	.	T	C	.	.	AC=3	GT	0/0	./.	0/0	0/0	0/0	./.	./.	0/0	0/0
+20	251952	.	C	T	.	.	AC=1	GT	0/0	./.	0/0	0/0	0/0	./.	./.	0/0	0/0
+20	251956	.	G	A	.	.	AC=2	GT	0/0	./.	0/0	0/0	0/0	./.	./.	0/0	0/0
+20	256559	.	G	A	.	.	AC=65	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	256564	.	CAG	C	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	256572	.	G	A	.	.	AC=2	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	256573	.	A	G	.	.	AC=24350	GT	0/0	1/1	1/1	0/0	0/0	1/1	0/0	1/1	0/1
+20	256576	.	G	A	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	256578	.	T	G	.	.	AC=555	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	256584	.	A	T	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	256595	.	A	G	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	256617	.	C	T	.	.	AC=53	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	256618	.	C	T	.	.	AC=4	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	256631	.	C	A	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	256636	.	A	C	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	256640	.	T	C	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	256649	.	G	A	.	.	AC=6	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	256658	.	G	A	.	.	AC=2	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	256662	.	C	T	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	256665	.	G	A	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	256681	.	AC	A	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	256686	.	G	A	.	.	AC=2	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	256687	.	G	A	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	256698	.	A	AGAAG	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	256701	.	C	CCCTTAGAGATTACACCACCCAGCCTGCTGTGTACAGATGGGA	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	256707	.	C	T	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	256723	.	A	G	.	.	AC=5	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	256727	.	T	A	.	.	AC=31858	GT	0/0	1/1	1/1	0/1	0/1	1/1	0/0	1/1	0/1
+20	256728	.	C	T	.	.	AC=2	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	256735	.	G	T	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	256745	.	G	T	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	256751	.	G	A	.	.	AC=11	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	256755	.	A	G	.	.	AC=2	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	256760	.	G	GA	.	.	AC=9925	GT	0/0	1/1	0/1	0/0	0/0	1/1	0/0	0/1	0/0
+20	256763	.	G	C	.	.	AC=9925	GT	0/0	1/1	0/1	0/0	0/0	1/1	0/0	0/1	0/0
+20	256777	.	A	G	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	257369	.	C	A	.	.	AC=45	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	257375	.	G	A	.	.	AC=2	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	257399	.	C	T	.	.	AC=2	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	257404	.	C	G	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	257429	.	C	T	.	.	AC=2	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	257430	.	G	A	.	.	AC=5	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	257435	.	T	C	.	.	AC=11	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	257436	.	C	T	.	.	AC=5	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	257440	.	G	A	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	257449	.	C	T	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	257452	.	G	A	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	257455	.	T	C	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	257456	.	T	C	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	257484	.	T	G	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	257511	.	G	A	.	.	AC=6	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	257524	.	T	C	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	257538	.	G	A,T	.	.	AC=1,3	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	257549	.	A	G	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	257551	.	G	A	.	.	AC=2	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	257569	.	C	T	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	257635	.	G	A	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	257637	.	G	A	.	.	AC=18	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	257638	.	G	A	.	.	AC=3	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	257640	.	G	A	.	.	AC=12	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	257647	.	C	A	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	257657	.	C	T	.	.	AC=2	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	257658	.	G	A	.	.	AC=343	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	257666	.	A	G	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	257681	.	T	C	.	.	AC=8	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	257685	.	C	A,T	.	.	AC=8,9	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	257686	.	G	A,T	.	.	AC=1,1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	257704	.	AT	A,GT	.	.	AC=2,1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	257706	.	T	G	.	.	AC=8	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	257709	.	TTTC	TTTCTTC,T	.	.	AC=1,1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	257721	.	C	G	.	.	AC=3	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	257723	.	GA	G,CA	.	.	AC=69,1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	257733	.	A	G	.	.	AC=32625	GT	0/0	1/1	1/1	0/1	1/1	1/1	0/0	1/1	0/1
+20	257735	.	A	T	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	257759	.	G	A	.	.	AC=2	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	257768	.	C	T	.	.	AC=3	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	257798	.	C	G	.	.	AC=3	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	257803	.	G	C	.	.	AC=13675	GT	0/0	0/0	0/1	0/0	0/0	0/0	0/0	0/1	0/0
+20	257808	.	T	C	.	.	AC=5	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	257812	.	T	C	.	.	AC=33414	GT	0/0	1/1	1/1	0/1	0/1	1/1	0/0	1/1	0/0
+20	257843	.	G	A	.	.	AC=2	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	257851	.	G	A	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	257863	.	C	A,T	.	.	AC=28,9	GT	0/0	0/0	0/2	0/0	0/0	0/0	0/0	0/0	0/0
+20	257876	.	G	C	.	.	AC=4	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	257892	.	A	C	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	257897	.	G	A	.	.	AC=2	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	257898	.	C	T	.	.	AC=4	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	257899	.	G	A	.	.	AC=15	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	257905	.	G	T	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	257911	.	A	C	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	257922	.	G	A	.	.	AC=2	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	257927	.	G	A	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	257946	.	A	G	.	.	AC=14	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	257962	.	A	C	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	257963	.	G	A	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	257964	.	T	C	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	257977	.	G	C,A	.	.	AC=1,1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	257978	.	G	C	.	.	AC=38	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	257988	.	A	G	.	.	AC=2	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	257992	.	T	C	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	257994	.	G	C	.	.	AC=4	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	258001	.	G	C	.	.	AC=3	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	258013	.	G	A	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	258022	.	G	T	.	.	AC=2	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	258023	.	A	G	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	258029	.	G	T	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	258053	.	G	C	.	.	AC=4	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	258054	.	ACAGGAGGCAAGACCTTCCCTCAAGCACCTGGGCCC	A	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	258057	.	G	T	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	258060	.	G	T	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	258072	.	C	T	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	258920	.	C	T	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	258926	.	A	C	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	258936	.	G	A	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	258940	.	G	T	.	.	AC=5	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	258970	.	C	T	.	.	AC=29	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	258978	.	C	T	.	.	AC=10	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	258984	.	T	C	.	.	AC=11	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	258987	.	C	T	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	258988	.	T	G	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	259033	.	C	T	.	.	AC=2	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	259040	.	T	C	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	259041	.	GT	G,AT	.	.	AC=1,2	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	259043	.	T	A	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	259057	.	A	C	.	.	AC=4	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	259061	.	C	T	.	.	AC=2	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	259062	.	G	A	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	259068	.	G	A	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	259072	.	T	C	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	259074	.	C	T,A	.	.	AC=2,1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	259082	.	G	T	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	259086	.	A	T	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	259093	.	T	A	.	.	AC=12	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	259104	.	C	T	.	.	AC=8	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	259115	.	C	G	.	.	AC=2	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	259763	.	CGGAGGTTGGGACGGA	C	.	.	AC=3	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	259770	.	T	TGGGACGGA	.	.	AC=28	GT	0/0	0/0	0/0	./.	0/0	0/0	0/0	0/0	0/0
+20	259773	.	G	A	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	259775	.	C	T,CGGAGGGACGGAGGGAGGGAG,G	.	.	AC=2,1,1	GT	0/0	0/0	0/0	./.	0/0	0/0	0/0	0/0	0/0
+20	259778	.	A	AGGGACGGAGGGAGGGC,C	.	.	AC=1,1	GT	0/0	0/0	0/0	./.	0/0	0/0	0/0	0/0	0/0
+20	259779	.	G	T,A,GGGACGGAGGGAGGGAGGGAGGGACGGAGGTTGGGACGGAT	.	.	AC=2393,1,2	GT	0/0	0/0	0/1	0/0	0/0	0/1	0/0	0/0	0/0
+20	259790	.	C	A	.	.	AC=42	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	259794	.	C	T,A	.	.	AC=1,2	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	259809	.	T	C	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	259817	.	A	G	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	259818	.	G	A	.	.	AC=17153	GT	0/1	0/0	0/1	0/1	0/1	0/0	0/1	0/1	1/1
+20	259821	.	T	A	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	259823	.	T	C	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	259824	.	C	CCTG	.	.	AC=2	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	259829	.	T	C	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	259832	.	T	TGCA	.	.	AC=2	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	259847	.	A	G	.	.	AC=2	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	259854	.	G	C	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	259856	.	G	C	.	.	AC=2	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	259867	.	C	T	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	259872	.	T	C	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	259873	.	C	T	.	.	AC=2	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	259876	.	C	T	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	259883	.	G	C	.	.	AC=8	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	259887	.	C	G	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	259888	.	G	T,C,A	.	.	AC=4,3,1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	259893	.	G	A	.	.	AC=2	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	259911	.	T	C	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	259912	.	GA	G	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	259915	.	G	A	.	.	AC=2	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	259916	.	A	T	.	.	AC=2	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	259918	.	G	C	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	259928	.	C	G,T	.	.	AC=134,5	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	259929	.	T	C	.	.	AC=2	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	259939	.	T	C	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	259940	.	C	A	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	259941	.	G	A	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	259942	.	C	A	.	.	AC=7	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	259946	.	G	C	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	259948	.	G	T	.	.	AC=6	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	259956	.	C	T,G	.	.	AC=12,1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	259969	.	G	C	.	.	AC=30616	GT	0/0	1/1	1/1	0/1	0/0	1/1	0/0	0/1	0/0
+20	259978	.	G	C	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	259992	.	A	G	.	.	AC=134	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	259999	.	C	A	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	260000	.	G	A	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	260001	.	GCGCTGCGCCCTGCCCGGCCTGAGCCCCCGAAAGCCCGTGGACCCGCCGCCCCGGCCCCGCCAGACGCC	G	.	.	AC=2	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	260002	.	C	T	.	.	AC=2	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	260003	.	G	A	.	.	AC=4	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	260005	.	T	C	.	.	AC=155	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	260007	.	C	G	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	260008	.	G	A	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	260017	.	G	A	.	.	AC=2	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	264556	.	C	A	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	264559	.	C	T	.	.	AC=2	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	264565	.	T	G	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	264571	.	G	C	.	.	AC=2	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	264589	.	A	C	.	.	AC=67	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	264593	.	G	A	.	.	AC=7	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	264595	.	G	A	.	.	AC=4	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	264601	.	T	C	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	264603	.	C	T	.	.	AC=20	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	264626	.	T	C	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	264628	.	C	T	.	.	AC=18	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	264650	.	C	T	.	.	AC=4	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	264651	.	G	A	.	.	AC=5	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	264658	.	A	G	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	264663	.	G	C	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	264677	.	T	G	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	264679	.	C	T	.	.	AC=7	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	264680	.	G	A	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	264700	.	C	T	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	264701	.	G	A	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	264715	.	G	A	.	.	AC=3	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	264720	.	A	C	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	264756	.	G	A,C	.	.	AC=1,2	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	264758	.	G	C	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	264764	.	C	A,T	.	.	AC=3667,42	GT	0/0	0/0	0/1	0/0	0/1	0/1	0/0	0/0	0/0
+20	264770	.	G	C	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	270149	.	A	T	.	.	AC=181	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	270163	.	C	T	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	270179	.	C	A	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	270193	.	C	T	.	.	AC=2	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	270194	.	G	A	.	.	AC=7	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	270203	.	G	C	.	.	AC=7	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	270204	.	T	C	.	.	AC=394	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	270217	.	A	T	.	.	AC=4	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	270222	.	C	T	.	.	AC=4	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	270230	.	T	G	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	270240	.	A	C	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	270251	.	C	T	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	270257	.	G	C	.	.	AC=3	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	270258	.	G	C	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	270272	.	T	C	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	270275	.	A	G	.	.	AC=4	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	270293	.	T	C	.	.	AC=2	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	270306	.	T	C	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	270328	.	T	C	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	270345	.	C	T	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	270351	.	G	C	.	.	AC=65	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	270366	.	C	G	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	270852	.	G	A	.	.	AC=19	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	270855	.	G	C	.	.	AC=50	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	270863	.	G	A	.	.	AC=3	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	270873	.	C	T	.	.	AC=3	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	270882	.	T	TA	.	.	AC=20	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	270908	.	G	C	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	270914	.	C	T	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	270931	.	G	A	.	.	AC=4	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	270943	.	T	C	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	270956	.	G	T	.	.	AC=2	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	270989	.	A	G	.	.	AC=2	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	271005	.	A	C	.	.	AC=48	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	271006	.	G	C	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	271031	.	T	C	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	271178	.	C	T	.	.	AC=172	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	271186	.	T	C	.	.	AC=3	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	271200	.	T	C	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	271201	.	C	T	.	.	AC=8	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	271202	.	C	CA	.	.	AC=32	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	271204	.	ATTTTT	ATTTTTTTT,ATT,ATTT,ATTTT,ATTTTTTTTT,A	.	.	AC=308,532,1163,1369,319,116	GT	0/2	0/0	0/0	0/0	1/4	0/0	0/2	0/0	0/3
+20	271220	.	T	TA	.	.	AC=1	GT	0/0	0/0	./.	0/0	0/0	0/0	0/0	0/0	0/0
+20	271224	.	T	TTA	.	.	AC=7	GT	0/0	0/0	./.	0/0	0/0	0/0	0/0	0/0	0/0
+20	271225	.	TACCTAC	TAACCTAC,TTTAACCTAC,TTAACCTAC,T,AACCTAC,TTTTAACCTAC	.	.	AC=13968,2761,2841,856,1068,752	GT	0/0	0/3	3/6	0/1	0/0	0/6	0/0	1/1	0/0
+20	271226	.	A	T	.	.	AC=3	GT	0/0	./.	./.	0/0	0/0	0/0	0/0	./.	0/0
+20	271228	.	C	T	.	.	AC=55	GT	0/0	./.	./.	0/0	0/0	0/0	0/0	0/0	0/0
+20	271229	.	TAC	T	.	.	AC=206	GT	0/0	./.	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	271230	.	A	T	.	.	AC=147	GT	0/0	./.	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	271231	.	C	T	.	.	AC=148	GT	0/0	./.	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	271235	.	TG	T	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	271236	.	G	T	.	.	AC=126	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	271243	.	A	G	.	.	AC=2	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	271251	.	T	C	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	271260	.	A	C	.	.	AC=2	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	271266	.	G	C,T	.	.	AC=440,1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	271268	.	G	A	.	.	AC=2	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	271276	.	G	A	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	271278	.	G	A	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	271287	.	A	T	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	271288	.	C	CTG	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	271289	.	C	CGAGTTGCGAGT	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	271291	.	T	A	.	.	AC=539	GT	0/0	0/0	0/0	0/0	0/1	0/0	0/0	0/0	0/0
+20	271299	.	T	C	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	271302	.	T	C	.	.	AC=6	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	278187	.	T	C	.	.	AC=12	GT	./.	./.	./.	./.	./.	./.	./.	./.	./.
+20	278288	.	C	T	.	.	AC=1	GT	./.	./.	./.	./.	./.	./.	./.	./.	./.
+20	278291	.	G	C	.	.	AC=1	GT	./.	./.	./.	./.	./.	./.	./.	./.	./.
+20	278304	.	C	G	.	.	AC=3	GT	./.	./.	./.	./.	./.	./.	./.	./.	./.
+20	278419	.	G	A	.	.	AC=1	GT	./.	./.	./.	./.	./.	./.	./.	./.	./.
+20	278515	.	T	C	.	.	AC=238	GT	./.	./.	./.	./.	./.	./.	./.	./.	./.
+20	278637	.	C	T	.	.	AC=1	GT	./.	./.	./.	./.	./.	./.	./.	./.	./.
+20	278647	.	C	T	.	.	AC=2	GT	./.	./.	./.	./.	./.	./.	./.	./.	./.
+20	278675	.	C	T	.	.	AC=2	GT	./.	./.	./.	0/0	./.	./.	./.	./.	./.
+20	278687	.	CCGG	C,CCGGCGG	.	.	AC=19610,2	GT	1/1	1/1	./.	0/0	1/1	./.	./.	./.	1/1
+20	278709	.	C	T	.	.	AC=4	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	278710	.	G	A	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	278745	.	A	G	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	278752	.	C	T	.	.	AC=2	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	278774	.	G	A	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	278776	.	C	T	.	.	AC=2	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	278797	.	C	G,T	.	.	AC=2,1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	278801	.	C	G	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	278803	.	C	T,G	.	.	AC=1,1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	278806	.	C	T	.	.	AC=10799	GT	0/0	0/0	0/1	0/0	0/0	0/0	0/0	0/0	0/0
+20	278818	.	C	T	.	.	AC=44	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	278819	.	C	G	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	278841	.	T	G	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	278848	.	C	T	.	.	AC=104	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	278851	.	G	C	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	278860	.	C	T	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	278879	.	C	T	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	278899	.	C	A	.	.	AC=29	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	278910	.	G	A	.	.	AC=3	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	278953	.	C	T	.	.	AC=3	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	278966	.	G	A	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	278968	.	G	T	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	278983	.	C	T	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	278986	.	G	A	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	279004	.	C	T	.	.	AC=2	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	279029	.	G	A	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	279064	.	C	T	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	279068	.	C	T	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	279070	.	G	C	.	.	AC=2	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	279073	.	C	T	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	279107	.	T	G	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	279116	.	G	C	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	279169	.	G	A	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	279175	.	G	C	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	279182	.	T	C	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	279185	.	C	T	.	.	AC=517	GT	0/1	0/0	0/0	0/0	0/0	0/0	0/1	0/0	0/0
+20	279199	.	G	A	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	279204	.	A	G	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	279214	.	C	A	.	.	AC=3	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	279228	.	A	G	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	279251	.	C	T	.	.	AC=2	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	279252	.	G	C	.	.	AC=4	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	279263	.	A	T	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	279269	.	A	G	.	.	AC=2	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	279289	.	C	T	.	.	AC=2	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	279299	.	G	T	.	.	AC=9	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	279314	.	C	T	.	.	AC=6	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	279319	.	C	T	.	.	AC=2	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	279331	.	G	A	.	.	AC=2	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	279349	.	C	A,T	.	.	AC=1,1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	279350	.	C	A	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	279352	.	C	G	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	279363	.	G	C	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	279395	.	G	A	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	279402	.	A	G	.	.	AC=3	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	279413	.	G	A	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	279415	.	T	C	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	279417	.	A	C	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	279430	.	G	C	.	.	AC=7	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	279441	.	A	G	.	.	AC=7	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	279445	.	A	C	.	.	AC=20	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	279448	.	C	G	.	.	AC=3	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	279465	.	G	A	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	279483	.	T	C,A	.	.	AC=22014,1	GT	0/0	1/1	0/1	1/1	0/1	0/0	0/0	0/0	0/0
+20	306543	.	G	A	.	.	AC=1	GT	./.	./.	./.	./.	./.	./.	./.	./.	./.
+20	306627	.	C	A	.	.	AC=1	GT	0/0	./.	0/0	0/0	./.	./.	0/0	0/0	0/0
+20	306679	.	C	T	.	.	AC=3	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	306727	.	C	T	.	.	AC=4	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	306731	.	C	A	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	306733	.	G	A	.	.	AC=631	GT	0/1	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	306792	.	G	C	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	306862	.	C	G	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	306892	.	G	A	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	306910	.	G	A	.	.	AC=1	GT	0/0	./.	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	306918	.	G	T	.	.	AC=12	GT	0/0	./.	0/0	0/0	0/0	0/0	0/0	0/0	./.
+20	306920	.	G	T	.	.	AC=3	GT	0/0	./.	0/0	0/0	0/0	0/0	0/0	0/0	./.
+20	306950	.	G	T	.	.	AC=2	GT	./.	./.	./.	0/0	./.	./.	./.	./.	./.
+20	306958	.	C	T	.	.	AC=68	GT	./.	./.	./.	0/0	./.	./.	./.	./.	./.
+20	306960	.	G	A	.	.	AC=2	GT	./.	./.	./.	0/0	./.	./.	./.	./.	./.
+20	307034	.	G	A	.	.	AC=1	GT	./.	./.	./.	./.	./.	./.	./.	./.	./.
+20	307175	.	G	A	.	.	AC=2	GT	./.	./.	./.	./.	./.	./.	./.	./.	./.
+20	307197	.	G	GGGC	.	.	AC=3	GT	./.	./.	./.	./.	./.	./.	./.	./.	./.
+20	307201	.	G	GGCC	.	.	AC=4	GT	./.	./.	./.	./.	./.	./.	./.	./.	./.
+20	307202	.	G	A	.	.	AC=5	GT	./.	./.	./.	./.	./.	./.	./.	./.	./.
+20	307227	.	C	T	.	.	AC=9	GT	./.	./.	./.	./.	./.	./.	0/0	./.	./.
+20	307240	.	CGAGGAGCCG	C	.	.	AC=48	GT	./.	./.	./.	./.	./.	./.	0/0	./.	./.
+20	307249	.	G	A	.	.	AC=104	GT	./.	./.	0/0	./.	./.	0/0	0/0	0/0	0/0
+20	307281	.	A	G	.	.	AC=3	GT	0/0	0/0	0/0	./.	./.	0/0	0/0	0/0	0/0
+20	307284	.	A	G	.	.	AC=1	GT	0/0	0/0	0/0	./.	./.	0/0	0/0	0/0	0/0
+20	307287	.	G	C	.	.	AC=2	GT	0/0	0/0	0/0	./.	./.	0/0	0/0	0/0	0/0
+20	307294	.	G	A	.	.	AC=7	GT	0/0	0/0	0/0	./.	./.	0/0	0/0	0/0	0/0
+20	307296	.	A	G	.	.	AC=80	GT	0/0	0/0	0/0	./.	./.	0/0	0/0	0/0	0/0
+20	307300	.	G	A	.	.	AC=85	GT	0/0	0/0	0/0	./.	./.	0/0	0/0	0/0	0/0
+20	307320	.	C	T	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	307321	.	G	T	.	.	AC=2	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	307343	.	C	A	.	.	AC=3	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	307361	.	C	T	.	.	AC=4	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	307367	.	T	TGCAGCGCCCTGGATC	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	307369	.	C	T	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	307372	.	C	T	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	307381	.	T	G	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	307408	.	G	A	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	307420	.	C	T	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	307423	.	C	T	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	307432	.	G	C	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+20	307444	.	C	T	.	.	AC=1	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
