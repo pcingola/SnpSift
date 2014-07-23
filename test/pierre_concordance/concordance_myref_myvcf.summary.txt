@@ -1,0 +1,6 @@
+Number of samples:
+	1	File myref.bare.vcf
+	9	File myvcf.bare.vcf
+	1	Both files
+# Errors:
+	Multiple ALT in file 'myvcf.bare.vcf'S	1

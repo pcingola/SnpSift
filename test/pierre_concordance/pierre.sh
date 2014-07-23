@@ -1,7 +1,15 @@
 #!/bin/sh
 
-java -jar SnpSift.jar concordance myref.vcf myvcf.vcf > res.txt
+java -jar $HOME/snpEff/SnpSift.jar concordance myref.bare.vcf myvcf.bare.vcf > res.txt
 
+echo
+echo
+echo SnpSift 
+( head -n 1 res.txt ; tail -n 1 res.txt ) | $HOME/snpEff/scripts/transpose.pl
+
+echo
+echo
+echo Pierre
 awk 'BEGIN{cv["0/0"]=0;cv["0|0"]=0;cv["0/1"]=1;cv["1/0"]=1;cv["0|1"]=1;cv["1|0"]=1;cv["1/1"]=2;cv["1|1"]=2; \
     cv["."]="M";cv["./."]="M";cv[".|."]="M";cv["0|."]="M";cv["1|."]="M";cv[".|0"]="M";cv[".|1"]="M";cnt=0;} \
     FNR==NR{if($0!~/^#/){id=$1":"$2;split($10,a,":");x1[id]=cv[a[1]]; if(id in y){pp=0;} else {cnt++;y[id]=cnt;z[cnt]=id;}} next} \
