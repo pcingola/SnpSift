@@ -37,7 +37,7 @@ public class TestCasesConcordance extends TestCase {
 		CountByType concordance = ssconc.getConcordance();
 
 		for (String key : count.keysSorted()) {
-			System.out.println("Checking\t'" + key + "' = " + count.get(key));
+			System.out.println("Checking\t'" + key + "'\tExpected: " + count.get(key) + "\tActual: " + concordance.get(key));
 			Assert.assertEquals(count.get(key), concordance.get(key));
 		}
 	}
@@ -49,7 +49,7 @@ public class TestCasesConcordance extends TestCase {
 		SnpSiftCmdConcordance ssconc = checkConcordance(refVcfFile, vcfFile);
 		CountByType concordance = ssconc.getConcordance();
 
-		System.out.println("Checking\t'" + key + "' = " + value);
+		System.out.println("Checking\t'" + key + "'\tExpected: " + value + "\tActual: " + concordance.get(key));
 		Assert.assertEquals(value, concordance.get(key));
 	}
 
@@ -82,10 +82,8 @@ public class TestCasesConcordance extends TestCase {
 
 	public void test_05() {
 		CountByType count = new CountByType();
-		count.inc("ALT_2/ALT_2", 1);
-		count.inc("ALT_2/REF", 1);
+		count.inc("ALT_2/ALT_2", 3);
 		count.inc("ALT_2/MISSING_ENTRY_concordance_test_05", 1);
-		count.inc("ALT_2/MISSING_GT_concordance_test_05", 1);
 
 		checkConcordance("test/concordance_ref_05.vcf", "test/concordance_test_05.vcf", count);
 	}

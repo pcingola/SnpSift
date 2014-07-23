@@ -105,6 +105,12 @@ public class SnpSiftCmdConcordance extends SnpSift {
 		// Check that VCF entries match
 		if (!check(ve1, ve2)) return;
 
+		if (debug) {
+			String s1 = ve1 == null ? "null" : ve1.toStr();
+			String s2 = ve2 == null ? "null" : ve2.toStr();
+			Gpr.debug("Concordance: " + s1 + "\t" + s2);
+		}
+
 		// Compare all genotypes from ve2 to the corresponding genotype in ve1
 		CountByType count = new CountByType();
 		int gtMax = idx2toidx1.length;
@@ -166,7 +172,7 @@ public class SnpSiftCmdConcordance extends SnpSift {
 		//---
 		String chr = vcfEntry.getChromosomeName();
 		if (!chr.equals(chrPrev)) {
-			if (debug) Gpr.debug("Looking for chromosome '" + chr + "'");
+			if (debug) Gpr.debug("Find: Looking for chromosome '" + chr + "'");
 			// Get to the beginning of the new chromosome
 			long start = indexVcf.getStart(chr);
 
@@ -188,10 +194,18 @@ public class SnpSiftCmdConcordance extends SnpSift {
 		//---
 		if (latestVcfEntry != null) {
 			// Sanity check
-			if (!latestVcfEntry.getChromosomeName().equals(chr)) return null;
-			if (vcfEntry.getStart() < latestVcfEntry.getStart()) return null; // Not there yet
-			if (vcfEntry.getStart() == latestVcfEntry.getStart()) return latestVcfEntry; // Match!
-
+			if (!latestVcfEntry.getChromosomeName().equals(chr)) {
+				if (debug) Gpr.debug("Find: Different chromosomes :\t" + latestVcfEntry.toStr() + "\t" + vcfEntry.toStr());
+				return null;
+			}
+			if (vcfEntry.getStart() < latestVcfEntry.getStart()) {
+				if (debug) Gpr.debug("Find: Not there yet         :\t" + latestVcfEntry.toStr() + "\t" + vcfEntry.toStr());
+				return null; // Not there yet
+			}
+			if (vcfEntry.getStart() == latestVcfEntry.getStart()) {
+				if (debug) Gpr.debug("Find: Match!                :\t" + latestVcfEntry.toStr() + "\t" + vcfEntry.toStr());
+				return latestVcfEntry; // Match!
+			}
 		}
 
 		//---
@@ -204,11 +218,15 @@ public class SnpSiftCmdConcordance extends SnpSift {
 			// Does this entry match?
 			if (!ve.getChromosomeName().equals(chr)) return null;
 			if (vcfEntry.getStart() < latestVcfEntry.getStart()) return null; // Not there yet
-			if (vcfEntry.getStart() == latestVcfEntry.getStart()) return latestVcfEntry; // Match!
+			if (vcfEntry.getStart() == latestVcfEntry.getStart()) {
+				latestVcfEntry = null;
+				return ve; // Match!
+			}
 
 			concordance(latestVcfEntry, null);
 		}
 
+		if (debug) Gpr.debug("Find: No more entried in VCF_1    :\t\t" + vcfEntry.toStr());
 		return null;
 	}
 
