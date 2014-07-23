@@ -5,7 +5,7 @@ java -jar $HOME/snpEff/SnpSift.jar concordance myref.bare.vcf myvcf.bare.vcf > r
 echo
 echo
 echo SnpSift 
-( head -n 1 res.txt ; tail -n 1 res.txt ) | $HOME/snpEff/scripts/transpose.pl
+( head -n 1 res.txt ; tail -n 1 res.txt ) | $HOME/snpEff/scripts/transpose.pl | tee res.summary.txt
 
 echo
 echo

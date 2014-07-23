@@ -332,6 +332,42 @@ public class SnpSiftCmdConcordance extends SnpSift {
 		summary("\t" + shared + "\tBoth files");
 	}
 
+	/**
+	 * Show results
+	 */
+	void results(String titleBySample) {
+		// Show totals
+		System.out.print(showCounts(concordance, null, null));
+
+		// Write summary file
+		if (writeSummaryFile) {
+			String summaryFile = "concordance_" + name1 + "_" + name2 + ".summary.txt"; // Write to file
+			Timer.showStdErr("Writing summary file '" + summaryFile + "'");
+			if (!errors.isEmpty()) { // Add errors (if any)
+				summary("# Errors:");
+				for (String l : errors.keySet())
+					summary("\t" + l + "\t" + errors.get(l));
+			}
+			Gpr.toFile(summaryFile, summary);
+		}
+
+		// Write 'by sample' file
+		if (writeBySampleFile) {
+			String bySampleFile = "concordance_" + name1 + "_" + name2 + ".by_sample.txt"; // Write to file
+			Timer.showStdErr("Writing concordance by sample to file '" + bySampleFile + "'");
+
+			StringBuilder bySample = new StringBuilder();
+			bySample.append(titleBySample + "\n"); // Add title
+			ArrayList<String> sampleNames = new ArrayList<String>(); // Sort samples by name
+			sampleNames.addAll(concordanceBySample.keySet());
+			Collections.sort(sampleNames);
+			for (String sample : sampleNames)
+				bySample.append(showCounts(concordanceBySample.get(sample), null, sample)); // Add all samples
+
+			Gpr.toFile(bySampleFile, bySample); // Write file
+		}
+	}
+
 	@Override
 	public void run() {
 		// Read samples file
@@ -395,56 +431,37 @@ public class SnpSiftCmdConcordance extends SnpSift {
 		//---
 		// Iterate on larger file
 		//---
-		for (VcfEntry ve2 : vcf2) {
-			try {
+		try {
+			// Iterate over all entries on VCF2
+			for (VcfEntry ve2 : vcf2) {
 				VcfEntry ve1 = find(vcf1, ve2);
 				concordance(ve1, ve2);
-			} catch (Exception e) {
-				throw new RuntimeException(e);
+
+				// Show progress
+				if (verbose && (countEntries >= SHOW_EVERY)) {
+					countEntries = 0;
+					Timer.showStdErr("\t" + (latestVcfEntry != null ? latestVcfEntry.getChromosomeName() + ":" + (latestVcfEntry.getStart() + 1) : "") + "\t" + ve2.getChromosomeName() + ":" + (ve2.getStart() + 1));
+				}
+				countEntries++;
 			}
 
-			// Show progress
-			if (verbose && (countEntries >= SHOW_EVERY)) {
-				countEntries = 0;
-				Timer.showStdErr("\t" + (latestVcfEntry != null ? latestVcfEntry.getChromosomeName() + ":" + (latestVcfEntry.getStart() + 1) : "") + "\t" + ve2.getChromosomeName() + ":" + (ve2.getStart() + 1));
+			// Finish iterating on VCF1, just to complete the 'missing' counts
+			for (VcfEntry ve1 : vcf1) {
+				if (!ve1.getChromosomeName().equals(chrPrev)) break; // Jumped to another chromo? Then we are done
+				concordance(ve1, null);
+
+				// Show progress
+				if (verbose && (countEntries >= SHOW_EVERY)) {
+					countEntries = 0;
+					Timer.showStdErr("\t" + (latestVcfEntry != null ? latestVcfEntry.getChromosomeName() + ":" + (latestVcfEntry.getStart() + 1) : "") + "\t" + ve1.getChromosomeName() + ":" + (ve1.getStart() + 1));
+				}
+				countEntries++;
 			}
-			countEntries++;
+		} catch (Exception e) {
+			throw new RuntimeException(e);
 		}
 
-		//---
-		// Show results
-		//---
-
-		// Show totals
-		System.out.print(showCounts(concordance, null, null));
-
-		// Write summary file
-		if (writeSummaryFile) {
-			String summaryFile = "concordance_" + name1 + "_" + name2 + ".summary.txt"; // Write to file
-			Timer.showStdErr("Writing summary file '" + summaryFile + "'");
-			if (!errors.isEmpty()) { // Add errors (if any)
-				summary("# Errors:");
-				for (String l : errors.keySet())
-					summary("\t" + l + "\t" + errors.get(l));
-			}
-			Gpr.toFile(summaryFile, summary);
-		}
-
-		// Write 'by sample' file
-		if (writeBySampleFile) {
-			String bySampleFile = "concordance_" + name1 + "_" + name2 + ".by_sample.txt"; // Write to file
-			Timer.showStdErr("Writing concordance by sample to file '" + bySampleFile + "'");
-
-			StringBuilder bySample = new StringBuilder();
-			bySample.append(titleBySample + "\n"); // Add title
-			ArrayList<String> sampleNames = new ArrayList<String>(); // Sort samples by name
-			sampleNames.addAll(concordanceBySample.keySet());
-			Collections.sort(sampleNames);
-			for (String sample : sampleNames)
-				bySample.append(showCounts(concordanceBySample.get(sample), null, sample)); // Add all samples
-
-			Gpr.toFile(bySampleFile, bySample); // Write file
-		}
+		results(titleBySample.toString());
 	}
 
 	public void setWriteBySampleFile(boolean writeBySampleFile) {
