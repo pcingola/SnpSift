@@ -463,7 +463,7 @@ public class SnpSiftCmdConcordance extends SnpSift {
 
 		if (ve != null) sb.append(ve.getChromosomeName() + "\t" + (ve.getStart() + 1) + "\t" + ve.getRef() + "\t" + ve.getAltsStr());
 		else if (rowTitle != null) sb.append(rowTitle);
-		else sb.append("# Total\t\t\t");
+		else sb.append("#Total\t.\t.\t.");
 
 		for (String label : labels)
 			sb.append("\t" + count.get(label));
