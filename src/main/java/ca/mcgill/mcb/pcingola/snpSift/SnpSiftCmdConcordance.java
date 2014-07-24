@@ -172,26 +172,12 @@ public class SnpSiftCmdConcordance extends SnpSift {
 	 * Find an entry in 'vcfFile' that matches chromosome and position from 'vcfEntry'
 	 */
 	VcfEntry find(VcfFileIterator vcfFile, VcfEntry vcfEntry) throws IOException {
-		//---
 		// Do we have to seek to chromosome position (in vcfFile)?
-		//---
 		String chr = vcfEntry.getChromosomeName();
 		if (!chr.equals(chrPrev)) {
-			if (debug) Gpr.debug("Find: Looking for chromosome '" + chr + "'");
-			// Get to the beginning of the new chromosome
-			long start = indexVcf.getStart(chr);
-
-			// No such chromosome?
-			if (start < 0) {
-				warn("Chromosome '" + chr + "' not found in database.");
-				return null;
-			}
-
-			// Seek
-			vcfFile.seek(start);
-			latestVcfEntry = null;
-			if (verbose) Timer.showStdErr("Chromosome: '" + chr + "'");
+			if (!jumpToChromo(vcfFile, chr)) return null;
 		}
+
 		chrPrev = chr;
 
 		//---
@@ -272,6 +258,32 @@ public class SnpSiftCmdConcordance extends SnpSift {
 	}
 
 	/**
+	 * Jump to next chromosome
+	 */
+	boolean jumpToChromo(VcfFileIterator vcfFile, String chr) throws IOException {
+		if (debug) Gpr.debug("Find: Looking for chromosome '" + chr + "'");
+
+		// Make sure we account for all 'missing' entries
+		readUntilChromosomeEnd(vcfFile, chrPrev);
+
+		// Get to the beginning of the new chromosome
+		long start = indexVcf.getStart(chr);
+
+		// No such chromosome?
+		if (start < 0) {
+			warn("Chromosome '" + chr + "' not found in database.");
+			return false;
+		}
+
+		// Seek
+		vcfFile.seek(start);
+		latestVcfEntry = null;
+		if (verbose) Timer.showStdErr("Chromosome: '" + chr + "'");
+
+		return true;
+	}
+
+	/**
 	 * Parse command line arguments
 	 */
 	@Override
@@ -337,6 +349,32 @@ public class SnpSiftCmdConcordance extends SnpSift {
 		summary("\t" + vcf2.getSampleNames().size() + "\tFile " + vcfFileName2);
 		if (restrictSamples != null) summary("\t" + restrictSamples.size() + "\tFile " + restrictSamplesFile);
 		summary("\t" + shared + "\tBoth files");
+	}
+
+	/**
+	 * Iterate on a VCF until next we finish reading entries corresponding to chromosome 'chr'
+	 * This is done to complete the 'missing' counts
+	 */
+	void readUntilChromosomeEnd(VcfFileIterator vcf, String chr) {
+
+		// Don't forget to count this 'latestVcfEntry'
+		if (latestVcfEntry != null) {
+			if (latestVcfEntry.getChromosomeName().equals(chr)) concordance(latestVcfEntry, null);
+			else return; // We are already on a different chromosome
+		}
+
+		// Finish iterating on VCF1, just to complete the 'missing' counts
+		for (VcfEntry ve : vcf) {
+			if (!ve.getChromosomeName().equals(chr)) break; // Jumped to another chromo? Then we are done
+			concordance(ve, null);
+
+			// Show progress
+			if (verbose && (countEntries >= SHOW_EVERY)) {
+				countEntries = 0;
+				Timer.showStdErr("\t" + (latestVcfEntry != null ? latestVcfEntry.getChromosomeName() + ":" + (latestVcfEntry.getStart() + 1) : "") + "\t" + ve.getChromosomeName() + ":" + (ve.getStart() + 1));
+			}
+			countEntries++;
+		}
 	}
 
 	/**
@@ -451,22 +489,7 @@ public class SnpSiftCmdConcordance extends SnpSift {
 				}
 				countEntries++;
 			}
-
-			// Don't forget to count this 'latestVcfEntry'
-			if (latestVcfEntry != null) concordance(latestVcfEntry, null);
-
-			// Finish iterating on VCF1, just to complete the 'missing' counts
-			for (VcfEntry ve1 : vcf1) {
-				if (!ve1.getChromosomeName().equals(chrPrev)) break; // Jumped to another chromo? Then we are done
-				concordance(ve1, null);
-
-				// Show progress
-				if (verbose && (countEntries >= SHOW_EVERY)) {
-					countEntries = 0;
-					Timer.showStdErr("\t" + (latestVcfEntry != null ? latestVcfEntry.getChromosomeName() + ":" + (latestVcfEntry.getStart() + 1) : "") + "\t" + ve1.getChromosomeName() + ":" + (ve1.getStart() + 1));
-				}
-				countEntries++;
-			}
+			readUntilChromosomeEnd(vcf1, chrPrev);
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}

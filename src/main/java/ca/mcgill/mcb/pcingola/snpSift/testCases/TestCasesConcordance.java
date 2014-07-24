@@ -103,4 +103,28 @@ public class TestCasesConcordance extends TestCase {
 		checkConcordance("test/concordance_ref_07.vcf", "test/concordance_test_07.vcf", "ALT_2/ALT_2", 1);
 	}
 
+	public void test_08() {
+		CountByType count = new CountByType();
+		count.inc("ALT_2/ALT_2", 10);
+		count.inc("ALT_2/MISSING_ENTRY_concordance_test_08", 10);
+
+		checkConcordance("test/concordance_ref_08.vcf", "test/concordance_test_08.vcf", count);
+	}
+
+	public void test_09() {
+		CountByType count = new CountByType();
+		count.inc("ALT_2/ALT_2", 15);
+		count.inc("ALT_2/MISSING_ENTRY_concordance_test_09", 15);
+
+		checkConcordance("test/concordance_ref_09.vcf", "test/concordance_test_09.vcf", count);
+	}
+
+	public void test_10() {
+		CountByType count = new CountByType();
+		count.inc("ALT_2/ALT_2", 15);
+		count.inc("MISSING_ENTRY_concordance_ref_10/ALT_2", 15);
+
+		checkConcordance("test/concordance_ref_10.vcf", "test/concordance_test_10.vcf", count);
+	}
+
 }
