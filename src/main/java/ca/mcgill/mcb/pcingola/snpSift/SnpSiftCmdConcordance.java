@@ -206,7 +206,9 @@ public class SnpSiftCmdConcordance extends SnpSift {
 			}
 			if (vcfEntry.getStart() == latestVcfEntry.getStart()) {
 				if (debug) Gpr.debug("Find: Match!                :\t" + latestVcfEntry.toStr() + "\t" + vcfEntry.toStr());
-				return latestVcfEntry; // Match!
+				VcfEntry ve = latestVcfEntry;
+				latestVcfEntry = null;
+				return ve; // Match!
 			}
 		}
 
@@ -445,6 +447,9 @@ public class SnpSiftCmdConcordance extends SnpSift {
 				}
 				countEntries++;
 			}
+
+			// Don't forget to count this 'latestVcfEntry'
+			if (latestVcfEntry != null) concordance(latestVcfEntry, null);
 
 			// Finish iterating on VCF1, just to complete the 'missing' counts
 			for (VcfEntry ve1 : vcf1) {

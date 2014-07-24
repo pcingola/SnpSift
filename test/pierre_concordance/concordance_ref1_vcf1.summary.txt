@@ -1,0 +1,4 @@
+Number of samples:
+	1	File ref1.vcf
+	1	File vcf1.vcf
+	1	Both files

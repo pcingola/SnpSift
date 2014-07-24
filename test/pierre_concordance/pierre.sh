@@ -1,12 +1,15 @@
 #!/bin/sh
 
-java -jar $HOME/snpEff/SnpSift.jar concordance -d myref.bare.vcf myvcf.bare.vcf 2>&1 | less
 #java -jar $HOME/snpEff/SnpSift.jar concordance myref.bare.vcf myvcf.bare.vcf > res.txt
+java -jar $HOME/snpEff/SnpSift.jar concordance ref1.vcf vcf1.vcf > res.txt
 
 echo
 echo
 echo SnpSift 
-( head -n 1 res.txt ; tail -n 1 res.txt ) | $HOME/snpEff/scripts/transpose.pl | tee res.summary.txt
+( head -n 1 res.txt ; tail -n 1 res.txt ) \
+	| $HOME/snpEff/scripts/transpose.pl \
+	| tr "/" "\t" \
+	| tee res.summary.txt
 
 echo
 echo
