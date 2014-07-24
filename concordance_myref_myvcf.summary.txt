@@ -1,0 +1,6 @@
+Number of samples:
+	1	File /home/pcingola/git/SnpSift/test/pierre_concordance/myref.bare.vcf
+	1	File /home/pcingola/git/SnpSift/test/pierre_concordance/myvcf.bare.vcf
+	1	Both files
+# Errors:
+	Multiple ALT in file '/home/pcingola/git/SnpSift/test/pierre_concordance/myvcf.bare.vcf'S	1

@@ -126,6 +126,7 @@ public class SnpSiftCmdConcordance extends SnpSift {
 				String gen1Str = genotypKey(ve1, idx1, name1);
 				String gen2Str = genotypKey(ve2, idx2, name2);
 				String key = gen1Str + SEP_GT + gen2Str;
+				if (debug) Gpr.debug("Sample " + sampleNameIdx2[idx2] + "\tkey:" + key);
 				concordanceCount(key, count, countBySample);
 			} else if (debug) Gpr.debug("Unmatched sample '" + sampleNameIdx2[idx2] + "' (number " + idx2 + ") in file " + name2);
 		}

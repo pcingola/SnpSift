@@ -1,6 +1,7 @@
 #!/bin/sh
 
-java -jar $HOME/snpEff/SnpSift.jar concordance myref.bare.vcf myvcf.bare.vcf > res.txt
+java -jar $HOME/snpEff/SnpSift.jar concordance -d myref.bare.vcf myvcf.bare.vcf 2>&1 | less
+#java -jar $HOME/snpEff/SnpSift.jar concordance myref.bare.vcf myvcf.bare.vcf > res.txt
 
 echo
 echo
