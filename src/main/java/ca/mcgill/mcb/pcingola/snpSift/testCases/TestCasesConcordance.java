@@ -99,4 +99,8 @@ public class TestCasesConcordance extends TestCase {
 		checkConcordance("test/concordance_ref_06.vcf", "test/concordance_test_06.vcf", count);
 	}
 
+	public void test_07() {
+		checkConcordance("test/concordance_ref_07.vcf", "test/concordance_test_07.vcf", "ALT_2/ALT_2", 1);
+	}
+
 }

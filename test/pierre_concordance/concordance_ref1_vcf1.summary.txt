@@ -2,3 +2,5 @@ Number of samples:
 	1	File ref1.vcf
 	1	File vcf1.vcf
 	1	Both files
+# Errors:
+	Multiple ALT in file 'vcf1.vcf'S	1

@@ -49,6 +49,7 @@ public class SnpSiftCmdConcordance extends SnpSift {
 	protected VcfEntry latestVcfEntry = null;
 	boolean writeSummaryFile;
 	boolean writeBySampleFile;
+	boolean errorOnNonBiallelic;
 
 	public SnpSiftCmdConcordance(String args[]) {
 		super(args, "concordance");
@@ -56,7 +57,6 @@ public class SnpSiftCmdConcordance extends SnpSift {
 
 	/**
 	 * Check that VCF entries match
-	 * @return
 	 */
 	boolean check(VcfEntry ve1, VcfEntry ve2) {
 		if (ve1 == null && ve2 == null) return false;
@@ -65,17 +65,20 @@ public class SnpSiftCmdConcordance extends SnpSift {
 		//---
 		// Sanity checks
 		//---
-		if (ve1.getAlts().length > 1) {
-			errors(ve1, ve2, "Multiple ALT in file '" + vcfFileName1 + "'");
-			return false;
+		if (errorOnNonBiallelic) {
+			if (ve1.getAlts().length > 1) {
+				errors(ve1, ve2, "Multiple ALT in file '" + vcfFileName1 + "'");
+				return false;
+			}
+
+			if (ve2.getAlts().length > 1) {
+				errors(ve1, ve2, "Multiple ALT in file '" + vcfFileName2 + "'S");
+				return false;
+			}
 		}
 
-		if (ve2.getAlts().length > 1) {
-			errors(ve1, ve2, "Multiple ALT in file '" + vcfFileName2 + "'S");
-			return false;
-		}
-
-		if (!ve1.getAltsStr().equals(ve2.getAltsStr())) {
+		// Only makes sense to check for bi-allelic ALTs
+		if (!ve1.getAltsStr().equals(ve2.getAltsStr()) && ve1.getAlts().length == 1 && ve2.getAlts().length == 1) {
 			errors(ve1, ve2, "ALT field does not match");
 			return false;
 		}
@@ -265,6 +268,7 @@ public class SnpSiftCmdConcordance extends SnpSift {
 	@Override
 	public void init() {
 		writeSummaryFile = writeBySampleFile = true;
+		errorOnNonBiallelic = false;
 	}
 
 	/**
