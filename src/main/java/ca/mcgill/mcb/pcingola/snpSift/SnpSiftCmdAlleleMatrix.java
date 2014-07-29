@@ -22,7 +22,6 @@ public class SnpSiftCmdAlleleMatrix extends SnpSift {
 
 	public static String SEPARATOR = "";
 	public static int SHOW_EVERY = 1000;
-	String vcfFile;
 
 	public SnpSiftCmdAlleleMatrix() {
 		super(null, null);
@@ -37,14 +36,20 @@ public class SnpSiftCmdAlleleMatrix extends SnpSift {
 	 */
 	@Override
 	public void parse(String[] args) {
-		if (args.length != 1) usage(null);
-		vcfFile = args[0];
+		if (args.length <= 0) usage(null);
+
+		for (int i = 0; i < args.length; i++) {
+			String arg = args[i];
+
+			// Argument starts with '-'?
+			if (isOpt(arg)) {
+				// No options available for this command
+			} else vcfInputFile = arg;
+		}
 	}
 
 	/**
 	 * Process a VCF entry and return a string (tab separated values)
-	 * @param vcfEntry
-	 * @return
 	 */
 	public int processStr(VcfEntry vcfEntry, StringBuilder sbcodes) {
 		// Add all genotype codes
@@ -71,12 +76,8 @@ public class SnpSiftCmdAlleleMatrix extends SnpSift {
 	 */
 	@Override
 	public void run() {
-		if (verbose) Timer.showStdErr("Processing file '" + vcfFile + "'");
-
 		int i = 1;
-		VcfFileIterator vcf = new VcfFileIterator(vcfFile);
-		vcf.setDebug(debug);
-
+		VcfFileIterator vcf = openVcfInputFile();
 		for (VcfEntry ve : vcf) {
 			if (vcf.isHeadeSection()) {
 				System.out.print("#CHROM\tPOS\tREF\tALT");
@@ -102,7 +103,6 @@ public class SnpSiftCmdAlleleMatrix extends SnpSift {
 
 	/**
 	 * Show usage message
-	 * @param msg
 	 */
 	@Override
 	public void usage(String msg) {

@@ -35,7 +35,6 @@ public class SnpSift {
 	public static final int MAX_ERRORS = 10; // Report an error no more than X times
 
 	protected boolean help; // Be verbose
-
 	protected boolean verbose; // Be verbose
 	protected boolean debug; // Debug mode
 	protected boolean quiet; // Be quiet
@@ -49,6 +48,7 @@ public class SnpSift {
 	protected boolean dbTabix; // Is this database supposed to be in tabix indexed form?
 	protected String args[];
 	protected String command;
+	protected String vcfInputFile; // VCF Input file
 	protected String dbFileName;
 	protected String dbType;
 	protected int numWorkers = Gpr.NUM_CORES; // Max number of threads (if multi-threaded version is available)
@@ -188,17 +188,6 @@ public class SnpSift {
 	}
 
 	/**
-	 * Handle VCF header related issues
-	 * @param vcf
-	 */
-	protected void handleVcfHeader(VcfFileIterator vcf) {
-		if (!vcf.isHeadeSection()) return;
-
-		addHeader(vcf); // Add lines to header
-		if (showHeader) System.out.println(vcf.getVcfHeader()); // Show header
-	}
-
-	/**
 	 * Initialize default values
 	 */
 	public void init() {
@@ -220,6 +209,17 @@ public class SnpSift {
 		if (verbose) Timer.showStdErr("Reading configuration file '" + configFile + "'");
 		config = new Config("", configFile, dataDir); // Read configuration
 		if (verbose) Timer.showStdErr("done");
+	}
+
+	/**
+	 * Open VCF input file
+	 */
+	protected VcfFileIterator openVcfInputFile() {
+		if (vcfInputFile == null || vcfInputFile.isEmpty() || vcfInputFile.equals("-")) vcfInputFile = "-";
+		if (verbose) Timer.showStdErr("Opening VCF input '" + (vcfInputFile.equals("-") ? "STDIN" : vcfInputFile) + "'");
+		VcfFileIterator vcf = new VcfFileIterator(vcfInputFile);
+		vcf.setDebug(debug);
+		return vcf;
 	}
 
 	/**
@@ -259,16 +259,33 @@ public class SnpSift {
 			} else argsList.add(args[i]);
 		}
 
-		this.args = argsList.toArray(new String[0]);;
+		this.args = argsList.toArray(new String[0]);
 	}
 
 	/**
 	 * Print to screen or save to output buffer
-	 * @param o
 	 */
 	void print(Object o) {
 		if (saveOutput) output.append(o.toString() + "\n");
 		else if (!suppressOutput) System.out.println(o.toString());
+	}
+
+	/**
+	 * Process VCF header related issues
+	 */
+	protected String processVcfHeader(VcfFileIterator vcf) {
+		if (!vcf.isHeadeSection()) return "";
+
+		// Add lines to header
+		addHeader(vcf);
+
+		if (showHeader) {
+			String headerStr = vcf.getVcfHeader().toString();
+			if (!headerStr.isEmpty()) print(headerStr);
+			return headerStr;
+		}
+
+		return "";
 	}
 
 	/**

@@ -36,7 +36,6 @@ public class SnpSiftCmdAnnotate extends SnpSift {
 	protected boolean useRefAlt;
 	protected AnnotationMethod method;
 	protected int countBadRef = 0;
-	protected String vcfFileName;
 	protected String chrPrev = "";
 	protected String prependInfoFieldName;
 	protected ArrayList<String> infoFields; // Use only info fields
@@ -87,7 +86,7 @@ public class SnpSiftCmdAnnotate extends SnpSift {
 	 */
 	ArrayList<VcfEntry> annotate(boolean createList) {
 		ArrayList<VcfEntry> list = (createList ? new ArrayList<VcfEntry>() : null);
-		if (verbose) Timer.showStdErr("Annotating entries from: '" + vcfFileName + "'");
+		if (verbose) Timer.showStdErr("Annotating entries from: '" + vcfInputFile + "'");
 
 		try {
 			initAnnotate();
@@ -96,19 +95,12 @@ public class SnpSiftCmdAnnotate extends SnpSift {
 		}
 
 		int countAnnotated = 0, count = 0;
-		boolean showHeader = true;
 		int pos = -1;
 		String chr = "";
 
 		for (VcfEntry vcfEntry : vcfFile) {
 			try {
-				// Show header?
-				if (showHeader) {
-					showHeader = false;
-					addHeader(vcfFile);
-					String headerStr = vcfFile.getVcfHeader().toString();
-					if (!headerStr.isEmpty()) print(headerStr);
-				}
+				processVcfHeader(vcfFile);
 
 				// Check if file is sorted
 				if (vcfEntry.getChromosomeName().equals(chr) && vcfEntry.getStart() < pos) {
@@ -173,7 +165,7 @@ public class SnpSiftCmdAnnotate extends SnpSift {
 	 * @throws IOException
 	 */
 	public void initAnnotate() throws IOException {
-		vcfFile = new VcfFileIterator(vcfFileName); // Open input VCF
+		vcfFile = new VcfFileIterator(vcfInputFile); // Open input VCF
 		vcfFile.setDebug(debug);
 
 		// Type of database
@@ -254,13 +246,13 @@ public class SnpSiftCmdAnnotate extends SnpSift {
 				else usage("Unknown command line option '" + arg + "'");
 			} else {
 				if (dbFileName == null) dbFileName = arg;
-				else if (vcfFileName == null) vcfFileName = arg;
+				else if (vcfInputFile == null) vcfInputFile = arg;
 				else usage("Unknown extra parameter '" + arg + "'");
 			}
 		}
 
 		// Sanity check
-		if (vcfFileName == null) usage("Missing 'file.vcf'");
+		if (vcfInputFile == null) usage("Missing 'file.vcf'");
 		if (dbType == null && dbFileName == null) usage("Missing database option or file: [-dbSnp | -clinVar | database.vcf ]");
 	}
 
@@ -290,7 +282,7 @@ public class SnpSiftCmdAnnotate extends SnpSift {
 		) dbFileName = dbFileName + ".gz";
 
 		if (verbose) Timer.showStdErr("Annotating\n" //
-				+ "\tInput file    : '" + vcfFileName + "'\n" //
+				+ "\tInput file    : '" + vcfInputFile + "'\n" //
 				+ "\tDatabase file : '" + dbFileName + "'" //
 		);
 

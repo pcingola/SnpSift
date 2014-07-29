@@ -56,7 +56,6 @@ public class SnpSiftCmdFilter extends SnpSift {
 	boolean usePassField; // Use Filter field
 	boolean inverse; // Inverse filter (i.e. do NOT show lines that match the filter)
 	boolean exceptionIfNotFound; // Throw an exception of a field is not found?
-	String inputFile; // Input file
 	String expression; // Expression (as a string)
 	Condition condition; // Condition (parsed expression)
 	String filterId; // FilterID string to add to FILTER field if the filter does NOT pass.
@@ -225,7 +224,7 @@ public class SnpSiftCmdFilter extends SnpSift {
 	 * @return
 	 */
 	public List<VcfEntry> filter(String fileName, String expression, boolean createList) {
-		inputFile = fileName;
+		vcfInputFile = fileName;
 		this.expression = expression;
 		return run(createList);
 	}
@@ -238,7 +237,7 @@ public class SnpSiftCmdFilter extends SnpSift {
 		verbose = false;
 		usePassField = false;
 		inverse = false;
-		inputFile = "-";
+		vcfInputFile = null;
 		filterId = SnpSift.class.getSimpleName();
 		addFilterField = null;
 		rmFilterField = null;
@@ -254,31 +253,34 @@ public class SnpSiftCmdFilter extends SnpSift {
 	@Override
 	public void parse(String[] args) {
 		for (int i = 0; i < args.length; i++) {
+			String arg = args[i];
+
 			// Argument starts with '-'?
-			if (args[i].startsWith("-")) {
-				if (args[i].equals("-h") || args[i].equalsIgnoreCase("-help")) usage(null);
-				else if (args[i].equals("-f") || args[i].equalsIgnoreCase("--file")) inputFile = args[++i];
-				else if (args[i].equals("-s") || args[i].equalsIgnoreCase("--set")) addSet(args[++i]);
-				else if (args[i].equals("-p") || args[i].equalsIgnoreCase("--pass")) usePassField = true;
-				else if (args[i].equalsIgnoreCase("--errMissing")) exceptionIfNotFound = true;
-				else if (args[i].equals("-i") || args[i].equalsIgnoreCase("--filterId")) {
+			if (isOpt(arg)) {
+				if (arg.equals("-h") || arg.equalsIgnoreCase("-help")) usage(null);
+				else if (arg.equals("-f") || arg.equalsIgnoreCase("--file")) vcfInputFile = args[++i];
+				else if (arg.equals("-s") || arg.equalsIgnoreCase("--set")) addSet(args[++i]);
+				else if (arg.equals("-p") || arg.equalsIgnoreCase("--pass")) usePassField = true;
+				else if (arg.equalsIgnoreCase("--errMissing")) exceptionIfNotFound = true;
+				else if (arg.equals("-i") || arg.equalsIgnoreCase("--filterId")) {
 					usePassField = true;
 					filterId = args[++i];
-				} else if (args[i].equals("-a") || args[i].equalsIgnoreCase("--addFilter")) addFilterField = args[++i];
-				else if (args[i].equals("-r") || args[i].equalsIgnoreCase("--rmFilter")) rmFilterField = args[++i];
-				else if (args[i].equals("-n") || args[i].equalsIgnoreCase("--inverse")) inverse = true;
-				else if (args[i].equalsIgnoreCase("--format")) {
+				} else if (arg.equals("-a") || arg.equalsIgnoreCase("--addFilter")) addFilterField = args[++i];
+				else if (arg.equals("-r") || arg.equalsIgnoreCase("--rmFilter")) rmFilterField = args[++i];
+				else if (arg.equals("-n") || arg.equalsIgnoreCase("--inverse")) inverse = true;
+				else if (arg.equalsIgnoreCase("--format")) {
 					String formatVer = args[++i];
 					if (formatVer.equals("2")) formatVersion = FormatVersion.FORMAT_SNPEFF_2;
 					else if (formatVer.equals("3")) formatVersion = FormatVersion.FORMAT_SNPEFF_3;
 					else usage("Unknown format version '" + formatVer + "'");
-				} else if (args[i].equals("-e") || args[i].equalsIgnoreCase("--exprfile")) {
+				} else if (arg.equals("-e") || arg.equalsIgnoreCase("--exprfile")) {
 					String exprFile = args[++i];
 					if (verbose) System.err.println("Reading expression from file '" + exprFile + "'");
 					expression = Gpr.readFile(exprFile);
-				} else usage("Unknow option '" + args[i] + "'");
-			} else if (expression == null) expression = args[i];
-			else usage("Unknow parameter '" + args[i] + "'");
+				} else usage("Unknow option '" + arg + "'");
+			} else if (expression == null) expression = arg;
+			else if (vcfInputFile == null) vcfInputFile = arg;
+			else usage("Unknow parameter '" + arg + "'");
 		}
 
 		if (expression == null) usage("Missing filter expression!");
@@ -332,19 +334,11 @@ public class SnpSiftCmdFilter extends SnpSift {
 		LinkedList<VcfEntry> passEntries = (createList ? new LinkedList<VcfEntry>() : null);
 
 		// Open and read entries
-		VcfFileIterator vcfFile = new VcfFileIterator(inputFile);
-		vcfFile.setDebug(debug);
-
 		int entryNum = 0;
+		showHeader = !createList;
+		VcfFileIterator vcfFile = openVcfInputFile();
 		for (VcfEntry vcfEntry : vcfFile) {
-			// Show header before first entry
-			if (vcfFile.isHeadeSection()) {
-				addHeader();
-				if (!createList) {
-					String headerStr = vcfFile.getVcfHeader().toString();
-					if (!headerStr.isEmpty()) System.out.println(headerStr);
-				}
-			}
+			processVcfHeader(vcfFile);
 
 			// Evaluate expression
 			boolean eval = evaluate(vcfEntry);
@@ -396,11 +390,11 @@ public class SnpSiftCmdFilter extends SnpSift {
 
 		showVersion();
 
-		System.err.println("Usage: java -jar " + SnpSift.class.getSimpleName() + "" + ".jar filter [options] 'expression'");
+		System.err.println("Usage: java -jar " + SnpSift.class.getSimpleName() + "" + ".jar filter [options] 'expression' [input.vcf]");
 		System.err.println("Options:");
 		System.err.println("\t-a|--addFilter <str>  : Add a string to FILTER VCF field if 'expression' is true. Default: '' (none)");
 		System.err.println("\t-e|--exprFile <file>  : Read expression from a file");
-		System.err.println("\t-f|--file <file>      : VCF input file. Default: STDIN");
+		System.err.println("\t-f|--file <input.vcf> : VCF input file. Default: STDIN");
 		System.err.println("\t-i|--filterId <str>   : ID for this filter (##FILTER tag in header and FILTER VCF field). Default: '" + filterId + "'");
 		System.err.println("\t-n|--inverse          : Inverse. Show lines that do not match filter expression");
 		System.err.println("\t-p|--pass             : Use 'PASS' field instead of filtering out VCF entries");

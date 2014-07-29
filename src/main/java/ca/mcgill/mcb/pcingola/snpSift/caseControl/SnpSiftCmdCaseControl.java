@@ -132,59 +132,6 @@ public class SnpSiftCmdCaseControl extends SnpSift {
 	}
 
 	@Override
-	protected void handleVcfHeader(VcfFileIterator vcf) {
-		if (!vcf.isHeadeSection()) return;
-
-		super.handleVcfHeader(vcf); // Add lines and print header
-
-		// Parse pedigree from TFAM?
-		if (pedigree != null) {
-			List<String> sampleIds = vcf.getVcfHeader().getSampleNames();
-			caseControl = new Boolean[sampleIds.size()];
-
-			int idx = 0, errors = 0;
-			for (String sid : sampleIds) {
-				TfamEntry tfam = pedigree.get(sid); // Find TFAM entry for this sample
-				if (tfam == null) {
-					System.err.println("WARNING: Sample ID '" + sid + "' has no entry in pedigree form TFAM file '" + tfamFile + "'");
-					errors++;
-					caseControl[idx] = null;
-				} else {
-					// Assign case, control or missing
-					if (tfam.isMissing()) caseControl[idx] = null;
-					else caseControl[idx] = tfam.isCase();
-				}
-				idx++;
-			}
-
-			// Abort?
-			if (errors > (sampleIds.size() / 2)) throw new RuntimeException("VCF samples are missing in TFAM file. Too many errors, aboting!");
-		}
-
-		// Sanity check
-		if (caseControl.length != vcf.getVcfHeader().getSampleNames().size()) throw new RuntimeException("Number of case control entries specified does not match number of samples in VCF file");
-
-		// Show details
-		if (debug) {
-			System.err.println("\tSample\tCase");
-			int idx = 0;
-			for (String sid : vcf.getVcfHeader().getSampleNames())
-				System.err.println("\t" + sid + "\t" + caseControl[idx++]);
-		}
-
-		// Show overview
-		if (verbose) {
-			int countCase = 0, countCtrl = 0, countIgnored = 0;
-			for (Boolean cc : caseControl) {
-				if (cc == null) countIgnored++;
-				else if (cc) countCase++;
-				else countCtrl++;
-			}
-			Timer.showStdErr("Total : " + caseControl.length + " entries. Cases: " + countCase + ", controls: " + countCtrl + ", ignored: " + countIgnored);
-		}
-	}
-
-	@Override
 	public void init() {
 		pvalueThreshold = 1.0;
 		useChiSquare = false;
@@ -246,7 +193,7 @@ public class SnpSiftCmdCaseControl extends SnpSift {
 			if (chars[i] == '+') caseControl[i] = true;
 			else if (chars[i] == '-') caseControl[i] = false;
 			else if (chars[i] == '0') caseControl[i] = null;
-			else usage("Unknown character '"+chars[i]+"' (sample "+(i+1)+") in groups string");
+			else usage("Unknown character '" + chars[i] + "' (sample " + (i + 1) + ") in groups string");
 		}
 	}
 
@@ -347,6 +294,61 @@ public class SnpSiftCmdCaseControl extends SnpSift {
 		return Math.min(pup, pdown);
 	}
 
+	@Override
+	protected String processVcfHeader(VcfFileIterator vcf) {
+		if (!vcf.isHeadeSection()) return "";
+
+		String header = super.processVcfHeader(vcf); // Add lines and print header
+
+		// Parse pedigree from TFAM?
+		if (pedigree != null) {
+			List<String> sampleIds = vcf.getVcfHeader().getSampleNames();
+			caseControl = new Boolean[sampleIds.size()];
+
+			int idx = 0, errors = 0;
+			for (String sid : sampleIds) {
+				TfamEntry tfam = pedigree.get(sid); // Find TFAM entry for this sample
+				if (tfam == null) {
+					System.err.println("WARNING: Sample ID '" + sid + "' has no entry in pedigree form TFAM file '" + tfamFile + "'");
+					errors++;
+					caseControl[idx] = null;
+				} else {
+					// Assign case, control or missing
+					if (tfam.isMissing()) caseControl[idx] = null;
+					else caseControl[idx] = tfam.isCase();
+				}
+				idx++;
+			}
+
+			// Abort?
+			if (errors > (sampleIds.size() / 2)) throw new RuntimeException("VCF samples are missing in TFAM file. Too many errors, aboting!");
+		}
+
+		// Sanity check
+		if (caseControl.length != vcf.getVcfHeader().getSampleNames().size()) throw new RuntimeException("Number of case control entries specified does not match number of samples in VCF file");
+
+		// Show details
+		if (debug) {
+			System.err.println("\tSample\tCase");
+			int idx = 0;
+			for (String sid : vcf.getVcfHeader().getSampleNames())
+				System.err.println("\t" + sid + "\t" + caseControl[idx++]);
+		}
+
+		// Show overview
+		if (verbose) {
+			int countCase = 0, countCtrl = 0, countIgnored = 0;
+			for (Boolean cc : caseControl) {
+				if (cc == null) countIgnored++;
+				else if (cc) countCase++;
+				else countCtrl++;
+			}
+			Timer.showStdErr("Total : " + caseControl.length + " entries. Cases: " + countCase + ", controls: " + countCtrl + ", ignored: " + countIgnored);
+		}
+
+		return header;
+	}
+
 	/**
 	 * Trend model
 	 * @param nControl
@@ -411,7 +413,7 @@ public class SnpSiftCmdCaseControl extends SnpSift {
 
 		int i = 1;
 		for (VcfEntry vcfEntry : vcf) {
-			handleVcfHeader(vcf); // Handle header stuff
+			processVcfHeader(vcf); // Handle header stuff
 			annotate(vcfEntry); // Annotate
 
 			// Show

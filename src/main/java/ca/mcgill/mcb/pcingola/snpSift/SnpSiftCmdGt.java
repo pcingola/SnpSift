@@ -51,6 +51,7 @@ public class SnpSiftCmdGt extends SnpSift {
 
 		for (int i = 0; i < args.length; i++) {
 			String arg = args[i];
+
 			if (isOpt(arg)) {
 				if (arg.equals("-u")) uncompress = true;
 				else usage("Unknown option '" + arg + "'");
@@ -70,17 +71,15 @@ public class SnpSiftCmdGt extends SnpSift {
 	 */
 	@Override
 	public void run() {
-		VcfFileIterator vcf = new VcfFileIterator(vcfFile);
-		vcf.setDebug(debug);
+		VcfFileIterator vcf = openVcfInputFile();
 
 		if (save) showHeader = false; // No need to show header
 
 		int i = 1;
 		for (VcfEntry ve : vcf) {
 			if (vcf.isHeadeSection()) {
-				handleVcfHeader(vcf);
-
-				if (save) print(vcf.getVcfHeader().toString()); // Save header to output buffer
+				String header = processVcfHeader(vcf);
+				if (save) print(header); // Save header to output buffer
 			}
 
 			if (uncompress) {
@@ -109,9 +108,10 @@ public class SnpSiftCmdGt extends SnpSift {
 
 		showVersion();
 
-		System.err.println("Usage: java -jar " + SnpSift.class.getSimpleName() + ".jar gt [options] file.vcf > file.gt.vcf");
+		System.err.println("Usage: java -jar " + SnpSift.class.getSimpleName() + ".jar gt [options] 'expression' [file.vcf] > file.gt.vcf");
 		System.err.println("Options: ");
 		System.err.println("\t-u   : Uncompress (restore genotype fields).");
+		System.err.println("\tDefault 'file.vcf' is STDIN.");
 		System.exit(1);
 	}
 
