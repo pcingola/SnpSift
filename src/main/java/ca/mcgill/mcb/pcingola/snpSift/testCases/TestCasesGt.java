@@ -9,7 +9,7 @@ import ca.mcgill.mcb.pcingola.util.Gpr;
 
 /**
  * SnpSift 'gt' test cases
- * 
+ *
  * @author pcingola
  */
 public class TestCasesGt extends TestCase {
@@ -29,7 +29,7 @@ public class TestCasesGt extends TestCase {
 		SnpSiftCmdGt cmd = new SnpSiftCmdGt(args);
 		cmd.setVerbose(true);
 		cmd.setDebug(debug);
-		cmd.setSave(true);
+		cmd.setSaveOutput(true);
 		cmd.run();
 
 		// Save output to tmp file
@@ -43,12 +43,12 @@ public class TestCasesGt extends TestCase {
 		SnpSiftCmdGt cmdUn = new SnpSiftCmdGt(argsUn);
 		cmdUn.setVerbose(true);
 		cmdUn.setDebug(debug);
-		cmdUn.setSave(true);
+		cmdUn.setSaveOutput(true);
 		cmdUn.run();
 		String outputUn = cmdUn.getOutput();
 
 		//---
-		// Compare original and 'uncompressed' 
+		// Compare original and 'uncompressed'
 		//---
 
 		// Read all non-header lines form original file
@@ -70,6 +70,5 @@ public class TestCasesGt extends TestCase {
 				Assert.assertEquals(false, diff); // We expect no differences.
 			}
 		}
-		// Assert.assertEquals(false, diff); // We expect no differences.
 	}
 }

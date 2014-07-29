@@ -60,16 +60,27 @@ public class TestCasesFilterChrPos extends TestCase {
 		// Check
 		Assert.assertTrue(results != null);
 		Assert.assertTrue(results.size() > 0);
+		Assert.assertEquals(expectedCount, results.size());
 		return results;
 	}
 
-	/**
-	 * Chromosomes in VCF file are called 'chr22' instead of '22'.
-	 * This should work OK as well.
-	 */
 	public void test_01() {
 		String chrPosFileName = "./test/filterChrPos_01.txt";
 		String fileName = "./test/filterChrPos_01.vcf";
+		int expectedCount = 10;
+		filter(chrPosFileName, fileName, expectedCount);
+	}
+
+	public void test_02() {
+		String chrPosFileName = "./test/filterChrPos_02.txt";
+		String fileName = "./test/filterChrPos_02.vcf";
+		int expectedCount = 10;
+		filter(chrPosFileName, fileName, expectedCount);
+	}
+
+	public void test_03() {
+		String chrPosFileName = "./test/filterChrPos_03.txt";
+		String fileName = "./test/filterChrPos_03.vcf";
 		int expectedCount = 10;
 		filter(chrPosFileName, fileName, expectedCount);
 	}

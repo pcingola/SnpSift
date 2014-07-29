@@ -132,7 +132,7 @@ public class SnpSiftCmdFilterChrPos extends SnpSift {
 				+ "\n\t\tVCF lines passing filter : " + countVcfFiltered //
 				+ "\n\t\tChrPos lines             : " + countChrPosLines //
 				+ "\n\t\tChrPos entries added     : " + countChrPosAdded //
-		);
+				);
 
 		return passEntries;
 	}

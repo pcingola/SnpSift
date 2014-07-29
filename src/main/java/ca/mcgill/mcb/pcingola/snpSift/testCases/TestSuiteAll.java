@@ -35,6 +35,7 @@ public class TestSuiteAll {
 		suite.addTestSuite(TestCasesGt.class);
 		suite.addTestSuite(TestCasesGeneSets.class);
 		suite.addTestSuite(TestCasesConcordance.class);
+		suite.addTestSuite(TestCasesFilterChrPos.class);
 
 		return suite;
 	}

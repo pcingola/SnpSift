@@ -14,10 +14,7 @@ import ca.mcgill.mcb.pcingola.vcf.VcfEntry;
 public class SnpSiftCmdGt extends SnpSift {
 
 	public static int SHOW_EVERY = 100;
-	String vcfFile;
 	boolean uncompress;
-	boolean save; // Save output to string buffer instead of printing it to STDOUT (used for test cases)
-	StringBuilder output = new StringBuilder();
 
 	public SnpSiftCmdGt() {
 		super(null, null);
@@ -55,32 +52,22 @@ public class SnpSiftCmdGt extends SnpSift {
 			if (isOpt(arg)) {
 				if (arg.equals("-u")) uncompress = true;
 				else usage("Unknown option '" + arg + "'");
-			} else if (vcfFile == null) vcfFile = args[i];
+			} else if (vcfInputFile == null) vcfInputFile = args[i];
 		}
-	}
-
-	void print(String out) {
-		if (save) output.append(out + "\n");
-		else System.out.println(out);
 	}
 
 	/**
 	 * Process a VCF entry and return a string (tab separated values)
-	 * @param vcfEntry
-	 * @return
 	 */
 	@Override
 	public void run() {
 		VcfFileIterator vcf = openVcfInputFile();
 
-		if (save) showHeader = false; // No need to show header
+		showHeader = !saveOutput; // No need to show header
 
 		int i = 1;
 		for (VcfEntry ve : vcf) {
-			if (vcf.isHeadeSection()) {
-				String header = processVcfHeader(vcf);
-				if (save) print(header); // Save header to output buffer
-			}
+			processVcfHeader(vcf);
 
 			if (uncompress) {
 				// Uncompress
@@ -93,10 +80,6 @@ public class SnpSiftCmdGt extends SnpSift {
 
 			if (verbose) Gpr.showMark(i++, SHOW_EVERY);
 		}
-	}
-
-	public void setSave(boolean save) {
-		this.save = save;
 	}
 
 	@Override
