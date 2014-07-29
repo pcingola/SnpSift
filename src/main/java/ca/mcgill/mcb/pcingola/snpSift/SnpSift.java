@@ -33,6 +33,7 @@ public class SnpSift {
 	public static final String VERSION_NO_NAME = VERSION_SHORT + " (build " + BUILD + "), by " + Pcingola.BY;
 	public static final String VERSION = SOFTWARE_NAME + " " + VERSION_NO_NAME;
 	public static final int MAX_ERRORS = 10; // Report an error no more than X times
+	public static int SHOW_EVERY_VCFLINES = 100; // Show a mark every N vcf lines processed
 
 	protected boolean help; // Be verbose
 	protected boolean verbose; // Be verbose
@@ -294,7 +295,7 @@ public class SnpSift {
 	public void run() {
 		SnpSift cmd = null;
 
-		if (command.startsWith("ALLELEMAT")) cmd = new SnpSiftCmdAlleleMatrix(args);
+		if (command.startsWith("ALL")) cmd = new SnpSiftCmdAlleleMatrix(args);
 		else if (command.startsWith("ANN")) cmd = new SnpSiftCmdAnnotate(args);
 		else if (command.startsWith("CA")) cmd = new SnpSiftCmdCaseControl(args);
 		else if (command.startsWith("CCS")) cmd = new SnpSiftCmdCaseControlSummary(args);
@@ -302,26 +303,27 @@ public class SnpSift {
 		else if (command.startsWith("COVMAT")) cmd = new SnpSiftCmdCovarianceMatrix(args);
 		else if (command.startsWith("DBNSFP")) cmd = new SnpSiftCmdDbNsfp(args);
 		else if (command.startsWith("EX")) cmd = new SnpSiftCmdExtractFields(args);
+		else if (command.startsWith("FILTERC")) cmd = new SnpSiftCmdFilterChrPos(args);
 		else if (command.startsWith("FI")) cmd = new SnpSiftCmdFilter(args);
+		else if (command.startsWith("GENESETS")) cmd = new SnpSiftCmdGeneSets(args);
+		else if (command.startsWith("GTF")) cmd = new SnpSiftCmdGtFilter(args);
+		else if (command.startsWith("GT")) cmd = new SnpSiftCmdGt(args);
 		else if (command.startsWith("GWASCAT")) cmd = new SnpSiftCmdGwasCatalog(args);
 		else if (command.startsWith("HW")) cmd = new SnpSiftCmdHwe(args);
 		else if (command.startsWith("INTIDX")) cmd = new SnpSiftCmdIntervalsIndex(args);
 		else if (command.startsWith("INTERS")) cmd = new SnpSiftCmdIntersect(args);
 		else if (command.startsWith("INTERV")) cmd = new SnpSiftCmdIntervals(args);
 		else if (command.startsWith("JOIN")) cmd = new SnpSiftCmdJoin(args);
+		else if (command.startsWith("PEDSHOW")) cmd = new SnpSiftCmdPedShow(args);
+		else if (command.startsWith("PHASTCONS")) cmd = new SnpSiftCmdPhastCons(args);
+		else if (command.startsWith("PRIVATE")) cmd = new SnpSiftCmdPrivate(args);
+		else if (command.startsWith("RMINFO")) cmd = new SnpSiftCmdRmInfo(args);
+		else if (command.startsWith("RMREF")) cmd = new SnpSiftCmdRemoveReferenceGenotypes(args);
+		else if (command.startsWith("SIMPLIFYINDELS")) cmd = new SnpSiftCmdSimplifyIndels(args);
 		else if (command.startsWith("SPLIT")) cmd = new SnpSiftCmdSplit(args);
 		else if (command.startsWith("TS")) cmd = new SnpSiftCmdTsTv(args);
 		else if (command.startsWith("VARTYPE")) cmd = new SnpSiftCmdVarType(args);
-		else if (command.startsWith("PRIVATE")) cmd = new SnpSiftCmdPrivate(args);
-		else if (command.startsWith("PHASTCONS")) cmd = new SnpSiftCmdPhastCons(args);
-		else if (command.startsWith("RMINFO")) cmd = new SnpSiftCmdRmInfo(args);
-		else if (command.startsWith("RMREF")) cmd = new SnpSiftCmdRemoveReferenceGenotypes(args);
 		else if (command.startsWith("VCF2TPED")) cmd = new SnpSiftCmdVcf2Tped(args);
-		else if (command.startsWith("GENESETS")) cmd = new SnpSiftCmdGeneSets(args);
-		else if (command.startsWith("GTF")) cmd = new SnpSiftCmdGtFilter(args);
-		else if (command.startsWith("GT")) cmd = new SnpSiftCmdGt(args);
-		else if (command.startsWith("SIMPLIFYINDELS")) cmd = new SnpSiftCmdSimplifyIndels(args);
-		else if (command.startsWith("PEDSHOW")) cmd = new SnpSiftCmdPedShow(args);
 		else if (command.startsWith("VCFCHECK")) cmd = new SnpSiftCmdVcfCheck(args);
 		else usage("Unknown command '" + command + "'");
 

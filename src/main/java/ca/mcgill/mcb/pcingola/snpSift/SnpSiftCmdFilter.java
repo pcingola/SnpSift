@@ -334,7 +334,6 @@ public class SnpSiftCmdFilter extends SnpSift {
 		LinkedList<VcfEntry> passEntries = (createList ? new LinkedList<VcfEntry>() : null);
 
 		// Open and read entries
-		int entryNum = 0;
 		showHeader = !createList;
 		VcfFileIterator vcfFile = openVcfInputFile();
 		for (VcfEntry vcfEntry : vcfFile) {
@@ -368,10 +367,6 @@ public class SnpSiftCmdFilter extends SnpSift {
 				if (passEntries != null) passEntries.add(vcfEntry); // Do not show. just add to the list (this is used for debugging and testing)
 				else System.out.println(vcfEntry);
 			}
-
-			// Debug mode? => Break after a few lines
-			entryNum++;
-			if (debug && (entryNum > 1000)) break;
 		}
 
 		return passEntries;

@@ -321,7 +321,6 @@ public class SnpSiftCmdGtFilter extends SnpSift {
 
 		// Open and read entries
 		VcfFileIterator vcfFile = openVcfInputFile();
-		int entryNum = 0;
 		showHeader = !createList;
 		for (VcfEntry vcfEntry : vcfFile) {
 			// Show header before first entry
@@ -332,10 +331,6 @@ public class SnpSiftCmdGtFilter extends SnpSift {
 
 			if (passEntries != null) passEntries.add(vcfEntry); // Do not show. just add to the list (this is used for debugging and testing)
 			else System.out.println(vcfEntry);
-
-			// Debug mode? => Break after a few lines
-			entryNum++;
-			if (debug && (entryNum > 1000)) break;
 		}
 
 		return passEntries;
