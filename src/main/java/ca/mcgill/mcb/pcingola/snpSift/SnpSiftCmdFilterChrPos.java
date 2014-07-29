@@ -132,7 +132,7 @@ public class SnpSiftCmdFilterChrPos extends SnpSift {
 				+ "\n\t\tVCF lines passing filter : " + countVcfFiltered //
 				+ "\n\t\tChrPos lines             : " + countChrPosLines //
 				+ "\n\t\tChrPos entries added     : " + countChrPosAdded //
-				);
+		);
 
 		return passEntries;
 	}
@@ -150,11 +150,11 @@ public class SnpSiftCmdFilterChrPos extends SnpSift {
 		showVersion();
 
 		System.err.println("Usage: java -jar " + SnpSift.class.getSimpleName() + "" + ".jar filter [options] chrpos.txt [input.vcf]");
-		System.err.println("File chrpos.txt is parsed as follows:");
-		System.err.println("\t  i) First two (tab-separated) columns are 'chr' and 'pos'.");
-		System.err.println("\t ii) Other columns are ignored.");
-		System.err.println("\tiii) Lines starting with '#' are ignored.");
-		System.err.println("\t iv) Positions are one-based (same as in VCF files).");
+		System.err.println("\nFile 'chrpos.txt' is parsed as follows:");
+		System.err.println("\t- First two (tab-separated) columns are 'chr' and 'pos'.");
+		System.err.println("\t- Other columns are ignored.");
+		System.err.println("\t- Lines starting with '#' are ignored.");
+		System.err.println("\t- Positions are one-based (same as in VCF files).");
 		System.exit(-1);
 	}
 
