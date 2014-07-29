@@ -52,7 +52,7 @@ public class SnpSiftCmdGt extends SnpSift {
 			if (isOpt(arg)) {
 				if (arg.equals("-u")) uncompress = true;
 				else usage("Unknown option '" + arg + "'");
-			} else if (vcfInputFile == null) vcfInputFile = args[i];
+			} else if (vcfInputFile == null) vcfInputFile = arg;
 		}
 	}
 
@@ -61,11 +61,8 @@ public class SnpSiftCmdGt extends SnpSift {
 	 */
 	@Override
 	public void run() {
-		VcfFileIterator vcf = openVcfInputFile();
-
-		showHeader = !saveOutput; // No need to show header
-
 		int i = 1;
+		VcfFileIterator vcf = openVcfInputFile();
 		for (VcfEntry ve : vcf) {
 			processVcfHeader(vcf);
 

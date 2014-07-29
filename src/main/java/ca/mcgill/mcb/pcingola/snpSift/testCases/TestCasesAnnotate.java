@@ -53,14 +53,14 @@ public class TestCasesAnnotate extends TestCase {
 		String args[] = argsList(dbFileName, fileName, extraArgs);
 
 		// Iterate over VCF entries
-		SnpSiftCmdAnnotate snpSiftAnnotate = new SnpSiftCmdAnnotate(args);
-		snpSiftAnnotate.setDebug(debug);
-		snpSiftAnnotate.setVerbose(verbose);
-		snpSiftAnnotate.setSaveOutput(true);
-		snpSiftAnnotate.run();
+		SnpSiftCmdAnnotate snpSift = new SnpSiftCmdAnnotate(args);
+		snpSift.setDebug(debug);
+		snpSift.setVerbose(verbose);
+		snpSift.setSaveOutput(true);
+		snpSift.run();
 
 		// Check
-		return snpSiftAnnotate.getOutput();
+		return snpSift.getOutput();
 	}
 
 	public void annotateTest(String dbFileName, String fileName) {

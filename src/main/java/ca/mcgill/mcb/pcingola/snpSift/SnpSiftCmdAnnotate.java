@@ -89,7 +89,7 @@ public class SnpSiftCmdAnnotate extends SnpSift {
 		if (verbose) Timer.showStdErr("Annotating entries from: '" + vcfInputFile + "'");
 
 		try {
-			initAnnotate();
+			initAnnotateDb();
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
@@ -97,7 +97,7 @@ public class SnpSiftCmdAnnotate extends SnpSift {
 		int countAnnotated = 0, count = 0;
 		int pos = -1;
 		String chr = "";
-
+		vcfFile = openVcfInputFile(); // Open input VCF
 		for (VcfEntry vcfEntry : vcfFile) {
 			try {
 				processVcfHeader(vcfFile);
@@ -161,13 +161,9 @@ public class SnpSiftCmdAnnotate extends SnpSift {
 	}
 
 	/**
-	 * Initialize annotation process
-	 * @throws IOException
+	 * Initialize database for annotation process
 	 */
-	public void initAnnotate() throws IOException {
-		vcfFile = new VcfFileIterator(vcfInputFile); // Open input VCF
-		vcfFile.setDebug(debug);
-
+	void initAnnotateDb() throws IOException {
 		// Type of database
 		switch (method) {
 
@@ -187,7 +183,7 @@ public class SnpSiftCmdAnnotate extends SnpSift {
 			throw new RuntimeException("Unknwon method '" + method + "'");
 		}
 
-		// Set parameters
+		// Set parameters & open database file
 		annotateDb.setUseId(useId);
 		annotateDb.setUseInfoField(useInfoField);
 		annotateDb.setUseRefAlt(useRefAlt);
@@ -195,7 +191,6 @@ public class SnpSiftCmdAnnotate extends SnpSift {
 		annotateDb.setPrependInfoFieldName(prependInfoFieldName);
 		annotateDb.setDebug(debug);
 		annotateDb.setVerbose(verbose);
-
 		annotateDb.open();// Open database
 	}
 

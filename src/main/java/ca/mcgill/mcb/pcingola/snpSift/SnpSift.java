@@ -275,7 +275,7 @@ public class SnpSift {
 	 * Process VCF header related issues
 	 */
 	protected String processVcfHeader(VcfFileIterator vcf) {
-		if (!vcf.isHeadeSection()) return "";
+		if (!vcf.isHeadeSection() && vcf.getLineNum() > 1) return ""; // First line is always a header
 
 		// Add lines to header
 		addHeader(vcf);
