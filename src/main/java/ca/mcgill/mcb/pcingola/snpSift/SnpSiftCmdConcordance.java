@@ -47,8 +47,6 @@ public class SnpSiftCmdConcordance extends SnpSift {
 	StringBuilder summary = new StringBuilder();
 	HashSet<String> restrictSamples;
 	protected VcfEntry latestVcfEntry = null;
-	boolean writeSummaryFile;
-	boolean writeBySampleFile;
 	boolean errorOnNonBiallelic;
 
 	public SnpSiftCmdConcordance(String args[]) {
@@ -126,8 +124,8 @@ public class SnpSiftCmdConcordance extends SnpSift {
 			if (idx1 >= 0) {
 				// OK, we can calculate concordance
 				CountByType countBySample = concordanceBySample.get(sampleNameIdx2[idx2]);
-				String gen1Str = genotypKey(ve1, idx1, name1);
-				String gen2Str = genotypKey(ve2, idx2, name2);
+				String gen1Str = genotypeKey(ve1, idx1, name1);
+				String gen2Str = genotypeKey(ve2, idx2, name2);
 				String key = gen1Str + SEP_GT + gen2Str;
 				if (debug) Gpr.debug("Sample " + sampleNameIdx2[idx2] + "\tkey:" + key);
 				concordanceCount(key, count, countBySample);
@@ -199,6 +197,9 @@ public class SnpSiftCmdConcordance extends SnpSift {
 				latestVcfEntry = null;
 				return ve; // Match!
 			}
+
+			// Latest entry is not used, we should do the accounting before skipping to next entry
+			concordance(latestVcfEntry, null);
 		}
 
 		//---
@@ -223,20 +224,20 @@ public class SnpSiftCmdConcordance extends SnpSift {
 		return null;
 	}
 
-	String genotypKey(int gtCode, String name) {
-		if (gtCode == -2) return MISSING_ENTRY + SEP + name;
-		if (gtCode == -1) return MISSING_GENOTYPE + SEP + name;
-		if (gtCode == 0) return "REF";
-		return "ALT" + SEP + gtCode;
-	}
-
-	String genotypKey(VcfEntry ve, int gtIndx, String name) {
+	String genotypeKey(VcfEntry ve, int gtIndx, String name) {
 		if (ve == null) return MISSING_ENTRY + SEP + name;
 
 		VcfGenotype gt = ve.getVcfGenotype(gtIndx);
 		if (gt.isMissing()) return MISSING_GENOTYPE + SEP + name;
 
 		return genotypKey(gt.getGenotypeCode(), name);
+	}
+
+	String genotypKey(int gtCode, String name) {
+		if (gtCode == -2) return MISSING_ENTRY + SEP + name;
+		if (gtCode == -1) return MISSING_GENOTYPE + SEP + name;
+		if (gtCode == 0) return "REF";
+		return "ALT" + SEP + gtCode;
 	}
 
 	public CountByType getConcordance() {
@@ -253,7 +254,6 @@ public class SnpSiftCmdConcordance extends SnpSift {
 
 	@Override
 	public void init() {
-		writeSummaryFile = writeBySampleFile = true;
 		errorOnNonBiallelic = false;
 	}
 
@@ -377,42 +377,6 @@ public class SnpSiftCmdConcordance extends SnpSift {
 		}
 	}
 
-	/**
-	 * Show results
-	 */
-	void results(String titleBySample) {
-		// Show totals
-		System.out.print(showCounts(concordance, null, null));
-
-		// Write summary file
-		if (writeSummaryFile) {
-			String summaryFile = "concordance_" + name1 + "_" + name2 + ".summary.txt"; // Write to file
-			Timer.showStdErr("Writing summary file '" + summaryFile + "'");
-			if (!errors.isEmpty()) { // Add errors (if any)
-				summary("# Errors:");
-				for (String l : errors.keySet())
-					summary("\t" + l + "\t" + errors.get(l));
-			}
-			Gpr.toFile(summaryFile, summary);
-		}
-
-		// Write 'by sample' file
-		if (writeBySampleFile) {
-			String bySampleFile = "concordance_" + name1 + "_" + name2 + ".by_sample.txt"; // Write to file
-			Timer.showStdErr("Writing concordance by sample to file '" + bySampleFile + "'");
-
-			StringBuilder bySample = new StringBuilder();
-			bySample.append(titleBySample + "\n"); // Add title
-			ArrayList<String> sampleNames = new ArrayList<String>(); // Sort samples by name
-			sampleNames.addAll(concordanceBySample.keySet());
-			Collections.sort(sampleNames);
-			for (String sample : sampleNames)
-				bySample.append(showCounts(concordanceBySample.get(sample), null, sample)); // Add all samples
-
-			Gpr.toFile(bySampleFile, bySample); // Write file
-		}
-	}
-
 	@Override
 	public void run() {
 		// Read samples file
@@ -465,7 +429,7 @@ public class SnpSiftCmdConcordance extends SnpSift {
 		StringBuilder title = new StringBuilder();
 		StringBuilder titleBySample = new StringBuilder();
 		title.append("chr\tpos\tref\talt");
-		titleBySample.append("sample");
+		titleBySample.append("sample\t\t\t");
 		labels = createLabels();
 		for (String label : labels) {
 			title.append("\t" + label);
@@ -494,15 +458,8 @@ public class SnpSiftCmdConcordance extends SnpSift {
 			throw new RuntimeException(e);
 		}
 
-		results(titleBySample.toString());
-	}
-
-	public void setWriteBySampleFile(boolean writeBySampleFile) {
-		this.writeBySampleFile = writeBySampleFile;
-	}
-
-	public void setWriteSummaryFile(boolean writeSummaryFile) {
-		this.writeSummaryFile = writeSummaryFile;
+		// Show results
+		showResults(titleBySample.toString());
 	}
 
 	/**
@@ -512,7 +469,7 @@ public class SnpSiftCmdConcordance extends SnpSift {
 		StringBuilder sb = new StringBuilder();
 
 		if (ve != null) sb.append(ve.getChromosomeName() + "\t" + (ve.getStart() + 1) + "\t" + ve.getRef() + "\t" + ve.getAltsStr());
-		else if (rowTitle != null) sb.append(rowTitle);
+		else if (rowTitle != null) sb.append(rowTitle + "\t\t\t");
 		else sb.append("#Total\t.\t.\t.");
 
 		for (String label : labels)
@@ -520,6 +477,32 @@ public class SnpSiftCmdConcordance extends SnpSift {
 		sb.append("\n");
 
 		return sb.toString();
+	}
+
+	/**
+	 * Show results
+	 */
+	void showResults(String titleBySample) {
+		// Show totals
+		System.out.print(showCounts(concordance, null, null));
+
+		// Show stats 'by sample'
+		StringBuilder bySample = new StringBuilder();
+		bySample.append(titleBySample + "\n"); // Add title
+		ArrayList<String> sampleNames = new ArrayList<String>(); // Sort samples by name
+		sampleNames.addAll(concordanceBySample.keySet());
+		Collections.sort(sampleNames);
+		for (String sample : sampleNames)
+			bySample.append(showCounts(concordanceBySample.get(sample), null, sample)); // Add all samples
+		System.out.println("\n# By sample:\n" + bySample);
+
+		// Show summary file
+		if (!errors.isEmpty()) { // Add errors (if any)
+			summary("\n# Errors:");
+			for (String l : errors.keySet())
+				summary("\t" + l + "\t" + errors.get(l));
+		}
+		System.out.println("\n# Samples summary:\n" + summary);
 	}
 
 	/**

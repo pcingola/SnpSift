@@ -22,8 +22,6 @@ public class TestCasesConcordance extends TestCase {
 		SnpSiftCmdConcordance ssconc = new SnpSiftCmdConcordance(args);
 		ssconc.setVerbose(verbose);
 		ssconc.setDebug(debug);
-		ssconc.setWriteSummaryFile(false);
-		ssconc.setWriteBySampleFile(false);
 		ssconc.run();
 
 		CountByType concordance = ssconc.getConcordance();
