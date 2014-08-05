@@ -1,4 +1,0 @@
-Number of samples:
-	1	File /home/pcingola/snpEff/pierre_concordance/ref.vcf
-	26	File /home/pcingola/snpEff/pierre_concordance/myvcf.vcf
-	1	Both files

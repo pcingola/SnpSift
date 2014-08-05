@@ -47,6 +47,8 @@ public class SnpSiftCmdConcordance extends SnpSift {
 	StringBuilder summary = new StringBuilder();
 	HashSet<String> restrictSamples;
 	protected VcfEntry latestVcfEntry = null;
+	boolean writeSummaryFile;
+	boolean writeBySampleFile;
 	boolean errorOnNonBiallelic;
 
 	public SnpSiftCmdConcordance(String args[]) {
@@ -254,6 +256,7 @@ public class SnpSiftCmdConcordance extends SnpSift {
 
 	@Override
 	public void init() {
+		writeSummaryFile = writeBySampleFile = true;
 		errorOnNonBiallelic = false;
 	}
 
@@ -462,6 +465,14 @@ public class SnpSiftCmdConcordance extends SnpSift {
 		showResults(titleBySample.toString());
 	}
 
+	public void setWriteBySampleFile(boolean writeBySampleFile) {
+		this.writeBySampleFile = writeBySampleFile;
+	}
+
+	public void setWriteSummaryFile(boolean writeSummaryFile) {
+		this.writeSummaryFile = writeSummaryFile;
+	}
+
 	/**
 	 * Show a counter
 	 */
@@ -486,23 +497,35 @@ public class SnpSiftCmdConcordance extends SnpSift {
 		// Show totals
 		System.out.print(showCounts(concordance, null, null));
 
-		// Show stats 'by sample'
-		StringBuilder bySample = new StringBuilder();
-		bySample.append(titleBySample + "\n"); // Add title
-		ArrayList<String> sampleNames = new ArrayList<String>(); // Sort samples by name
-		sampleNames.addAll(concordanceBySample.keySet());
-		Collections.sort(sampleNames);
-		for (String sample : sampleNames)
-			bySample.append(showCounts(concordanceBySample.get(sample), null, sample)); // Add all samples
-		System.out.println("\n# By sample:\n" + bySample);
+		// Write 'by sample' file
+		if (writeBySampleFile) {
+			String bySampleFile = "concordance_" + name1 + "_" + name2 + ".by_sample.txt"; // Write to file
+			Timer.showStdErr("Writing concordance by sample to file '" + bySampleFile + "'");
 
-		// Show summary file
-		if (!errors.isEmpty()) { // Add errors (if any)
-			summary("\n# Errors:");
-			for (String l : errors.keySet())
-				summary("\t" + l + "\t" + errors.get(l));
+			StringBuilder bySample = new StringBuilder();
+			bySample.append(titleBySample + "\n"); // Add title
+			ArrayList<String> sampleNames = new ArrayList<String>(); // Sort samples by name
+			sampleNames.addAll(concordanceBySample.keySet());
+			Collections.sort(sampleNames);
+			for (String sample : sampleNames)
+				bySample.append(showCounts(concordanceBySample.get(sample), null, sample)); // Add all samples
+
+			Gpr.toFile(bySampleFile, bySample); // Write file
 		}
-		System.out.println("\n# Samples summary:\n" + summary);
+
+		// Write summary file
+		if (writeSummaryFile) {
+			String summaryFile = "concordance_" + name1 + "_" + name2 + ".summary.txt"; // Write to file
+			Timer.showStdErr("Writing summary file '" + summaryFile + "'");
+
+			if (!errors.isEmpty()) { // Add errors (if any)
+				summary("\n# Errors:");
+				for (String l : errors.keySet())
+					summary("\t" + l + "\t" + errors.get(l));
+			}
+
+			Gpr.toFile(summaryFile, summary);
+		}
 	}
 
 	/**
