@@ -1,0 +1,7 @@
+Number of samples:
+	1	File /home/pcingola/workspace/SnpSift/test/concordance_ref_12.vcf
+	1	File /home/pcingola/workspace/SnpSift/test/concordance_test_12.vcf
+	1	Both files
+
+# Errors:
+	REF fields does not match	1

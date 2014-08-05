@@ -57,10 +57,11 @@ public class SnpSiftCmdConcordance extends SnpSift {
 
 	/**
 	 * Check that VCF entries match
+	 * @return String indicating an error (empty string if OK)
 	 */
-	boolean check(VcfEntry ve1, VcfEntry ve2) {
-		if (ve1 == null && ve2 == null) return false;
-		if (ve1 == null || ve2 == null) return true;
+	String check(VcfEntry ve1, VcfEntry ve2) {
+		if (ve1 == null && ve2 == null) return "ERROR_BOTH_NULL";
+		if (ve1 == null || ve2 == null) return ""; // OK, nothing to check
 
 		//---
 		// Sanity checks
@@ -68,37 +69,37 @@ public class SnpSiftCmdConcordance extends SnpSift {
 		if (errorOnNonBiallelic) {
 			if (ve1.getAlts().length > 1) {
 				errors(ve1, ve2, "Multiple ALT in file '" + vcfFileName1 + "'");
-				return false;
+				return "ERROR_NON_BIALLELIC_" + vcfFileName1 + ":" + ve1.getAlts();
 			}
 
 			if (ve2.getAlts().length > 1) {
 				errors(ve1, ve2, "Multiple ALT in file '" + vcfFileName2 + "'S");
-				return false;
+				return "ERROR_NON_BIALLELIC_" + vcfFileName2 + ":" + ve2.getAlts();
 			}
 		}
 
 		// Only makes sense to check for bi-allelic ALTs
 		if (!ve1.getAltsStr().equals(ve2.getAltsStr()) && ve1.getAlts().length == 1 && ve2.getAlts().length == 1) {
 			errors(ve1, ve2, "ALT field does not match");
-			return false;
+			return "ERROR_ALT_DOES_NOT_MATCH:" + ve1.getAltsStr() + "/" + ve2.getAltsStr();
 		}
 
 		if (!ve1.getRef().equals(ve2.getRef())) {
 			errors(ve1, ve2, "REF fields does not match");
-			return false;
+			return "ERROR_REF_DOES_NOT_MATCH:" + ve1.getRef() + "/" + ve2.getRef();
 		}
 
 		if (!ve1.getChromosomeName().equals(ve2.getChromosomeName())) {
 			errors(ve1, ve2, "CHROMO field does not match");
-			return false;
+			return "ERROR_CHROMO_DOES_NOT_MATCH";
 		}
 
 		if (ve1.getStart() != ve2.getStart()) {
 			errors(ve1, ve2, "POS field does not match");
-			return false;
+			return "ERROR_POS_DOES_NOT_MATCH";
 		}
 
-		return true;
+		return "";
 	}
 
 	/**
@@ -106,13 +107,13 @@ public class SnpSiftCmdConcordance extends SnpSift {
 	 */
 	void concordance(VcfEntry ve1, VcfEntry ve2) {
 		// Check that VCF entries match
-		if (!check(ve1, ve2)) return;
+		String err = check(ve1, ve2);
 
 		// Debug
 		if (debug) {
 			String s1 = ve1 == null ? "null" : ve1.toStr();
 			String s2 = ve2 == null ? "null" : ve2.toStr();
-			Gpr.debug("Concordance: " + s1 + "\t" + s2);
+			Gpr.debug("Concordance: " + s1 + "\t" + s2 + "\tErr: " + err);
 		}
 
 		// Compare all genotypes from ve2 to the corresponding genotype in ve1
@@ -124,18 +125,25 @@ public class SnpSiftCmdConcordance extends SnpSift {
 
 			// Does vcf1 also have this sample?
 			if (idx1 >= 0) {
-				// OK, we can calculate concordance
 				CountByType countBySample = concordanceBySample.get(sampleNameIdx2[idx2]);
-				String gen1Str = genotypeKey(ve1, idx1, name1);
-				String gen2Str = genotypeKey(ve2, idx2, name2);
-				String key = gen1Str + SEP_GT + gen2Str;
+				String key = "";
+
+				if (err.isEmpty()) {
+					// OK, we can calculate concordance
+					String gen1Str = genotypeKey(ve1, idx1, name1);
+					String gen2Str = genotypeKey(ve2, idx2, name2);
+					key = gen1Str + SEP_GT + gen2Str;
+				} else {
+					key = "ERROR";
+				}
 				if (debug) Gpr.debug("Sample " + sampleNameIdx2[idx2] + "\tkey:" + key);
+
 				concordanceCount(key, count, countBySample);
 			} else if (debug) Gpr.debug("Unmatched sample '" + sampleNameIdx2[idx2] + "' (number " + idx2 + ") in file " + name2);
 		}
 
 		// Show counts for this match
-		System.out.print(showCounts(count, (ve1 != null ? ve1 : ve2), null));
+		System.out.print(showCounts(count, (ve1 != null ? ve1 : ve2), null, err));
 	}
 
 	/**
@@ -152,11 +160,16 @@ public class SnpSiftCmdConcordance extends SnpSift {
 	 */
 	List<String> createLabels() {
 		ArrayList<String> labels = new ArrayList<String>();
+
 		for (int gtCode1 = -2; gtCode1 <= 2; gtCode1++)
 			for (int gtCode2 = -2; gtCode2 <= 2; gtCode2++) {
 				String label = genotypKey(gtCode1, name1) + SEP_GT + genotypKey(gtCode2, name2);
 				labels.add(label);
 			}
+
+		// Last one is 'error'
+		labels.add("ERROR");
+
 		return labels;
 	}
 
@@ -476,7 +489,7 @@ public class SnpSiftCmdConcordance extends SnpSift {
 	/**
 	 * Show a counter
 	 */
-	String showCounts(CountByType count, VcfEntry ve, String rowTitle) {
+	String showCounts(CountByType count, VcfEntry ve, String rowTitle, String error) {
 		StringBuilder sb = new StringBuilder();
 
 		if (ve != null) sb.append(ve.getChromosomeName() + "\t" + (ve.getStart() + 1) + "\t" + ve.getRef() + "\t" + ve.getAltsStr());
@@ -485,6 +498,10 @@ public class SnpSiftCmdConcordance extends SnpSift {
 
 		for (String label : labels)
 			sb.append("\t" + count.get(label));
+
+		// Show error
+		sb.append("\t" + error);
+
 		sb.append("\n");
 
 		return sb.toString();
@@ -495,7 +512,7 @@ public class SnpSiftCmdConcordance extends SnpSift {
 	 */
 	void showResults(String titleBySample) {
 		// Show totals
-		System.out.print(showCounts(concordance, null, null));
+		System.out.print(showCounts(concordance, null, null, ""));
 
 		// Write 'by sample' file
 		if (writeBySampleFile) {
@@ -508,7 +525,7 @@ public class SnpSiftCmdConcordance extends SnpSift {
 			sampleNames.addAll(concordanceBySample.keySet());
 			Collections.sort(sampleNames);
 			for (String sample : sampleNames)
-				bySample.append(showCounts(concordanceBySample.get(sample), null, sample)); // Add all samples
+				bySample.append(showCounts(concordanceBySample.get(sample), null, sample, "")); // Add all samples
 
 			Gpr.toFile(bySampleFile, bySample); // Write file
 		}
