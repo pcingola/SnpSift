@@ -27,7 +27,7 @@ public class TestCasesConcordance extends TestCase {
 		ssconc.run();
 
 		CountByType concordance = ssconc.getConcordance();
-		if (debug) System.err.println("Concordance:\n" + concordance);
+		if (verbose) System.out.println("\n\nConcordance:\n" + concordance);
 
 		return ssconc;
 	}
@@ -125,6 +125,20 @@ public class TestCasesConcordance extends TestCase {
 		count.inc("MISSING_ENTRY_concordance_ref_10/ALT_2", 15);
 
 		checkConcordance("test/concordance_ref_10.vcf", "test/concordance_test_10.vcf", count);
+	}
+
+	public void test_11() {
+		CountByType count = new CountByType();
+		count.inc("ALT_1/ALT_1", 4);
+		count.inc("ALT_1/MISSING_ENTRY_concordance_test_11", 4);
+		count.inc("ALT_2/ALT_2", 7);
+		count.inc("ALT_2/MISSING_ENTRY_concordance_test_11", 5);
+		count.inc("ALT_2/MISSING_GT_concordance_test_11", 1);
+		count.inc("MISSING_ENTRY_concordance_ref_11/ALT_2", 1);
+		count.inc("MISSING_ENTRY_concordance_ref_11/MISSING_GT_concordance_test_11", 39);
+		count.inc("MISSING_ENTRY_concordance_ref_11/REF", 1086);
+
+		checkConcordance("test/concordance_ref_11.vcf", "test/concordance_test_11.vcf", count);
 	}
 
 }
