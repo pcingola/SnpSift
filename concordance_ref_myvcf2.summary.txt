@@ -1,0 +1,4 @@
+Number of samples:
+	1	File /data/pcingola/Documents/workspace/SnpSift/test/pierre_concordance/ref.vcf
+	26	File /data/pcingola/Documents/workspace/SnpSift/test/pierre_concordance/myvcf2.vcf
+	1	Both files

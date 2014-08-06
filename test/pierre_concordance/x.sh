@@ -1,22 +1,29 @@
 #!/bin/sh
 
-REF_VCF="ref_21.vcf"
-MY_VCF="myvcf.vcf"
+SNPSIFT="$HOME/snpEff/SnpSift.jar"
 
-# Reference using only chr 21
-cat ref.vcf | grep -e "^#" -e "^21" > ref_21.vcf
+echo
+echo
+echo MYVCF 1
+cat myvcf1.vcf | java -jar $SNPSIFT concordance ref.vcf - >res2.txt
+echo
+echo
+echo MYVCF 2
+cat myvcf2.vcf | java -jar $SNPSIFT concordance ref.vcf - >res1.txt
 
-# Concordance
-java -jar ~/snpEff/SnpSift.jar concordance -v $REF_VCF $MY_VCF | tee concordance.txt
+head -n1 res1.txt | awk '{for(i=1;i<=NF;i++){print(i,$i);}}'
+awk '$20==1{print ($1,$2);}' < res1.txt
+awk '$20==1{print ($1,$2);}' < res2.txt
 
-# Count lines
-cat $REF_VCF | grep -v "^#" | wc -l
-cat $MY_VCF  | grep -v "^#" | wc -l
-
-# Compare
-cat $MY_VCF | grep -v "^#" | cut -f 1,2 | tr "\t" "_" | sort | tee myvcf.txt 
-cat $REF_VCF   | grep -v "^#" | cut -f 1,2 | tr "\t" "_" | sort | tee ref.txt 
-join ref.txt myvcf.txt > ref_my.txt
-wc -l ref.txt myvcf.txt ref_my.txt
-
-
+VR="2621998"
+echo
+echo
+echo VCF
+grep $VR myvcf?.vcf ref.vcf
+echo
+echo
+echo TXT: res 1
+grep $VR res1.txt 
+echo
+echo TXT: res 1
+grep $VR res2.txt 

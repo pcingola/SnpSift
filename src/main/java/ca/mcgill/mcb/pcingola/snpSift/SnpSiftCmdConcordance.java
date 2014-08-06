@@ -47,6 +47,8 @@ public class SnpSiftCmdConcordance extends SnpSift {
 	StringBuilder summary = new StringBuilder();
 	HashSet<String> restrictSamples;
 	protected VcfEntry latestVcfEntry = null;
+	int latestVcfPos = 0;
+	String latestVcfChr = "";
 	boolean writeSummaryFile;
 	boolean writeBySampleFile;
 	boolean errorOnNonBiallelic;
@@ -109,7 +111,6 @@ public class SnpSiftCmdConcordance extends SnpSift {
 		// Check that VCF entries match
 		String err = check(ve1, ve2);
 
-		// Debug
 		if (debug) {
 			String s1 = ve1 == null ? "null" : ve1.toStr();
 			String s2 = ve2 == null ? "null" : ve2.toStr();
@@ -222,7 +223,13 @@ public class SnpSiftCmdConcordance extends SnpSift {
 		//---
 		for (VcfEntry ve : vcfFile) {
 			countEntries++;
+
+			// Sanity check: Is VCF sorted?
+			if (latestVcfChr.equals(ve.getChromosomeName()) && latestVcfPos > ve.getStart()) fatalError("VCF file '" + vcfFileName2 + "' is not propperly sorted. Position " + latestVcfChr + ":" + (latestVcfPos + 1) + " is after position " + latestVcfChr + ":" + (ve.getStart() + 1));
+
 			latestVcfEntry = ve;
+			latestVcfChr = ve.getChromosomeName();
+			latestVcfPos = ve.getStart();
 
 			// Does this entry match?
 			if (!ve.getChromosomeName().equals(chr)) return null;
@@ -458,7 +465,12 @@ public class SnpSiftCmdConcordance extends SnpSift {
 		//---
 		try {
 			// Iterate over all entries on VCF2
+			int latestPos = 0;
+			String latestChr = "";
 			for (VcfEntry ve2 : vcf2) {
+				// Sanity check: Is VCF sorted?
+				if (latestChr.equals(ve2.getChromosomeName()) && latestPos > ve2.getStart()) fatalError("VCF file '" + vcfFileName2 + "' is not propperly sorted. Position " + latestChr + ":" + (latestPos + 1) + " is after position " + latestChr + ":" + (ve2.getStart() + 1));
+
 				VcfEntry ve1 = find(vcf1, ve2);
 				concordance(ve1, ve2);
 
@@ -467,7 +479,10 @@ public class SnpSiftCmdConcordance extends SnpSift {
 					countEntries = 0;
 					Timer.showStdErr("\t" + (latestVcfEntry != null ? latestVcfEntry.getChromosomeName() + ":" + (latestVcfEntry.getStart() + 1) : "") + "\t" + ve2.getChromosomeName() + ":" + (ve2.getStart() + 1));
 				}
+
 				countEntries++;
+				latestChr = ve2.getChromosomeName();
+				latestPos = ve2.getStart();
 			}
 			readUntilChromosomeEnd(vcf1, chrPrev);
 		} catch (Exception e) {
