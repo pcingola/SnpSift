@@ -225,7 +225,7 @@ public class SnpSiftCmdConcordance extends SnpSift {
 			countEntries++;
 
 			// Sanity check: Is VCF sorted?
-			if (latestVcfChr.equals(ve.getChromosomeName()) && latestVcfPos > ve.getStart()) fatalError("VCF file '" + vcfFileName2 + "' is not propperly sorted. Position " + latestVcfChr + ":" + (latestVcfPos + 1) + " is after position " + latestVcfChr + ":" + (ve.getStart() + 1));
+			if (latestVcfChr.equals(ve.getChromosomeName()) && latestVcfPos > ve.getStart()) fatalError("VCF file '" + vcfFileName2 + "' is not properly sorted. Position " + latestVcfChr + ":" + (latestVcfPos + 1) + " is after position " + latestVcfChr + ":" + (ve.getStart() + 1));
 
 			latestVcfEntry = ve;
 			latestVcfChr = ve.getChromosomeName();
@@ -469,7 +469,7 @@ public class SnpSiftCmdConcordance extends SnpSift {
 			String latestChr = "";
 			for (VcfEntry ve2 : vcf2) {
 				// Sanity check: Is VCF sorted?
-				if (latestChr.equals(ve2.getChromosomeName()) && latestPos > ve2.getStart()) fatalError("VCF file '" + vcfFileName2 + "' is not propperly sorted. Position " + latestChr + ":" + (latestPos + 1) + " is after position " + latestChr + ":" + (ve2.getStart() + 1));
+				if (latestChr.equals(ve2.getChromosomeName()) && latestPos > ve2.getStart()) fatalError("VCF file '" + vcfFileName2 + "' is not properly sorted. Position " + latestChr + ":" + (latestPos + 1) + " is after position " + latestChr + ":" + (ve2.getStart() + 1));
 
 				VcfEntry ve1 = find(vcf1, ve2);
 				concordance(ve1, ve2);
