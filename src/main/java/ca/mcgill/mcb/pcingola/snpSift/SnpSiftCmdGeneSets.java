@@ -134,11 +134,11 @@ public class SnpSiftCmdGeneSets extends SnpSift {
 			if (vcf.isHeadeSection()) {
 				addHeader(vcf);
 				String headerStr = vcf.getVcfHeader().toString();
-				if (!headerStr.isEmpty()) System.out.println(headerStr);
+				if (!headerStr.isEmpty()) print(headerStr);
 			}
 
 			annotate(vcfEntry);
-			System.out.println(vcfEntry);
+			print(vcfEntry);
 
 			if (createList) results.add(vcfEntry);
 		}

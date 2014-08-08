@@ -25,11 +25,13 @@ public class TestCasesGeneSets extends TestCase {
 		// Run command
 		SnpSiftCmdGeneSets snpSiftCmdEpistasis = new SnpSiftCmdGeneSets(args);
 		snpSiftCmdEpistasis.setVerbose(verbose);
+		snpSiftCmdEpistasis.setSuppressOutput(!verbose);
+		snpSiftCmdEpistasis.setDebug(debug);
 		List<VcfEntry> results = snpSiftCmdEpistasis.run(true);
 
 		// Check
 		for (VcfEntry ve : results) {
-			System.out.println(ve.toStr() + "\t" + ve.getInfo("MSigDb"));
+			if (verbose) System.out.println(ve.toStr() + "\t" + ve.getInfo("MSigDb"));
 			Assert.assertEquals(ve.getInfo("MSigDb"), "chr1p36");
 		}
 	}

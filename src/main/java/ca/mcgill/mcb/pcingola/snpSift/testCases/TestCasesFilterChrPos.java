@@ -55,6 +55,7 @@ public class TestCasesFilterChrPos extends TestCase {
 		SnpSiftCmdFilterChrPos snpSiftCmd = new SnpSiftCmdFilterChrPos(args);
 		snpSiftCmd.setDebug(debug);
 		snpSiftCmd.setVerbose(verbose);
+		snpSiftCmd.setSuppressOutput(!verbose);
 		List<VcfEntry> results = snpSiftCmd.run(true);
 
 		// Check
