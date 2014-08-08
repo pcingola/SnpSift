@@ -108,7 +108,7 @@ public class SnpSiftCmdIntervals extends SnpSift {
 			if (showHeader) {
 				addHeader(vcfFile);
 				String headerStr = vcfFile.getVcfHeader().toString();
-				if (!headerStr.isEmpty()) System.out.println(headerStr);
+				if (!headerStr.isEmpty()) print(headerStr);
 				showHeader = false;
 			}
 
@@ -120,11 +120,11 @@ public class SnpSiftCmdIntervals extends SnpSift {
 				// It does not intercept any interval. Show if we are interested in excluding intervals
 				if (exclude) {
 					results.add(vcfEntry);
-					System.out.println(vcfEntry);
+					print(vcfEntry);
 				}
 			} else if (!exclude) {
 				results.add(vcfEntry);
-				System.out.println(vcfEntry);
+				print(vcfEntry);
 			}
 		}
 

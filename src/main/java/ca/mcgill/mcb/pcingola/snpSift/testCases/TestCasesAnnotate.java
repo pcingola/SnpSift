@@ -217,7 +217,7 @@ public class TestCasesAnnotate extends TestCase {
 
 		// Make sure output header for "GMAF" is present ONLY ONCE.
 		// Also make sure implicit headers are not (e.g. AC)
-		System.out.println(out);
+		if (verbose) System.out.println(out);
 		int hasGmaf = 0;
 		int hasAc = 0;
 		for (String line : out.split("\n")) {
@@ -260,7 +260,7 @@ public class TestCasesAnnotate extends TestCase {
 
 		// Make sure output header for "AA" is present ONLY ONCE.
 		// Also make sure implicit headers are not (e.g. AC)
-		System.out.println(out);
+		if (verbose) System.out.println(out);
 		int hasAa = 0;
 		for (String line : out.split("\n"))
 			if (line.startsWith("##INFO=<ID=AA")) hasAa++;
@@ -277,7 +277,7 @@ public class TestCasesAnnotate extends TestCase {
 
 		// Check results
 		VcfEntry ve = results.get(0);
-		System.out.println(ve);
+		if (verbose) System.out.println(ve);
 		String allNum = ve.getInfo("ALL_NUM");
 		Assert.assertEquals("2", allNum);
 	}
@@ -291,7 +291,7 @@ public class TestCasesAnnotate extends TestCase {
 
 		// Check results
 		VcfEntry ve = results.get(0);
-		System.out.println(ve);
+		if (verbose) System.out.println(ve);
 		String allNum = ve.getInfo("ALL_NUM");
 		Assert.assertEquals("value_C", allNum);
 	}
@@ -330,7 +330,7 @@ public class TestCasesAnnotate extends TestCase {
 			String type = ve.getInfo("TYPE");
 			String ann = ve.getInfo("ANN");
 
-			System.out.println(ve.toStr() + "\t" + type + "\t" + ann);
+			if (verbose) System.out.println(ve.toStr() + "\t" + type + "\t" + ann);
 			Assert.assertEquals(types.get(type), ann);
 		}
 	}
