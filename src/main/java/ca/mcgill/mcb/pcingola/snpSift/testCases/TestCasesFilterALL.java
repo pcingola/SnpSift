@@ -10,13 +10,15 @@ import ca.mcgill.mcb.pcingola.vcf.VcfEntry;
 
 /**
  * Filter test cases for 'ALL' index
- * 
+ *
  * @author pcingola
  */
 public class TestCasesFilterALL extends TestCase {
 
+	public static boolean verbose = false;
+
 	/**
-	 * Filter by EFF[ALL].CODING 
+	 * Filter by EFF[ALL].EFFECT
 	 */
 	public void test_34() {
 		// Filter data
@@ -27,7 +29,7 @@ public class TestCasesFilterALL extends TestCase {
 		// Check that it satisfies the condition
 		System.out.println("Expression: '" + expression + "'");
 		for (VcfEntry vcfEntry : list) {
-			System.out.println("\t" + vcfEntry);
+			if (verbose) System.out.println("\t" + vcfEntry);
 
 			boolean all = true;
 			String effStr = vcfEntry.getInfo("EFF");
