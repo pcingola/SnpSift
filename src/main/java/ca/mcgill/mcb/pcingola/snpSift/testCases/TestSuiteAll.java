@@ -3,6 +3,8 @@ package ca.mcgill.mcb.pcingola.snpSift.testCases;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
+import org.junit.runner.JUnitCore;
+
 /**
  * Invoke all test cases
  *
@@ -11,7 +13,8 @@ import junit.framework.TestSuite;
 public class TestSuiteAll {
 
 	public static void main(String args[]) {
-		junit.textui.TestRunner.run(suite());
+		// junit.textui.TestRunner.run(suite());
+		JUnitCore.main("ca.mcgill.mcb.pcingola.snpSift.testCases.TestSuiteAll");
 	}
 
 	public static Test suite() {

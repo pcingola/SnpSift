@@ -32,6 +32,7 @@ public class TestCasesDbNsfp extends TestCase {
 		SnpSiftCmdDbNsfp cmd = new SnpSiftCmdDbNsfp(args);
 		cmd.setDbFileName(dbFileName);
 		cmd.setVerbose(verbose);
+		cmd.setSuppressOutput(!verbose);
 		cmd.setDebug(debug);
 		cmd.setTabixCheck(false);
 
@@ -51,6 +52,7 @@ public class TestCasesDbNsfp extends TestCase {
 		SnpSiftCmdDbNsfp cmd = new SnpSiftCmdDbNsfp(args);
 		cmd.setDbFileName(dbFileName);
 		cmd.setVerbose(verbose);
+		cmd.setSuppressOutput(!verbose);
 		cmd.setDebug(debug);
 		cmd.setTabixCheck(false);
 

@@ -16,7 +16,7 @@ import ca.mcgill.mcb.pcingola.vcf.VcfEntry;
 public class TestCasesFilterChrPos extends TestCase {
 
 	public static boolean debug = false;
-	public static boolean verbose = true || debug;
+	public static boolean verbose = false || debug;
 
 	protected String[] defaultExtraArgs = null;
 

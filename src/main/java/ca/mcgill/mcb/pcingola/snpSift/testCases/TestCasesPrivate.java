@@ -8,12 +8,13 @@ import ca.mcgill.mcb.pcingola.vcf.VcfEntry;
 
 /**
  * SnpSift 'private' test cases
- * 
+ *
  * @author pcingola
  */
 public class TestCasesPrivate extends TestCase {
 
 	public static boolean debug = false;
+	public static boolean verbose = false;
 
 	void checkPrivate(String vcfFile, String tfamFile, boolean isPrivate) {
 		String args[] = { tfamFile, vcfFile };
@@ -21,7 +22,7 @@ public class TestCasesPrivate extends TestCase {
 
 		List<VcfEntry> vcfEntries = cmd.run(true);
 		for (VcfEntry ve : vcfEntries) {
-			System.out.println(ve);
+			if (verbose) System.out.println(ve);
 
 			if (!isPrivate && (ve.getInfo(VcfEntry.VCF_INFO_PRIVATE) != null)) throw new RuntimeException("This should not be a 'private' variant!");
 			if (isPrivate && (ve.getInfo(VcfEntry.VCF_INFO_PRIVATE) == null)) throw new RuntimeException("This should be a 'private' variant!");

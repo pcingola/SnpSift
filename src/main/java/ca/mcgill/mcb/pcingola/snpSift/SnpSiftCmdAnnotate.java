@@ -284,10 +284,6 @@ public class SnpSiftCmdAnnotate extends SnpSift {
 		return annotate(createList);
 	}
 
-	public void setSuppressOutput(boolean suppressOutput) {
-		this.suppressOutput = suppressOutput;
-	}
-
 	/**
 	 * Show usage message
 	 * @param msg

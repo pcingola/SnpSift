@@ -111,7 +111,7 @@ public class SnpSiftCmdDbNsfp extends SnpSift {
 					// Add VCF header
 					addHeader(vcfFile);
 					String headerStr = vcfFile.getVcfHeader().toString();
-					if (!headerStr.isEmpty()) System.out.println(headerStr);
+					if (!headerStr.isEmpty()) print(headerStr);
 					showHeader = false;
 
 					// Check that the fields we want to add are actually in the database
@@ -130,7 +130,7 @@ public class SnpSiftCmdDbNsfp extends SnpSift {
 				annotate(vcfEntry);
 
 				// Show
-				System.out.println(vcfEntry);
+				print(vcfEntry);
 				if (list != null) list.add(vcfEntry);
 				count++;
 

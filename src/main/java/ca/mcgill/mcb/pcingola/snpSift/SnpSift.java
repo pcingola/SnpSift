@@ -372,6 +372,10 @@ public class SnpSift {
 		this.saveOutput = saveOutput;
 	}
 
+	public void setSuppressOutput(boolean suppressOutput) {
+		this.suppressOutput = suppressOutput;
+	}
+
 	public void setVerbose(boolean verbose) {
 		this.verbose = verbose;
 	}

@@ -11,7 +11,7 @@ import ca.mcgill.mcb.pcingola.vcf.VcfEntry;
 
 /**
  * Case control test cases
- * 
+ *
  * @author pcingola
  */
 public class TestCasesCaseControl extends TestCase {
@@ -25,7 +25,7 @@ public class TestCasesCaseControl extends TestCase {
 
 		List<VcfEntry> vcfEntries = cmd.run(true);
 		for (VcfEntry ve : vcfEntries) {
-			System.out.println(ve);
+			if (verbose) System.out.println(ve);
 			Assert.assertEquals(casesStr, ve.getInfo(SnpSiftCmdCaseControl.VCF_INFO_CASE));
 			Assert.assertEquals(controlStr, ve.getInfo(SnpSiftCmdCaseControl.VCF_INFO_CONTROL));
 		}
@@ -37,7 +37,7 @@ public class TestCasesCaseControl extends TestCase {
 
 		List<VcfEntry> vcfEntries = cmd.run(true);
 		for (VcfEntry ve : vcfEntries) {
-			System.out.println(ve);
+			if (verbose) System.out.println(ve);
 			Assert.assertEquals(casesStr, ve.getInfo(SnpSiftCmdCaseControl.VCF_INFO_CASE));
 			Assert.assertEquals(controlStr, ve.getInfo(SnpSiftCmdCaseControl.VCF_INFO_CONTROL));
 		}
@@ -168,12 +168,12 @@ public class TestCasesCaseControl extends TestCase {
 
 	/**
 	 * Compare to results from PLINK using Fisher exact test
-	 * 
-	 * Note: I use the rule of the thumb that Fisher exact 
+	 *
+	 * Note: I use the rule of the thumb that Fisher exact
 	 * 		 test should be below 2 times Chi^2 estimation.
-	 * 		 This rule seems to work, at least for p-values in 
+	 * 		 This rule seems to work, at least for p-values in
 	 *       this example, which are between 10^-15 and 0.9
-	 * 
+	 *
 	 */
 	public void test_10() {
 		String vcfFile = "test/caseContorlStudies.vcf";

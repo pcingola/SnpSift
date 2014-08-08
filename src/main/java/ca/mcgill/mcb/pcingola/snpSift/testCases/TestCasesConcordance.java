@@ -21,6 +21,7 @@ public class TestCasesConcordance extends TestCase {
 
 		SnpSiftCmdConcordance ssconc = new SnpSiftCmdConcordance(args);
 		ssconc.setVerbose(verbose);
+		ssconc.setSuppressOutput(!verbose);
 		ssconc.setDebug(debug);
 		ssconc.setWriteBySampleFile(false);
 		ssconc.setWriteSummaryFile(false);
@@ -40,7 +41,7 @@ public class TestCasesConcordance extends TestCase {
 		CountByType concordance = ssconc.getConcordance();
 
 		for (String key : count.keysSorted()) {
-			System.out.println("Checking\t'" + key + "'\tExpected: " + count.get(key) + "\tActual: " + concordance.get(key));
+			if (verbose) System.out.println("Checking\t'" + key + "'\tExpected: " + count.get(key) + "\tActual: " + concordance.get(key));
 			Assert.assertEquals(count.get(key), concordance.get(key));
 		}
 	}
@@ -52,7 +53,7 @@ public class TestCasesConcordance extends TestCase {
 		SnpSiftCmdConcordance ssconc = checkConcordance(refVcfFile, vcfFile);
 		CountByType concordance = ssconc.getConcordance();
 
-		System.out.println("Checking\t'" + key + "'\tExpected: " + value + "\tActual: " + concordance.get(key));
+		if (verbose) System.out.println("Checking\t'" + key + "'\tExpected: " + value + "\tActual: " + concordance.get(key));
 		Assert.assertEquals(value, concordance.get(key));
 	}
 
@@ -146,7 +147,6 @@ public class TestCasesConcordance extends TestCase {
 		count.inc("ERROR", 1);
 
 		checkConcordance("test/concordance_ref_12.vcf", "test/concordance_test_12.vcf", count);
-
 	}
 
 }

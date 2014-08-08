@@ -144,7 +144,7 @@ public class SnpSiftCmdConcordance extends SnpSift {
 		}
 
 		// Show counts for this match
-		System.out.print(showCounts(count, (ve1 != null ? ve1 : ve2), null, err));
+		print(showCounts(count, (ve1 != null ? ve1 : ve2), null, err));
 	}
 
 	/**
@@ -458,7 +458,7 @@ public class SnpSiftCmdConcordance extends SnpSift {
 			title.append("\t" + label);
 			titleBySample.append("\t" + label);
 		}
-		System.out.println(title);
+		print(title);
 
 		//---
 		// Iterate on larger file
@@ -527,7 +527,7 @@ public class SnpSiftCmdConcordance extends SnpSift {
 	 */
 	void showResults(String titleBySample) {
 		// Show totals
-		System.out.print(showCounts(concordance, null, null, ""));
+		print(showCounts(concordance, null, null, ""));
 
 		// Write 'by sample' file
 		if (writeBySampleFile) {

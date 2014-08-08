@@ -218,10 +218,6 @@ public class SnpSiftCmdFilter extends SnpSift {
 
 	/**
 	 * Filter a file
-	 * @param fileName
-	 * @param expression
-	 * @param createList
-	 * @return
 	 */
 	public List<VcfEntry> filter(String fileName, String expression, boolean createList) {
 		vcfInputFile = fileName;

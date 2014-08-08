@@ -13,7 +13,7 @@ import ca.mcgill.mcb.pcingola.vcf.VcfLof;
 
 /**
  * Filter test cases
- * 
+ *
  * @author pcingola
  */
 public class TestCasesFilter extends TestCase {
@@ -708,7 +708,7 @@ public class TestCasesFilter extends TestCase {
 	}
 
 	/**
-	 * Filter by EFF[*].CODING 
+	 * Filter by EFF[*].CODING
 	 */
 	public void test_32() {
 		// Filter data
@@ -733,7 +733,7 @@ public class TestCasesFilter extends TestCase {
 	}
 
 	/**
-	 * Filter by EFF[*].CODING 
+	 * Filter by EFF[*].CODING
 	 */
 	public void test_33() {
 		// Filter data
@@ -758,7 +758,7 @@ public class TestCasesFilter extends TestCase {
 	}
 
 	/**
-	 * Filter by EFF[ALL].CODING 
+	 * Filter by EFF[ALL].EFFECT
 	 */
 	public void test_34() {
 		// Filter data
@@ -782,7 +782,7 @@ public class TestCasesFilter extends TestCase {
 	}
 
 	/**
-	 * Filter by EFF[*].GENE 
+	 * Filter by EFF[*].GENE
 	 */
 	public void test_35() {
 		// Filter data
@@ -855,7 +855,6 @@ public class TestCasesFilter extends TestCase {
 	 */
 	public void test_38() {
 		double minQ = 50;
-		verbose = true;
 
 		// Filter data
 		String expression = "QUAL >= " + minQ;
@@ -878,7 +877,6 @@ public class TestCasesFilter extends TestCase {
 	 * Remove FILTER strings
 	 */
 	public void test_39() {
-		verbose = true;
 
 		// Filter data
 		String expression = "REF = 'A'";
@@ -901,12 +899,11 @@ public class TestCasesFilter extends TestCase {
 	 * Inverse FILTER strings
 	 */
 	public void test_40() {
-		verbose = true;
 
 		// Filter data
 		String expression = "( EFF[*].EFFECT = 'SPLICE_SITE_ACCEPTOR' )";
 		String vcfFile = "test/test_jim.vcf";
-		String args[] = { "-f", vcfFile, "-n", expression }; // FILTER iNverse 
+		String args[] = { "-f", vcfFile, "-n", expression }; // FILTER iNverse
 		SnpSiftCmdFilter snpsiftFilter = new SnpSiftCmdFilter(args);
 		List<VcfEntry> list = snpsiftFilter.filter(vcfFile, expression, true);
 
@@ -926,12 +923,11 @@ public class TestCasesFilter extends TestCase {
 	 * Bug reported by Jim Johnson
 	 */
 	public void test_41() {
-		verbose = true;
 
 		// Filter data
 		String expression = "( DP < 5 )";
 		String vcfFile = "test/test_rmfilter.vcf";
-		String args[] = { "-f", vcfFile, "--rmFilter", "DP_OK", expression }; // Remove 'PASS' if there is not enough depth  
+		String args[] = { "-f", vcfFile, "--rmFilter", "DP_OK", expression }; // Remove 'PASS' if there is not enough depth
 		SnpSiftCmdFilter snpsiftFilter = new SnpSiftCmdFilter(args);
 		List<VcfEntry> list = snpsiftFilter.filter(vcfFile, expression, true);
 
@@ -1008,7 +1004,7 @@ public class TestCasesFilter extends TestCase {
 
 		int count = 0;
 		for (VcfEntry ve : list) {
-			System.out.println(ve);
+			if (verbose) System.out.println(ve);
 
 			for (VcfLof lof : ve.parseLof()) {
 				System.out.println("\t" + lof);

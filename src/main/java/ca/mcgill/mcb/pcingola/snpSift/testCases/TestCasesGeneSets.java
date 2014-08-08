@@ -9,13 +9,13 @@ import ca.mcgill.mcb.pcingola.vcf.VcfEntry;
 
 /**
  * SnpSift 'gt' test cases
- * 
+ *
  * @author pcingola
  */
 public class TestCasesGeneSets extends TestCase {
 
 	public static boolean debug = false;
-	public static boolean verbose = true;
+	public static boolean verbose = false;
 
 	public void test_01() {
 		String msigDb = "test/c1.all.v4.0.symbols.gmt.gz";
