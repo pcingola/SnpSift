@@ -61,7 +61,7 @@ public class SnpSiftCmdVarType extends SnpSift {
 		StringBuilder sb = new StringBuilder();
 		for (Variant sq : vcfEntry.variants()) {
 			if (sb.length() > 0) sb.append(",");
-			sb.append(sq.getChangeType());
+			sb.append(sq.getVariantType());
 		}
 
 		if (sb.length() > 0) vcfEntry.addInfo(VARTYPE, sb.toString());
