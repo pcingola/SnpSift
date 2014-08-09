@@ -51,7 +51,7 @@ public class SnpSiftCmdVarType extends SnpSift {
 	 */
 	public void annotate(VcfEntry vcfEntry) {
 		// Entry type?
-		if (vcfEntry.getChangeType() != null) vcfEntry.addInfo(vcfEntry.getChangeType().toString());
+		if (vcfEntry.getVariantType() != null) vcfEntry.addInfo(vcfEntry.getVariantType().toString());
 
 		// Heterozygous?
 		Boolean isHet = vcfEntry.calcHetero();
