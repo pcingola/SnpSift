@@ -48,7 +48,7 @@ public class Effect extends Pojo<Effect> {
 
 	public Effect(VcfEffect veff) {
 		id = null;
-		effect = veff.getEffect() != null ? veff.getEffect().toString() : null;
+		effect = veff.getEffectType() != null ? veff.getEffectType().toString() : null;
 		impact = veff.getImpact() != null ? veff.getImpact().toString() : null;
 		funClass = veff.getFunClass() != null ? veff.getFunClass().toString() : null;
 		codon = veff.getCodon();
