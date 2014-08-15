@@ -35,9 +35,9 @@ public class AnnotateVcfDbTabix extends AnnotateVcfDb {
 
 		// Make sure we actually advance at least one entry
 		do {
-			if (debug) Gpr.debug("After seek: " + latestVcfDb.getChromosomeName() + ":" + latestVcfDb.getStart());
 			latestVcfDb = vcfDbFile.next();
-		} while (latestVcfDb != null && latestVcfDb.getChromosome().equals(chr) && latestVcfDb.getStart() <= pos);
+			if (debug) Gpr.debug("After seek: " + latestVcfDb.getChromosomeName() + ":" + latestVcfDb.getStart() + "\t" + chr + ":" + pos);
+		} while (latestVcfDb != null && latestVcfDb.getChromosomeName().equals(chr) && latestVcfDb.getStart() <= pos);
 	}
 
 	/**
