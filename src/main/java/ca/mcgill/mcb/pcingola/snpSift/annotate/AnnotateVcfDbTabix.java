@@ -74,11 +74,7 @@ public class AnnotateVcfDbTabix extends AnnotateVcfDb {
 						return;
 					}
 
-					// VCfEntry is in another chromosome? seek to 'new' chromosome
-					if (debug) Gpr.debug("New chromosome '" + dbCurrentEntry.getLatestChromo() + "' != '" + vcfEntry.getChromosomeName() + "': We should seek");
-					vcfDbFile.seek(vcfEntry.getChromosomeName(), vcfEntry.getStart());
-					latestVcfDb = vcfDbFile.next();
-					if (debug) Gpr.debug("After seek: " + latestVcfDb.getChromosomeName() + ":" + latestVcfDb.getStart());
+					dbSeek(vcfEntry); // VCfEntry is in another chromosome? seek to 'new' chromosome
 
 					// Still null? well it looks like we don't have any dbEntry for this chromosome
 					if (latestVcfDb == null) {
