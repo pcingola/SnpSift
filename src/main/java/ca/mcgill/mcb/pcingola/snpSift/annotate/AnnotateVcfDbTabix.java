@@ -21,6 +21,24 @@ public class AnnotateVcfDbTabix extends AnnotateVcfDb {
 	}
 
 	/**
+	 * Seek to a new position. Make sure we advance at least one entry
+	 */
+	void dbSeek(VcfEntry vcfEntry) {
+		String currentEntry = latestVcfDb != null ? latestVcfDb.toStr() : "";
+		if (debug) Gpr.debug("Position seek:\t" + latestVcfDb.getChromosomeName() + ":" + latestVcfDb.getStart() + "\t->\t" + vcfEntry.getChromosomeName() + ":" + vcfEntry.getStart());
+
+		// Seek
+		vcfDbFile.seek(vcfEntry.getChromosomeName(), vcfEntry.getStart());
+
+		// Make sure we actually advance at least one entry
+		do {
+			latestVcfDb = vcfDbFile.next();
+		} while (latestVcfDb != null && latestVcfDb.toStr().equals(currentEntry));
+
+		if (debug) Gpr.debug("After seek: " + latestVcfDb.getChromosomeName() + ":" + latestVcfDb.getStart());
+	}
+
+	/**
 	 * Open database annotation file
 	 */
 	@Override
@@ -88,11 +106,8 @@ public class AnnotateVcfDbTabix extends AnnotateVcfDb {
 					return;
 				} else if ((vcfEntry.getStart() - latestVcfDb.getStart()) > MIN_SEEK) {
 					// Is it far enough? Don't iterate, seek
-					if (debug) Gpr.debug("Position seek:\t" + latestVcfDb.getChromosomeName() + ":" + latestVcfDb.getStart() + "\t->\t" + vcfEntry.getChromosomeName() + ":" + vcfEntry.getStart());
 					dbCurrentEntry.clear();
-					vcfDbFile.seek(vcfEntry.getChromosomeName(), vcfEntry.getStart());
-					latestVcfDb = vcfDbFile.next();
-					if (debug) Gpr.debug("After seek: " + latestVcfDb.getChromosomeName() + ":" + latestVcfDb.getStart());
+					dbSeek(vcfEntry);
 				} else {
 					// Just read next entry to get closer
 					latestVcfDb = vcfDbFile.next();
