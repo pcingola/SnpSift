@@ -92,6 +92,7 @@ public class AnnotateVcfDbTabix extends AnnotateVcfDb {
 					dbCurrentEntry.clear();
 					vcfDbFile.seek(vcfEntry.getChromosomeName(), vcfEntry.getStart());
 					latestVcfDb = vcfDbFile.next();
+					if (debug) Gpr.debug("After seek: " + latestVcfDb.getChromosomeName() + ":" + latestVcfDb.getStart());
 				} else {
 					// Just read next entry to get closer
 					latestVcfDb = vcfDbFile.next();
