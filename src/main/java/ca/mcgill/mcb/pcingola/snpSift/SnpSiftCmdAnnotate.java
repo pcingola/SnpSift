@@ -286,7 +286,6 @@ public class SnpSiftCmdAnnotate extends SnpSift {
 
 	/**
 	 * Show usage message
-	 * @param msg
 	 */
 	@Override
 	public void usage(String msg) {

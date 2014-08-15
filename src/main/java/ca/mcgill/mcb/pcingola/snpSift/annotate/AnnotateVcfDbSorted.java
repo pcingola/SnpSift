@@ -74,18 +74,18 @@ public class AnnotateVcfDbSorted extends AnnotateVcfDb {
 
 				if (ve.getStart() == latestVcfDb.getStart()) dbCurrentEntry.addDbCurrent(latestVcfDb);
 			} else {
-				// VCFentry and latestDb entry are in different chromosomes
+				// VCFentry and latestDb entry are in different chromosome
 				if (dbCurrentEntry.checkChromo(ve)) {
 					// Same chromosome.
 					// This means that we finished reading all database entries from the previous chromosome.
-					// There is nothing else to do until ve reaches a new chromosome
+					// There is nothing else to do until it reaches a new chromosome
 					return;
 				} else {
 					// This means that we should jump to a database position matching VcfEntry's chromosome
 					dbCurrentEntry.clear();
 
 					long filePos = indexDb.getStart(chr);
-					if (filePos < 0) return;
+					if (filePos < 0) return; // The database file does not have this chromosome
 					try {
 						vcfDbFile.seek(filePos);
 					} catch (IOException e) {

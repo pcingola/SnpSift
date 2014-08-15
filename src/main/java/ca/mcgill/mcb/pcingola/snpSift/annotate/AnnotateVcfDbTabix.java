@@ -14,7 +14,7 @@ import ca.mcgill.mcb.pcingola.vcf.VcfEntry;
  */
 public class AnnotateVcfDbTabix extends AnnotateVcfDb {
 
-	public static final int MIN_JUMP = 100;
+	public static final int MIN_SEEK = 100;
 
 	public AnnotateVcfDbTabix(String dbFileName) {
 		super(dbFileName);
@@ -56,14 +56,15 @@ public class AnnotateVcfDbTabix extends AnnotateVcfDb {
 						return;
 					}
 
-					// VCfEntry is in another chromosome? Jump to 'new' chromosome
-					if (debug) Gpr.debug("New chromosome '" + dbCurrentEntry.getLatestChromo() + "' != '" + vcfEntry.getChromosomeName() + "': We should jump");
+					// VCfEntry is in another chromosome? seek to 'new' chromosome
+					if (debug) Gpr.debug("New chromosome '" + dbCurrentEntry.getLatestChromo() + "' != '" + vcfEntry.getChromosomeName() + "': We should seek");
 					vcfDbFile.seek(vcfEntry.getChromosomeName(), vcfEntry.getStart());
 					latestVcfDb = vcfDbFile.next();
+					if (debug) Gpr.debug("After seek: " + latestVcfDb.getChromosomeName() + ":" + latestVcfDb.getStart());
 
 					// Still null? well it looks like we don't have any dbEntry for this chromosome
 					if (latestVcfDb == null) {
-						dbCurrentEntry.updateChromo(vcfEntry); // Make sure we don't try jumping again
+						dbCurrentEntry.updateChromo(vcfEntry); // Make sure we don't try seeking again
 						return;
 					}
 				}
@@ -85,9 +86,9 @@ public class AnnotateVcfDbTabix extends AnnotateVcfDb {
 					// Same chromosome, but positioned after => No db entry found
 					if (debug) Gpr.debug("No db entry found:\t" + vcfEntry.getChromosomeName() + ":" + vcfEntry.getStart());
 					return;
-				} else if ((vcfEntry.getStart() - latestVcfDb.getStart()) > MIN_JUMP) {
-					// Is it far enough? Don't iterate, jump
-					if (debug) Gpr.debug("Position jump:\t" + latestVcfDb.getChromosomeName() + ":" + latestVcfDb.getStart() + "\t->\t" + vcfEntry.getChromosomeName() + ":" + vcfEntry.getStart());
+				} else if ((vcfEntry.getStart() - latestVcfDb.getStart()) > MIN_SEEK) {
+					// Is it far enough? Don't iterate, seek
+					if (debug) Gpr.debug("Position seek:\t" + latestVcfDb.getChromosomeName() + ":" + latestVcfDb.getStart() + "\t->\t" + vcfEntry.getChromosomeName() + ":" + vcfEntry.getStart());
 					dbCurrentEntry.clear();
 					vcfDbFile.seek(vcfEntry.getChromosomeName(), vcfEntry.getStart());
 					latestVcfDb = vcfDbFile.next();
@@ -97,10 +98,10 @@ public class AnnotateVcfDbTabix extends AnnotateVcfDb {
 					dbCurrentEntry.clear();
 				}
 			} else if (!latestVcfDb.getChromosomeName().equals(vcfEntry.getChromosomeName())) {
-				// Different chromosome? => Jump to chromosome
-				if (debug) Gpr.debug("Chromosome jump:\t" + latestVcfDb.getChromosomeName() + ":" + latestVcfDb.getStart() + "\t->\t" + vcfEntry.getChromosomeName() + ":" + vcfEntry.getStart());
+				// Different chromosome? => seek to chromosome
+				if (debug) Gpr.debug("Chromosome seek:\t" + latestVcfDb.getChromosomeName() + ":" + latestVcfDb.getStart() + "\t->\t" + vcfEntry.getChromosomeName() + ":" + vcfEntry.getStart());
 
-				// Jump to new position. If chromosome not found, return null
+				// seek to new position. If chromosome not found, return null
 				if (!vcfDbFile.seek(vcfEntry.getChromosomeName(), vcfEntry.getStart())) return;
 
 				dbCurrentEntry.clear();
