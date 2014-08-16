@@ -1,3 +1,0 @@
-##INFO=<ID=UK10KWES_AC,Number=A,Type=Integer,Description="Allele count in genotypes in UK10KWES">
-#CHROM	POS	ID	REF	ALT	QUAL	FILTER	INFO
-3	148890105	.	TCA	T,TCACACA	.	.	UK10KWES_AC=44,49
