@@ -61,7 +61,6 @@ public class SnpSift {
 
 	/**
 	 * Main
-	 * @param args
 	 */
 	public static void main(String[] args) {
 		Stat.igSupress(); // Otherwise we can get error messages printed to STDOUT
@@ -80,7 +79,6 @@ public class SnpSift {
 
 	/**
 	 * Headers to add
-	 * @return
 	 */
 	protected List<String> addHeader() {
 		ArrayList<String> newHeaders = new ArrayList<String>();
@@ -91,7 +89,6 @@ public class SnpSift {
 
 	/**
 	 * Add some lines to header before showing it
-	 * @param vcfFile
 	 */
 	protected void addHeader(VcfFileIterator vcfFile) {
 		for (String h : addHeader())
@@ -100,7 +97,6 @@ public class SnpSift {
 
 	/**
 	 * Show command line
-	 * @return
 	 */
 	protected String commandLineStr() {
 		StringBuilder argsList = new StringBuilder();
@@ -156,7 +152,7 @@ public class SnpSift {
 			dbFileName = config.getDatabaseLocal(dbType);
 
 			// Still empty: Something is wrong!
-			if (dbFileName == null || dbFileName.isEmpty()) fatalError("Database file name is empty ('dbFileName'): Missing entry in config file?");
+			if (dbFileName == null || dbFileName.isEmpty()) fatalError("Database file name is empty. Missing '" + Config.KEY_DATABASE_LOCAL + "." + dbType + "' entry in SnpEff's config file?");
 
 			if (!Gpr.exists(dbFileName)) {
 				Timer.showStdErr("Database file '" + dbFileName + "' not found.");
@@ -177,7 +173,6 @@ public class SnpSift {
 
 	/**
 	 * Show an error message and exit
-	 * @param message
 	 */
 	public void fatalError(String message) {
 		System.err.println("Fatal error: " + message);
@@ -401,9 +396,6 @@ public class SnpSift {
 	 * Convert a sanitized expression (from Galaxy) back to the original string
 	 *
 	 * References: http://www.mail-archive.com/galaxy-dev@lists.bx.psu.edu/msg00530.html
-	 *
-	 * @param str
-	 * @return
 	 */
 	public String unSanitize(String str) {
 		str = str.replaceAll("__lt__", "<");
@@ -489,7 +481,6 @@ public class SnpSift {
 
 	/**
 	 * Show a warning message (up to MAX_ERRORS times)
-	 * @param warn
 	 */
 	protected void warn(String warn) {
 		if (!errCount.containsKey(warn)) errCount.put(warn, 0);

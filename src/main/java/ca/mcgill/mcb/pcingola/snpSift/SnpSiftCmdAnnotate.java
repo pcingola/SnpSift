@@ -240,7 +240,7 @@ public class SnpSiftCmdAnnotate extends SnpSift {
 				else if (arg.equalsIgnoreCase("-tabix")) method = AnnotationMethod.TABIX;
 				else usage("Unknown command line option '" + arg + "'");
 			} else {
-				if (dbFileName == null) dbFileName = arg;
+				if (dbType == null && dbFileName == null) dbFileName = arg;
 				else if (vcfInputFile == null) vcfInputFile = arg;
 				else usage("Unknown extra parameter '" + arg + "'");
 			}
