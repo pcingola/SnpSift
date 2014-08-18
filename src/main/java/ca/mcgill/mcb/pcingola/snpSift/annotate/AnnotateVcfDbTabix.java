@@ -26,9 +26,14 @@ public class AnnotateVcfDbTabix extends AnnotateVcfDb {
 	void dbSeek(VcfEntry vcfEntry) {
 
 		// Current coordinates
-		String chr = latestVcfDb.getChromosomeName();
-		int pos = latestVcfDb.getStart();
-		if (debug) Gpr.debug("Position seek:\t" + chr + ":" + pos + "\t->\t" + vcfEntry.getChromosomeName() + ":" + vcfEntry.getStart());
+		String chr = "";
+		int pos = -1;
+
+		if (latestVcfDb != null) {
+			pos = latestVcfDb.getStart();
+			chr = latestVcfDb.getChromosomeName();
+			if (debug) Gpr.debug("Position seek:\t" + chr + ":" + pos + "\t->\t" + vcfEntry.getChromosomeName() + ":" + vcfEntry.getStart());
+		}
 
 		// Seek
 		vcfDbFile.seek(vcfEntry.getChromosomeName(), vcfEntry.getStart());
@@ -37,6 +42,7 @@ public class AnnotateVcfDbTabix extends AnnotateVcfDb {
 		do {
 			latestVcfDb = vcfDbFile.next();
 			if (debug) Gpr.debug("After seek: " + latestVcfDb.getChromosomeName() + ":" + latestVcfDb.getStart() + "\t" + chr + ":" + pos);
+			if (latestVcfDb == null) break;
 		} while (latestVcfDb != null && latestVcfDb.getChromosomeName().equals(chr) && latestVcfDb.getStart() <= pos);
 	}
 
