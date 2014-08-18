@@ -47,7 +47,6 @@ public class SnpSiftCmdVarType extends SnpSift {
 
 	/**
 	 * Annotate one entry
-	 * @param vcfEntry
 	 */
 	public void annotate(VcfEntry vcfEntry) {
 		// Entry type?
