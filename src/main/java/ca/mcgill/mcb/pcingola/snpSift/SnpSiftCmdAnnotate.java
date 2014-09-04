@@ -153,7 +153,7 @@ public class SnpSiftCmdAnnotate extends SnpSift {
 		useInfoField = true; // Default: Use INFO fields
 		useId = true; // Annotate ID fields
 		useRefAlt = true; // Use REF and ALT fields when comparing
-		method = AnnotationMethod.SORTED_VCF;
+		method = null; // Guess annotation method
 
 		needsConfig = true;
 		needsDb = true;
@@ -231,10 +231,8 @@ public class SnpSiftCmdAnnotate extends SnpSift {
 				else if (arg.equalsIgnoreCase("-noAlt")) useRefAlt = false;
 				else if (arg.equalsIgnoreCase("-dbSnp")) {
 					dbType = "dbsnp";
-					method = AnnotationMethod.SORTED_VCF;
 				} else if (arg.equalsIgnoreCase("-clinVar")) {
 					dbType = "clinvar";
-					method = AnnotationMethod.TABIX;
 				} else if (arg.equalsIgnoreCase("-mem")) method = AnnotationMethod.MEMORY;
 				else if (arg.equalsIgnoreCase("-sorted")) method = AnnotationMethod.SORTED_VCF;
 				else if (arg.equalsIgnoreCase("-tabix")) method = AnnotationMethod.TABIX;
@@ -269,6 +267,14 @@ public class SnpSiftCmdAnnotate extends SnpSift {
 
 		// Find or download database
 		dbFileName = databaseFindOrDownload();
+
+		// Guess annotation method if none is provided
+		if (method == null) {
+			if (dbFileName.endsWith(".gz")) {
+				if (Gpr.exists(dbFileName + ".tbi")) method = AnnotationMethod.TABIX;
+			} else if (Gpr.exists(dbFileName + ".gz") && Gpr.exists(dbFileName + ".gz.tbi")) method = AnnotationMethod.TABIX;
+			else method = AnnotationMethod.SORTED_VCF;
+		}
 
 		// For tabix databases, if the 'gz' file exists, try opening that one instead
 		if (method == AnnotationMethod.TABIX //
