@@ -104,7 +104,7 @@ public class SnpSift {
 
 		if (args != null) {
 			for (String arg : args)
-				argsList.append(arg + " ");
+				argsList.append(arg.trim() + " ");
 		}
 
 		return argsList.toString();
@@ -225,7 +225,7 @@ public class SnpSift {
 		if (args.length < 1) usage(null);
 
 		// Get command
-		command = args[0].toUpperCase();
+		command = args[0].trim().toUpperCase();
 
 		// Create new array shifting everything 1 position
 		ArrayList<String> argsList = new ArrayList<String>();
@@ -416,7 +416,6 @@ public class SnpSift {
 
 	/**
 	 * Show usage message
-	 * @param msg
 	 */
 	public void usage(String msg) {
 		if (msg != null) {
