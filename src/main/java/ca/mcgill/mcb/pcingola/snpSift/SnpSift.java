@@ -103,11 +103,14 @@ public class SnpSift {
 		argsList.append("SnpSift " + command + " ");
 
 		if (args != null) {
-			for (String arg : args)
-				argsList.append(arg.trim() + " ");
+			for (String arg : args) {
+				arg = arg.replace('\n', ' ').replace('\r', ' ').replace('\t', ' ').trim();
+				if (arg.indexOf(' ') > 0) arg = "'" + arg + "'";
+				argsList.append(arg + " ");
+			}
 		}
 
-		return argsList.toString();
+		return argsList.toString().trim();
 	}
 
 	/**
