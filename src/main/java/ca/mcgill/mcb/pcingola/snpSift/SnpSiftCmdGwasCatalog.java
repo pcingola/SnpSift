@@ -94,11 +94,13 @@ public class SnpSiftCmdGwasCatalog extends SnpSift {
 	 */
 	@Override
 	public void parse(String[] args) {
-		if (args.length < 1) usage(null);
-
 		for (int i = 0; i < args.length; i++) {
 			String arg = args[i];
-			vcfInputFile = arg;
+			if (isOpt(arg) && (arg.equals("-h") || arg.equals("-help"))) usage(null);
+			else {
+				if (vcfInputFile == null) vcfInputFile = arg;
+				else usage("VCF input file already assigned to '" + vcfInputFile + "'");
+			}
 		}
 	}
 
