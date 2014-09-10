@@ -22,7 +22,6 @@ public class SnpSiftCmdGwasCatalog extends SnpSift {
 	public static final int SHOW = 10000;
 	public static final int SHOW_LINES = 100 * SHOW;
 
-	String vcfFile;
 	GwasCatalog gwasCatalog;
 
 	public SnpSiftCmdGwasCatalog(String args[]) {
@@ -39,9 +38,7 @@ public class SnpSiftCmdGwasCatalog extends SnpSift {
 	void annotate() {
 		readDb();
 
-		if (verbose) Timer.showStdErr("Annotating entries from: '" + vcfFile + "'");
-
-		VcfFileIterator vcf = new VcfFileIterator(vcfFile);
+		VcfFileIterator vcf = openVcfInputFile();
 		vcf.setDebug(debug);
 
 		int countAnnotated = 0, count = 0;
@@ -101,10 +98,8 @@ public class SnpSiftCmdGwasCatalog extends SnpSift {
 
 		for (int i = 0; i < args.length; i++) {
 			String arg = args[i];
-			vcfFile = arg;
+			vcfInputFile = arg;
 		}
-
-		if (vcfFile == null) usage("Missing 'file.vcf'");
 	}
 
 	/**
@@ -127,7 +122,7 @@ public class SnpSiftCmdGwasCatalog extends SnpSift {
 		dbFileName = databaseFindOrDownload();
 
 		if (verbose) Timer.showStdErr("Annotating\n" //
-				+ "\tInput file    : '" + vcfFile + "'\n" //
+				+ "\tInput file    : '" + (vcfInputFile != null ? vcfInputFile : "STDIN") + "'\n" //
 				+ "\tDatabase file : '" + dbFileName + "'" //
 				);
 
@@ -146,7 +141,7 @@ public class SnpSiftCmdGwasCatalog extends SnpSift {
 
 		showVersion();
 
-		System.err.println("Usage: java -jar " + SnpSift.class.getSimpleName() + ".jar gwasCat file.vcf > newFile.vcf.");
+		System.err.println("Usage: java -jar " + SnpSift.class.getSimpleName() + ".jar gwasCat [file.vcf] > newFile.vcf.");
 
 		usageGenericAndDb();
 
