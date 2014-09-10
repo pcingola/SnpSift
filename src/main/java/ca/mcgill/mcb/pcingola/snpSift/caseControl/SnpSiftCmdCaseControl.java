@@ -48,7 +48,6 @@ public class SnpSiftCmdCaseControl extends SnpSift {
 
 	/**
 	 * Lines to be added to VCF header
-	 * @return
 	 */
 	@Override
 	protected List<String> addHeader() {
@@ -65,7 +64,6 @@ public class SnpSiftCmdCaseControl extends SnpSift {
 
 	/**
 	 * Annotate VCF entry
-	 * @param vcfEntry
 	 */
 	void annotate(VcfEntry vcfEntry) {
 		int casesHom = 0, casesHet = 0, cases = 0;
@@ -177,9 +175,7 @@ public class SnpSiftCmdCaseControl extends SnpSift {
 		}
 
 		// Sanity check
-		if (vcfFileName == null) usage("Missing paramter 'file.vcf'");
 		if ((groups == null) && (tfamFile == null)) usage("You must provide either a 'group' string or a TFAM file");
-
 		if (name == null) name = "";
 	}
 
@@ -225,9 +221,6 @@ public class SnpSiftCmdCaseControl extends SnpSift {
 
 	/**
 	 * Genotypic model (Chi Square)
-	 * @param nControl
-	 * @param nCase
-	 * @return
 	 */
 	protected double pGenotypic(int nControl[], int nCase[]) {
 		int rows = 2;
@@ -274,9 +267,6 @@ public class SnpSiftCmdCaseControl extends SnpSift {
 
 	/**
 	 * Recessive model: Only A/A causes the disease
-	 * @param nControl
-	 * @param nCase
-	 * @return
 	 */
 	protected double pRecessive(int nControl[], int nCase[], double pvalueTh) {
 		int k = nCase[2]; // Cases a/a
@@ -351,9 +341,6 @@ public class SnpSiftCmdCaseControl extends SnpSift {
 
 	/**
 	 * Trend model
-	 * @param nControl
-	 * @param nCase
-	 * @return
 	 */
 	protected double pTrend(int nControl[], int nCase[]) {
 		// Null hypothesis of no association
@@ -364,9 +351,6 @@ public class SnpSiftCmdCaseControl extends SnpSift {
 
 	/**
 	 * Show p-value as a string and record minimum p-value
-	 * @param vcfEntry
-	 * @param p
-	 * @return
 	 */
 	String pValueStr(VcfEntry vcfEntry, double p) {
 		if (verbose && (p > 0) && (p < 1.0) && (p <= pValueMin)) //
@@ -386,8 +370,6 @@ public class SnpSiftCmdCaseControl extends SnpSift {
 
 	/**
 	 * Load a file compare calls
-	 *
-	 * @param vcfFile
 	 */
 	@Override
 	public void run() {
@@ -402,13 +384,12 @@ public class SnpSiftCmdCaseControl extends SnpSift {
 	public List<VcfEntry> run(boolean createList) {
 		showHeader = !createList;
 		ArrayList<VcfEntry> list = new ArrayList<VcfEntry>();
-		if (verbose) Timer.showStdErr("Annotating number of cases and controls : '" + vcfFileName + "'");
 
 		if (tfamFile != null) parseCaseControlTfam();
 		else parseCaseControlString();
 
 		// Read all vcfEntries
-		VcfFileIterator vcf = new VcfFileIterator(vcfFileName);
+		VcfFileIterator vcf = openVcfInputFile();
 		vcf.setDebug(debug);
 
 		int i = 1;
@@ -431,8 +412,6 @@ public class SnpSiftCmdCaseControl extends SnpSift {
 
 	/**
 	 * Swap counts if REF is minor allele (instead of ALT)
-	 * @param nControl
-	 * @param nCase
 	 */
 	protected void swapMinorAllele(int nControl[], int nCase[]) {
 		int refCount = 2 * nControl[0] + nControl[1] + 2 * nCase[0] + nCase[1];
@@ -452,7 +431,6 @@ public class SnpSiftCmdCaseControl extends SnpSift {
 
 	/**
 	 * Show usage message
-	 * @param msg
 	 */
 	@Override
 	public void usage(String msg) {
