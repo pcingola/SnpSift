@@ -78,7 +78,7 @@ public class SnpSiftCmdGwasCatalog extends SnpSift {
 				+ "\n\tTotal annotated entries : " + countAnnotated //
 				+ "\n\tTotal entries           : " + count //
 				+ "\n\tPercent                 : " + String.format("%.2f%%", perc) //
-		);
+				);
 	}
 
 	/**
@@ -129,14 +129,13 @@ public class SnpSiftCmdGwasCatalog extends SnpSift {
 		if (verbose) Timer.showStdErr("Annotating\n" //
 				+ "\tInput file    : '" + vcfFile + "'\n" //
 				+ "\tDatabase file : '" + dbFileName + "'" //
-		);
+				);
 
 		annotate();
 	}
 
 	/**
 	 * Show usage message
-	 * @param msg
 	 */
 	@Override
 	public void usage(String msg) {
@@ -156,7 +155,6 @@ public class SnpSiftCmdGwasCatalog extends SnpSift {
 
 	/**
 	 * Create an annotation string
-	 * @return
 	 */
 	String vcfAnnotation(List<GwasCatalogEntry> list) {
 		StringBuilder sb = new StringBuilder();

@@ -19,7 +19,7 @@ import ca.mcgill.mcb.pcingola.vcf.VcfGenotype;
 public class SnpSiftCmdPrivate extends SnpSift {
 
 	boolean headerSummary = true;
-	String tfamFile, vcfFile; // File names
+	String tfamFile; // File names
 	String[] sampleNum2group;
 	List<String> sampleIds; // Sample IDs
 	PedPedigree pedigree;
@@ -30,7 +30,6 @@ public class SnpSiftCmdPrivate extends SnpSift {
 
 	/**
 	 * Parse a single VCF entry
-	 * @param ve
 	 */
 	boolean annotate(VcfEntry ve) {
 		String privateGorup = privateGroup(ve);
@@ -59,17 +58,15 @@ public class SnpSiftCmdPrivate extends SnpSift {
 		for (int argc = 0; argc < args.length; argc++) {
 			if (isOpt(args[argc])) usage("Unknown option '" + args[argc] + "'"); // Argument starts with '-'? (all default arguments are processed by SnpSift
 			else if (tfamFile == null) tfamFile = args[argc];
-			else if (vcfFile == null) vcfFile = args[argc];
+			else if (vcfInputFile == null) vcfInputFile = args[argc];
 		}
 
 		// Sanity check
 		if (tfamFile == null) usage("Missing paramter 'file.tped'");
-		if (vcfFile == null) usage("Missing paramter 'file.vcf'");
 	}
 
 	/**
 	 * Parse VCF header to get sample IDs
-	 * @param vcf
 	 */
 	List<String> parseSampleIds(VcfFileIterator vcf) {
 		// Get sample names
@@ -104,8 +101,6 @@ public class SnpSiftCmdPrivate extends SnpSift {
 
 	/**
 	 * Name of the group, if this variant private. Null otherwise
-	 *
-	 * @param ve
 	 */
 	String privateGroup(VcfEntry ve) {
 		String groupPrev = null;
@@ -145,10 +140,9 @@ public class SnpSiftCmdPrivate extends SnpSift {
 		loadTfam();
 
 		// Read VCF
-		if (verbose) Timer.showStdErr("Annotating VCF file '" + vcfFile + "'");
 		int countLines = 0, countAnnotated = 0;
 		ArrayList<VcfEntry> vcfEntries = new ArrayList<VcfEntry>();
-		VcfFileIterator vcf = new VcfFileIterator(vcfFile);
+		VcfFileIterator vcf = openVcfInputFile();
 		vcf.setDebug(debug);
 		for (VcfEntry ve : vcf) {
 			// Read header info
@@ -177,7 +171,6 @@ public class SnpSiftCmdPrivate extends SnpSift {
 
 	/**
 	 * Show usage message
-	 * @param msg
 	 */
 	@Override
 	public void usage(String msg) {
@@ -191,7 +184,7 @@ public class SnpSiftCmdPrivate extends SnpSift {
 		System.err.println("Usage: java -jar " + SnpSift.class.getSimpleName() + ".jar private file.tfam file.vcf");
 		System.err.println("Where:");
 		System.err.println("\tfile.tfam  : File with genotypes and groups information (in PLINK's TFAM format)");
-		System.err.println("\tfile.vcf   : A VCF file (variants and genotype data)");
+		System.err.println("\tfile.vcf   : A VCF file (variants and genotype data). Default: 'STDIN'");
 		System.exit(1);
 	}
 }
