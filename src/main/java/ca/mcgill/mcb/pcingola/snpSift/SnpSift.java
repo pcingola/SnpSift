@@ -438,7 +438,6 @@ public class SnpSift {
 				+ "\n\tconcordance   : Concordance metrics between two VCF files." //
 				+ "\n\tcovMat        : Create an covariance matrix output (allele matrix as input)." //
 				+ "\n\tdbnsfp        : Annotate with multiple entries from dbNSFP." //
-				+ "\n\tepistasis     : Epistatic case control model (this feature is alpha)." //
 				+ "\n\textractFields : Extract fields from VCF file into tab separated format." //
 				+ "\n\tfilter        : Filter using arbitrary expressions" //
 				+ "\n\tgeneSets      : Annotate using MSigDb gene sets (MSigDb includes: GO, KEGG, Reactome, BioCarta, etc.)" //
