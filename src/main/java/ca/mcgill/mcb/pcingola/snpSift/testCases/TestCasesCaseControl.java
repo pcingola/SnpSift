@@ -16,7 +16,7 @@ import ca.mcgill.mcb.pcingola.vcf.VcfEntry;
  */
 public class TestCasesCaseControl extends TestCase {
 
-	public static boolean verbose = false;
+	public static boolean verbose = true;
 	public static boolean debug = false;
 
 	void checkCaseControlString(String vcfFile, String geoupStr, String casesStr, String controlStr) {

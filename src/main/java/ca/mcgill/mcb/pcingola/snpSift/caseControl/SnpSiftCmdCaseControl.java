@@ -34,7 +34,6 @@ public class SnpSiftCmdCaseControl extends SnpSift {
 	protected Boolean caseControl[];
 	protected String tfamFile;
 	protected String groups;
-	protected String vcfFileName;
 	protected PedPedigree pedigree;
 	protected double pvalueThreshold;
 	protected boolean useChiSquare;
@@ -165,13 +164,17 @@ public class SnpSiftCmdCaseControl extends SnpSift {
 	public void parse(String[] args) {
 		if (args.length <= 0) usage(null);
 
-		for (int argc = 0; argc < args.length; argc++) {
-			if (args[argc].equals("-tfam")) tfamFile = args[++argc];
-			else if (args[argc].equals("-name")) name = args[++argc];
-			else if (args[argc].equals("-chi2")) useChiSquare = true;
-			else if ((groups == null) && (tfamFile == null) && isGroupString(args[argc])) groups = args[argc];
-			else if (vcfFileName == null) vcfFileName = args[argc];
-			else usage("Unkown parameter '" + args[argc] + "'");
+		for (int i = 0; i < args.length; i++) {
+			String arg = args[i];
+
+			if (isOpt(arg)) {
+				if (arg.equals("-tfam")) tfamFile = args[++i];
+				else if (arg.equals("-name")) name = args[++i];
+				else if (arg.equals("-chi2")) useChiSquare = true;
+				else if ((groups == null) && (tfamFile == null) && isGroupString(arg)) groups = arg; // Sometimes this starts with a '-' and is confused with a command line option
+			} else if ((groups == null) && (tfamFile == null) && isGroupString(arg)) groups = arg;
+			else if (vcfInputFile == null) vcfInputFile = arg;
+			else usage("Unkown parameter '" + arg + "'");
 		}
 
 		// Sanity check
