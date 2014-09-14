@@ -72,7 +72,7 @@ public class SnpSiftCmdAnnotate extends SnpSift {
 				if (isAnnotateInfo(vcfInfoDb) // Add if it is being used to annotate
 						&& !vcfInfoDb.isImplicit() //  AND it is not an "implicit" header in Db (i.e. created automatically by VcfHeader class)
 						&& ((vcfInfoFile == null) || vcfInfoFile.isImplicit()) // AND it is not already added OR is already added, but it is implicit
-						) newHeaders.add(vcfInfoDb.toString());
+				) newHeaders.add(vcfInfoDb.toString());
 			}
 		}
 
@@ -107,7 +107,7 @@ public class SnpSiftCmdAnnotate extends SnpSift {
 					fatalError("Your VCF file should be sorted!" //
 							+ "\n\tPrevious entry " + chr + ":" + pos//
 							+ "\n\tCurrent entry  " + vcfEntry.getChromosomeName() + ":" + (vcfEntry.getStart() + 1)//
-							);
+					);
 				}
 
 				// Annotate
@@ -139,7 +139,7 @@ public class SnpSiftCmdAnnotate extends SnpSift {
 					+ "\n\tTotal entries           : " + count //
 					+ "\n\tPercent                 : " + String.format("%.2f%%", perc) //
 					+ "\n\tErrors (bad references) : " + countBadRef //
-					);
+			);
 		}
 
 		return list;
@@ -164,6 +164,7 @@ public class SnpSiftCmdAnnotate extends SnpSift {
 	 * Initialize database for annotation process
 	 */
 	void initAnnotateDb() throws IOException {
+
 		// Type of database
 		switch (method) {
 
@@ -231,8 +232,10 @@ public class SnpSiftCmdAnnotate extends SnpSift {
 				else if (arg.equalsIgnoreCase("-noAlt")) useRefAlt = false;
 				else if (arg.equalsIgnoreCase("-dbSnp")) {
 					dbType = "dbsnp";
+					method = AnnotationMethod.TABIX;
 				} else if (arg.equalsIgnoreCase("-clinVar")) {
 					dbType = "clinvar";
+					method = AnnotationMethod.TABIX;
 				} else if (arg.equalsIgnoreCase("-mem")) method = AnnotationMethod.MEMORY;
 				else if (arg.equalsIgnoreCase("-sorted")) method = AnnotationMethod.SORTED_VCF;
 				else if (arg.equalsIgnoreCase("-tabix")) method = AnnotationMethod.TABIX;
@@ -271,6 +274,7 @@ public class SnpSiftCmdAnnotate extends SnpSift {
 		if (method == null) {
 			if (dbFileName.endsWith(".gz")) {
 				if (Gpr.exists(dbFileName + ".tbi")) method = AnnotationMethod.TABIX;
+				else method = AnnotationMethod.MEMORY;
 			} else if (Gpr.exists(dbFileName + ".gz") && Gpr.exists(dbFileName + ".gz.tbi")) method = AnnotationMethod.TABIX;
 			else method = AnnotationMethod.SORTED_VCF;
 		}
@@ -279,12 +283,12 @@ public class SnpSiftCmdAnnotate extends SnpSift {
 		if (method == AnnotationMethod.TABIX //
 				&& !dbFileName.endsWith(".gz") //
 				&& Gpr.exists(dbFileName + ".gz") //
-				) dbFileName = dbFileName + ".gz";
+		) dbFileName = dbFileName + ".gz";
 
 		if (verbose) Timer.showStdErr("Annotating\n" //
 				+ "\tInput file    : '" + vcfInputFile + "'\n" //
 				+ "\tDatabase file : '" + dbFileName + "'" //
-				);
+		);
 
 		return annotate(createList);
 	}
