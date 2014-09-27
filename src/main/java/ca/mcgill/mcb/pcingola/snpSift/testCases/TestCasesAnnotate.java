@@ -8,6 +8,7 @@ import java.util.List;
 import junit.framework.Assert;
 import junit.framework.TestCase;
 import ca.mcgill.mcb.pcingola.snpSift.SnpSiftCmdAnnotate;
+import ca.mcgill.mcb.pcingola.util.Gpr;
 import ca.mcgill.mcb.pcingola.vcf.VcfEntry;
 
 /**
@@ -47,6 +48,9 @@ public class TestCasesAnnotate extends TestCase {
 		return results;
 	}
 
+	/**
+	 * Annotate and return STDOUT as a string
+	 */
 	public String annotateOut(String dbFileName, String fileName, String[] extraArgs) {
 		System.out.println("Annotate: " + dbFileName + "\t" + fileName);
 
@@ -362,6 +366,31 @@ public class TestCasesAnnotate extends TestCase {
 
 		// Check
 		Assert.assertEquals("44,49", results.get(0).getInfo("ANNOTATE_ONCE"));
+	}
+
+	/**
+	 * Annotate two consecutive variants in the same position
+	 */
+	public void test_21() throws IOException {
+		Gpr.debug("Test");
+		String dbFileName = "./test/db_test_21.vcf";
+		String fileName = "./test/annotate_21.vcf";
+		List<VcfEntry> results = annotate(dbFileName, fileName, null);
+
+		// Third entry is the one not being annotated
+
+		// Check third entry
+		VcfEntry ve = results.get(2);
+		String ann = ve.getInfo("clinvar_db");
+		if (debug) Gpr.debug("Annotation: '" + ann + "'");
+		Assert.assertNotNull(ann);
+
+		// Check second entry
+		ve = results.get(1);
+		ann = ve.getInfo("clinvar_db");
+		if (debug) Gpr.debug("Annotation: '" + ann + "'");
+		Assert.assertNotNull(ann);
+
 	}
 
 }

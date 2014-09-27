@@ -1,11 +1,13 @@
 package ca.mcgill.mcb.pcingola.snpSift.testCases;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 import junit.framework.Assert;
 import junit.framework.TestCase;
 import ca.mcgill.mcb.pcingola.snpSift.SnpSiftCmdAnnotate;
+import ca.mcgill.mcb.pcingola.util.Gpr;
 import ca.mcgill.mcb.pcingola.vcf.VcfEntry;
 
 /**
@@ -16,7 +18,7 @@ import ca.mcgill.mcb.pcingola.vcf.VcfEntry;
 public class TestCasesZzz extends TestCase {
 
 	public static boolean debug = false;
-	public static boolean verbose = true || debug;
+	public static boolean verbose = false || debug;
 
 	protected String[] defaultExtraArgs = null;
 
@@ -33,12 +35,33 @@ public class TestCasesZzz extends TestCase {
 		SnpSiftCmdAnnotate snpSiftAnnotate = new SnpSiftCmdAnnotate(args);
 		snpSiftAnnotate.setDebug(debug);
 		snpSiftAnnotate.setVerbose(verbose);
+		snpSiftAnnotate.setSuppressOutput(!verbose);
 		List<VcfEntry> results = snpSiftAnnotate.run(true);
 
 		// Check
 		Assert.assertTrue(results != null);
 		Assert.assertTrue(results.size() > 0);
 		return results;
+	}
+
+	/**
+	 * Annotate and return STDOUT as a string
+	 */
+	public String annotateOut(String dbFileName, String fileName, String[] extraArgs) {
+		System.out.println("Annotate: " + dbFileName + "\t" + fileName);
+
+		// Create command line
+		String args[] = argsList(dbFileName, fileName, extraArgs);
+
+		// Iterate over VCF entries
+		SnpSiftCmdAnnotate snpSift = new SnpSiftCmdAnnotate(args);
+		snpSift.setDebug(debug);
+		snpSift.setVerbose(verbose);
+		snpSift.setSaveOutput(true);
+		snpSift.run();
+
+		// Check
+		return snpSift.getOutput();
 	}
 
 	public void annotateTest(String dbFileName, String fileName) {
@@ -87,13 +110,34 @@ public class TestCasesZzz extends TestCase {
 	}
 
 	/**
-	 * Chromosomes in VCF file are called 'chr22' instead of '22'.
-	 * This should work OK as well.
+	 * Annotate two consecutive variants in the same position
 	 */
-	public void test_05() {
-		String dbFileName = "./test/db_test_chr22.vcf";
-		String fileName = "./test/test_chr22.vcf";
-		annotateTest(dbFileName, fileName);
+	public void test_21() throws IOException {
+		// !!!!!!!!!!!!!!!!!!
+		// FIXME: bgzip not installed in my laptop, could not test tabix version
+		// !!!!!!!!!!!!!!!!!!
+		String[] memExtraArgs = { "-tabix" };
+		defaultExtraArgs = memExtraArgs;
+
+		Gpr.debug("Test");
+		String dbFileName = "./test/db_test_21.vcf";
+		String fileName = "./test/annotate_21.vcf";
+		List<VcfEntry> results = annotate(dbFileName, fileName, null);
+
+		// Third entry is the one not being annotated
+
+		// Check third entry
+		VcfEntry ve = results.get(2);
+		String ann = ve.getInfo("clinvar_db");
+		if (debug) Gpr.debug("Annotation: '" + ann + "'");
+		Assert.assertNotNull(ann);
+
+		// Check second entry
+		ve = results.get(1);
+		ann = ve.getInfo("clinvar_db");
+		if (debug) Gpr.debug("Annotation: '" + ann + "'");
+		Assert.assertNotNull(ann);
+
 	}
 
 }
