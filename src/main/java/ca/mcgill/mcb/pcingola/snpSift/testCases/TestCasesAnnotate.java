@@ -393,4 +393,15 @@ public class TestCasesAnnotate extends TestCase {
 
 	}
 
+	/**
+	 * Annotate first base in a chromosome
+	 */
+	public void test_22() throws IOException {
+		Gpr.debug("Test");
+		String dbFileName = "./test/db_test_2.vcf";
+		String fileName = "./test/annotate_22.vcf";
+		annotate(dbFileName, fileName, null);
+		// We simply check that no exception was thrown
+	}
+
 }
