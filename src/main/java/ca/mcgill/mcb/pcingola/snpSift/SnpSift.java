@@ -331,6 +331,12 @@ public class SnpSift {
 			return;
 		}
 
+		// Show version and command
+		if (!help && (verbose || debug)) {
+			Timer.showStdErr("SnpSift version " + VERSION);
+			Timer.showStdErr("Command: '" + command + "'");
+		}
+
 		// Copy parsed parameters
 		cmd.verbose = verbose;
 		cmd.quiet = quiet;
