@@ -38,7 +38,6 @@ public class SnpSiftCmdJoin extends SnpSift {
 
 	/** 		 
 	 * Create SnpEffect predictor and add all peaks
-	 * 
 	 */
 	void build(ArrayList<GenericMarker> list) {
 		if (verbose) Timer.showStdErr("Creating interval forest");
@@ -53,8 +52,6 @@ public class SnpSiftCmdJoin extends SnpSift {
 
 	/**
 	 * Find closest interval
-	 * @param m
-	 * @return
 	 */
 	GenericMarker closest(GenericMarker marker) {
 		String chr = marker.getChromosomeName();
@@ -144,8 +141,6 @@ public class SnpSiftCmdJoin extends SnpSift {
 
 	/**
 	 * Parse column definition string
-	 * @param num
-	 * @param columnDef
 	 */
 	void parseCols(int num, String columnDef) {
 		columnDef = columnDef.toLowerCase();
@@ -187,9 +182,6 @@ public class SnpSiftCmdJoin extends SnpSift {
 
 	/**
 	 * Read a peaks file from an XLS file (MACS 'negative peaks' format).
-	 * @param fileName
-	 * @param add
-	 * @return
 	 */
 	ArrayList<GenericMarker> readMarkers(int num) {
 		ArrayList<GenericMarker> list = new ArrayList<GenericMarker>();
