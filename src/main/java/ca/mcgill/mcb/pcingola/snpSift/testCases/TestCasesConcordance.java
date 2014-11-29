@@ -4,6 +4,7 @@ import junit.framework.Assert;
 import junit.framework.TestCase;
 import ca.mcgill.mcb.pcingola.snpSift.SnpSiftCmdConcordance;
 import ca.mcgill.mcb.pcingola.stats.CountByType;
+import ca.mcgill.mcb.pcingola.util.Gpr;
 
 /**
  * Concordance test cases
@@ -16,7 +17,7 @@ public class TestCasesConcordance extends TestCase {
 	public static boolean verbose = false || debug;
 
 	SnpSiftCmdConcordance checkConcordance(String refVcfFile, String vcfFile) {
-		System.err.println("\n\nConcordance between: " + refVcfFile + "\t" + vcfFile);
+		if (verbose) System.err.println("\n\nConcordance between: " + refVcfFile + "\t" + vcfFile);
 		String args[] = { refVcfFile, vcfFile };
 
 		SnpSiftCmdConcordance ssconc = new SnpSiftCmdConcordance(args);
@@ -58,14 +59,17 @@ public class TestCasesConcordance extends TestCase {
 	}
 
 	public void test_01() {
+		Gpr.debug("Test");
 		checkConcordance("test/concordance_ref_01.vcf", "test/concordance_test_01.vcf", "ALT_2/ALT_2", 1);
 	}
 
 	public void test_02() {
+		Gpr.debug("Test");
 		checkConcordance("test/concordance_ref_02.vcf", "test/concordance_test_02.vcf", "ALT_2/ALT_2", 2);
 	}
 
 	public void test_03() {
+		Gpr.debug("Test");
 		CountByType count = new CountByType();
 		count.inc("ALT_2/ALT_2", 1);
 		count.inc("ALT_2/REF", 1);
@@ -75,6 +79,7 @@ public class TestCasesConcordance extends TestCase {
 	}
 
 	public void test_04() {
+		Gpr.debug("Test");
 		CountByType count = new CountByType();
 		count.inc("ALT_2/ALT_2", 1);
 		count.inc("ALT_2/REF", 1);
@@ -84,6 +89,8 @@ public class TestCasesConcordance extends TestCase {
 	}
 
 	public void test_05() {
+		Gpr.debug("Test");
+
 		CountByType count = new CountByType();
 		count.inc("ALT_2/ALT_2", 3);
 		count.inc("ALT_2/MISSING_ENTRY_concordance_test_05", 1);
@@ -92,6 +99,8 @@ public class TestCasesConcordance extends TestCase {
 	}
 
 	public void test_06() {
+		Gpr.debug("Test");
+
 		CountByType count = new CountByType();
 		count.inc("ALT_2/ALT_2", 5);
 		count.inc("ALT_2/MISSING_ENTRY_concordance_test_06", 1);
@@ -101,10 +110,13 @@ public class TestCasesConcordance extends TestCase {
 	}
 
 	public void test_07() {
+		Gpr.debug("Test");
 		checkConcordance("test/concordance_ref_07.vcf", "test/concordance_test_07.vcf", "ALT_2/ALT_2", 1);
 	}
 
 	public void test_08() {
+		Gpr.debug("Test");
+
 		CountByType count = new CountByType();
 		count.inc("ALT_2/ALT_2", 10);
 		count.inc("ALT_2/MISSING_ENTRY_concordance_test_08", 10);
@@ -113,6 +125,8 @@ public class TestCasesConcordance extends TestCase {
 	}
 
 	public void test_09() {
+		Gpr.debug("Test");
+
 		CountByType count = new CountByType();
 		count.inc("ALT_2/ALT_2", 15);
 		count.inc("ALT_2/MISSING_ENTRY_concordance_test_09", 15);
@@ -121,6 +135,8 @@ public class TestCasesConcordance extends TestCase {
 	}
 
 	public void test_10() {
+		Gpr.debug("Test");
+
 		CountByType count = new CountByType();
 		count.inc("ALT_2/ALT_2", 15);
 		count.inc("MISSING_ENTRY_concordance_ref_10/ALT_2", 15);
@@ -129,6 +145,8 @@ public class TestCasesConcordance extends TestCase {
 	}
 
 	public void test_11() {
+		Gpr.debug("Test");
+
 		CountByType count = new CountByType();
 		count.inc("ALT_1/ALT_1", 4);
 		count.inc("ALT_1/MISSING_ENTRY_concordance_test_11", 4);
@@ -143,6 +161,8 @@ public class TestCasesConcordance extends TestCase {
 	}
 
 	public void test_12() {
+		Gpr.debug("Test");
+
 		CountByType count = new CountByType();
 		count.inc("ERROR", 1);
 

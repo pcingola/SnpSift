@@ -5,6 +5,7 @@ import java.util.List;
 import junit.framework.Assert;
 import junit.framework.TestCase;
 import ca.mcgill.mcb.pcingola.snpSift.SnpSiftCmdGeneSets;
+import ca.mcgill.mcb.pcingola.util.Gpr;
 import ca.mcgill.mcb.pcingola.vcf.VcfEntry;
 
 /**
@@ -18,6 +19,8 @@ public class TestCasesGeneSets extends TestCase {
 	public static boolean verbose = false;
 
 	public void test_01() {
+		Gpr.debug("Test");
+
 		String msigDb = "test/c1.all.v4.0.symbols.gmt.gz";
 		String vcf = "test/test_geneSets.vcf";
 		String args[] = { msigDb, vcf };

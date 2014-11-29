@@ -15,11 +15,13 @@ import ca.mcgill.mcb.pcingola.util.Gpr;
 public class TestCasesSplit extends TestCase {
 
 	public static boolean debug = false;
+	public static boolean verbose = false;
 
 	/**
 	 * Split by chromosome
 	 */
 	public void test_01() {
+		Gpr.debug("Test");
 		String file = "test/test_split_01.vcf";
 
 		// Delete old files
@@ -29,7 +31,7 @@ public class TestCasesSplit extends TestCase {
 		// Run command
 		String args[] = { file };
 		SnpSiftCmdSplit cmd = new SnpSiftCmdSplit(args);
-		cmd.setVerbose(true);
+		cmd.setVerbose(verbose);
 		cmd.setDebug(debug);
 		cmd.run();
 
@@ -47,13 +49,15 @@ public class TestCasesSplit extends TestCase {
 	 * Split by number
 	 */
 	public void test_02() {
+		Gpr.debug("Test");
+
 		int numLines = 2;
 		String file = "test/test_split_01.vcf";
 
 		// Run command
 		String args[] = { "-l", numLines + "", file };
 		SnpSiftCmdSplit cmd = new SnpSiftCmdSplit(args);
-		cmd.setVerbose(true);
+		cmd.setVerbose(verbose);
 		cmd.setDebug(debug);
 		cmd.run();
 
@@ -69,6 +73,8 @@ public class TestCasesSplit extends TestCase {
 	 * Split and join
 	 */
 	public void test_03() {
+		Gpr.debug("Test");
+
 		//---
 		// Split
 		//---
@@ -82,7 +88,7 @@ public class TestCasesSplit extends TestCase {
 		// Run command
 		String args[] = { file };
 		SnpSiftCmdSplit cmd = new SnpSiftCmdSplit(args);
-		cmd.setVerbose(true);
+		cmd.setVerbose(verbose);
 		cmd.setDebug(debug);
 		cmd.run();
 
