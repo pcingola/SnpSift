@@ -30,7 +30,7 @@ public class TestCasesAnnotate extends TestCase {
 	 * Annotate
 	 */
 	public List<VcfEntry> annotate(String dbFileName, String fileName, String[] extraArgs) {
-		System.out.println("Annotate: " + dbFileName + "\t" + fileName);
+		if (verbose) System.out.println("Annotate: " + dbFileName + "\t" + fileName);
 
 		// Create command line
 		String args[] = argsList(dbFileName, fileName, extraArgs);
@@ -52,7 +52,7 @@ public class TestCasesAnnotate extends TestCase {
 	 * Annotate and return STDOUT as a string
 	 */
 	public String annotateOut(String dbFileName, String fileName, String[] extraArgs) {
-		System.out.println("Annotate: " + dbFileName + "\t" + fileName);
+		if (verbose) System.out.println("Annotate: " + dbFileName + "\t" + fileName);
 
 		// Create command line
 		String args[] = argsList(dbFileName, fileName, extraArgs);
@@ -363,7 +363,7 @@ public class TestCasesAnnotate extends TestCase {
 		List<VcfEntry> results = annotate(dbFileName, fileName, null);
 		VcfEntry ve = results.get(0);
 		String ukac = ve.getInfo("UK10KWES_AC");
-		System.out.println("Annotated value: " + ukac);
+		if (verbose) System.out.println("Annotated value: " + ukac);
 		Assert.assertEquals(".,49,44,.,.,.,.,.,.,.,.", ukac);
 	}
 
