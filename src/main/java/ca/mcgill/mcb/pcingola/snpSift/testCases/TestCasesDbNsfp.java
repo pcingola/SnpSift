@@ -25,7 +25,7 @@ public class TestCasesDbNsfp extends TestCase {
 	protected String[] defaultExtraArgs = null;
 
 	public List<VcfEntry> annotate(String dbFileName, String fileName, String[] extraArgs) {
-		System.out.println("Annotate: " + dbFileName + "\t" + fileName);
+		if (verbose) System.out.println("Annotate: " + dbFileName + "\t" + fileName);
 
 		// Create command line
 		String args[] = argsList(dbFileName, fileName, extraArgs);
@@ -45,7 +45,7 @@ public class TestCasesDbNsfp extends TestCase {
 	}
 
 	public Map<String, String> annotateGetFiledTypes(String dbFileName, String fileName, String[] extraArgs) {
-		System.out.println("Annotate: " + dbFileName + "\t" + fileName);
+		if (verbose) System.out.println("Annotate: " + dbFileName + "\t" + fileName);
 
 		// Create command line
 		String args[] = argsList(dbFileName, fileName, extraArgs);
@@ -82,6 +82,7 @@ public class TestCasesDbNsfp extends TestCase {
 	}
 
 	public void test_01() {
+		Gpr.debug("Test");
 		String vcfFileName = "test/test_dbNSFP_chr1_69134.vcf";
 		String dbFileName = "test/dbNSFP2.0b3.chr1_69134.txt";
 		String args[] = { "-collapse", "-f", "GERP++_RS,GERP++_NR,ESP6500_AA_AF,29way_logOdds,Polyphen2_HVAR_pred,SIFT_score,Uniprot_acc,Ensembl_transcriptid" };
@@ -105,6 +106,7 @@ public class TestCasesDbNsfp extends TestCase {
 	 * Test dbnsfp having multiple lines per variant
 	 */
 	public void test_02() {
+		Gpr.debug("Test");
 		String vcfFileName = "test/test_dbnsfp_multiple.vcf";
 		String dbFileName = "test/test_dbnsfp_multiple_lines.txt";
 		String fields = "genename,Ensembl_geneid,Ensembl_transcriptid,aaref,aaalt";
@@ -125,6 +127,7 @@ public class TestCasesDbNsfp extends TestCase {
 	 * Test dbnsfp having multiple lines per variant, without collapsing
 	 */
 	public void test_03() {
+		Gpr.debug("Test");
 		String vcfFileName = "test/test_dbnsfp_multiple_noCollapse.vcf";
 		String dbFileName = "test/test_dbnsfp_multiple_noCollapse.txt";
 		String fields = "aaalt,Ensembl_transcriptid,Polyphen2_HDIV_score,Polyphen2_HVAR_pred";
@@ -142,6 +145,7 @@ public class TestCasesDbNsfp extends TestCase {
 	}
 
 	public void test_04() {
+		Gpr.debug("Test");
 		// We annotate something trivial: position
 		String vcfFileName = "test/test_dbNSFP_04.vcf";
 		String dbFileName = "test/dbNSFP2.3.test.txt.gz";
@@ -161,6 +165,7 @@ public class TestCasesDbNsfp extends TestCase {
 	}
 
 	public void test_05() {
+		Gpr.debug("Test");
 		// We annotate something trivial: position
 		String vcfFileName = "test/test_dbNSFP_05.vcf";
 		String dbFileName = "test/dbNSFP2.3.test.txt.gz";
@@ -182,6 +187,7 @@ public class TestCasesDbNsfp extends TestCase {
 	}
 
 	public void test_06() {
+		Gpr.debug("Test");
 		// We annotate something trivial: position
 		String vcfFileName = "test/test_dbNSFP_06.vcf";
 		String dbFileName = "test/dbNSFP2.3.test.txt.gz";
