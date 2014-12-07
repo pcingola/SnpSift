@@ -5,7 +5,7 @@ import ca.mcgill.mcb.pcingola.util.Gpr;
 import ca.mcgill.mcb.pcingola.vcf.VcfEntry;
 import ca.mcgill.mcb.pcingola.vcf.VcfGenotype;
 import ca.mcgill.mcb.pcingola.vcf.VcfHeader;
-import ca.mcgill.mcb.pcingola.vcf.VcfInfo;
+import ca.mcgill.mcb.pcingola.vcf.VcfHeaderInfo;
 import ca.mcgill.mcb.pcingola.vcf.VcfInfoGenotype;
 import ca.mcgill.mcb.pcingola.vcf.VcfInfoType;
 
@@ -47,7 +47,7 @@ public class Field extends Expression {
 			VcfHeader vcfHeader = vcfEntry.getVcfFileIterator().getVcfHeader();
 
 			// Is there a filed 'name'
-			VcfInfo vcfInfo = vcfHeader.getVcfInfo(name);
+			VcfHeaderInfo vcfInfo = vcfHeader.getVcfInfo(name);
 			if (vcfInfo != null) returnType = vcfInfo.getVcfInfoType();
 			else {
 				// Is there a genotype 'name'
@@ -209,7 +209,7 @@ public class Field extends Expression {
 		if (name.equals("QUAL")) return "" + vcfEntry.getQuality();
 
 		// Is there a filed 'name'
-		VcfInfo vcfInfo = vcfEntry.getVcfFileIterator().getVcfHeader().getVcfInfo(name);
+		VcfHeaderInfo vcfInfo = vcfEntry.getVcfFileIterator().getVcfHeader().getVcfInfo(name);
 		if (vcfInfo == null) return (String) fieldHeaderNotFound(vcfEntry);
 
 		// Get field value

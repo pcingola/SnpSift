@@ -25,7 +25,7 @@ import ca.mcgill.mcb.pcingola.vcf.VcfEffect.FormatVersion;
 import ca.mcgill.mcb.pcingola.vcf.VcfEntry;
 import ca.mcgill.mcb.pcingola.vcf.VcfGenotype;
 import ca.mcgill.mcb.pcingola.vcf.VcfHeader;
-import ca.mcgill.mcb.pcingola.vcf.VcfInfo;
+import ca.mcgill.mcb.pcingola.vcf.VcfHeaderInfo;
 
 /**
  * Summarize a VCF annotated file
@@ -167,7 +167,7 @@ public class SnpSiftCmdCaseControlSummary extends SnpSift {
 	 */
 	void parseDbNsfpFields(VcfFileIterator vcf) {
 		VcfHeader vcfHeader = vcf.getVcfHeader();
-		for (VcfInfo vcfInfo : vcfHeader.getVcfInfo())
+		for (VcfHeaderInfo vcfInfo : vcfHeader.getVcfInfo())
 			if (vcfInfo.getId().startsWith(SnpSiftCmdDbNsfp.VCF_INFO_PREFIX)) infoFields.add(vcfInfo.getId());
 		Collections.sort(infoFields);
 
@@ -198,7 +198,7 @@ public class SnpSiftCmdCaseControlSummary extends SnpSift {
 
 		// TODO: Test code, move somewhere else
 		VcfHeader vcfHeader = vcf.getVcfHeader();
-		for (VcfInfo vcfInfo : vcfHeader.getVcfInfo())
+		for (VcfHeaderInfo vcfInfo : vcfHeader.getVcfInfo())
 			if (vcfInfo.getId().startsWith(SnpSiftCmdDbNsfp.VCF_INFO_PREFIX)) infoFields.add(vcfInfo.getId());
 		Collections.sort(infoFields);
 
