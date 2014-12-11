@@ -3,6 +3,8 @@ package ca.mcgill.mcb.pcingola.snpSift.caseControl;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.math3.distribution.ChiSquaredDistribution;
+
 import ca.mcgill.mcb.pcingola.fileIterator.VcfFileIterator;
 import ca.mcgill.mcb.pcingola.ped.PedPedigree;
 import ca.mcgill.mcb.pcingola.ped.TfamEntry;
@@ -264,7 +266,7 @@ public class SnpSiftCmdCaseControl extends SnpSift {
 
 		// Null hypothesis of no association
 		// Degrees of freedom: 2
-		double pvalue = 1 - flanagan.analysis.Stat.chiSquareCDF(chi2, 2);
+		double pvalue = 1 - new ChiSquaredDistribution(2).cumulativeProbability(chi2);
 		return pvalue;
 	}
 

@@ -1,9 +1,11 @@
 package ca.mcgill.mcb.pcingola.snpSift.hwe;
 
+import org.apache.commons.math3.distribution.ChiSquaredDistribution;
+import org.apache.commons.math3.util.ArithmeticUtils;
+
 import ca.mcgill.mcb.pcingola.util.Gpr;
 import ca.mcgill.mcb.pcingola.vcf.VcfEntry;
 import ca.mcgill.mcb.pcingola.vcf.VcfGenotype;
-import flanagan.analysis.Stat;
 
 /**
  * Calculate Hardy-Weimberg equilibrium and goodness of fit.
@@ -107,8 +109,8 @@ public class VcfHwe {
 		int n22 = (n2 - n12) / 2;
 		int N = n11 + n12 + n22;
 
-		double num = Stat.logFactorial(N) - (Stat.logFactorial(n11) + Stat.logFactorial(n12) + Stat.logFactorial(n22));//
-		double den = Stat.logFactorial(2 * N) - (Stat.logFactorial(n1) + Stat.logFactorial(n2));
+		double num = ArithmeticUtils.factorialLog(N) - (ArithmeticUtils.factorialLog(n11) + ArithmeticUtils.factorialLog(n12) + ArithmeticUtils.factorialLog(n22));//
+		double den = ArithmeticUtils.factorialLog(2 * N) - (ArithmeticUtils.factorialLog(n1) + ArithmeticUtils.factorialLog(n2));
 		double logp = num - den + n12 * LOG2;
 		double p = Math.exp(logp);
 
@@ -181,7 +183,7 @@ public class VcfHwe {
 
 		double chi2 = (dAA * dAA) / expAA + (dAB * dAB) / expAB + (dBB * dBB) / expBB;
 
-		double pChi2 = 1.0 - Stat.chiSquareCDF(chi2, 1);
+		double pChi2 = 1.0 - new ChiSquaredDistribution(1).cumulativeProbability(chi2);
 		return pChi2;
 	}
 
