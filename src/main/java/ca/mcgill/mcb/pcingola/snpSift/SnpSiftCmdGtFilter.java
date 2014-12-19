@@ -18,8 +18,7 @@ import ca.mcgill.mcb.pcingola.snpSift.lang.condition.Condition;
 import ca.mcgill.mcb.pcingola.snpSift.lang.expression.Field;
 import ca.mcgill.mcb.pcingola.snpSift.lang.expression.FieldIterator;
 import ca.mcgill.mcb.pcingola.util.Gpr;
-import ca.mcgill.mcb.pcingola.vcf.VcfEffect;
-import ca.mcgill.mcb.pcingola.vcf.VcfEffect.FormatVersion;
+import ca.mcgill.mcb.pcingola.vcf.EffFormatVersion;
 import ca.mcgill.mcb.pcingola.vcf.VcfEntry;
 import ca.mcgill.mcb.pcingola.vcf.VcfGenotype;
 
@@ -43,7 +42,7 @@ public class SnpSiftCmdGtFilter extends SnpSift {
 	Condition condition; // Condition (parsed expression)
 	String filterId; // FilterID string to add to FILTER field if the filter does NOT pass.
 	ArrayList<HashSet<String>> sets;
-	VcfEffect.FormatVersion formatVersion;
+	EffFormatVersion formatVersion;
 
 	public SnpSiftCmdGtFilter() {
 		super(null, "filter");
@@ -257,8 +256,8 @@ public class SnpSiftCmdGtFilter extends SnpSift {
 				else if (arg.equals("-gv") || arg.equalsIgnoreCase("--value")) gtFieldValue = args[++i];
 				else if (arg.equalsIgnoreCase("--format")) {
 					String formatVer = args[++i];
-					if (formatVer.equals("2")) formatVersion = FormatVersion.FORMAT_EFF_2;
-					else if (formatVer.equals("3")) formatVersion = FormatVersion.FORMAT_EFF_3;
+					if (formatVer.equals("2")) formatVersion = EffFormatVersion.FORMAT_EFF_2;
+					else if (formatVer.equals("3")) formatVersion = EffFormatVersion.FORMAT_EFF_3;
 					else usage("Unknown format version '" + formatVer + "'");
 				} else if (arg.equals("-e") || arg.equalsIgnoreCase("--exprfile")) {
 					String exprFile = args[++i];

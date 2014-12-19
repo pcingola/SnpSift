@@ -47,7 +47,7 @@ import ca.mcgill.mcb.pcingola.snpSift.lang.function.IsHom;
 import ca.mcgill.mcb.pcingola.snpSift.lang.function.IsRef;
 import ca.mcgill.mcb.pcingola.snpSift.lang.function.IsVariant;
 import ca.mcgill.mcb.pcingola.util.Gpr;
-import ca.mcgill.mcb.pcingola.vcf.VcfEffect;
+import ca.mcgill.mcb.pcingola.vcf.EffFormatVersion;
 
 /**
  * Creates objects from an AST
@@ -58,14 +58,14 @@ public class LangFactory {
 
 	protected static boolean debug = false;
 	ArrayList<HashSet<String>> sets = new ArrayList<HashSet<String>>();
-	VcfEffect.FormatVersion formatVersion;
+	EffFormatVersion formatVersion;
 	boolean exceptionIfNotFound = false;
 
 	public LangFactory() {
 		sets = new ArrayList<HashSet<String>>(); // No sets
 	}
 
-	public LangFactory(ArrayList<HashSet<String>> sets, VcfEffect.FormatVersion formatVersion, boolean exceptionIfNotFound) {
+	public LangFactory(ArrayList<HashSet<String>> sets, EffFormatVersion formatVersion, boolean exceptionIfNotFound) {
 		this.sets = sets;
 		this.formatVersion = formatVersion;
 		this.exceptionIfNotFound = exceptionIfNotFound;

@@ -3,8 +3,8 @@ package ca.mcgill.mcb.pcingola.snpSift.lang.expression;
 import java.util.List;
 
 import ca.mcgill.mcb.pcingola.snpSift.lang.expression.FieldIterator.IteratorType;
+import ca.mcgill.mcb.pcingola.vcf.EffFormatVersion;
 import ca.mcgill.mcb.pcingola.vcf.VcfEffect;
-import ca.mcgill.mcb.pcingola.vcf.VcfEffect.FormatVersion;
 import ca.mcgill.mcb.pcingola.vcf.VcfEntry;
 
 /**
@@ -17,13 +17,13 @@ import ca.mcgill.mcb.pcingola.vcf.VcfEntry;
 public class FieldEff extends FieldSub {
 
 	int fieldNum = -1;
-	FormatVersion formatVersion = null;
+	EffFormatVersion formatVersion = null;
 
 	/**
 	 * Constructor
 	 * @param formatVersion : Can be null (it will be guessed)
 	 */
-	public FieldEff(String name, int index, FormatVersion formatVersion) {
+	public FieldEff(String name, int index, EffFormatVersion formatVersion) {
 		super("EFF." + name, index); // Add an 'EFF.' at the beginning
 		this.formatVersion = formatVersion;
 	}
