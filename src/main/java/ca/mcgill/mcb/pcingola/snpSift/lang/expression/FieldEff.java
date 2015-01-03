@@ -9,9 +9,9 @@ import ca.mcgill.mcb.pcingola.vcf.VcfEntry;
 
 /**
  * An 'EFF' field form SnpEff:
- * 
+ *
  * E.g.:  'EFF[2].GENE'
- * 
+ *
  * @author pablocingolani
  */
 public class FieldEff extends FieldSub {

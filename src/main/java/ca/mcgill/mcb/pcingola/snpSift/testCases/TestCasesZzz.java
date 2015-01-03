@@ -113,9 +113,6 @@ public class TestCasesZzz extends TestCase {
 	 * Annotate two consecutive variants in the same position
 	 */
 	public void test_21() throws IOException {
-		// !!!!!!!!!!!!!!!!!!
-		// FIXME: bgzip not installed in my laptop, could not test tabix version
-		// !!!!!!!!!!!!!!!!!!
 		String[] memExtraArgs = { "-tabix" };
 		defaultExtraArgs = memExtraArgs;
 

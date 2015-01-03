@@ -196,7 +196,7 @@ public class SnpSiftCmdCaseControlSummary extends SnpSift {
 			System.exit(1);
 		}
 
-		// TODO: Test code, move somewhere else
+		// Add an sort info fields
 		VcfHeader vcfHeader = vcf.getVcfHeader();
 		for (VcfHeaderInfo vcfInfo : vcfHeader.getVcfInfo())
 			if (vcfInfo.getId().startsWith(SnpSiftCmdDbNsfp.VCF_INFO_PREFIX)) infoFields.add(vcfInfo.getId());

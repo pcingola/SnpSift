@@ -12,7 +12,8 @@ import flanagan.analysis.Stat;
  * 			"Principles of population genetics", Hartl & Clark
  * 			"A Note on Exact test of Hardy Weinbeg Equilibrium", G. Abecasis et. al.
  * 
- * FIXME: This is only for two alleles in diploid individuals. We should extend this to more alleles and N-ploid species. 
+ * Note: This is only for two alleles in diploid individuals. We should 
+ *       extend this to more alleles and N-ploid species. 
  * 
  * @author pablocingolani
  */
