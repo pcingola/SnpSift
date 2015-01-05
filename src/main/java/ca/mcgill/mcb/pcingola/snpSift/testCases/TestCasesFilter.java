@@ -1041,7 +1041,6 @@ public class TestCasesFilter extends TestCase {
 	 * Inverse FILTER strings
 	 */
 	public void test_40() {
-
 		// Filter data
 		String expression = "( EFF[*].EFFECT = 'SPLICE_SITE_ACCEPTOR' )";
 		String vcfFile = "test/test_jim.vcf";

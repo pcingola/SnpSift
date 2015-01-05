@@ -1,13 +1,10 @@
 package ca.mcgill.mcb.pcingola.snpSift.testCases;
 
-import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
 import junit.framework.Assert;
 import junit.framework.TestCase;
-import ca.mcgill.mcb.pcingola.snpSift.SnpSiftCmdAnnotate;
-import ca.mcgill.mcb.pcingola.util.Gpr;
+import ca.mcgill.mcb.pcingola.snpSift.SnpSiftCmdFilter;
 import ca.mcgill.mcb.pcingola.vcf.VcfEntry;
 
 /**
@@ -17,124 +14,159 @@ import ca.mcgill.mcb.pcingola.vcf.VcfEntry;
  */
 public class TestCasesZzz extends TestCase {
 
-	public static boolean debug = false;
+	public static boolean debug = true;
 	public static boolean verbose = false || debug;
 
 	protected String[] defaultExtraArgs = null;
 
 	/**
-	 * Annotate
+	 * Filter by ANN[0].EFFECT (effect)
 	 */
-	public List<VcfEntry> annotate(String dbFileName, String fileName, String[] extraArgs) {
-		System.out.println("Annotate: " + dbFileName + "\t" + fileName);
+	public void test_26_ann() {
+		// Filter data
+		SnpSiftCmdFilter snpsiftFilter = new SnpSiftCmdFilter();
+		String expression = "EFF[0].EFFECT = 'synonymous_variant'";
+		List<VcfEntry> list = snpsiftFilter.filter("test/test03.ann.vcf", expression, true);
 
-		// Create command line
-		String args[] = argsList(dbFileName, fileName, extraArgs);
+		// Check that it satisfies the condition
+		int count = 0;
+		System.out.println("Expression: '" + expression + "'");
+		for (VcfEntry vcfEntry : list) {
+			if (verbose) System.out.println("\t" + vcfEntry);
 
-		// Iterate over VCF entries
-		SnpSiftCmdAnnotate snpSiftAnnotate = new SnpSiftCmdAnnotate(args);
-		snpSiftAnnotate.setDebug(debug);
-		snpSiftAnnotate.setVerbose(verbose);
-		snpSiftAnnotate.setSuppressOutput(!verbose);
-		List<VcfEntry> results = snpSiftAnnotate.run(true);
+			String eff = vcfEntry.getInfo("ANN").split("\\|")[1];
+			Assert.assertEquals("synonymous_variant", eff);
+			count++;
+		}
 
-		// Check
-		Assert.assertTrue(results != null);
-		Assert.assertTrue(results.size() > 0);
-		return results;
+		Assert.assertEquals(3, count);
 	}
 
 	/**
-	 * Annotate and return STDOUT as a string
+	 * Filter by ANN[*].EFFECT (any effect)
 	 */
-	public String annotateOut(String dbFileName, String fileName, String[] extraArgs) {
-		System.out.println("Annotate: " + dbFileName + "\t" + fileName);
+	public void test_27_ann() {
+		// Filter data
+		SnpSiftCmdFilter snpsiftFilter = new SnpSiftCmdFilter();
+		String expression = "EFF[*].EFFECT = 'synonymous_variant'";
+		List<VcfEntry> list = snpsiftFilter.filter("test/test03.ann.vcf", expression, true);
 
-		// Create command line
-		String args[] = argsList(dbFileName, fileName, extraArgs);
+		// Check that it satisfies the condition
+		System.out.println("Expression: '" + expression + "'");
+		int count = 0;
+		for (VcfEntry vcfEntry : list) {
+			if (verbose) System.out.println("\t" + vcfEntry);
 
-		// Iterate over VCF entries
-		SnpSiftCmdAnnotate snpSift = new SnpSiftCmdAnnotate(args);
-		snpSift.setDebug(debug);
-		snpSift.setVerbose(verbose);
-		snpSift.setSaveOutput(true);
-		snpSift.run();
+			boolean any = false;
+			String effStr = vcfEntry.getInfo("EFF");
+			for (String eff : effStr.split(",")) {
+				String e = eff.split("\\|")[1];
+				any |= e.equals("synonymous_variant");
+			}
 
-		// Check
-		return snpSift.getOutput();
-	}
-
-	public void annotateTest(String dbFileName, String fileName) {
-		annotateTest(dbFileName, fileName, null);
-	}
-
-	/**
-	 * Annotate a file and check that the new annotation matches the expected one
-	 */
-	public void annotateTest(String dbFileName, String fileName, String[] extraArgs) {
-		List<VcfEntry> results = annotate(dbFileName, fileName, extraArgs);
-
-		// Check each entry
-		for (VcfEntry vcf : results) {
-			// We expect the same annotation twice
-			String idstr = vcf.getId();
-
-			// Get expected IDs
-			String expectedIds = vcf.getInfo("EXP_IDS");
-			if (expectedIds != null) {
-				expectedIds = expectedIds.replace('|', ';');
-				if (expectedIds.equals(".")) expectedIds = "";
-
-				// Compare
-				Assert.assertEquals(expectedIds, idstr);
-			} else fail("EXP_IDS (expected ids) INFO field missing in " + fileName + ", entry:\n" + vcf);
-		}
-	}
-
-	protected String[] argsList(String dbFileName, String fileName, String[] extraArgs) {
-		ArrayList<String> argsList = new ArrayList<String>();
-
-		if (defaultExtraArgs != null) {
-			for (String arg : defaultExtraArgs)
-				argsList.add(arg);
+			Assert.assertEquals(true, any);
+			if (any) count++;
 		}
 
-		if (extraArgs != null) {
-			for (String arg : extraArgs)
-				argsList.add(arg);
-		}
-
-		argsList.add(dbFileName);
-		argsList.add(fileName);
-		return argsList.toArray(new String[0]);
+		Assert.assertEquals(3, count);
 	}
 
-	/**
-	 * Annotate two consecutive variants in the same position
-	 */
-	public void test_21() throws IOException {
-		String[] memExtraArgs = { "-tabix" };
-		defaultExtraArgs = memExtraArgs;
-
-		Gpr.debug("Test");
-		String dbFileName = "./test/db_test_21.vcf";
-		String fileName = "./test/annotate_21.vcf";
-		List<VcfEntry> results = annotate(dbFileName, fileName, null);
-
-		// Third entry is the one not being annotated
-
-		// Check third entry
-		VcfEntry ve = results.get(2);
-		String ann = ve.getInfo("clinvar_db");
-		if (debug) Gpr.debug("Annotation: '" + ann + "'");
-		Assert.assertNotNull(ann);
-
-		// Check second entry
-		ve = results.get(1);
-		ann = ve.getInfo("clinvar_db");
-		if (debug) Gpr.debug("Annotation: '" + ann + "'");
-		Assert.assertNotNull(ann);
-
-	}
+	//	/**
+	//	 * Filter by ANN[*].CODING
+	//	 */
+	//	public void test_32_ann() {
+	//		// Filter data
+	//		SnpSiftCmdFilter snpsiftFilter = new SnpSiftCmdFilter();
+	//		String expression = "ANN[*].BIOTYPE = 'CODING'";
+	//		List<VcfEntry> list = snpsiftFilter.filter("test/test03.vcf", expression, true);
+	//
+	//		// Check that it satisfies the condition
+	//		System.out.println("Expression: '" + expression + "'");
+	//		for (VcfEntry vcfEntry : list) {
+	//			if (verbose) System.out.println("\t" + vcfEntry);
+	//
+	//			boolean any = false;
+	//			String effStr = vcfEntry.getInfo("EFF");
+	//			for (String eff : effStr.split(",")) {
+	//				String e = eff.split("\\|")[6];
+	//				any |= e.equals("CODING");
+	//			}
+	//
+	//			Assert.assertEquals(true, any);
+	//		}
+	//	}
+	//
+	//	/**
+	//	 * Filter by ANN[*].CODING
+	//	 */
+	//	public void test_33_ann() {
+	//		// Filter data
+	//		SnpSiftCmdFilter snpsiftFilter = new SnpSiftCmdFilter();
+	//		String expression = "ANN[*].CODING = 'NON_CODING'";
+	//		List<VcfEntry> list = snpsiftFilter.filter("test/test03.vcf", expression, true);
+	//
+	//		// Check that it satisfies the condition
+	//		System.out.println("Expression: '" + expression + "'");
+	//		for (VcfEntry vcfEntry : list) {
+	//			if (verbose) System.out.println("\t" + vcfEntry);
+	//
+	//			boolean any = false;
+	//			String effStr = vcfEntry.getInfo("EFF");
+	//			for (String eff : effStr.split(",")) {
+	//				String e = eff.split("\\|")[6];
+	//				any |= e.equals("NON_CODING");
+	//			}
+	//
+	//			Assert.assertEquals(true, any);
+	//		}
+	//	}
+	//
+	//	/**
+	//	 * Filter by ANN[ALL].EFFECT
+	//	 */
+	//	public void test_34_ann() {
+	//		// Filter data
+	//		SnpSiftCmdFilter snpsiftFilter = new SnpSiftCmdFilter();
+	//		String expression = "(ANN[ALL].EFFECT = 'DOWNSTREAM')";
+	//		List<VcfEntry> list = snpsiftFilter.filter("test/downstream.vcf", expression, true);
+	//
+	//		// Check that it satisfies the condition
+	//		System.out.println("Expression: '" + expression + "'");
+	//		for (VcfEntry vcfEntry : list) {
+	//			boolean all = true;
+	//			String effStr = vcfEntry.getInfo("EFF");
+	//			for (String eff : effStr.split(",")) {
+	//				String e = eff.split("\\(")[0];
+	//				all &= e.equals("DOWNSTREAM");
+	//			}
+	//
+	//			if (!all) Gpr.debug("Error: " + effStr);
+	//			Assert.assertEquals(true, all);
+	//		}
+	//	}
+	//
+	//	/**
+	//	 * Filter by EFF[*].GENE
+	//	 */
+	//	public void test_35_ann() {
+	//		// Filter data
+	//		SnpSiftCmdFilter snpsiftFilter = new SnpSiftCmdFilter();
+	//		String expression = "ANN[*].GENE = 'BICD1'";
+	//		List<VcfEntry> list = snpsiftFilter.filter("test/test_gene.vcf", expression, true);
+	//
+	//		// Check that it satisfies the condition
+	//		System.out.println("Expression: '" + expression + "'");
+	//		for (VcfEntry vcfEntry : list) {
+	//			if (verbose) System.out.println("\t" + vcfEntry);
+	//
+	//			boolean any = false;
+	//			for (VcfEffect eff : vcfEntry.parseEffects(null)) {
+	//				Assert.assertEquals("BICD1", eff.getGeneName());
+	//				any = true;
+	//			}
+	//
+	//			Assert.assertEquals(true, any);
+	//		}
+	//	}
 
 }
