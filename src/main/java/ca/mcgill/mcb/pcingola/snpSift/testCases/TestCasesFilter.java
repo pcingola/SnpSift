@@ -186,9 +186,9 @@ public class TestCasesFilter extends TestCase {
 		for (VcfEntry vcfEntry : list) {
 			if (verbose) System.out.println("\t" + vcfEntry);
 			Assert.assertTrue( //
-					(vcfEntry.getStart() >= (minPos - 1)) //
+			(vcfEntry.getStart() >= (minPos - 1)) //
 					|| (vcfEntry.getStart() <= (maxPos - 1)) //
-					);
+			);
 		}
 	}
 
@@ -534,7 +534,7 @@ public class TestCasesFilter extends TestCase {
 			for (String a : ap.split(","))
 				any |= Gpr.parseDoubleSafe(a) > 0.8;
 
-				Assert.assertEquals(true, any);
+			Assert.assertEquals(true, any);
 		}
 	}
 
@@ -583,12 +583,56 @@ public class TestCasesFilter extends TestCase {
 	}
 
 	/**
+	 * Filter by ANN[0].EFFECT (effect)
+	 */
+	public void test_26_ann() {
+		// Filter data
+		SnpSiftCmdFilter snpsiftFilter = new SnpSiftCmdFilter();
+		String expression = "ANN[0].EFFECT = 'SYNONYMOUS_CODING'";
+		List<VcfEntry> list = snpsiftFilter.filter("test/test03.vcf", expression, true);
+
+		// Check that it satisfies the condition
+		System.out.println("Expression: '" + expression + "'");
+		for (VcfEntry vcfEntry : list) {
+			if (verbose) System.out.println("\t" + vcfEntry);
+
+			String eff = vcfEntry.getInfo("EFF").split("\\(")[0];
+			Assert.assertEquals(eff, "SYNONYMOUS_CODING");
+		}
+	}
+
+	/**
 	 * Filter by EFF[*].EFFECT (any effect)
 	 */
 	public void test_27() {
 		// Filter data
 		SnpSiftCmdFilter snpsiftFilter = new SnpSiftCmdFilter();
 		String expression = "EFF[*].EFFECT = 'SYNONYMOUS_CODING'";
+		List<VcfEntry> list = snpsiftFilter.filter("test/test03.vcf", expression, true);
+
+		// Check that it satisfies the condition
+		System.out.println("Expression: '" + expression + "'");
+		for (VcfEntry vcfEntry : list) {
+			if (verbose) System.out.println("\t" + vcfEntry);
+
+			boolean any = false;
+			String effStr = vcfEntry.getInfo("EFF");
+			for (String eff : effStr.split(",")) {
+				String e = eff.split("\\(")[0];
+				any |= e.equals("SYNONYMOUS_CODING");
+			}
+
+			Assert.assertEquals(true, any);
+		}
+	}
+
+	/**
+	 * Filter by ANN[*].EFFECT (any effect)
+	 */
+	public void test_27_ann() {
+		// Filter data
+		SnpSiftCmdFilter snpsiftFilter = new SnpSiftCmdFilter();
+		String expression = "ANN[*].EFFECT = 'SYNONYMOUS_CODING'";
 		List<VcfEntry> list = snpsiftFilter.filter("test/test03.vcf", expression, true);
 
 		// Check that it satisfies the condition
@@ -733,12 +777,62 @@ public class TestCasesFilter extends TestCase {
 	}
 
 	/**
+	 * Filter by ANN[*].CODING
+	 */
+	public void test_32_ann() {
+		// Filter data
+		SnpSiftCmdFilter snpsiftFilter = new SnpSiftCmdFilter();
+		String expression = "ANN[*].BIOTYPE = 'CODING'";
+		List<VcfEntry> list = snpsiftFilter.filter("test/test03.vcf", expression, true);
+
+		// Check that it satisfies the condition
+		System.out.println("Expression: '" + expression + "'");
+		for (VcfEntry vcfEntry : list) {
+			if (verbose) System.out.println("\t" + vcfEntry);
+
+			boolean any = false;
+			String effStr = vcfEntry.getInfo("EFF");
+			for (String eff : effStr.split(",")) {
+				String e = eff.split("\\|")[6];
+				any |= e.equals("CODING");
+			}
+
+			Assert.assertEquals(true, any);
+		}
+	}
+
+	/**
 	 * Filter by EFF[*].CODING
 	 */
 	public void test_33() {
 		// Filter data
 		SnpSiftCmdFilter snpsiftFilter = new SnpSiftCmdFilter();
 		String expression = "EFF[*].CODING = 'NON_CODING'";
+		List<VcfEntry> list = snpsiftFilter.filter("test/test03.vcf", expression, true);
+
+		// Check that it satisfies the condition
+		System.out.println("Expression: '" + expression + "'");
+		for (VcfEntry vcfEntry : list) {
+			if (verbose) System.out.println("\t" + vcfEntry);
+
+			boolean any = false;
+			String effStr = vcfEntry.getInfo("EFF");
+			for (String eff : effStr.split(",")) {
+				String e = eff.split("\\|")[6];
+				any |= e.equals("NON_CODING");
+			}
+
+			Assert.assertEquals(true, any);
+		}
+	}
+
+	/**
+	 * Filter by ANN[*].CODING
+	 */
+	public void test_33_ann() {
+		// Filter data
+		SnpSiftCmdFilter snpsiftFilter = new SnpSiftCmdFilter();
+		String expression = "ANN[*].CODING = 'NON_CODING'";
 		List<VcfEntry> list = snpsiftFilter.filter("test/test03.vcf", expression, true);
 
 		// Check that it satisfies the condition
@@ -782,12 +876,60 @@ public class TestCasesFilter extends TestCase {
 	}
 
 	/**
+	 * Filter by ANN[ALL].EFFECT
+	 */
+	public void test_34_ann() {
+		// Filter data
+		SnpSiftCmdFilter snpsiftFilter = new SnpSiftCmdFilter();
+		String expression = "(ANN[ALL].EFFECT = 'DOWNSTREAM')";
+		List<VcfEntry> list = snpsiftFilter.filter("test/downstream.vcf", expression, true);
+
+		// Check that it satisfies the condition
+		System.out.println("Expression: '" + expression + "'");
+		for (VcfEntry vcfEntry : list) {
+			boolean all = true;
+			String effStr = vcfEntry.getInfo("EFF");
+			for (String eff : effStr.split(",")) {
+				String e = eff.split("\\(")[0];
+				all &= e.equals("DOWNSTREAM");
+			}
+
+			if (!all) Gpr.debug("Error: " + effStr);
+			Assert.assertEquals(true, all);
+		}
+	}
+
+	/**
 	 * Filter by EFF[*].GENE
 	 */
 	public void test_35() {
 		// Filter data
 		SnpSiftCmdFilter snpsiftFilter = new SnpSiftCmdFilter();
 		String expression = "EFF[*].GENE = 'BICD1'";
+		List<VcfEntry> list = snpsiftFilter.filter("test/test_gene.vcf", expression, true);
+
+		// Check that it satisfies the condition
+		System.out.println("Expression: '" + expression + "'");
+		for (VcfEntry vcfEntry : list) {
+			if (verbose) System.out.println("\t" + vcfEntry);
+
+			boolean any = false;
+			for (VcfEffect eff : vcfEntry.parseEffects(null)) {
+				Assert.assertEquals("BICD1", eff.getGeneName());
+				any = true;
+			}
+
+			Assert.assertEquals(true, any);
+		}
+	}
+
+	/**
+	 * Filter by EFF[*].GENE
+	 */
+	public void test_35_ann() {
+		// Filter data
+		SnpSiftCmdFilter snpsiftFilter = new SnpSiftCmdFilter();
+		String expression = "ANN[*].GENE = 'BICD1'";
 		List<VcfEntry> list = snpsiftFilter.filter("test/test_gene.vcf", expression, true);
 
 		// Check that it satisfies the condition
@@ -902,6 +1044,28 @@ public class TestCasesFilter extends TestCase {
 
 		// Filter data
 		String expression = "( EFF[*].EFFECT = 'SPLICE_SITE_ACCEPTOR' )";
+		String vcfFile = "test/test_jim.vcf";
+		String args[] = { "-f", vcfFile, "-n", expression }; // FILTER iNverse
+		SnpSiftCmdFilter snpsiftFilter = new SnpSiftCmdFilter(args);
+		List<VcfEntry> list = snpsiftFilter.filter(vcfFile, expression, true);
+
+		// Check that it satisfies the condition
+		System.out.println("Expression: '" + expression + "'");
+		Assert.assertNotNull(list);
+		Assert.assertTrue(list.size() == 1);
+
+		// Check result (hould be only one entry)
+		VcfEntry vcfEntry = list.get(0);
+		if (verbose) System.out.println(vcfEntry.getFilterPass() + "\t" + vcfEntry);
+		Assert.assertEquals(219134272, vcfEntry.getStart());
+	}
+
+	/**
+	 * Inverse FILTER strings
+	 */
+	public void test_40_ann() {
+		// Filter data
+		String expression = "( ANN[*].EFFECT = 'SPLICE_SITE_ACCEPTOR' )";
 		String vcfFile = "test/test_jim.vcf";
 		String args[] = { "-f", vcfFile, "-n", expression }; // FILTER iNverse
 		SnpSiftCmdFilter snpsiftFilter = new SnpSiftCmdFilter(args);
