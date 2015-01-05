@@ -286,7 +286,7 @@ public class SnpSiftCmdCaseControlSummary extends SnpSift {
 					+ "\t" + (ve.getStart() + 1) //
 					+ "\t" + ve.getRef() //
 					+ "\t" + ve.getAltsStr() //
-					+ "\t" + effMax.getGene() //
+					+ "\t" + effMax.getGeneName() //
 					+ "\t" + effMax.getEffectType() //
 					+ "\t" + effMax.getAa() //
 					+ "\t" + summary.toString(groupNamesSorted) //

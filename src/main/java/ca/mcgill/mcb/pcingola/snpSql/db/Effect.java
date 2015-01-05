@@ -54,7 +54,7 @@ public class Effect extends Pojo<Effect> {
 		codon = veff.getCodon();
 		aa = veff.getAa();
 		aaLen = veff.getAaLen();
-		gene = veff.getGene();
+		gene = veff.getGeneName();
 		bioType = veff.getBioType();
 		coding = veff.getCoding() != null ? veff.getCoding().toString() : null;
 		transcriptId = veff.getTranscriptId();

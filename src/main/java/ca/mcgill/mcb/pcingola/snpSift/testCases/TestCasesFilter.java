@@ -186,9 +186,9 @@ public class TestCasesFilter extends TestCase {
 		for (VcfEntry vcfEntry : list) {
 			if (verbose) System.out.println("\t" + vcfEntry);
 			Assert.assertTrue( //
-			(vcfEntry.getStart() >= (minPos - 1)) //
+					(vcfEntry.getStart() >= (minPos - 1)) //
 					|| (vcfEntry.getStart() <= (maxPos - 1)) //
-			);
+					);
 		}
 	}
 
@@ -534,7 +534,7 @@ public class TestCasesFilter extends TestCase {
 			for (String a : ap.split(","))
 				any |= Gpr.parseDoubleSafe(a) > 0.8;
 
-			Assert.assertEquals(true, any);
+				Assert.assertEquals(true, any);
 		}
 	}
 
@@ -797,7 +797,7 @@ public class TestCasesFilter extends TestCase {
 
 			boolean any = false;
 			for (VcfEffect eff : vcfEntry.parseEffects(null)) {
-				Assert.assertEquals("BICD1", eff.getGene());
+				Assert.assertEquals("BICD1", eff.getGeneName());
 				any = true;
 			}
 

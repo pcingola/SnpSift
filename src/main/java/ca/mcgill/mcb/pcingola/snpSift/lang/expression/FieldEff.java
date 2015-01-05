@@ -68,7 +68,7 @@ public class FieldEff extends FieldSub {
 
 		eff.formatVersion();
 
-		String value = eff.get(fieldNum);
+		String value = eff.getVcfFieldString(fieldNum);
 		if (value == null) return (String) fieldNotFound(vcfEntry);
 		return value;
 	}
