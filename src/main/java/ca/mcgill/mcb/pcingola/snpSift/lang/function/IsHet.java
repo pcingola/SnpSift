@@ -1,5 +1,7 @@
 package ca.mcgill.mcb.pcingola.snpSift.lang.function;
 
+import ca.mcgill.mcb.pcingola.snpSift.lang.Value;
+import ca.mcgill.mcb.pcingola.snpSift.lang.expression.Expression;
 import ca.mcgill.mcb.pcingola.vcf.VcfEntry;
 import ca.mcgill.mcb.pcingola.vcf.VcfGenotype;
 
@@ -10,19 +12,19 @@ import ca.mcgill.mcb.pcingola.vcf.VcfGenotype;
  */
 public class IsHet extends FunctionBoolGenotype {
 
-	public IsHet(int genotypNum) {
-		super("isHet", genotypNum);
+	public IsHet(Expression exprIdx) {
+		super("isHet", exprIdx);
 	}
 
 	@Override
-	public boolean eval(VcfEntry vcfEntry) {
-		VcfGenotype gen = vcfEntry.getVcfGenotype(genotypeNum);
-		return gen.isHeterozygous();
+	public Value eval(VcfEntry vcfEntry) {
+		VcfGenotype gen = evalGenotype(vcfEntry);
+		return gen.isHeterozygous() ? Value.TRUE : Value.FALSE;
 	}
 
 	@Override
-	public boolean eval(VcfGenotype vcfGenotype) {
-		return vcfGenotype.isHeterozygous();
+	public Value eval(VcfGenotype vcfGenotype) {
+		return vcfGenotype.isHeterozygous() ? Value.TRUE : Value.FALSE;
 	}
 
 }

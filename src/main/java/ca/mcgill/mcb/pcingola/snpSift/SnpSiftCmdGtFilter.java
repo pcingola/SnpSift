@@ -5,16 +5,9 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.antlr.runtime.ANTLRStringStream;
-import org.antlr.runtime.CommonTokenStream;
-import org.antlr.runtime.RecognitionException;
-import org.antlr.runtime.tree.Tree;
-
 import ca.mcgill.mcb.pcingola.fileIterator.VcfFileIterator;
-import ca.mcgill.mcb.pcingola.snpSift.antlr.VcfFilterLexer;
-import ca.mcgill.mcb.pcingola.snpSift.antlr.VcfFilterParser;
-import ca.mcgill.mcb.pcingola.snpSift.lang.LangFactory;
-import ca.mcgill.mcb.pcingola.snpSift.lang.condition.Condition;
+import ca.mcgill.mcb.pcingola.snpSift.lang.Value;
+import ca.mcgill.mcb.pcingola.snpSift.lang.expression.Expression;
 import ca.mcgill.mcb.pcingola.snpSift.lang.expression.Field;
 import ca.mcgill.mcb.pcingola.snpSift.lang.expression.FieldIterator;
 import ca.mcgill.mcb.pcingola.util.Gpr;
@@ -36,10 +29,9 @@ public class SnpSiftCmdGtFilter extends SnpSift {
 
 	boolean inverse; // Inverse filter (i.e. do NOT show lines that match the filter)
 	boolean exceptionIfNotFound; // Throw an exception of a field is not found?
-	// String vcfInputFile; // Input file
 	String expression; // Expression (as a string)
 	String gtFieldName, gtFieldValue;
-	Condition condition; // Condition (parsed expression)
+	Expression expr; // Expression (parsed expression string)
 	String filterId; // FilterID string to add to FILTER field if the filter does NOT pass.
 	ArrayList<HashSet<String>> sets;
 	EffFormatVersion formatVersion;
@@ -90,29 +82,29 @@ public class SnpSiftCmdGtFilter extends SnpSift {
 		vcfEntry.setFilterPass(filter);
 	}
 
-	/**
-	 * Create a "Vcf filter condition" from an FCL definition string
-	 */
-	private Condition createFromLexer(VcfFilterLexer lexer, boolean verbose) throws RecognitionException {
-		CommonTokenStream tokens = new CommonTokenStream(lexer);
-		VcfFilterParser parser = new VcfFilterParser(tokens);
-
-		VcfFilterParser.main_return root;
-		root = parser.main();
-		Tree parseTree = (Tree) root.getTree();
-
-		// Error creating?
-		if (parseTree == null) {
-			System.err.println("Can't create expression");
-			return null;
-		}
-
-		if (debug) Gpr.debug("Tree: " + parseTree.toStringTree());
-
-		// Create a language factory
-		LangFactory langFactory = new LangFactory(sets, formatVersion, exceptionIfNotFound);
-		return langFactory.conditionFactory(parseTree);
-	}
+	//	/**
+	//	 * Create a "Vcf filter condition" from an FCL definition string
+	//	 */
+	//	private Condition createFromLexer(VcfFilterLexer lexer, boolean verbose) throws RecognitionException {
+	//		CommonTokenStream tokens = new CommonTokenStream(lexer);
+	//		VcfFilterParser parser = new VcfFilterParser(tokens);
+	//
+	//		VcfFilterParser.main_return root;
+	//		root = parser.main();
+	//		Tree parseTree = (Tree) root.getTree();
+	//
+	//		// Error creating?
+	//		if (parseTree == null) {
+	//			System.err.println("Can't create expression");
+	//			return null;
+	//		}
+	//
+	//		if (debug) Gpr.debug("Tree: " + parseTree.toStringTree());
+	//
+	//		// Create a language factory
+	//		LangFactory langFactory = new LangFactory(sets, formatVersion, exceptionIfNotFound);
+	//		return langFactory.conditionFactory(parseTree);
+	//	}
 
 	/**
 	 * Remove a string from FILTER vcf field
@@ -170,11 +162,11 @@ public class SnpSiftCmdGtFilter extends SnpSift {
 		if (debug) Gpr.debug("VCF entry:" + vcfEntry.toStringNoGt() + "\t" + vcfGenotype);
 
 		do {
-			boolean eval = condition.eval(vcfGenotype);
+			Value eval = expr.eval(vcfGenotype);
 			if (debug) Gpr.debug("\tEval: " + eval + "\tFieldIterator: " + fieldIterator);
 
-			all &= eval;
-			any |= eval;
+			all &= eval.asBool();
+			any |= eval.asBool();
 
 			if ((fieldIterator.getType() == Field.TYPE_ALL) && !all) {
 				boolean ret = inverse ^ all;
@@ -275,22 +267,25 @@ public class SnpSiftCmdGtFilter extends SnpSift {
 	/**
 	 * Parse expression
 	 */
-	public Condition parseExpression(String expression) throws Exception {
+	public Expression parseExpression(String expression) throws Exception {
 		if (debug) Gpr.debug("Parse expression: \"" + expression + "\"");
 
-		// Parse string (lexer first, then parser)
-		VcfFilterLexer lexer = new VcfFilterLexer(new ANTLRStringStream(expression));
+		// FIXME: Fix this
+		throw new RuntimeException("FIX THIS CODE!");
 
-		// Parse tree and create expression
-		condition = createFromLexer(lexer, true);
-
-		if (condition == null) {
-			System.err.println("Fatal error: Cannot build expression tree.");
-			System.exit(-1);
-		}
-
-		if (debug) Gpr.debug("Condition: " + condition);
-		return condition;
+		//		// Parse string (lexer first, then parser)
+		//		VcfFilterLexer lexer = new VcfFilterLexer(new ANTLRStringStream(expression));
+		//
+		//		// Parse tree and create expression
+		//		condition = createFromLexer(lexer, true);
+		//
+		//		if (condition == null) {
+		//			System.err.println("Fatal error: Cannot build expression tree.");
+		//			System.exit(-1);
+		//		}
+		//
+		//		if (debug) Gpr.debug("Condition: " + condition);
+		//		return condition;
 	}
 
 	@Override
@@ -305,7 +300,7 @@ public class SnpSiftCmdGtFilter extends SnpSift {
 	 */
 	public List<VcfEntry> run(boolean createList) {
 		// Debug mode?
-		if (debug) Condition.debug = true;
+		if (debug) Expression.debug = true;
 
 		// Parse expression
 		try {

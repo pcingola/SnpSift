@@ -5,16 +5,10 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.antlr.runtime.ANTLRStringStream;
-import org.antlr.runtime.CommonTokenStream;
-import org.antlr.runtime.RecognitionException;
-import org.antlr.runtime.tree.Tree;
-
 import ca.mcgill.mcb.pcingola.fileIterator.VcfFileIterator;
-import ca.mcgill.mcb.pcingola.snpSift.antlr.VcfFilterLexer;
-import ca.mcgill.mcb.pcingola.snpSift.antlr.VcfFilterParser;
 import ca.mcgill.mcb.pcingola.snpSift.lang.LangFactory;
-import ca.mcgill.mcb.pcingola.snpSift.lang.condition.Condition;
+import ca.mcgill.mcb.pcingola.snpSift.lang.Value;
+import ca.mcgill.mcb.pcingola.snpSift.lang.expression.Expression;
 import ca.mcgill.mcb.pcingola.snpSift.lang.expression.Field;
 import ca.mcgill.mcb.pcingola.snpSift.lang.expression.FieldIterator;
 import ca.mcgill.mcb.pcingola.util.Gpr;
@@ -41,7 +35,7 @@ import ca.mcgill.mcb.pcingola.vcf.VcfEntry;
  * 			- Singletons
  * 			- Doubletons
  * 			- Tripletons
- * 			- negate all previous conditions
+ * 			- negate all previous expressions
  * 			- pValue (Fisher exact test)
  *
  * 		- Database information
@@ -56,7 +50,7 @@ public class SnpSiftCmdFilter extends SnpSift {
 	boolean inverse; // Inverse filter (i.e. do NOT show lines that match the filter)
 	boolean exceptionIfNotFound; // Throw an exception of a field is not found?
 	String expression; // Expression (as a string)
-	Condition condition; // Condition (parsed expression)
+	Expression expr; // Expression (parsed expression)
 	String filterId; // FilterID string to add to FILTER field if the filter does NOT pass.
 	String addFilterField; // Add a string to FILTER field.
 	String rmFilterField; // Remove String from FILTER field
@@ -81,7 +75,6 @@ public class SnpSiftCmdFilter extends SnpSift {
 
 	/**
 	 * Read a file as a string set
-	 * @param fileName
 	 */
 	public void addSet(String fileName) {
 		// Open file and check
@@ -100,8 +93,6 @@ public class SnpSiftCmdFilter extends SnpSift {
 
 	/**
 	 * Add string to FILTER vcf field
-	 * @param vcfEntry
-	 * @param filterStr
 	 */
 	void addVcfFilter(VcfEntry vcfEntry, String filterStr) {
 		// Get current value
@@ -113,36 +104,7 @@ public class SnpSiftCmdFilter extends SnpSift {
 	}
 
 	/**
-	 * Create a "Vcf filter condition" from an FCL definition string
-	 * @param lexer : lexer to use
-	 * @param verbose : be verbose?
-	 * @return A new FIS (or null on error)
-	 */
-	private Condition createFromLexer(VcfFilterLexer lexer, boolean verbose) throws RecognitionException {
-		CommonTokenStream tokens = new CommonTokenStream(lexer);
-		VcfFilterParser parser = new VcfFilterParser(tokens);
-
-		VcfFilterParser.main_return root;
-		root = parser.main();
-		Tree parseTree = (Tree) root.getTree();
-
-		// Error creating?
-		if (parseTree == null) {
-			System.err.println("Can't create expression");
-			return null;
-		}
-
-		if (debug) Gpr.debug("Tree: " + parseTree.toStringTree());
-
-		// Create a language factory
-		LangFactory langFactory = new LangFactory(sets, formatVersion, exceptionIfNotFound);
-		return langFactory.conditionFactory(parseTree);
-	}
-
-	/**
 	 * Remove a string from FILTER vcf field
-	 * @param vcfEntry
-	 * @param filterStr
 	 */
 	void delVcfFilter(VcfEntry vcfEntry, String filterStr) {
 		// Get current value
@@ -175,11 +137,11 @@ public class SnpSiftCmdFilter extends SnpSift {
 		if (debug) Gpr.debug("VCF entry:" + vcfEntry.toStringNoGt());
 
 		do {
-			boolean eval = condition.eval(vcfEntry);
+			Value eval = expr.eval(vcfEntry);
 			if (debug) Gpr.debug("\tEval: " + eval + "\tFieldIterator: " + fieldIterator);
 
-			all &= eval;
-			any |= eval;
+			all &= eval.asBool();
+			any |= eval.asBool();
 
 			if ((fieldIterator.getType() == Field.TYPE_ALL) && !all) {
 				boolean ret = inverse ^ all;
@@ -243,7 +205,6 @@ public class SnpSiftCmdFilter extends SnpSift {
 
 	/**
 	 * Parse command line options
-	 * @param args
 	 */
 	@Override
 	public void parse(String[] args) {
@@ -283,24 +244,23 @@ public class SnpSiftCmdFilter extends SnpSift {
 
 	/**
 	 * Parse expression
-	 * @throws Exception
 	 */
-	public Condition parseExpression(String expression) throws Exception {
+	public Expression parseExpression(String expression) throws Exception {
 		if (debug) Gpr.debug("Parse expression: \"" + expression + "\"");
 
-		// Parse string (lexer first, then parser)
-		VcfFilterLexer lexer = new VcfFilterLexer(new ANTLRStringStream(expression));
+		// Create a language factory
+		LangFactory langFactory = new LangFactory(sets, formatVersion, exceptionIfNotFound);
 
 		// Parse tree and create expression
-		condition = createFromLexer(lexer, true);
+		expr = langFactory.compile(expression);
 
-		if (condition == null) {
+		if (expression == null) {
 			System.err.println("Fatal error: Cannot build expression tree.");
 			System.exit(-1);
 		}
 
-		if (debug) Gpr.debug("Condition: " + condition);
-		return condition;
+		if (debug) Gpr.debug("Expression: " + expression);
+		return expr;
 	}
 
 	@Override
@@ -315,7 +275,7 @@ public class SnpSiftCmdFilter extends SnpSift {
 	 */
 	public List<VcfEntry> run(boolean createList) {
 		// Debug mode?
-		if (debug) Condition.debug = true;
+		if (debug) Expression.debug = true;
 
 		// Parse expression
 		try {
@@ -369,7 +329,6 @@ public class SnpSiftCmdFilter extends SnpSift {
 
 	/**
 	 * Usage message
-	 * @param msg
 	 */
 	@Override
 	public void usage(String msg) {

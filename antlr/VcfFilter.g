@@ -52,7 +52,6 @@ WS		: (' ' | '\t')+ { $channel = HIDDEN; };
 // On others they are represented by a \r and a \n character.
 NEWLINE		: ('\r'? '\n')+ { $channel=HIDDEN; };
 
-	
 // A number is a set of digits
 fragment NUMBER	: (DIGIT)+;
 

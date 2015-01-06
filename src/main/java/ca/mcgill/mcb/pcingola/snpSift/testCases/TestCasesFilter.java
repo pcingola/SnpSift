@@ -287,7 +287,7 @@ public class TestCasesFilter extends TestCase {
 		// Check that it satisfies the condition
 		if (verbose) System.out.println("Expression: '" + expression + "'");
 		Assert.assertNotNull(list);
-		Assert.assertTrue(list.size() == 182);
+		Assert.assertEquals(182, list.size());
 		for (VcfEntry vcfEntry : list) {
 			if (verbose) System.out.println("\t" + vcfEntry);
 			Assert.assertNotNull(vcfEntry.getInfo("INDEL"));
@@ -323,13 +323,15 @@ public class TestCasesFilter extends TestCase {
 
 		// Filter data
 		SnpSiftCmdFilter snpsiftFilter = new SnpSiftCmdFilter();
-		String expression = "( GEN[0].PL[1] > 10 ) ";
+		String expression = "( GEN[0].PL[1] > 100 ) ";
 		List<VcfEntry> list = snpsiftFilter.filter("test/test01.vcf", expression, true);
 
 		// Check that it satisfies the condition
 		if (verbose) System.out.println("Expression: '" + expression + "'");
 		Assert.assertNotNull(list);
 		Assert.assertTrue(list.size() > 0);
+
+		int count = 0;
 		for (VcfEntry vcfEntry : list) {
 			if (verbose) System.out.println("\t" + vcfEntry);
 
@@ -339,7 +341,10 @@ public class TestCasesFilter extends TestCase {
 			int plSubInt = Gpr.parseIntSafe(plSub);
 
 			Assert.assertTrue(plSubInt > 10);
+			count++;
 		}
+
+		Assert.assertTrue(count == 24);
 	}
 
 	/**
@@ -382,12 +387,16 @@ public class TestCasesFilter extends TestCase {
 		if (verbose) System.out.println("Expression: '" + expression + "'");
 		Assert.assertNotNull(list);
 		Assert.assertTrue(list.size() > 0);
+		int count = 0;
 		for (VcfEntry vcfEntry : list) {
 			if (verbose) System.out.println("\t" + vcfEntry);
 
 			VcfGenotype vcfGenotype = vcfEntry.getVcfGenotype(0);
 			Assert.assertTrue(vcfGenotype.isHomozygous());
+			count++;
 		}
+
+		Assert.assertEquals(821, count);
 	}
 
 	/**
@@ -525,7 +534,7 @@ public class TestCasesFilter extends TestCase {
 		// Check that it satisfies the condition
 		if (verbose) System.out.println("Expression: '" + expression + "'");
 		Assert.assertNotNull(list);
-		Assert.assertTrue(list.size() > 0);
+
 		for (VcfEntry vcfEntry : list) {
 			if (verbose) System.out.println("\t" + vcfEntry);
 
@@ -534,6 +543,33 @@ public class TestCasesFilter extends TestCase {
 					|| id.equals("rs71262674") //
 					|| id.equals("rs71262673"));
 		}
+
+		Assert.assertEquals(3, list.size());
+	}
+
+	/**
+	 * Filter by GT genottype functions
+	 */
+	public void test_22_3() {
+		Gpr.debug("Test");
+
+		// Filter data
+		SnpSiftCmdFilter snpsiftFilter = new SnpSiftCmdFilter();
+		snpsiftFilter.addSet("test/set_rs_test01.txt");
+		snpsiftFilter.addSet("test/set_rs_test02.txt");
+		snpsiftFilter.addSet("test/set_rs_test03.txt");
+		String expression = "ID in SET[2]";
+		List<VcfEntry> list = snpsiftFilter.filter("test/test02.vcf", expression, true);
+
+		// Check that it satisfies the condition
+		if (verbose) System.out.println("Expression: '" + expression + "'");
+		Assert.assertNotNull(list);
+
+		for (VcfEntry vcfEntry : list) {
+			if (verbose) System.out.println("\t" + vcfEntry);
+		}
+
+		Assert.assertEquals(67, list.size());
 	}
 
 	/**
@@ -558,6 +594,8 @@ public class TestCasesFilter extends TestCase {
 
 			Assert.assertEquals(true, any);
 		}
+
+		Assert.assertEquals(147, list.size());
 	}
 
 	/**
@@ -632,6 +670,8 @@ public class TestCasesFilter extends TestCase {
 			String eff = vcfEntry.getInfo("EFF").split("\\(")[0];
 			Assert.assertEquals(eff, "SYNONYMOUS_CODING");
 		}
+
+		Assert.assertEquals(2, list.size());
 	}
 
 	/**
@@ -642,7 +682,7 @@ public class TestCasesFilter extends TestCase {
 
 		// Filter data
 		SnpSiftCmdFilter snpsiftFilter = new SnpSiftCmdFilter();
-		String expression = "EFF[0].EFFECT = 'synonymous_variant'";
+		String expression = "ANN[0].EFFECT = 'synonymous_variant'";
 		List<VcfEntry> list = snpsiftFilter.filter("test/test03.ann.vcf", expression, true);
 
 		// Check that it satisfies the condition
@@ -685,6 +725,8 @@ public class TestCasesFilter extends TestCase {
 
 			Assert.assertEquals(true, any);
 		}
+
+		Assert.assertEquals(4, list.size()); // Check that total number of lines is OK
 	}
 
 	/**
@@ -695,7 +737,7 @@ public class TestCasesFilter extends TestCase {
 
 		// Filter data
 		SnpSiftCmdFilter snpsiftFilter = new SnpSiftCmdFilter();
-		String expression = "EFF[*].EFFECT = 'synonymous_variant'";
+		String expression = "ANN[*].EFFECT = 'synonymous_variant'";
 		List<VcfEntry> list = snpsiftFilter.filter("test/test03.ann.vcf", expression, true);
 
 		// Check that it satisfies the condition
@@ -734,7 +776,6 @@ public class TestCasesFilter extends TestCase {
 		// Check that it satisfies the condition
 		if (verbose) System.out.println("Expression: '" + expression + "'");
 		Assert.assertNotNull(list);
-		Assert.assertTrue(list.size() > 0);
 		for (VcfEntry vcfEntry : list) {
 			if (verbose) System.out.println("\t" + vcfEntry);
 
@@ -745,6 +786,8 @@ public class TestCasesFilter extends TestCase {
 
 			Assert.assertTrue(count == 3);
 		}
+
+		Assert.assertEquals(105, list.size());
 	}
 
 	/**
@@ -797,8 +840,9 @@ public class TestCasesFilter extends TestCase {
 				if (!gen.isVariant()) count++;
 			}
 
-			Assert.assertTrue(count == 3);
+			Assert.assertEquals(3, count);
 		}
+		Assert.assertEquals(84, list.size());
 	}
 
 	/**
@@ -863,7 +907,7 @@ public class TestCasesFilter extends TestCase {
 
 		// Filter data
 		SnpSiftCmdFilter snpsiftFilter = new SnpSiftCmdFilter();
-		String expression = "EFF[*].BIOTYPE = 'protein_coding'";
+		String expression = "ANN[*].BIOTYPE = 'protein_coding'";
 		List<VcfEntry> list = snpsiftFilter.filter("test/test03.ann.vcf", expression, true);
 
 		// Check that it satisfies the condition
@@ -922,7 +966,7 @@ public class TestCasesFilter extends TestCase {
 
 		// Filter data
 		SnpSiftCmdFilter snpsiftFilter = new SnpSiftCmdFilter();
-		String expression = "EFF[*].BIOTYPE = 'lincRNA'";
+		String expression = "ANN[*].BIOTYPE = 'lincRNA'";
 		List<VcfEntry> list = snpsiftFilter.filter("test/test03.ann.vcf", expression, true);
 
 		// Check that it satisfies the condition
@@ -979,7 +1023,7 @@ public class TestCasesFilter extends TestCase {
 
 		// Filter data
 		SnpSiftCmdFilter snpsiftFilter = new SnpSiftCmdFilter();
-		String expression = "(EFF[ALL].EFFECT = 'downstream_gene_variant')";
+		String expression = "(ANN[ALL].EFFECT = 'downstream_gene_variant')";
 		List<VcfEntry> list = snpsiftFilter.filter("test/downstream.ann.vcf", expression, true);
 
 		// Check that it satisfies the condition
@@ -1036,7 +1080,7 @@ public class TestCasesFilter extends TestCase {
 
 		// Filter data
 		SnpSiftCmdFilter snpsiftFilter = new SnpSiftCmdFilter();
-		String expression = "EFF[*].GENE = 'BICD1'";
+		String expression = "ANN[*].GENE = 'BICD1'";
 		List<VcfEntry> list = snpsiftFilter.filter("test/test_gene.ann.vcf", expression, true);
 
 		// Check that it satisfies the condition
@@ -1237,7 +1281,7 @@ public class TestCasesFilter extends TestCase {
 		// Check that it satisfies the condition
 		if (verbose) System.out.println("Expression: '" + expression + "'");
 		Assert.assertNotNull(list);
-		Assert.assertTrue(list.size() == 0);
+		Assert.assertEquals(0, list.size());
 	}
 
 	/**
@@ -1254,7 +1298,7 @@ public class TestCasesFilter extends TestCase {
 		// Check that it satisfies the condition
 		if (verbose) System.out.println("Expression: '" + expression + "'");
 		Assert.assertNotNull(list);
-		Assert.assertTrue(list.size() == 0);
+		Assert.assertEquals(0, list.size());
 	}
 
 	/**

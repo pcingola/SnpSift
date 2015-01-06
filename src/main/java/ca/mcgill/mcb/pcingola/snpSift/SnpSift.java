@@ -389,8 +389,10 @@ public class SnpSift {
 	 */
 	public void showCmd() {
 		System.err.print(SnpSift.class.getSimpleName() + " " + command + " ");
-		for (String a : args)
-			System.err.print(a + " ");
+		if (args != null) {
+			for (String a : args)
+				System.err.print(a + " ");
+		}
 		System.err.println("");
 	}
 
