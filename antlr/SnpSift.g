@@ -44,10 +44,10 @@ COMMENT_HASH   : '#' ~('\r' | '\n')* NEWLINE	{ skip(); };
 BOOL_LITERAL   : 'true' | 'false' ;
 
 // FLOAT number (float/double) without any signNUMBER
-INT_LITERAL    :   ('+'|'-')? NUMBER ;
-FLOAT_LITERAL   :   ('+'|'-')? NUMBER ( '.' NUMBER )? (('e'|'E') ('+'|'-')? NUMBER)? 
-                     | 'NaN' | 'NAN'
-                     ;
+INT_LITERAL    :   NUMBER ;
+FLOAT_LITERAL  :   NUMBER ( '.' NUMBER )? (('e'|'E') ('+'|'-')? NUMBER)? 
+                   | 'NaN' | 'NAN'
+                   ;
 
 // A string literal
 STRING_LITERAL : '\'' ~( '\n' | '\r' | '\'' )* '\'' { setText(getText().substring( 1, getText().length()-1 ) ); } ;

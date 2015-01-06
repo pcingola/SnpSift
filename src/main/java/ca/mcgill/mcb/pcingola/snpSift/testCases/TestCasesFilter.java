@@ -1371,4 +1371,20 @@ public class TestCasesFilter extends TestCase {
 		Assert.assertEquals(list.get(0).getInfo("ZZZ"), "NaN");
 	}
 
+	public void test_49() {
+		verbose = true;
+		Gpr.debug("Test");
+
+		// Filter data
+		SnpSiftCmdFilter snpsiftFilter = new SnpSiftCmdFilter();
+		String expression = "( DP < (AC+4))";
+		List<VcfEntry> list = snpsiftFilter.filter("test/test49.vcf", expression, true);
+
+		// Check that it satisfies the condition
+		if (verbose) System.out.println("Expression: '" + expression + "'");
+		Assert.assertNotNull(list);
+		Assert.assertTrue(list.size() == 1);
+		Assert.assertEquals("4", list.get(0).getInfo("AC"));
+	}
+
 }

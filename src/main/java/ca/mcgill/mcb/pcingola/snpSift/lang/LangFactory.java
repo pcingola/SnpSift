@@ -188,8 +188,8 @@ public class LangFactory {
 			Expression left = expressionFactory(tree.getChild(0));
 			Expression right = expressionFactory(tree.getChild(2));
 
-			if (op.equals("+")) expression = new Times(left, right);
-			else if (op.equals("-")) expression = new Div(left, right);
+			if (op.equals("+")) expression = new Plus(left, right);
+			else if (op.equals("-")) expression = new Minus(left, right);
 			else throw new RuntimeException("Unknown operator '" + op + "'");
 
 		} else if (leaveClass == ExpressionCompContext.class) { // Comparison operators
@@ -258,35 +258,6 @@ public class LangFactory {
 		if (debug) Gpr.debug("Expression: " + expression);
 		return expression;
 	}
-
-	//	/**
-	//	 * Create a field using lexer
-	//	 * @param lexer
-	//	 * @param verbose
-	//	 * @return
-	//	 * @throws RecognitionException
-	//	 */
-	//	private Field createFieldFromLexer(VcfFilterLexer lexer, boolean verbose) throws RecognitionException {
-	//		CommonTokenStream tokens = new CommonTokenStream(lexer);
-	//		VcfFilterParser parser = new VcfFilterParser(tokens);
-	//
-	//		// Parse 'var' (field)
-	//		VcfFilterParser.var_return root;
-	//		root = parser.var();
-	//		Tree parseTree = (Tree) root.getTree();
-	//
-	//		// Error creating?
-	//		if (parseTree == null) {
-	//			System.err.println("Can't create field tree");
-	//			return null;
-	//		}
-	//
-	//		if (debug) Gpr.debug("Field Tree: " + parseTree.toStringTree());
-	//
-	//		// Create a language factory
-	//		LangFactory langFactory = new LangFactory(sets, formatVersion, exceptionIfNotFound);
-	//		return langFactory.fieldFactory(parseTree);
-	//	}
 
 	/**
 	 * Create FunctionBoolSet from AST
@@ -464,21 +435,5 @@ public class LangFactory {
 		if (debug) Gpr.debug("vcfExpression: " + func);
 		return func;
 	}
-
-	//	/**
-	//	 * Get genotype number
-	//	 */
-	//	int genotypeNum(ParseTree tree) {
-	//		if (!tree.getText().equals("VAR_GENOTYPE")) throw new RuntimeException("Expecting genotype (VAR_GENOTYPE) , but got: " + tree.getText());
-	//		return Gpr.parseIntSafe(tree.getChild(0).getText());
-	//	}
-	//
-	//	/**
-	//	 * Parse a field
-	//	 */
-	//	public Field parseField(String fieldStr) throws Exception {
-	//		if (debug) Gpr.debug("Parse field: \"" + fieldStr + "\"");
-	//
-	//	}
 
 }
