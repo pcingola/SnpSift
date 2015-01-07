@@ -6,6 +6,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import ca.mcgill.mcb.pcingola.fileIterator.VcfFileIterator;
+import ca.mcgill.mcb.pcingola.snpSift.lang.LangFactory;
 import ca.mcgill.mcb.pcingola.snpSift.lang.Value;
 import ca.mcgill.mcb.pcingola.snpSift.lang.expression.Expression;
 import ca.mcgill.mcb.pcingola.snpSift.lang.expression.Field;
@@ -81,30 +82,6 @@ public class SnpSiftCmdGtFilter extends SnpSift {
 		filter += (!filter.isEmpty() ? ";" : "") + filterStr; // Add this filter to the not-passed list
 		vcfEntry.setFilterPass(filter);
 	}
-
-	//	/**
-	//	 * Create a "Vcf filter condition" from an FCL definition string
-	//	 */
-	//	private Condition createFromLexer(VcfFilterLexer lexer, boolean verbose) throws RecognitionException {
-	//		CommonTokenStream tokens = new CommonTokenStream(lexer);
-	//		VcfFilterParser parser = new VcfFilterParser(tokens);
-	//
-	//		VcfFilterParser.main_return root;
-	//		root = parser.main();
-	//		Tree parseTree = (Tree) root.getTree();
-	//
-	//		// Error creating?
-	//		if (parseTree == null) {
-	//			System.err.println("Can't create expression");
-	//			return null;
-	//		}
-	//
-	//		if (debug) Gpr.debug("Tree: " + parseTree.toStringTree());
-	//
-	//		// Create a language factory
-	//		LangFactory langFactory = new LangFactory(sets, formatVersion, exceptionIfNotFound);
-	//		return langFactory.conditionFactory(parseTree);
-	//	}
 
 	/**
 	 * Remove a string from FILTER vcf field
@@ -270,22 +247,16 @@ public class SnpSiftCmdGtFilter extends SnpSift {
 	public Expression parseExpression(String expression) throws Exception {
 		if (debug) Gpr.debug("Parse expression: \"" + expression + "\"");
 
-		// FIXME: Fix this
-		throw new RuntimeException("FIX THIS CODE!");
+		LangFactory lf = new LangFactory();
+		expr = lf.compile(expression);
 
-		//		// Parse string (lexer first, then parser)
-		//		VcfFilterLexer lexer = new VcfFilterLexer(new ANTLRStringStream(expression));
-		//
-		//		// Parse tree and create expression
-		//		condition = createFromLexer(lexer, true);
-		//
-		//		if (condition == null) {
-		//			System.err.println("Fatal error: Cannot build expression tree.");
-		//			System.exit(-1);
-		//		}
-		//
-		//		if (debug) Gpr.debug("Condition: " + condition);
-		//		return condition;
+		if (expr == null) {
+			System.err.println("Fatal error: Cannot build expression tree.");
+			System.exit(-1);
+		}
+
+		if (debug) Gpr.debug("Expression: " + expr);
+		return expr;
 	}
 
 	@Override
