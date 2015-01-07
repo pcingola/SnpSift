@@ -20,8 +20,8 @@ import ca.mcgill.mcb.pcingola.snpSift.SnpSift;
 import ca.mcgill.mcb.pcingola.snpSift.SnpSiftCmdDbNsfp;
 import ca.mcgill.mcb.pcingola.stats.CountByType;
 import ca.mcgill.mcb.pcingola.util.Timer;
+import ca.mcgill.mcb.pcingola.vcf.EffFormatVersion;
 import ca.mcgill.mcb.pcingola.vcf.VcfEffect;
-import ca.mcgill.mcb.pcingola.vcf.VcfEffect.FormatVersion;
 import ca.mcgill.mcb.pcingola.vcf.VcfEntry;
 import ca.mcgill.mcb.pcingola.vcf.VcfGenotype;
 import ca.mcgill.mcb.pcingola.vcf.VcfHeader;
@@ -34,7 +34,7 @@ import ca.mcgill.mcb.pcingola.vcf.VcfHeaderInfo;
  */
 public class SnpSiftCmdCaseControlSummary extends SnpSift {
 
-	public static FormatVersion formatVersion = null;
+	public static EffFormatVersion formatVersion = null;
 
 	public static Boolean CaseControl[] = { true, false };
 
@@ -196,7 +196,7 @@ public class SnpSiftCmdCaseControlSummary extends SnpSift {
 			System.exit(1);
 		}
 
-		// TODO: Test code, move somewhere else
+		// Add an sort info fields
 		VcfHeader vcfHeader = vcf.getVcfHeader();
 		for (VcfHeaderInfo vcfInfo : vcfHeader.getVcfInfo())
 			if (vcfInfo.getId().startsWith(SnpSiftCmdDbNsfp.VCF_INFO_PREFIX)) infoFields.add(vcfInfo.getId());
@@ -286,7 +286,7 @@ public class SnpSiftCmdCaseControlSummary extends SnpSift {
 					+ "\t" + (ve.getStart() + 1) //
 					+ "\t" + ve.getRef() //
 					+ "\t" + ve.getAltsStr() //
-					+ "\t" + effMax.getGene() //
+					+ "\t" + effMax.getGeneName() //
 					+ "\t" + effMax.getEffectType() //
 					+ "\t" + effMax.getAa() //
 					+ "\t" + summary.toString(groupNamesSorted) //

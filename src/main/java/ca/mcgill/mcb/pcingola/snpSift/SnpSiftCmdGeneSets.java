@@ -52,7 +52,7 @@ public class SnpSiftCmdGeneSets extends SnpSift {
 
 		// For all effects
 		for (VcfEffect eff : vcfEntry.parseEffects()) {
-			String gene = eff.getGene();
+			String gene = eff.getGeneName();
 
 			// Do we have gene name field?
 			if ((gene != null) && !gene.isEmpty()) {

@@ -1,87 +1,41 @@
 package ca.mcgill.mcb.pcingola.snpSift.lang.expression;
 
+import ca.mcgill.mcb.pcingola.snpSift.lang.Value;
 import ca.mcgill.mcb.pcingola.vcf.VcfEntry;
 import ca.mcgill.mcb.pcingola.vcf.VcfGenotype;
-import ca.mcgill.mcb.pcingola.vcf.VcfInfoType;
 
 public class Literal extends Expression {
 
-	String str;
-	double d = Double.NaN;
-	long l = 0;
+	Value value;
+
+	public Literal(Boolean b) {
+		value = new Value(b);
+	}
+
+	public Literal(Double d) {
+		value = new Value(d);
+	}
+
+	public Literal(long l) {
+		value = new Value(l);
+	}
 
 	public Literal(String str) {
-		this.str = str;
-		returnType = VcfInfoType.String;
-	}
-
-	public Literal(String str, boolean asNumber) {
-		this.str = str;
-		try {
-			returnType = VcfInfoType.Integer;
-			l = Long.parseLong(str);
-			d = l;
-		} catch (Exception e) {
-			returnType = VcfInfoType.Float;
-			d = Double.parseDouble(str);
-			l = (long) d;
-		}
-	}
-
-	@SuppressWarnings("rawtypes")
-	@Override
-	public Comparable get(VcfEntry vcfEntry) {
-		switch (returnType) {
-		case Integer:
-			return l;
-		case Float:
-			return d;
-		case String:
-			return str;
-		default:
-			throw new RuntimeException("Unknwon return type '" + returnType + "'");
-		}
+		value = new Value(str);
 	}
 
 	@Override
-	public Comparable get(VcfGenotype vcfGenotype) {
-		switch (returnType) {
-		case Integer:
-			return l;
-		case Float:
-			return d;
-		case String:
-			return str;
-		default:
-			throw new RuntimeException("Unknwon return type '" + returnType + "'");
-		}
+	public Value eval(VcfEntry vcfEntry) {
+		return value;
 	}
 
-	public String getStr() {
-		switch (returnType) {
-		case String:
-			return str;
-		case Float:
-			return "" + d;
-		case Integer:
-			return "" + l;
-		default:
-			throw new RuntimeException("Unknown type '" + returnType + "'");
-		}
-
+	@Override
+	public Value eval(VcfGenotype vcfGenotype) {
+		return value;
 	}
 
 	@Override
 	public String toString() {
-		switch (returnType) {
-		case String:
-			return "'" + str + "'";
-		case Float:
-			return "" + d;
-		case Integer:
-			return "" + l;
-		default:
-			throw new RuntimeException("Unknown type '" + returnType + "'");
-		}
+		return value.toString();
 	}
 }

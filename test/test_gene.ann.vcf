@@ -1,0 +1,8 @@
+##SnpEffVersion="4.1alpha (build 2015-01-04), by Pablo Cingolani"
+##SnpEffCmd="SnpEff  hg19 g.vcf "
+##INFO=<ID=ANN,Number=.,Type=String,Description="Functional annotations: 'Allele | Annotation | Annotation_Impact | Gene_Name | Gene_ID | Feature_Type | Feature_ID | Transcript_BioType | Rank | HGVS.c | HGVS.p | cDNA.pos / cDNA.length | CDS.pos / CDS.length | AA.pos / AA.length | Distance | ERRORS / WARNINGS / INFO' ">
+##INFO=<ID=LOF,Number=.,Type=String,Description="Predicted loss of function effects for this variant. Format: 'Gene_Name | Gene_ID | Number_of_transcripts_in_gene | Percent_of_transcripts_affected' ">
+##INFO=<ID=NMD,Number=.,Type=String,Description="Predicted nonsense mediated decay effects for this variant. Format: 'Gene_Name | Gene_ID | Number_of_transcripts_in_gene | Percent_of_transcripts_affected' ">
+#CHROM	POS	ID	REF	ALT	QUAL	FILTER	INFO
+chr12	32491626	rs1471909	G	A	124.0	.	DP=22;ANN=A|intron_variant|MODIFIER|BICD1|BICD1|transcript|NM_001714.2|Coding|7/9|c.2571-94G>A||||||,A|intron_variant|MODIFIER|BICD1|BICD1|transcript|NM_001003398.1|Coding|7/8|c.2460+986G>A||||||
+chrX	153010066	rs11803	C	T	73.8	.	DP=34;ANN=T|3_prime_UTR_variant|MODIFIER|ABCD1|ABCD1|transcript|NM_000033.3|Coding|10/10|c.*877C>T|||||877|

@@ -41,6 +41,9 @@ public class TestCasesFilterALL extends TestCase {
 			if (!all) Gpr.debug("Error: " + effStr);
 			Assert.assertEquals(true, all);
 		}
+
+		Assert.assertEquals(163, list.size());
+
 	}
 
 }

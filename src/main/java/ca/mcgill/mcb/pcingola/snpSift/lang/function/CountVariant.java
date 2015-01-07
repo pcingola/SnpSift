@@ -1,8 +1,8 @@
 package ca.mcgill.mcb.pcingola.snpSift.lang.function;
 
+import ca.mcgill.mcb.pcingola.snpSift.lang.Value;
 import ca.mcgill.mcb.pcingola.vcf.VcfEntry;
 import ca.mcgill.mcb.pcingola.vcf.VcfGenotype;
-import ca.mcgill.mcb.pcingola.vcf.VcfInfoType;
 
 /**
  * Count number of ALT samples
@@ -12,23 +12,21 @@ import ca.mcgill.mcb.pcingola.vcf.VcfInfoType;
 public class CountVariant extends Function {
 
 	public CountVariant() {
-		super("countVariant", VcfInfoType.Integer);
+		super("countVariant");
 	}
 
-	@SuppressWarnings("rawtypes")
 	@Override
-	public Comparable get(VcfEntry vcfEntry) {
-		int count = 0;
+	public Value eval(VcfEntry vcfEntry) {
+		long count = 0;
 		for (VcfGenotype gen : vcfEntry)
 			if (gen.isVariant()) count++;
 
-		return new Long(count);
+		return new Value(count);
 	}
 
-	@SuppressWarnings("rawtypes")
 	@Override
-	public Comparable get(VcfGenotype vcfGenotype) {
-		return vcfGenotype.isVariant() ? 1 : 0;
+	public Value eval(VcfGenotype vcfGenotype) {
+		return new Value(vcfGenotype.isVariant() ? 1L : 0L);
 	}
 
 }
