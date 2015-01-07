@@ -20,20 +20,36 @@ public class TestCasesZzz extends TestCase {
 
 	protected String[] defaultExtraArgs = null;
 
-	public void test_49() {
-		verbose = true;
+	/**
+	 * LOF[*] : Whole field 
+	 */
+	public void test_51() {
 		Gpr.debug("Test");
 
+		String lofStr = "(CAMTA1|ENSG00000171735|17|0.29)";
+
 		// Filter data
-		SnpSiftCmdFilter snpsiftFilter = new SnpSiftCmdFilter();
-		String expression = "( DP < (AC+4))";
-		List<VcfEntry> list = snpsiftFilter.filter("test/test49.vcf", expression, true);
+		SnpSiftCmdFilter snpSiftFilter = new SnpSiftCmdFilter();
+		String expression = "LOF[*] = '" + lofStr + "'";
+		List<VcfEntry> list = snpSiftFilter.filter("test/test45.vcf", expression, true);
 
 		// Check that it satisfies the condition
 		if (verbose) System.out.println("Expression: '" + expression + "'");
 		Assert.assertNotNull(list);
-		Assert.assertTrue(list.size() == 1);
-		Assert.assertEquals("4", list.get(0).getInfo("AC"));
+
+		for (VcfEntry ve : list) {
+			if (verbose) System.out.println(ve);
+
+			boolean ok = false;
+			for (String lof : ve.getInfo("LOF").split(",")) {
+				if (verbose) System.out.println("\t" + lof);
+				ok |= lof.equals(lofStr);
+			}
+
+			Assert.assertTrue(ok);
+		}
+
+		Assert.assertEquals(1, list.size());
 	}
 
 }

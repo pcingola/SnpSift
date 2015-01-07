@@ -202,9 +202,9 @@ public class TestCasesFilter extends TestCase {
 		for (VcfEntry vcfEntry : list) {
 			if (verbose) System.out.println("\t" + vcfEntry);
 			Assert.assertTrue( //
-			(vcfEntry.getStart() >= (minPos - 1)) //
+					(vcfEntry.getStart() >= (minPos - 1)) //
 					|| (vcfEntry.getStart() <= (maxPos - 1)) //
-			);
+					);
 		}
 	}
 
@@ -620,7 +620,7 @@ public class TestCasesFilter extends TestCase {
 			for (String a : ap.split(","))
 				any |= Gpr.parseDoubleSafe(a) > 0.8;
 
-			Assert.assertEquals(true, any);
+				Assert.assertEquals(true, any);
 		}
 	}
 
@@ -1385,6 +1385,70 @@ public class TestCasesFilter extends TestCase {
 		Assert.assertNotNull(list);
 		Assert.assertTrue(list.size() == 1);
 		Assert.assertEquals("4", list.get(0).getInfo("AC"));
+	}
+
+	/**
+	 * Filter by EFF[*] (whole field comparison)
+	 */
+	public void test_50() {
+		Gpr.debug("Test");
+		verbose = true;
+
+		String effStr = "NON_SYNONYMOUS_CODING(MODERATE|MISSENSE|Cat/Tat|H52Y|AL669831.1|protein_coding|CODING|ENST00000358533|exon_1_721320_722513)";
+
+		// Filter data
+		SnpSiftCmdFilter snpsiftFilter = new SnpSiftCmdFilter();
+		String expression = "EFF[*] = '" + effStr + "'";
+		List<VcfEntry> list = snpsiftFilter.filter("test/test03.vcf", expression, true);
+
+		// Check that it satisfies the condition
+		if (verbose) System.out.println("Expression: '" + expression + "'");
+		for (VcfEntry vcfEntry : list) {
+			if (verbose) System.out.println("\t" + vcfEntry);
+
+			boolean ok = false;
+			if (verbose) System.out.println(vcfEntry);
+			for (String eff : vcfEntry.getInfo("EFF").split(",")) {
+				ok |= eff.equals(effStr);
+				if (verbose) System.out.println("\t" + eff);
+			}
+
+			Assert.assertEquals(true, ok);
+		}
+
+		Assert.assertEquals(1, list.size());
+	}
+
+	/**
+	 * LOF[*] : Whole field
+	 */
+	public void test_51() {
+		Gpr.debug("Test");
+
+		String lofStr = "(CAMTA1|ENSG00000171735|17|0.29)";
+
+		// Filter data
+		SnpSiftCmdFilter snpSiftFilter = new SnpSiftCmdFilter();
+		String expression = "LOF[*] = '" + lofStr + "'";
+		List<VcfEntry> list = snpSiftFilter.filter("test/test45.vcf", expression, true);
+
+		// Check that it satisfies the condition
+		if (verbose) System.out.println("Expression: '" + expression + "'");
+		Assert.assertNotNull(list);
+
+		for (VcfEntry ve : list) {
+			if (verbose) System.out.println(ve);
+
+			boolean ok = false;
+			for (String lof : ve.getInfo("LOF").split(",")) {
+				if (verbose) System.out.println("\t" + lof);
+				ok |= lof.equals(lofStr);
+			}
+
+			Assert.assertTrue(ok);
+		}
+
+		Assert.assertEquals(1, list.size());
 	}
 
 }

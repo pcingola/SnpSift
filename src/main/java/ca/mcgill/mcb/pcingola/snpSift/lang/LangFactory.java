@@ -145,7 +145,7 @@ public class LangFactory {
 			Gpr.debug("\n\tLeaveClassName : " + leaveName //
 					+ "\n\tTxt            : " + tree.getText() //
 					+ "\n\tTree           : " + tree.toStringTree() //
-					);
+			);
 			for (int i = 0; i < tree.getChildCount(); i++)
 				System.err.println("\t\tChild[" + i + "] : " + tree.getChild(i).getText() + "\t\t" + tree.getChild(i).getClass().getSimpleName());
 		}
@@ -231,7 +231,7 @@ public class LangFactory {
 		} else if (leaveClass == VarReferenceContext.class // All fields are preocessed here
 				|| leaveClass == VarReferenceListContext.class //
 				|| leaveClass == VarReferenceListSubContext.class //
-				) {
+		) {
 			// Is it a field?
 			expression = fieldFactory(tree);
 		} else if (leaveClass == LiteralBoolContext.class) { // Literals
@@ -271,7 +271,7 @@ public class LangFactory {
 			Gpr.debug("\n\tLeaveClassName : " + leaveName //
 					+ "\n\tTxt            : " + tree.getText() //
 					+ "\n\tTree           : " + tree.toStringTree() //
-					);
+			);
 			for (int i = 0; i < tree.getChildCount(); i++)
 				System.err.println("\t\tChild[" + i + "] : " + tree.getChild(i).getText() + "\t\t" + tree.getChild(i).getClass().getSimpleName());
 		}
@@ -299,7 +299,7 @@ public class LangFactory {
 			Gpr.debug("\n\tLeaveClassName : " + leaveName //
 					+ "\n\tTxt            : " + tree.getText() //
 					+ "\n\tTree           : " + tree.toStringTree() //
-					);
+			);
 			for (int i = 0; i < tree.getChildCount(); i++)
 				System.err.println("\t\tChild[" + i + "] : " + tree.getChild(i).getText() + "\t\t" + tree.getChild(i).getClass().getSimpleName());
 		}
@@ -315,7 +315,7 @@ public class LangFactory {
 			Expression idxExpr = expressionFactory(tree.getChild(2));
 
 			if (name.equalsIgnoreCase("gen")) field = new FieldGenotype(null, idxExpr);
-			else if (name.equalsIgnoreCase("ann") || name.equalsIgnoreCase("eff")) field = new FieldEff(name, idxExpr, formatVersion);
+			else if (name.equalsIgnoreCase("ann") || name.equalsIgnoreCase("eff")) field = new FieldEff(null, idxExpr, formatVersion);
 			else if (name.equalsIgnoreCase("lof")) field = new FieldLof(null, idxExpr);
 			else if (name.equalsIgnoreCase("nmd")) field = new FieldNmd(null, idxExpr);
 			else field = new FieldSub(name, idxExpr);
@@ -355,7 +355,7 @@ public class LangFactory {
 			Gpr.debug("\n\tLeaveClassName : " + leaveName //
 					+ "\n\tTxt            : " + tree.getText() //
 					+ "\n\tTree           : " + tree.toStringTree() //
-					);
+			);
 			for (int i = 0; i < tree.getChildCount(); i++)
 				System.err.println("\t\tChild[" + i + "] : " + tree.getChild(i).getText());
 		}
@@ -391,13 +391,13 @@ public class LangFactory {
 				|| leaveName.equalsIgnoreCase("isHet") //
 				|| leaveName.equalsIgnoreCase("isRef") //
 				|| leaveName.equalsIgnoreCase("isVariant") //
-				) {
+		) {
 			return functionBoolGenotypeFactory(tree);
 		} else if (leaveName.equalsIgnoreCase("countHom") //
 				|| leaveName.equalsIgnoreCase("countHet") //
 				|| leaveName.equalsIgnoreCase("countRef") //
 				|| leaveName.equalsIgnoreCase("countVariant") //
-				) {
+		) {
 			return functionVcfEntryFactory(tree);
 		} else {
 			throw new RuntimeException("Unknown function '" + leaveName + "'");
@@ -415,7 +415,7 @@ public class LangFactory {
 			Gpr.debug("\n\tLeaveClassName : " + leaveName //
 					+ "\n\tTxt            : " + tree.getText() //
 					+ "\n\tTree           : " + tree.toStringTree() //
-					);
+			);
 			for (int i = 0; i < tree.getChildCount(); i++)
 				System.err.println("\t\tChild[" + i + "] : " + tree.getChild(i).getText());
 		}
