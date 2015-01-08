@@ -52,7 +52,7 @@ public class SnpSift {
 	protected String vcfInputFile; // VCF Input file
 	protected String dbFileName;
 	protected String dbType;
-	protected int numWorkers = Gpr.NUM_CORES; // Max number of threads (if multi-threaded version is available)
+	protected int numWorkers = 1; //  Max number of threads (if multi-threaded version is available)
 	protected StringBuilder output = new StringBuilder();
 	protected HashMap<String, Integer> errCount;
 	protected String configFile; // Config file

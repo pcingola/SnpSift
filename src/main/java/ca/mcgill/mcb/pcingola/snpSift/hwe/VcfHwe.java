@@ -2,19 +2,18 @@ package ca.mcgill.mcb.pcingola.snpSift.hwe;
 
 import ca.mcgill.mcb.pcingola.util.Gpr;
 import ca.mcgill.mcb.pcingola.vcf.VcfEntry;
-import ca.mcgill.mcb.pcingola.vcf.VcfGenotype;
 import flanagan.analysis.Stat;
 
 /**
  * Calculate Hardy-Weimberg equilibrium and goodness of fit.
- * 
- * References: 
+ *
+ * References:
  * 			"Principles of population genetics", Hartl & Clark
  * 			"A Note on Exact test of Hardy Weinbeg Equilibrium", G. Abecasis et. al.
- * 
- * Note: This is only for two alleles in diploid individuals. We should 
- *       extend this to more alleles and N-ploid species. 
- * 
+ *
+ * Note: This is only for two alleles in diploid individuals. We should
+ *       extend this to more alleles and N-ploid species.
+ *
  * @author pablocingolani
  */
 public class VcfHwe {
@@ -40,23 +39,27 @@ public class VcfHwe {
 
 		// Count each allele
 		int tot = 0;
-		for (VcfGenotype vcfGenotype : vcfEntry) {
-			// Any missing data?
-			boolean hasMissing = false;
-			for (int gen : vcfGenotype.getGenotype())
-				if (gen < 0) hasMissing = true;
+		byte gt[] = vcfEntry.getGenotypesScores();
+		for (int i = 0; i < gt.length; i++) {
+			switch (gt[i]) {
+			case 0: // Hom-Ref
+				countAA++;
+				countByGen[0] += 2;
+				break;
 
-			// Only if no missing data
-			if (!hasMissing) {
-				for (int gen : vcfGenotype.getGenotype()) {
-					countByGen[gen]++;
-					tot++;
-				}
+			case 1: // Het
+				countAB++;
+				countByGen[0]++;
+				countByGen[1]++;
+				break;
 
-				int gens[] = vcfGenotype.getGenotype();
-				if ((gens[0] == 0) && (gens[1] == 0)) countAA++;
-				else if ((gens[0] == 1) && (gens[1] == 1)) countBB++;
-				else countAB++;
+			case 2: // Hom-Alt
+				countBB++;
+				countByGen[1] += 2;
+				break;
+
+			default: // Missing genotype (-1)
+				break;
 			}
 		}
 
@@ -73,6 +76,7 @@ public class VcfHwe {
 
 		// Calculate goodness of fit (p value) based on Chi square distribution
 		double exactP = hweP(countByGen[0], countByGen[1], countAB);
+		double exactLogP = hweLogPn12(countByGen[0], countByGen[1], countAB);
 
 		// Add values to entry
 		if (addInfo) {
@@ -86,17 +90,17 @@ public class VcfHwe {
 
 	/**
 	 * Calculate exact log of "P[ n12 | n1, n2]"
-	 * 
-	 * References: 
+	 *
+	 * References:
 	 * 			"Principles of population genetics", Hartl & Clark, page 58 (formula 2.5)
 	 * 			"A Note on Exact test of Hardy Weinbeg Equilibrium", G. Abecasis et. al. (formula 1)
-	 * 
-	 * @param n1 : Number of 'A' alleles 
-	 * @param n2 : Number of 'B' alleles 
-	 * @param n12 : Number of 'AB' individuals 
-	 * 
+	 *
+	 * @param n1 : Number of 'A' alleles
+	 * @param n2 : Number of 'B' alleles
+	 * @param n12 : Number of 'AB' individuals
+	 *
 	 * Note: Total number of individuals (assuming they are diploid) is N = (n1 + n2) / 2
-	 * 
+	 *
 	 * @return Log of pValue using exact test
 	 */
 	public double hweLogPn12(int n1, int n2, int n12) {
@@ -108,7 +112,7 @@ public class VcfHwe {
 		int n22 = (n2 - n12) / 2;
 		int N = n11 + n12 + n22;
 
-		double num = Stat.logFactorial(N) - (Stat.logFactorial(n11) + Stat.logFactorial(n12) + Stat.logFactorial(n22));//
+		double num = Stat.logFactorial(N) - (Stat.logFactorial(n11) + Stat.logFactorial(n12) + Stat.logFactorial(n22)); //
 		double den = Stat.logFactorial(2 * N) - (Stat.logFactorial(n1) + Stat.logFactorial(n2));
 		double logp = num - den + n12 * LOG2;
 		double p = Math.exp(logp);
@@ -124,12 +128,8 @@ public class VcfHwe {
 	/**
 	 * Calculate goodness of fit for n1, n2 combination.
 	 * References: "Principles of population genetics", Hartl & Clark, page 58
-	 * 
+	 *
 	 * WARNING: The formula P_{HWE} in page 2 of "A Note on Exact test of Hardy Weinbeg Equilibrium", seems to have two mistakes (probably typos?)
-	 *  
-	 * @param n1
-	 * @param n2
-	 * @return
 	 */
 	public double hweP(int n1, int n2, int n12star) {
 		int min = Math.min(n1, n2);
@@ -148,13 +148,6 @@ public class VcfHwe {
 
 	/**
 	 * Calculate goodness of fit using Chi square approximation
-	 * 
-	 * @param p
-	 * @param q
-	 * @param countAA
-	 * @param countAB
-	 * @param countBB
-	 * @return
 	 */
 	public double hwePchi2(int n1, int n2, int n12) {
 		if ((n1 - n12) % 2 != 0) throw new RuntimeException("Bad nuber combination: (n1-n12) must be even");
@@ -188,17 +181,17 @@ public class VcfHwe {
 
 	/**
 	 * Calculate exact probability of "P[ n12 | n1, n2]"
-	 * 
-	 * References: 
+	 *
+	 * References:
 	 * 			"Principles of population genetics", Hartl & Clark, page 58 (formula 2.5)
 	 * 			"A Note on Exact test of Hardy Weinbeg Equilibrium", G. Abecasis et. al. (formula 1)
-	 * 
-	 * @param n1 : Number of 'A' alleles 
-	 * @param n2 : Number of 'B' alleles 
-	 * @param n12 : Number of 'AB' individuals 
-	 * 
+	 *
+	 * @param n1 : Number of 'A' alleles
+	 * @param n2 : Number of 'B' alleles
+	 * @param n12 : Number of 'AB' individuals
+	 *
 	 * Note: Total number of individuals (assuming they are diploid) is N = (n1 + n2) / 2
-	 * 
+	 *
 	 * @return pValue using exact test
 	 */
 	public double hwePn12(int n1, int n2, int n12) {
