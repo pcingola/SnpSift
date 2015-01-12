@@ -70,6 +70,11 @@ public class FieldGenotypeSub extends FieldGenotype {
 	}
 
 	@Override
+	protected boolean isSub() {
+		return true;
+	}
+
+	@Override
 	public String toString() {
 		return "GEN[" + indexExpr + "]." + name + "[" + indexExpr2 + "]";
 	}

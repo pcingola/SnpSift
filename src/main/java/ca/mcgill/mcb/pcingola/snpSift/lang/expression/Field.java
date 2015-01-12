@@ -36,10 +36,19 @@ public class Field extends Expression {
 				|| name.equals("ALT") //
 				|| name.equals("FILTER") //
 				|| name.equals("FORMAT") //
-		) returnType = VcfInfoType.String;
+				) returnType = VcfInfoType.String;
 		else if (name.equals("QUAL")) returnType = VcfInfoType.Float;
 		else if (name.equals("POS")) returnType = VcfInfoType.Integer;
 		else returnType = VcfInfoType.UNKNOWN;
+	}
+
+	protected VcfInfoType calcReturnType(VcfHeaderInfo vcfInfo) {
+		if (isSub()) vcfInfo.getVcfInfoType();
+
+		// Not a sub-field?
+		// Check 'number'
+		if (vcfInfo.getNumber() == 1) return vcfInfo.getVcfInfoType();
+		return VcfInfoType.String;
 	}
 
 	@Override
@@ -207,11 +216,11 @@ public class Field extends Expression {
 
 		// Is there a filed 'name'
 		VcfHeaderInfo vcfInfo = vcfHeader.getVcfInfo(name);
-		if (vcfInfo != null) returnType = vcfInfo.getVcfInfoType();
+		if (vcfInfo != null) returnType = calcReturnType(vcfInfo);
 		else {
 			// Is there a genotype 'name'
 			VcfHeaderInfoGenotype vcfInfoGenotype = vcfHeader.getVcfInfoGenotype(name);
-			if (vcfInfoGenotype != null) returnType = vcfInfoGenotype.getVcfInfoType();
+			if (vcfInfoGenotype != null) returnType = calcReturnType(vcfInfoGenotype);
 			else {
 				// Is this a special field name?
 				if (FieldConstant.isConstantField(name)) returnType = FieldConstantNames.valueOf(name).getType();
@@ -235,7 +244,7 @@ public class Field extends Expression {
 				throw new RuntimeException("Genotype field '" + name + "' not found in VCF header");
 			}
 
-			returnType = vcfInfoGenotype.getVcfInfoType();
+			returnType = calcReturnType(vcfInfoGenotype);
 		}
 
 		return returnType;
@@ -253,6 +262,10 @@ public class Field extends Expression {
 		if (index == TYPE_ANY) return "*";
 		if (index == TYPE_ALL) return "ALL";
 		return Integer.toString(index);
+	}
+
+	protected boolean isSub() {
+		return false;
 	}
 
 	/**

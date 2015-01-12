@@ -18,9 +18,6 @@ public class TestCasesExtractFields extends TestCase {
 
 	/**
 	 * Extract fields and return the output lines
-	 * @param vcfFileName
-	 * @param fieldExpression
-	 * @return
 	 */
 	List<String> extract(String vcfFileName, String fieldExpression) {
 		String args[] = { vcfFileName, fieldExpression };
@@ -38,9 +35,6 @@ public class TestCasesExtractFields extends TestCase {
 
 	/**
 	 * Extract fields form a file and check that the line matches (only one line expected from the file)
-	 * @param vcfFileName
-	 * @param fieldExpression
-	 * @param expected
 	 */
 	void extractAndCheck(String vcfFileName, String fieldExpression, String expected) {
 		List<String> linesList = extract(vcfFileName, fieldExpression);
@@ -169,6 +163,11 @@ public class TestCasesExtractFields extends TestCase {
 	public void test_26() {
 		Gpr.debug("Test");
 		extractAndCheck("test/extractFields_01.eff.vcf", "NMD[*].PERC", "0.6");
+	}
+
+	public void test_27() {
+		Gpr.debug("Test");
+		extractAndCheck("test/extractFields_27.vcf", "GEN[0].AD", "16,2");
 	}
 
 }

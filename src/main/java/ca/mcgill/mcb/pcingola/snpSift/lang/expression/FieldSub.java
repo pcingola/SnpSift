@@ -108,6 +108,11 @@ public class FieldSub extends Field {
 	}
 
 	@Override
+	protected boolean isSub() {
+		return true;
+	}
+
+	@Override
 	public String toString() {
 		return name + "[" + indexExpr + "]";
 	}
