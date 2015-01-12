@@ -1372,7 +1372,6 @@ public class TestCasesFilter extends TestCase {
 	}
 
 	public void test_49() {
-		verbose = true;
 		Gpr.debug("Test");
 
 		// Filter data
@@ -1392,7 +1391,6 @@ public class TestCasesFilter extends TestCase {
 	 */
 	public void test_50() {
 		Gpr.debug("Test");
-		verbose = true;
 
 		String effStr = "NON_SYNONYMOUS_CODING(MODERATE|MISSENSE|Cat/Tat|H52Y|AL669831.1|protein_coding|CODING|ENST00000358533|exon_1_721320_722513)";
 
