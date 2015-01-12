@@ -148,6 +148,8 @@ public class Field extends Expression {
 	Long getFieldInt(VcfEntry vcfEntry) {
 		if (name.equals("POS")) return vcfEntry.getStart() + 1L;
 
+		if (isSampleName(vcfEntry, name)) return (long) getSampleNum(vcfEntry, name);
+
 		String value = getFieldString(vcfEntry);
 		if (value == null) return (Long) fieldNotFound(vcfEntry);
 		return Gpr.parseLongSafe(value);
@@ -224,6 +226,7 @@ public class Field extends Expression {
 			else {
 				// Is this a special field name?
 				if (FieldConstant.isConstantField(name)) returnType = FieldConstantNames.valueOf(name).getType();
+				else if (isSampleName(vcfEntry, name)) returnType = VcfInfoType.Integer;
 				else throw new RuntimeException("INFO field '" + name + "' not found in VCF header");
 			}
 		}
@@ -238,16 +241,19 @@ public class Field extends Expression {
 			VcfHeaderInfoGenotype vcfInfoGenotype = vcfHeader.getVcfInfoGenotype(name);
 			if (vcfInfoGenotype == null) {
 				// Is this a special field name?
-				if (FieldConstant.isConstantField(name)) return FieldConstantNames.valueOf(name).getType();
-
-				// Error: Not found
-				throw new RuntimeException("Genotype field '" + name + "' not found in VCF header");
+				if (FieldConstant.isConstantField(name)) returnType = FieldConstantNames.valueOf(name).getType();
+				else if (isSampleName(vcfGenotype.getVcfEntry(), name)) returnType = VcfInfoType.Integer;
+				else throw new RuntimeException("Genotype field '" + name + "' not found in VCF header"); // Error: Not found
 			}
 
 			returnType = calcReturnType(vcfInfoGenotype);
 		}
 
 		return returnType;
+	}
+
+	protected int getSampleNum(VcfEntry vcfEntry, String name) {
+		return vcfEntry.getVcfFileIterator().getVcfHeader().getSampleNum(name);
 	}
 
 	protected Object gtFieldNotFound(VcfGenotype vcfGenotype) {
@@ -262,6 +268,10 @@ public class Field extends Expression {
 		if (index == TYPE_ANY) return "*";
 		if (index == TYPE_ALL) return "ALL";
 		return Integer.toString(index);
+	}
+
+	protected boolean isSampleName(VcfEntry vcfEntry, String name) {
+		return vcfEntry.getVcfFileIterator().getVcfHeader().getSampleNum(name) >= 0;
 	}
 
 	protected boolean isSub() {

@@ -1,0 +1,7 @@
+##fileformat=VCFv4.0
+##source=BCM:SNPTools:hapfuse
+##reference=1000Genomes-NCBI37
+##FORMAT=<ID=GT,Number=1,Type=String,Description="Genotype">
+##FORMAT=<ID=AP,Number=2,Type=Float,Description="Allelic Probability, P(Allele=1|Haplotype)">
+#CHROM	POS	ID	REF	ALT	QUAL	FILTER	INFO	FORMAT	HG00096	HG00097	HG00099	HG00100	HG00101	HG00102
+1	10469	rs117577454	C	G	100	PASS	.	GT:AP	0|0:0.075,0.060	1|0:0.640,0.000	0|0:0.115,0.015	0|0:0.020,0.000	0|0:0.060,0.123	0|0:0.005,0.095
