@@ -36,7 +36,7 @@ public class Field extends Expression {
 				|| name.equals("ALT") //
 				|| name.equals("FILTER") //
 				|| name.equals("FORMAT") //
-				) returnType = VcfInfoType.String;
+		) returnType = VcfInfoType.String;
 		else if (name.equals("QUAL")) returnType = VcfInfoType.Float;
 		else if (name.equals("POS")) returnType = VcfInfoType.Integer;
 		else returnType = VcfInfoType.UNKNOWN;
@@ -234,6 +234,7 @@ public class Field extends Expression {
 				// Error: Not found
 				throw new RuntimeException("Genotype field '" + name + "' not found in VCF header");
 			}
+
 			returnType = vcfInfoGenotype.getVcfInfoType();
 		}
 
