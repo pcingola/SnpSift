@@ -6,6 +6,10 @@ import junit.framework.Assert;
 import junit.framework.TestCase;
 import ca.mcgill.mcb.pcingola.snpSift.SnpSiftCmdExtractFields;
 import ca.mcgill.mcb.pcingola.util.Gpr;
+import ca.mcgill.mcb.pcingola.vcf.EffFormatVersion;
+import ca.mcgill.mcb.pcingola.vcf.VcfEffect;
+import ca.mcgill.mcb.pcingola.vcf.VcfHeader;
+import ca.mcgill.mcb.pcingola.vcf.VcfHeaderInfo;
 
 /**
  * Extract fields test cases
@@ -40,6 +44,30 @@ public class TestCasesExtractFields extends TestCase {
 		List<String> linesList = extract(vcfFileName, fieldExpression);
 		if (linesList.size() != 1) throw new RuntimeException("Only one line expected");
 		Assert.assertEquals(expected, linesList.get(0));
+	}
+
+	/**
+	 * Check headers vs map2num
+	 */
+	public void test_00() {
+		Gpr.debug("Test");
+		VcfHeader vcfHeader = new VcfHeader();
+
+		// Make sure all map2num are in the INFO field
+		if (debug) System.out.println("ANN:");
+		for (String annField : VcfEffect.mapAnn2Num(EffFormatVersion.FORMAT_ANN_1).keySet()) {
+			VcfHeaderInfo vi = vcfHeader.getVcfInfo(annField);
+			if (debug) System.out.println("\t" + annField + "\t" + vi);
+			Assert.assertTrue("Cannot find INFO headeer for field '" + annField + "'", vi != null);
+		}
+
+		// Make sure all map2num are in the INFO field
+		if (debug) System.out.println("EFF:");
+		for (String effField : VcfEffect.mapAnn2Num(EffFormatVersion.FORMAT_EFF_4).keySet()) {
+			VcfHeaderInfo vi = vcfHeader.getVcfInfo(effField);
+			if (debug) System.out.println("\t" + effField + "\t" + vi);
+			Assert.assertTrue("Cannot find INFO headeer for field '" + effField + "'", vi != null);
+		}
 	}
 
 	/**
@@ -192,6 +220,43 @@ public class TestCasesExtractFields extends TestCase {
 	public void test_30() {
 		Gpr.debug("Test");
 		extractAndCheck("test/extractFields_28.vcf", "GEN[HG00101].AP[1]", "0.123");
+	}
+
+	/**
+	 * Extract fields using sample names
+	 */
+	public void test_31() {
+		Gpr.debug("Test");
+		extractAndCheck("test/extractFields_31.vcf", "EFF[*].AA", "c.*568C>A");
+	}
+
+	/**
+	 * Extract fields using sample names
+	 */
+	public void test_31_ann() {
+		Gpr.debug("Test");
+		extractAndCheck("test/extractFields_31.ann.vcf", "ANN[*].CODON", "c.*568C>A");
+	}
+
+	/**
+	 * Extract fields using sample names
+	 */
+	public void test_32() {
+		Gpr.debug("Test");
+		extractAndCheck("test/extractFields_32.vcf", "ANN[*].AA", "p.Glu15Gly");
+		extractAndCheck("test/extractFields_32.vcf", "ANN[*].HGVS", "p.Glu15Gly");
+		extractAndCheck("test/extractFields_32.vcf", "ANN[*].HGVS_P", "p.Glu15Gly");
+		extractAndCheck("test/extractFields_32.vcf", "ANN[*].HGVS_PROT", "p.Glu15Gly");
+	}
+
+	/**
+	 * Extract fields using sample names
+	 */
+	public void test_33() {
+		Gpr.debug("Test");
+		extractAndCheck("test/extractFields_32.vcf", "ANN[*].CODON", "c.44A>G");
+		extractAndCheck("test/extractFields_32.vcf", "ANN[*].HGVS_DNA", "c.44A>G");
+		extractAndCheck("test/extractFields_32.vcf", "ANN[*].HGVS_C", "c.44A>G");
 	}
 
 }

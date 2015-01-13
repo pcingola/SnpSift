@@ -48,25 +48,17 @@ public class TestCasesZzz extends TestCase {
 	/**
 	 * Extract fields using sample names
 	 */
-	public void test_28() {
+	public void test_31() {
 		Gpr.debug("Test");
-		extractAndCheck("test/extractFields_28.vcf", "GEN[HG00097].GT", "1|0");
+		extractAndCheck("test/extractFields_31.vcf", "EFF[*].AA", "c.*568C>A");
 	}
 
 	/**
 	 * Extract fields using sample names
 	 */
-	public void test_29() {
+	public void test_31_ann() {
 		Gpr.debug("Test");
-		extractAndCheck("test/extractFields_28.vcf", "GEN[HG00102].AP", "0.005,0.095");
-	}
-
-	/**
-	 * Extract fields using sample names
-	 */
-	public void test_30() {
-		Gpr.debug("Test");
-		extractAndCheck("test/extractFields_28.vcf", "GEN[HG00101].AP[1]", "0.123");
+		extractAndCheck("test/extractFields_31.ann.vcf", "ANN[*].CODON", "c.*568C>A");
 	}
 
 }

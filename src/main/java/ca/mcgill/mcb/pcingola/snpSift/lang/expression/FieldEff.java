@@ -19,6 +19,7 @@ import ca.mcgill.mcb.pcingola.vcf.VcfInfoType;
  */
 public class FieldEff extends FieldSub {
 
+	String fieldName;
 	int fieldNum = -1;
 	EffFormatVersion formatVersion = null;
 
@@ -26,16 +27,18 @@ public class FieldEff extends FieldSub {
 	 * Constructor
 	 * @param formatVersion : Can be null (it will be guessed)
 	 */
-	public FieldEff(String name, Expression idxExpr, EffFormatVersion formatVersion) {
-		super(name, idxExpr); // Add an 'ANN.' or 'EFF.' at the beginning
+	public FieldEff(String name, Expression idxExpr, EffFormatVersion formatVersion, String fieldName) {
+		super(name, idxExpr);
 		this.formatVersion = formatVersion;
+		this.fieldName = fieldName.toUpperCase();
 	}
 
 	/**
 	 * Should this be 'EFF' or 'ANN'?
 	 */
 	String annEff() {
-		return (formatVersion == null || formatVersion.isAnn() ? "ANN" : "EFF");
+		if (formatVersion == null) return fieldName;
+		return (formatVersion.isAnn() ? "ANN" : "EFF");
 	}
 
 	/**
