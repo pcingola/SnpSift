@@ -58,7 +58,7 @@ public class TestCasesExtractFields extends TestCase {
 		for (String annField : VcfEffect.mapAnn2Num(EffFormatVersion.FORMAT_ANN_1).keySet()) {
 			VcfHeaderInfo vi = vcfHeader.getVcfInfo(annField);
 			if (debug) System.out.println("\t" + annField + "\t" + vi);
-			Assert.assertTrue("Cannot find INFO headeer for field '" + annField + "'", vi != null);
+			Assert.assertTrue("Cannot find INFO header for field '" + annField + "'", vi != null);
 		}
 
 		// Make sure all map2num are in the INFO field
@@ -66,7 +66,7 @@ public class TestCasesExtractFields extends TestCase {
 		for (String effField : VcfEffect.mapAnn2Num(EffFormatVersion.FORMAT_EFF_4).keySet()) {
 			VcfHeaderInfo vi = vcfHeader.getVcfInfo(effField);
 			if (debug) System.out.println("\t" + effField + "\t" + vi);
-			Assert.assertTrue("Cannot find INFO headeer for field '" + effField + "'", vi != null);
+			Assert.assertTrue("Cannot find INFO header for field '" + effField + "'", vi != null);
 		}
 	}
 

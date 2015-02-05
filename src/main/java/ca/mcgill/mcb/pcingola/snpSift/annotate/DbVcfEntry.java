@@ -20,15 +20,21 @@ public class DbVcfEntry {
 	protected List<String> infoFields; // Use only these INFO fields
 	protected HashMap<String, String> dbCurrentId = new HashMap<String, String>(); // Current DB entries
 	protected HashMap<String, Boolean> vcfInfoPerAllele = new HashMap<String, Boolean>(); // Is a VCF INFO field annotated 'per allele' basis?
+	protected HashMap<String, Boolean> vcfInfoPerAlleleRef = new HashMap<String, Boolean>(); // Is a VCF INFO field annotated 'per allele' basis AND requires reference to be annotated (i.e. VCF header has Number=R)?
 
 	/**
 	 * Add 'key->id' entries to 'dbCurrent'
 	 */
 	public void addDbCurrent(VcfEntry vcfDb) {
 		latestChromo = vcfDb.getChromosomeName();
+
 		String alts[] = vcfDb.getAlts();
-		for (int i = 0; i < alts.length; i++) {
-			String key = key(vcfDb, i);
+
+		//---
+		// Add information for each ALT allele
+		//---
+		for (int alleleIdx = 0; alleleIdx < alts.length; alleleIdx++) {
+			String key = key(vcfDb, alleleIdx);
 
 			// Add ID field information
 			dbCurrentId.put(key, vcfDb.getId());
@@ -36,10 +42,23 @@ public class DbVcfEntry {
 			// Add INFO fields to DB?
 			if (useInfoField) {
 				// Add all INFO fields
-				Map<String, String> info = dbInfoFields(vcfDb, alts[i]);
+				Map<String, String> info = dbInfoFields(vcfDb, alts[alleleIdx]);
 				dbCurrentInfo.put(key, info);
 			}
 		}
+
+		//---
+		// Add information for each REF allele
+		// (e.g. when INFO field has 'Number=R')
+		//---
+		if (useInfoField) {
+			// Add all INFO fields
+			int alleleIdx = -1; // Negative allele number means 'REF'
+			String key = key(vcfDb, alleleIdx);
+			Map<String, String> info = dbInfoFields(vcfDb, vcfDb.getRef());
+			dbCurrentInfo.put(key, info);
+		}
+
 	}
 
 	public boolean checkChromo(VcfEntry vcfEntry) {
@@ -71,7 +90,19 @@ public class DbVcfEntry {
 			if (fieldName.isEmpty()) continue; // Empty INFO field may cause this
 
 			// Make sure we get allele specific information (if INFO is allele specific)
-			String val = isVcfInfoPerAllele(fieldName, vcfDb) ? vcfDb.getInfo(fieldName, allele) : vcfDb.getInfo(fieldName);
+			String val = null;
+
+			// Check if fields are Number='A' or Number='R' (this also caches results for future reference)
+			boolean perAlleleRef = isVcfInfoPerAlleleRef(fieldName, vcfDb);
+			boolean perAllele = isVcfInfoPerAllele(fieldName, vcfDb);
+
+			if (perAlleleRef) {
+				val = vcfDb.getInfo(fieldName, allele);
+			} else if (perAllele) {
+				val = vcfDb.getInfo(fieldName, allele);
+			} else {
+				val = vcfDb.getInfo(fieldName);
+			}
 
 			// Any value? => Add
 			if (val != null) info.put(fieldName, val);
@@ -119,11 +150,15 @@ public class DbVcfEntry {
 		}
 
 		//---
-		// Prepare INF field to add
+		// Prepare INFO field to add
 		//---
 		HashMap<String, String> results = new HashMap<>();
 		for (String infoFieldName : infoFieldsToAdd) {
-			for (int i = 0; i < vcf.getAlts().length; i++) {
+
+			// Allele number '-1' is reference. It's used when the INFO field has 'Number=R'
+			int minAlleleNum = isVcfInfoPerAlleleRef(infoFieldName) ? -1 : 0;
+
+			for (int i = minAlleleNum; i < vcf.getAlts().length; i++) {
 				// Get info field annotations
 				String key = key(vcf, i);
 				Map<String, String> info = dbCurrentInfo.get(key);
@@ -137,6 +172,10 @@ public class DbVcfEntry {
 				// Not a 'per allele' INFO field? Then we are done (no need to annotate other alleles)
 				if (!isVcfInfoPerAllele(infoFieldName)) break;
 			}
+
+			if (isVcfInfoPerAlleleRef(infoFieldName)) {
+
+			}
 		}
 
 		return results;
@@ -146,6 +185,9 @@ public class DbVcfEntry {
 		return latestChromo;
 	}
 
+	/**
+	 * Is 'fieldName' a per-allele annotation
+	 */
 	boolean isVcfInfoPerAllele(String fieldName) {
 		return isVcfInfoPerAllele(fieldName, null);
 	}
@@ -167,10 +209,36 @@ public class DbVcfEntry {
 	}
 
 	/**
+	 * Is this a "per-allele + REF" INFO field?
+	 */
+	boolean isVcfInfoPerAlleleRef(String fieldName) {
+		return isVcfInfoPerAlleleRef(fieldName, null);
+	}
+
+	/**
+	 * Is this a "per-allele + REF" INFO field?
+	 */
+	boolean isVcfInfoPerAlleleRef(String fieldName, VcfEntry vcfDb) {
+		// Look up information and cache it
+		if (vcfInfoPerAlleleRef.get(fieldName) == null) {
+			if (vcfDb == null) return false; // No VCF information? I cannot look it up...nothing to do
+
+			VcfHeaderInfo vcfInfo = vcfDb.getVcfInfo(fieldName);
+			boolean isPerAlleleRef = (vcfInfo != null && vcfInfo.isNumberAllAlleles());
+			vcfInfoPerAlleleRef.put(fieldName, isPerAlleleRef);
+		}
+
+		return vcfInfoPerAlleleRef.get(fieldName);
+	}
+
+	/**
 	 * Create a hash key
 	 */
 	String key(VcfEntry vcfDbEntry, int altIndex) {
-		if (useRefAlt) return vcfDbEntry.getChromosomeName() + ":" + vcfDbEntry.getStart() + "_" + vcfDbEntry.getRef() + "/" + vcfDbEntry.getAlts()[altIndex];
+		if (useRefAlt) {
+			if (altIndex >= 0) return vcfDbEntry.getChromosomeName() + ":" + vcfDbEntry.getStart() + "_" + vcfDbEntry.getRef() + "/" + vcfDbEntry.getAlts()[altIndex];
+			return vcfDbEntry.getChromosomeName() + ":" + vcfDbEntry.getStart() + "_" + vcfDbEntry.getRef() + "/" + vcfDbEntry.getRef();
+		}
 		return vcfDbEntry.getChromosomeName() + ":" + vcfDbEntry.getStart();
 	}
 

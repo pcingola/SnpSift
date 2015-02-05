@@ -155,7 +155,7 @@ public class TestCasesAnnotate extends TestCase {
 	/**
 	 * Annotate info fields
 	 */
-	public void test_06() throws IOException {
+	public void test_06() {
 		Gpr.debug("Test");
 		String dbFileName = "./test/db_test_06.vcf";
 		String fileName = "./test/annotate_06.vcf";
@@ -168,7 +168,7 @@ public class TestCasesAnnotate extends TestCase {
 	/**
 	 * Annotate only some info fields
 	 */
-	public void test_07() throws IOException {
+	public void test_07() {
 		Gpr.debug("Test");
 		String dbFileName = "./test/db_test_06.vcf";
 		String fileName = "./test/annotate_06.vcf";
@@ -182,7 +182,7 @@ public class TestCasesAnnotate extends TestCase {
 	/**
 	 * Do not annotate ID column
 	 */
-	public void test_08() throws IOException {
+	public void test_08() {
 		Gpr.debug("Test");
 		String dbFileName = "./test/db_test_06.vcf";
 		String fileName = "./test/annotate_06.vcf";
@@ -194,7 +194,7 @@ public class TestCasesAnnotate extends TestCase {
 	/**
 	 * Annotate only some info fields
 	 */
-	public void test_09() throws IOException {
+	public void test_09() {
 		Gpr.debug("Test");
 		String dbFileName = "./test/db_test_09.vcf";
 		String fileName = "./test/annotate_09.vcf";
@@ -220,7 +220,7 @@ public class TestCasesAnnotate extends TestCase {
 	 * Annotate only some info fields
 	 * @throws IOException
 	 */
-	public void test_11() throws IOException {
+	public void test_11() {
 		Gpr.debug("Test");
 		String dbFileName = "./test/db_test_11.vcf";
 		String fileName = "./test/annotate_11.vcf";
@@ -246,7 +246,7 @@ public class TestCasesAnnotate extends TestCase {
 	/**
 	 * Annotate without REF/ALT fields
 	 */
-	public void test_12() throws IOException {
+	public void test_12() {
 		Gpr.debug("Test");
 		String dbFileName = "./test/db_test_12.vcf";
 		String fileName = "./test/annotate_12.vcf";
@@ -265,7 +265,7 @@ public class TestCasesAnnotate extends TestCase {
 	 *
 	 * @throws IOException
 	 */
-	public void test_13() throws IOException {
+	public void test_13() {
 		Gpr.debug("Test");
 		String dbFileName = "./test/db_test_13.vcf";
 		String fileName = "./test/annotate_13.vcf";
@@ -311,7 +311,7 @@ public class TestCasesAnnotate extends TestCase {
 		VcfEntry ve = results.get(0);
 		if (verbose) System.out.println(ve);
 		String allNum = ve.getInfo("ALL_NUM");
-		Assert.assertEquals("value_C", allNum);
+		Assert.assertEquals("value_REF,value_C", allNum);
 	}
 
 	public void test_16() {
@@ -377,7 +377,7 @@ public class TestCasesAnnotate extends TestCase {
 	/**
 	 * Annotate info fields
 	 */
-	public void test_20() throws IOException {
+	public void test_20() {
 		Gpr.debug("Test");
 		String dbFileName = "./test/db_test_20.vcf";
 		String fileName = "./test/annotate_20.vcf";
@@ -390,7 +390,7 @@ public class TestCasesAnnotate extends TestCase {
 	/**
 	 * Annotate two consecutive variants in the same position
 	 */
-	public void test_21() throws IOException {
+	public void test_21() {
 		Gpr.debug("Test");
 		String dbFileName = "./test/db_test_21.vcf";
 		String fileName = "./test/annotate_21.vcf";
@@ -415,12 +415,29 @@ public class TestCasesAnnotate extends TestCase {
 	/**
 	 * Annotate first base in a chromosome
 	 */
-	public void test_22() throws IOException {
+	public void test_22() {
 		Gpr.debug("Test");
 		String dbFileName = "./test/db_test_2.vcf";
 		String fileName = "./test/annotate_22.vcf";
 		annotate(dbFileName, fileName, null);
 		// We simply check that no exception was thrown
+	}
+
+	/**
+	 * Database has one entry and VCF has multiple ALTs
+	 */
+	public void test_23_allele_specific_annotation_missing_R() {
+		Gpr.debug("Test");
+		String dbFileName = "./test/db_test_23.vcf";
+		String fileName = "./test/annotate_23.vcf";
+		List<VcfEntry> results = annotate(dbFileName, fileName, null);
+
+		// Check results
+		VcfEntry ve = results.get(0);
+		String caf = ve.getInfo("CAF");
+		if (verbose) System.out.println(ve + "\n\tCAF: " + caf);
+		Assert.assertEquals("0.9642,.,0.03581", caf);
+
 	}
 
 }

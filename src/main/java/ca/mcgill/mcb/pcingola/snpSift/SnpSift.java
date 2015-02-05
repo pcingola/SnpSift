@@ -206,7 +206,7 @@ public class SnpSift {
 		// Read config file
 		if (configFile == null || configFile.isEmpty()) configFile = Config.DEFAULT_CONFIG_FILE; // Default config file
 		if (verbose) Timer.showStdErr("Reading configuration file '" + configFile + "'");
-		config = new Config("", configFile, dataDir); // Read configuration
+		config = new Config("", configFile, dataDir, null); // Read configuration
 		if (verbose) Timer.showStdErr("done");
 	}
 

@@ -202,9 +202,9 @@ public class TestCasesFilter extends TestCase {
 		for (VcfEntry vcfEntry : list) {
 			if (verbose) System.out.println("\t" + vcfEntry);
 			Assert.assertTrue( //
-					(vcfEntry.getStart() >= (minPos - 1)) //
+			(vcfEntry.getStart() >= (minPos - 1)) //
 					|| (vcfEntry.getStart() <= (maxPos - 1)) //
-					);
+			);
 		}
 	}
 
@@ -620,7 +620,7 @@ public class TestCasesFilter extends TestCase {
 			for (String a : ap.split(","))
 				any |= Gpr.parseDoubleSafe(a) > 0.8;
 
-				Assert.assertEquals(true, any);
+			Assert.assertEquals(true, any);
 		}
 	}
 
@@ -767,7 +767,6 @@ public class TestCasesFilter extends TestCase {
 	 */
 	public void test_27_ann2() {
 		Gpr.debug("Test");
-		verbose = true;
 
 		// Filter data
 		SnpSiftCmdFilter snpsiftFilter = new SnpSiftCmdFilter();
