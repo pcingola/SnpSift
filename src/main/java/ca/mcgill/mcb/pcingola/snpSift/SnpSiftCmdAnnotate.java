@@ -72,7 +72,11 @@ public class SnpSiftCmdAnnotate extends SnpSift {
 				if (isAnnotateInfo(vcfInfoDb) // Add if it is being used to annotate
 						&& !vcfInfoDb.isImplicit() //  AND it is not an "implicit" header in Db (i.e. created automatically by VcfHeader class)
 						&& ((vcfInfoFile == null) || vcfInfoFile.isImplicit()) // AND it is not already added OR is already added, but it is implicit
-				) newHeaders.add(vcfInfoDb.toString());
+						) {
+					VcfHeaderInfo newHeader = new VcfHeaderInfo(vcfInfoDb);
+					if (prependInfoFieldName != null) newHeader.setId(prependInfoFieldName + newHeader.getId());
+					newHeaders.add(newHeader.toString());
+				}
 			}
 		}
 
@@ -107,7 +111,7 @@ public class SnpSiftCmdAnnotate extends SnpSift {
 					fatalError("Your VCF file should be sorted!" //
 							+ "\n\tPrevious entry " + chr + ":" + pos//
 							+ "\n\tCurrent entry  " + vcfEntry.getChromosomeName() + ":" + (vcfEntry.getStart() + 1)//
-					);
+							);
 				}
 
 				// Annotate
@@ -139,7 +143,7 @@ public class SnpSiftCmdAnnotate extends SnpSift {
 					+ "\n\tTotal entries           : " + count //
 					+ "\n\tPercent                 : " + String.format("%.2f%%", perc) //
 					+ "\n\tErrors (bad references) : " + countBadRef //
-			);
+					);
 		}
 
 		return list;
@@ -283,12 +287,12 @@ public class SnpSiftCmdAnnotate extends SnpSift {
 		if (method == AnnotationMethod.TABIX //
 				&& !dbFileName.endsWith(".gz") //
 				&& Gpr.exists(dbFileName + ".gz") //
-		) dbFileName = dbFileName + ".gz";
+				) dbFileName = dbFileName + ".gz";
 
 		if (verbose) Timer.showStdErr("Annotating\n" //
 				+ "\tInput file    : '" + vcfInputFile + "'\n" //
 				+ "\tDatabase file : '" + dbFileName + "'" //
-		);
+				);
 
 		return annotate(createList);
 	}

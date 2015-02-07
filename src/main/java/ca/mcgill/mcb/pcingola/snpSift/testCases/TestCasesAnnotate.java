@@ -440,4 +440,62 @@ public class TestCasesAnnotate extends TestCase {
 
 	}
 
+	/**
+	 * Annotate using "-name" to prepend a name to VCF fields (e.g. "AA" -> "PREPEND_AA")
+	 * Header should be added changing the ID accordingly
+	 */
+	public void test_24() {
+		Gpr.debug("Test");
+
+		String dbFileName = "./test/db_test_24.vcf";
+		String fileName = "./test/annotate_24.vcf";
+		String infoName = "PREPEND_";
+		String extraArgs[] = { "-name", infoName };
+
+		// Annotate
+		String out = annotateOut(dbFileName, fileName, extraArgs);
+
+		// Make sure output header for "PREPEND_AA"  and "PREPEND_BB" are present ONLY ONCE.
+		if (verbose) System.out.println(out);
+		int hasAa = 0, hasBb = 0, hasCc = 0;
+		for (String line : out.split("\n")) {
+			if (line.startsWith("##INFO=<ID=PREPEND_AA")) hasAa++;
+			if (line.startsWith("##INFO=<ID=PREPEND_BB")) hasBb++;
+			if (line.startsWith("##INFO=<ID=PREPEND_CC")) hasCc++;
+		}
+
+		Assert.assertEquals(1, hasAa);
+		Assert.assertEquals(1, hasBb);
+		Assert.assertEquals(1, hasCc);
+	}
+
+	/**
+	 * Annotate using "-name" to prepend a name to VCF fields (e.g. "AA" -> "PREPEND_AA")
+	 * Header should be added changing the ID accordingly
+	 */
+	public void test_25() {
+		Gpr.debug("Test");
+
+		String dbFileName = "./test/db_test_24.vcf";
+		String fileName = "./test/annotate_24.vcf";
+		String infoName = "PREPEND_";
+		String extraArgs[] = { "-name", infoName, "-info", "AA,BB" }; // Note: We don't include 'CC' annotation
+
+		// Annotate
+		String out = annotateOut(dbFileName, fileName, extraArgs);
+
+		// Make sure output header for "PREPEND_AA"  and "PREPEND_BB" are present ONLY ONCE.
+		if (verbose) System.out.println(out);
+		int hasAa = 0, hasBb = 0, hasCc = 0;
+		for (String line : out.split("\n")) {
+			if (line.startsWith("##INFO=<ID=PREPEND_AA")) hasAa++;
+			if (line.startsWith("##INFO=<ID=PREPEND_BB")) hasBb++;
+			if (line.startsWith("##INFO=<ID=PREPEND_CC")) hasCc++;
+		}
+
+		Assert.assertEquals(1, hasAa);
+		Assert.assertEquals(1, hasBb);
+		Assert.assertEquals(0, hasCc); // This onw should NOT be present
+	}
+
 }

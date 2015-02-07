@@ -465,7 +465,7 @@ public class SnpSift {
 				+ "\n\tvarType       : Annotate variant type (SNP,MNP,INS,DEL or MIXED)." //
 				+ "\n\tvcfCheck      : Check that VCF file is well formed." //
 				+ "\n\tvcf2tped      : Convert VCF to TPED." //
-		);
+				);
 
 		usageGenericAndDb();
 
@@ -485,7 +485,7 @@ public class SnpSift {
 				+ "\t-noLog               : Do not report usage statistics to server.\n" //
 				+ "\t-h                   : Help.\n" //
 				+ "\t-v                   : Verbose.\n" //
-		);
+				);
 	}
 
 	/**
