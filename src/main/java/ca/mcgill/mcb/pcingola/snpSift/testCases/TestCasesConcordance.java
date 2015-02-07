@@ -168,14 +168,4 @@ public class TestCasesConcordance extends TestCase {
 
 		checkConcordance("test/concordance_ref_12.vcf", "test/concordance_test_12.vcf", count);
 	}
-
-	public void test_13_missing_alt() {
-		Gpr.debug("Test");
-
-		CountByType count = new CountByType();
-		count.inc("ERROR", 1);
-
-		checkConcordance("test/concordance_ref_13.vcf", "test/concordance_test_13.vcf", count);
-	}
-
 }
