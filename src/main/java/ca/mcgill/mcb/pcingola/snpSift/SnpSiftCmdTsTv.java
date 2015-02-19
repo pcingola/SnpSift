@@ -4,6 +4,7 @@ import ca.mcgill.mcb.pcingola.fileIterator.VcfFileIterator;
 import ca.mcgill.mcb.pcingola.stats.AlleleCountStats;
 import ca.mcgill.mcb.pcingola.stats.HomHetStats;
 import ca.mcgill.mcb.pcingola.stats.TsTvStats;
+import ca.mcgill.mcb.pcingola.util.Gpr;
 import ca.mcgill.mcb.pcingola.util.Timer;
 import ca.mcgill.mcb.pcingola.vcf.VcfEntry;
 
@@ -70,11 +71,9 @@ public class SnpSiftCmdTsTv extends SnpSift {
 				tsTvStats.sample(vcfEntry);
 				homHetStats.sample(vcfEntry);
 				alleleCountStats.sample(vcfEntry);
+
 				// Show progress
-				if (entryNum % SHOW_EVERY == 0) {
-					if (entryNum % SHOW_EVERY_NL == 0) System.err.println('.');
-					else System.err.print('.');
-				}
+				Gpr.showMark(entryNum, 1);
 
 			} catch (Throwable t) {
 				error(t, "Error while processing VCF entry (line " + vcfFile.getLineNum() + ") :\n\t" + vcfEntry + "\n" + t);
@@ -82,13 +81,14 @@ public class SnpSiftCmdTsTv extends SnpSift {
 
 		}
 
-		System.err.println("\nTS/TV stats:");
+		// Show results
+		System.out.println("\nTS/TV stats:");
 		System.out.println(tsTvStats);
 
-		System.err.println("\nHom/Het stats:");
+		System.out.println("\nHom/Het stats:");
 		System.out.println(homHetStats);
 
-		System.err.println("\nAllele count stats:");
+		System.out.println("\nAllele count stats:");
 		System.out.println(alleleCountStats);
 
 		Timer.showStdErr("Done");
