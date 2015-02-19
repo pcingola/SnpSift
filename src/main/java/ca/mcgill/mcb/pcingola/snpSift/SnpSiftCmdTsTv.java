@@ -1,6 +1,8 @@
 package ca.mcgill.mcb.pcingola.snpSift;
 
 import ca.mcgill.mcb.pcingola.fileIterator.VcfFileIterator;
+import ca.mcgill.mcb.pcingola.stats.AlleleCountStats;
+import ca.mcgill.mcb.pcingola.stats.HomHetStats;
 import ca.mcgill.mcb.pcingola.stats.TsTvStats;
 import ca.mcgill.mcb.pcingola.util.Timer;
 import ca.mcgill.mcb.pcingola.vcf.VcfEntry;
@@ -12,10 +14,12 @@ import ca.mcgill.mcb.pcingola.vcf.VcfEntry;
  */
 public class SnpSiftCmdTsTv extends SnpSift {
 
-	public static final int SHOW_EVERY = 1000;
+	public static final int SHOW_EVERY = 1;
 	public static final int SHOW_EVERY_NL = 100 * SHOW_EVERY;
 
 	TsTvStats tsTvStats;
+	HomHetStats homHetStats;
+	AlleleCountStats alleleCountStats;
 	String vcfFileName;
 
 	public SnpSiftCmdTsTv(String[] args) {
@@ -50,10 +54,12 @@ public class SnpSiftCmdTsTv extends SnpSift {
 	public void run() {
 		Timer.showStdErr("Analysing '" + vcfFileName + "'");
 
-		tsTvStats = new TsTvStats(); // Create stats object
+		// Create stats objects
+		tsTvStats = new TsTvStats();
+		homHetStats = new HomHetStats();
+		alleleCountStats = new AlleleCountStats();
 
 		VcfFileIterator vcfFile = new VcfFileIterator(vcfFileName);
-		vcfFile.setCreateChromos(true); // Create chromosomes when needed
 		vcfFile.setDebug(debug);
 
 		// Read all vcfEntries
@@ -62,7 +68,8 @@ public class SnpSiftCmdTsTv extends SnpSift {
 			try {
 				entryNum++;
 				tsTvStats.sample(vcfEntry);
-
+				homHetStats.sample(vcfEntry);
+				alleleCountStats.sample(vcfEntry);
 				// Show progress
 				if (entryNum % SHOW_EVERY == 0) {
 					if (entryNum % SHOW_EVERY_NL == 0) System.err.println('.');
@@ -75,8 +82,15 @@ public class SnpSiftCmdTsTv extends SnpSift {
 
 		}
 
-		System.err.println("");
+		System.err.println("\nTS/TV stats:");
 		System.out.println(tsTvStats);
+
+		System.err.println("\nHom/Het stats:");
+		System.out.println(homHetStats);
+
+		System.err.println("\nAllele count stats:");
+		System.out.println(alleleCountStats);
+
 		Timer.showStdErr("Done");
 	}
 
