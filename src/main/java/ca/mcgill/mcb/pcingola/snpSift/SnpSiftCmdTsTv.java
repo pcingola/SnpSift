@@ -4,6 +4,7 @@ import ca.mcgill.mcb.pcingola.fileIterator.VcfFileIterator;
 import ca.mcgill.mcb.pcingola.stats.AlleleCountStats;
 import ca.mcgill.mcb.pcingola.stats.HomHetStats;
 import ca.mcgill.mcb.pcingola.stats.TsTvStats;
+import ca.mcgill.mcb.pcingola.stats.VariantTypeStats;
 import ca.mcgill.mcb.pcingola.util.Gpr;
 import ca.mcgill.mcb.pcingola.util.Timer;
 import ca.mcgill.mcb.pcingola.vcf.VcfEntry;
@@ -21,6 +22,7 @@ public class SnpSiftCmdTsTv extends SnpSift {
 	TsTvStats tsTvStats;
 	HomHetStats homHetStats;
 	AlleleCountStats alleleCountStats;
+	VariantTypeStats variantTypeStats;
 	String vcfFileName;
 
 	public SnpSiftCmdTsTv(String[] args) {
@@ -59,6 +61,7 @@ public class SnpSiftCmdTsTv extends SnpSift {
 		tsTvStats = new TsTvStats();
 		homHetStats = new HomHetStats();
 		alleleCountStats = new AlleleCountStats();
+		variantTypeStats = new VariantTypeStats();
 
 		VcfFileIterator vcfFile = new VcfFileIterator(vcfFileName);
 		vcfFile.setDebug(debug);
@@ -68,9 +71,12 @@ public class SnpSiftCmdTsTv extends SnpSift {
 		for (VcfEntry vcfEntry : vcfFile) {
 			try {
 				entryNum++;
+
+				// Perform all stats
 				tsTvStats.sample(vcfEntry);
 				homHetStats.sample(vcfEntry);
 				alleleCountStats.sample(vcfEntry);
+				variantTypeStats.sample(vcfEntry);
 
 				// Show progress
 				Gpr.showMark(entryNum, 1);
@@ -87,6 +93,9 @@ public class SnpSiftCmdTsTv extends SnpSift {
 
 		System.out.println("\nHom/Het stats:");
 		System.out.println(homHetStats);
+
+		System.out.println("\nVariant type stats:");
+		System.out.println(variantTypeStats);
 
 		System.out.println("\nAllele count stats:");
 		System.out.println(alleleCountStats);
