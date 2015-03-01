@@ -21,9 +21,9 @@ public class Field extends Expression {
 	public static final int TYPE_ALL = -2;
 	public static final int TYPE_ANY = -1;
 
-	String name;
-	VcfInfoType returnType;
-	boolean exceptionIfNotFound = true;
+	protected String name;
+	protected VcfInfoType returnType;
+	protected boolean exceptionIfNotFound = true;
 
 	public Field(String name) {
 		this.name = name;
@@ -36,7 +36,7 @@ public class Field extends Expression {
 				|| name.equals("ALT") //
 				|| name.equals("FILTER") //
 				|| name.equals("FORMAT") //
-				) returnType = VcfInfoType.String;
+		) returnType = VcfInfoType.String;
 		else if (name.equals("QUAL")) returnType = VcfInfoType.Float;
 		else if (name.equals("POS")) returnType = VcfInfoType.Integer;
 		else returnType = VcfInfoType.UNKNOWN;

@@ -20,7 +20,6 @@ import ca.mcgill.mcb.pcingola.vcf.VcfInfoType;
 public class FieldEff extends FieldSub {
 
 	String fieldName;
-	int fieldNum = -1;
 	EffFormatVersion formatVersion = null;
 
 	/**
@@ -39,19 +38,6 @@ public class FieldEff extends FieldSub {
 	String annEff() {
 		if (formatVersion == null) return fieldName;
 		return (formatVersion.isAnn() ? "ANN" : "EFF");
-	}
-
-	/**
-	 * Get field number by name
-	 */
-	int fieldNum(VcfEffect eff) {
-		String headerName = annEff() + "." + name;
-
-		if (formatVersion == null) formatVersion = eff.formatVersion();
-		int fieldNum = VcfEffect.fieldNum(headerName, formatVersion);
-
-		if (fieldNum < 0) throw new RuntimeException("No such subfield '" + headerName + "'");
-		return fieldNum;
 	}
 
 	/**
@@ -113,11 +99,8 @@ public class FieldEff extends FieldSub {
 		// No sub-field? => Use the whole field
 		if (name == null) return eff.getVcfFieldString();
 
-		// Field number not set? Try to guess it
-		if (fieldNum < 0) fieldNum = fieldNum(eff);
-
 		// Find sub-field
-		String value = eff.getVcfFieldString(fieldNum);
+		String value = eff.getFieldByName(name);
 		if (value == null) return (String) fieldNotFound(vcfEntry);
 		return value;
 	}

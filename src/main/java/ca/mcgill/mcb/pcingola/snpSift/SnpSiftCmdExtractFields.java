@@ -172,7 +172,7 @@ public class SnpSiftCmdExtractFields extends SnpSift {
 				+ "\nOptions:" //
 				+ "\n\t-s     : Same field separator. Default: '" + sameFieldSeparator + "'" //
 				+ "\n\t-e     : Empty field. Default: '" + emptyFieldString + "'" //
-		);
+				);
 
 		System.exit(1);
 	}

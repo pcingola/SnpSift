@@ -6,7 +6,6 @@ import junit.framework.Assert;
 import junit.framework.TestCase;
 import ca.mcgill.mcb.pcingola.snpSift.SnpSiftCmdExtractFields;
 import ca.mcgill.mcb.pcingola.util.Gpr;
-import ca.mcgill.mcb.pcingola.vcf.EffFormatVersion;
 import ca.mcgill.mcb.pcingola.vcf.VcfEffect;
 import ca.mcgill.mcb.pcingola.vcf.VcfHeader;
 import ca.mcgill.mcb.pcingola.vcf.VcfHeaderInfo;
@@ -55,7 +54,8 @@ public class TestCasesExtractFields extends TestCase {
 
 		// Make sure all map2num are in the INFO field
 		if (debug) System.out.println("ANN:");
-		for (String annField : VcfEffect.mapAnn2Num(EffFormatVersion.FORMAT_ANN_1).keySet()) {
+		for (String annField : VcfEffect.ANN_FIELD_NAMES) {
+			annField = "ANN." + annField;
 			VcfHeaderInfo vi = vcfHeader.getVcfInfo(annField);
 			if (debug) System.out.println("\t" + annField + "\t" + vi);
 			Assert.assertTrue("Cannot find INFO header for field '" + annField + "'", vi != null);
@@ -63,7 +63,8 @@ public class TestCasesExtractFields extends TestCase {
 
 		// Make sure all map2num are in the INFO field
 		if (debug) System.out.println("EFF:");
-		for (String effField : VcfEffect.mapAnn2Num(EffFormatVersion.FORMAT_EFF_4).keySet()) {
+		for (String effField : VcfEffect.EFF_FIELD_NAMES) {
+			effField = "EFF." + effField;
 			VcfHeaderInfo vi = vcfHeader.getVcfInfo(effField);
 			if (debug) System.out.println("\t" + effField + "\t" + vi);
 			Assert.assertTrue("Cannot find INFO header for field '" + effField + "'", vi != null);
@@ -257,6 +258,25 @@ public class TestCasesExtractFields extends TestCase {
 		extractAndCheck("test/extractFields_32.vcf", "ANN[*].CODON", "c.44A>G");
 		extractAndCheck("test/extractFields_32.vcf", "ANN[*].HGVS_DNA", "c.44A>G");
 		extractAndCheck("test/extractFields_32.vcf", "ANN[*].HGVS_C", "c.44A>G");
+	}
+
+	/**
+	 * Extract fields using sample names
+	 */
+	public void test_34() {
+		Gpr.debug("Test");
+
+		// CDS
+		extractAndCheck("test/extractFields_34.vcf", "ANN[*].CDS_POS", "755");
+		extractAndCheck("test/extractFields_34.vcf", "ANN[*].CDS_LEN", "1188");
+
+		// cDNA
+		extractAndCheck("test/extractFields_34.vcf", "ANN[*].CDNA_POS", "769");
+		extractAndCheck("test/extractFields_34.vcf", "ANN[*].CDNA_LEN", "2134");
+
+		// AA
+		extractAndCheck("test/extractFields_34.vcf", "ANN[*].AA_POS", "252");
+		extractAndCheck("test/extractFields_34.vcf", "ANN[*].AA_LEN", "395");
 	}
 
 }
