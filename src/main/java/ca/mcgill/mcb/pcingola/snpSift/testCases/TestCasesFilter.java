@@ -202,9 +202,9 @@ public class TestCasesFilter extends TestCase {
 		for (VcfEntry vcfEntry : list) {
 			if (verbose) System.out.println("\t" + vcfEntry);
 			Assert.assertTrue( //
-			(vcfEntry.getStart() >= (minPos - 1)) //
+					(vcfEntry.getStart() >= (minPos - 1)) //
 					|| (vcfEntry.getStart() <= (maxPos - 1)) //
-			);
+					);
 		}
 	}
 
@@ -620,7 +620,7 @@ public class TestCasesFilter extends TestCase {
 			for (String a : ap.split(","))
 				any |= Gpr.parseDoubleSafe(a) > 0.8;
 
-			Assert.assertEquals(true, any);
+				Assert.assertEquals(true, any);
 		}
 	}
 
@@ -1479,6 +1479,29 @@ public class TestCasesFilter extends TestCase {
 			Assert.assertTrue(ok);
 		}
 
+		Assert.assertEquals(1, list.size());
+	}
+
+	/**
+	 * Filter by "(Cases[0] = 3) & (Controls[0] = 0)"
+	 * Bug in Field.getReturnType() was causing some trouble.
+	 */
+	public void test_52() {
+		Gpr.debug("Test");
+
+		// Filter data
+		SnpSiftCmdFilter snpsiftFilter = new SnpSiftCmdFilter();
+		String expression = "(Cases[0] = 3) & (Controls[0] = 0)";
+		List<VcfEntry> list = snpsiftFilter.filter("test/test52.vcf", expression, true);
+
+		// Check that it satisfies the condition
+		if (verbose) {
+			System.out.println("Expression: '" + expression + "'");
+			for (VcfEntry vcfEntry : list)
+				System.out.println("\t" + vcfEntry);
+		}
+
+		// It should select 1 element
 		Assert.assertEquals(1, list.size());
 	}
 

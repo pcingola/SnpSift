@@ -18,15 +18,6 @@ public class TestCasesZzz extends TestCase {
 	public static boolean verbose = true || debug;
 
 	/**
-	 * Extract fields form a file and check that the line matches (only one line expected from the file)
-	 */
-	void extractAndCheck(String vcfFileName, String fieldExpression, String expected) {
-		List<String> linesList = extract(vcfFileName, fieldExpression);
-		if (linesList.size() != 1) throw new RuntimeException("Only one line expected");
-		Assert.assertEquals(expected, linesList.get(0));
-	}
-
-	/**
 	 * Extract fields and return the output lines
 	 */
 	List<String> extract(String vcfFileName, String fieldExpression) {
@@ -43,16 +34,26 @@ public class TestCasesZzz extends TestCase {
 		return linesList;
 	}
 
-	public void test_17() {
-		debug = verbose = true;
-
-		Gpr.debug("Test");
-		extractAndCheck("test/extractFields_01.eff.vcf", "EFF[*].TRID", "ENST00000379410");
+	/**
+	 * Extract fields form a file and check that the line matches (only one line expected from the file)
+	 */
+	void extractAndCheck(String vcfFileName, String fieldExpression, String expected) {
+		List<String> linesList = extract(vcfFileName, fieldExpression);
+		if (linesList.size() != 1) throw new RuntimeException("Only one line expected");
+		Assert.assertEquals(expected, linesList.get(0));
 	}
 
-	//	public void test_18() {
-	//		Gpr.debug("Test");
-	//		extractAndCheck("test/extractFields_01.eff.vcf", "EFF[*].EXID", "1");
-	//	}
+	public void test_27() {
+		Gpr.debug("Test");
+		extractAndCheck("test/extractFields_27.vcf", "GEN[0].AD", "16,2");
+	}
+
+	/**
+	 * Extract fields using sample names
+	 */
+	public void test_29() {
+		Gpr.debug("Test");
+		extractAndCheck("test/extractFields_28.vcf", "GEN[HG00102].AP", "0.005,0.095");
+	}
 
 }

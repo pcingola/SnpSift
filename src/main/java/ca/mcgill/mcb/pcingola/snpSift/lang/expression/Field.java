@@ -36,14 +36,14 @@ public class Field extends Expression {
 				|| name.equals("ALT") //
 				|| name.equals("FILTER") //
 				|| name.equals("FORMAT") //
-		) returnType = VcfInfoType.String;
+				) returnType = VcfInfoType.String;
 		else if (name.equals("QUAL")) returnType = VcfInfoType.Float;
 		else if (name.equals("POS")) returnType = VcfInfoType.Integer;
 		else returnType = VcfInfoType.UNKNOWN;
 	}
 
 	protected VcfInfoType calcReturnType(VcfHeaderInfo vcfInfo) {
-		if (isSub()) vcfInfo.getVcfInfoType();
+		if (isSub()) return vcfInfo.getVcfInfoType();
 
 		// Not a sub-field?
 		// Check 'number'
@@ -218,12 +218,14 @@ public class Field extends Expression {
 
 		// Is there a filed 'name'
 		VcfHeaderInfo vcfInfo = vcfHeader.getVcfInfo(name);
-		if (vcfInfo != null) returnType = calcReturnType(vcfInfo);
-		else {
+		if (vcfInfo != null) {
+			returnType = calcReturnType(vcfInfo);
+		} else {
 			// Is there a genotype 'name'
 			VcfHeaderInfoGenotype vcfInfoGenotype = vcfHeader.getVcfInfoGenotype(name);
-			if (vcfInfoGenotype != null) returnType = calcReturnType(vcfInfoGenotype);
-			else {
+			if (vcfInfoGenotype != null) {
+				returnType = calcReturnType(vcfInfoGenotype);
+			} else {
 				// Is this a special field name?
 				if (FieldConstant.isConstantField(name)) returnType = FieldConstantNames.valueOf(name).getType();
 				else if (isSampleName(vcfEntry, name)) returnType = VcfInfoType.Integer;

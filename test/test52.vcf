@@ -1,0 +1,52 @@
+##fileformat=VCFv4.1
+##fileDate=20120730
+##center=Complete Genomics
+##source=CGAPipeline_2.0.0.26;cgatools_1.6.0
+##source_GENOME_REFERENCE=NCBI build 37
+##phasing=partial
+##ALT=<ID=CGA_NOCALL,Description="No-called record">
+##ALT=<ID=CGA_CNVWIN,Description="Copy number analysis window">
+##ALT=<ID=INS:ME:ALU,Description="Insertion of ALU element">
+##ALT=<ID=INS:ME:L1,Description="Insertion of L1 element">
+##ALT=<ID=INS:ME:SVA,Description="Insertion of SVA element">
+##ALT=<ID=INS:ME:MER,Description="Insertion of MER element">
+##ALT=<ID=INS:ME:LTR,Description="Insertion of LTR element">
+##ALT=<ID=INS:ME:PolyA,Description="Insertion of PolyA element">
+##ALT=<ID=INS:ME:HERV,Description="Insertion of HERV element">
+##FILTER=<ID=VQLOW,Description="Quality not VQHIGH">
+##FILTER=<ID=SQLOW,Description="Somatic quality not SQHIGH">
+##FILTER=<ID=URR,Description="Too close to an underrepresented repeat">
+##FILTER=<ID=MPCBT,Description="Mate pair count below 10">
+##FILTER=<ID=SHORT,Description="Junction side length below 70">
+##FILTER=<ID=TSNR,Description="Transition sequence not resolved">
+##FILTER=<ID=INTERBL,Description="Interchromosomal junction in baseline">
+##FILTER=<ID=sns75,Description="Sensitivity to known MEI calls in range (.75,.95] i.e. medium FDR">
+##FILTER=<ID=sns95,Description="Sensitivity to known MEI calls in range (.95,1.00] i.e. high to very high FDR">
+##INFO=<ID=END,Number=1,Type=Integer,Description="End position of the variant described in this record">
+##INFO=<ID=SVTYPE,Number=1,Type=String,Description="Type of structural variant">
+##INFO=<ID=IMPRECISE,Number=0,Type=Flag,Description="Imprecise structural variation">
+##INFO=<ID=SVLEN,Number=.,Type=Integer,Description="Difference in length between REF and ALT alleles">
+##FORMAT=<ID=GT,Number=1,Type=String,Description="Genotype">
+##source_20130711.1=vcf-merge(r840) --collapse any --remove-duplicates --trim-ALTs --regions 1 /wsu/home/eq/eq83/eq8302/cg_panel/ceph/vcfBeta-NA12877.vcf.gz /wsu/home/eq/eq83/eq8302/cg_panel/ceph/vcfBeta-NA12878.vcf.gz /wsu/home/eq/eq83/eq8302/cg_panel/ceph/vcfBeta-NA12879.vcf.gz /wsu/home/eq/eq83/eq8302/cg_panel/ceph/vcfBeta-NA12880.vcf.gz /wsu/home/eq/eq83/eq8302/cg_panel/ceph/vcfBeta-NA12881.vcf.gz /wsu/home/eq/eq83/eq8302/cg_panel/ceph/vcfBeta-NA12882.vcf.gz /wsu/home/eq/eq83/eq8302/cg_panel/ceph/vcfBeta-NA12883.vcf.gz /wsu/home/eq/eq83/eq8302/cg_panel/ceph/vcfBeta-NA12884.vcf.gz /wsu/home/eq/eq83/eq8302/cg_panel/ceph/vcfBeta-NA12885.vcf.gz /wsu/home/eq/eq83/eq8302/cg_panel/ceph/vcfBeta-NA12886.vcf.gz /wsu/home/eq/eq83/eq8302/cg_panel/ceph/vcfBeta-NA12887.vcf.gz /wsu/home/eq/eq83/eq8302/cg_panel/ceph/vcfBeta-NA12888.vcf.gz /wsu/home/eq/eq83/eq8302/cg_panel/ceph/vcfBeta-NA12889.vcf.gz /wsu/home/eq/eq83/eq8302/cg_panel/ceph/vcfBeta-NA12890.vcf.gz /wsu/home/eq/eq83/eq8302/cg_panel/ceph/vcfBeta-NA12891.vcf.gz /wsu/home/eq/eq83/eq8302/cg_panel/ceph/vcfBeta-NA12892.vcf.gz /wsu/home/eq/eq83/eq8302/cg_panel/ceph/vcfBeta-NA12893.vcf.gz
+##sourceFiles_20130711.1=0:/wsu/home/eq/eq83/eq8302/cg_panel/ceph/vcfBeta-NA12877.vcf.gz,1:/wsu/home/eq/eq83/eq8302/cg_panel/ceph/vcfBeta-NA12878.vcf.gz,2:/wsu/home/eq/eq83/eq8302/cg_panel/ceph/vcfBeta-NA12879.vcf.gz,3:/wsu/home/eq/eq83/eq8302/cg_panel/ceph/vcfBeta-NA12880.vcf.gz,4:/wsu/home/eq/eq83/eq8302/cg_panel/ceph/vcfBeta-NA12881.vcf.gz,5:/wsu/home/eq/eq83/eq8302/cg_panel/ceph/vcfBeta-NA12882.vcf.gz,6:/wsu/home/eq/eq83/eq8302/cg_panel/ceph/vcfBeta-NA12883.vcf.gz,7:/wsu/home/eq/eq83/eq8302/cg_panel/ceph/vcfBeta-NA12884.vcf.gz,8:/wsu/home/eq/eq83/eq8302/cg_panel/ceph/vcfBeta-NA12885.vcf.gz,9:/wsu/home/eq/eq83/eq8302/cg_panel/ceph/vcfBeta-NA12886.vcf.gz,10:/wsu/home/eq/eq83/eq8302/cg_panel/ceph/vcfBeta-NA12887.vcf.gz,11:/wsu/home/eq/eq83/eq8302/cg_panel/ceph/vcfBeta-NA12888.vcf.gz,12:/wsu/home/eq/eq83/eq8302/cg_panel/ceph/vcfBeta-NA12889.vcf.gz,13:/wsu/home/eq/eq83/eq8302/cg_panel/ceph/vcfBeta-NA12890.vcf.gz,14:/wsu/home/eq/eq83/eq8302/cg_panel/ceph/vcfBeta-NA12891.vcf.gz,15:/wsu/home/eq/eq83/eq8302/cg_panel/ceph/vcfBeta-NA12892.vcf.gz,16:/wsu/home/eq/eq83/eq8302/cg_panel/ceph/vcfBeta-NA12893.vcf.gz
+##INFO=<ID=SF,Number=.,Type=String,Description="Source File (index to sourceFiles, f when filtered)">
+##INFO=<ID=AC,Number=.,Type=Integer,Description="Allele count in genotypes">
+##INFO=<ID=AN,Number=1,Type=Integer,Description="Total number of alleles in called genotypes">
+##SnpEffVersion="3.3h (build 2013-08-11), by Pablo Cingolani"
+##SnpEffCmd="SnpEff  -lof -motif -hgvs -nextProt GRCh37.71 protocols/ex1.vcf "
+##INFO=<ID=EFF,Number=.,Type=String,Description="Predicted effects for this variant.Format: 'Effect ( Effect_Impact | Functional_Class | Codon_Change | Amino_Acid_change| Amino_Acid_length | Gene_Name | Transcript_BioType | Gene_Coding | Transcript_ID | Exon  | GenotypeNum [ | ERRORS | WARNINGS ] )' ">
+##INFO=<ID=LOF,Number=.,Type=String,Description="Predicted loss of function effects for this variant. Format: 'Gene_Name | Gene_ID | Number_of_transcripts_in_gene | Percent_of_transcripts_affected' ">
+##INFO=<ID=NMD,Number=.,Type=String,Description="Predicted nonsense mediated decay effects for this variant. Format: 'Gene_Name | Gene_ID | Number_of_transcripts_in_gene | Percent_of_transcripts_affected' ">
+##SnpSiftVersion="SnpSift 3.3h (build 2013-08-11), by Pablo Cingolani"
+##SnpSiftCmd="SnpSift casecontrol -tfam protocols/pedigree.tfam protocols/ex1.eff.vcf "
+##INFO=<ID=Cases,Number=3,Type=Integer,Description="Number of variants in cases: Hom, Het, Count">
+##INFO=<ID=Controls,Number=3,Type=Integer,Description="Number of variants in controls: Hom, Het, Count">
+##INFO=<ID=CC_DOM,Number=1,Type=Float,Description="p-value using dominant model (Fisher exact)">
+##INFO=<ID=CC_REC,Number=1,Type=Float,Description="p-value using recessive model (Fisher exact)">
+##INFO=<ID=CC_ALL,Number=1,Type=Float,Description="p-value using allele count model (Fisher exact)">
+##INFO=<ID=CC_GENO,Number=1,Type=Float,Description="p-value using genotype / codominant model (CochranArmitage)">
+##SnpSiftVersion="SnpSift 4.0e (build 2014-09-13), by Pablo Cingolani"
+##SnpSiftCmd="SnpSift filter '(Cases[0] = 3) & (Controls[0] = 0)'"
+##FILTER=<ID=SnpSift,Description="SnpSift 4.0e (build 2014-09-13), by Pablo Cingolani, Expression used: (Cases[0] = 3) & (Controls[0] = 0)">
+#CHROM	POS	ID	REF	ALT	QUAL	FILTER	INFO	FORMAT	NA12877	NA12878	NA12879	NA12880	NA12881	NA12882	NA12883	NA12884	NA12885	NA12886	NA12887	NA12888	NA12889	NA12890	NA12891	NA12892	NA12893
+7	28831958	.	G	A	.	.	Cases=3,0,6;Controls=0,10,10	GT	1|0	1/0	1/1	.	.	1|0	1|0	.	1/1	1/1	1/0	1/0	.	1|0	1/0	1/0	1/0
