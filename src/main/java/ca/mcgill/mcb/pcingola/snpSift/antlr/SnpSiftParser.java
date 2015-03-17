@@ -17,17 +17,18 @@ public class SnpSiftParser extends Parser {
 	protected static final PredictionContextCache _sharedContextCache =
 		new PredictionContextCache();
 	public static final int
-		T__33=1, T__32=2, T__31=3, T__30=4, T__29=5, T__28=6, T__27=7, T__26=8, 
-		T__25=9, T__24=10, T__23=11, T__22=12, T__21=13, T__20=14, T__19=15, T__18=16, 
-		T__17=17, T__16=18, T__15=19, T__14=20, T__13=21, T__12=22, T__11=23, 
-		T__10=24, T__9=25, T__8=26, T__7=27, T__6=28, T__5=29, T__4=30, T__3=31, 
-		T__2=32, T__1=33, T__0=34, WS=35, COMMENT_SL=36, COMMENT_HASH=37, BOOL_LITERAL=38, 
-		INT_LITERAL=39, FLOAT_LITERAL=40, STRING_LITERAL=41, ID=42;
+		T__34=1, T__33=2, T__32=3, T__31=4, T__30=5, T__29=6, T__28=7, T__27=8, 
+		T__26=9, T__25=10, T__24=11, T__23=12, T__22=13, T__21=14, T__20=15, T__19=16, 
+		T__18=17, T__17=18, T__16=19, T__15=20, T__14=21, T__13=22, T__12=23, 
+		T__11=24, T__10=25, T__9=26, T__8=27, T__7=28, T__6=29, T__5=30, T__4=31, 
+		T__3=32, T__2=33, T__1=34, T__0=35, WS=36, COMMENT_SL=37, COMMENT_HASH=38, 
+		BOOL_LITERAL=39, INT_LITERAL=40, FLOAT_LITERAL=41, STRING_LITERAL=42, 
+		ID=43;
 	public static final String[] tokenNames = {
 		"<INVALID>", "'/'", "'!='", "'||'", "'&&'", "'='", "'^'", "'?'", "'<='", 
-		"'ALL'", "'&'", "'('", "'*'", "'exists'", "','", "'na'", "'].'", "':'", 
-		"'>='", "'['", "'<'", "'=='", "'|'", "'!~'", "']'", "'>'", "'!'", "'=~'", 
-		"'%'", "'in'", "'ANY'", "')'", "'+'", "'-'", "'SET'", "WS", "COMMENT_SL", 
+		"'ALL'", "'&'", "'('", "'*'", "'has'", "'exists'", "','", "'na'", "'].'", 
+		"':'", "'>='", "'['", "'<'", "'=='", "'|'", "'!~'", "']'", "'>'", "'!'", 
+		"'=~'", "'%'", "'in'", "'ANY'", "')'", "'+'", "'-'", "'SET'", "WS", "COMMENT_SL", 
 		"COMMENT_HASH", "BOOL_LITERAL", "INT_LITERAL", "FLOAT_LITERAL", "STRING_LITERAL", 
 		"ID"
 	};
@@ -519,7 +520,7 @@ public class SnpSiftParser extends Parser {
 				setState(10);
 				((ExpressionExistsContext)_localctx).op = _input.LT(1);
 				_la = _input.LA(1);
-				if ( !(_la==T__21 || _la==T__19) ) {
+				if ( !((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << T__22) | (1L << T__21) | (1L << T__19))) != 0)) ) {
 					((ExpressionExistsContext)_localctx).op = (Token)_errHandler.recoverInline(this);
 				}
 				consume();
@@ -566,7 +567,7 @@ public class SnpSiftParser extends Parser {
 				setState(16);
 				((LiteralIndexContext)_localctx).idx = _input.LT(1);
 				_la = _input.LA(1);
-				if ( !((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << T__27) | (1L << T__25) | (1L << T__22) | (1L << T__4))) != 0)) ) {
+				if ( !((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << T__28) | (1L << T__26) | (1L << T__23) | (1L << T__4))) != 0)) ) {
 					((LiteralIndexContext)_localctx).idx = (Token)_errHandler.recoverInline(this);
 				}
 				consume();
@@ -578,10 +579,10 @@ public class SnpSiftParser extends Parser {
 				_ctx = _localctx;
 				_prevctx = _localctx;
 				setState(17); match(ID);
-				setState(18); match(T__23);
+				setState(18); match(T__24);
 				setState(27);
 				_la = _input.LA(1);
-				if ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << T__27) | (1L << T__25) | (1L << T__23) | (1L << T__22) | (1L << T__21) | (1L << T__19) | (1L << T__8) | (1L << T__4) | (1L << T__2) | (1L << T__1) | (1L << BOOL_LITERAL) | (1L << INT_LITERAL) | (1L << FLOAT_LITERAL) | (1L << STRING_LITERAL) | (1L << ID))) != 0)) {
+				if ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << T__28) | (1L << T__26) | (1L << T__24) | (1L << T__23) | (1L << T__22) | (1L << T__21) | (1L << T__19) | (1L << T__8) | (1L << T__4) | (1L << T__2) | (1L << T__1) | (1L << BOOL_LITERAL) | (1L << INT_LITERAL) | (1L << FLOAT_LITERAL) | (1L << STRING_LITERAL) | (1L << ID))) != 0)) {
 					{
 					setState(19); expression(0);
 					setState(24);
@@ -617,7 +618,7 @@ public class SnpSiftParser extends Parser {
 				_localctx = new ExpressionParenContext(_localctx);
 				_ctx = _localctx;
 				_prevctx = _localctx;
-				setState(31); match(T__23);
+				setState(31); match(T__24);
 				setState(32); expression(0);
 				setState(33); match(T__3);
 				}
@@ -655,7 +656,7 @@ public class SnpSiftParser extends Parser {
 						setState(44); match(T__15);
 						setState(45);
 						_la = _input.LA(1);
-						if ( !((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << T__27) | (1L << T__25) | (1L << T__22) | (1L << T__4))) != 0)) ) {
+						if ( !((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << T__28) | (1L << T__26) | (1L << T__23) | (1L << T__4))) != 0)) ) {
 						_errHandler.recoverInline(this);
 						}
 						consume();
@@ -672,7 +673,7 @@ public class SnpSiftParser extends Parser {
 						setState(49);
 						((ExpressionLogicContext)_localctx).op = _input.LT(1);
 						_la = _input.LA(1);
-						if ( !((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << T__31) | (1L << T__30) | (1L << T__28) | (1L << T__24) | (1L << T__12))) != 0)) ) {
+						if ( !((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << T__32) | (1L << T__31) | (1L << T__29) | (1L << T__25) | (1L << T__12))) != 0)) ) {
 							((ExpressionLogicContext)_localctx).op = (Token)_errHandler.recoverInline(this);
 						}
 						consume();
@@ -688,7 +689,7 @@ public class SnpSiftParser extends Parser {
 						setState(52);
 						((ExpressionTimesContext)_localctx).op = _input.LT(1);
 						_la = _input.LA(1);
-						if ( !((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << T__33) | (1L << T__22) | (1L << T__6))) != 0)) ) {
+						if ( !((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << T__34) | (1L << T__23) | (1L << T__6))) != 0)) ) {
 							((ExpressionTimesContext)_localctx).op = (Token)_errHandler.recoverInline(this);
 						}
 						consume();
@@ -720,7 +721,7 @@ public class SnpSiftParser extends Parser {
 						setState(58);
 						((ExpressionCompContext)_localctx).op = _input.LT(1);
 						_la = _input.LA(1);
-						if ( !((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << T__32) | (1L << T__29) | (1L << T__26) | (1L << T__16) | (1L << T__14) | (1L << T__13) | (1L << T__11) | (1L << T__9) | (1L << T__7))) != 0)) ) {
+						if ( !((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << T__33) | (1L << T__30) | (1L << T__27) | (1L << T__16) | (1L << T__14) | (1L << T__13) | (1L << T__11) | (1L << T__9) | (1L << T__7))) != 0)) ) {
 							((ExpressionCompContext)_localctx).op = (Token)_errHandler.recoverInline(this);
 						}
 						consume();
@@ -733,7 +734,7 @@ public class SnpSiftParser extends Parser {
 						pushNewRecursionContext(_localctx, _startState, RULE_expression);
 						setState(60);
 						if (!(precpred(_ctx, 1))) throw new FailedPredicateException(this, "precpred(_ctx, 1)");
-						setState(61); match(T__27);
+						setState(61); match(T__28);
 						setState(62); expression(0);
 						setState(63); match(T__17);
 						setState(64); expression(2);
@@ -805,31 +806,31 @@ public class SnpSiftParser extends Parser {
 	}
 
 	public static final String _serializedATN =
-		"\3\u0430\ud6d1\u8206\uad2d\u4417\uaef1\u8d80\uaadd\3,V\4\2\t\2\4\3\t\3"+
+		"\3\u0430\ud6d1\u8206\uad2d\u4417\uaef1\u8d80\uaadd\3-V\4\2\t\2\4\3\t\3"+
 		"\3\2\3\2\3\2\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3"+
 		"\3\7\3\31\n\3\f\3\16\3\34\13\3\5\3\36\n\3\3\3\3\3\3\3\3\3\3\3\3\3\5\3"+
 		"&\n\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3"+
 		"\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3"+
 		"\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\7\3Q\n\3\f\3\16\3T\13\3\3\3\2\3\4\4\2\4"+
-		"\2\t\4\2\34\34\"#\4\2\17\17\21\21\6\2\t\t\13\13\16\16  \6\2\5\6\b\b\f"+
-		"\f\30\30\5\2\3\3\16\16\36\36\3\2\"#\n\2\4\4\7\7\n\n\24\24\26\27\31\31"+
-		"\33\33\35\35g\2\6\3\2\2\2\4%\3\2\2\2\6\7\5\4\3\2\7\b\7\2\2\3\b\3\3\2\2"+
-		"\2\t\n\b\3\1\2\n\13\t\2\2\2\13&\5\4\3\7\f\r\t\3\2\2\r&\5\4\3\6\16&\7("+
-		"\2\2\17&\7)\2\2\20&\7*\2\2\21&\7+\2\2\22&\t\4\2\2\23\24\7,\2\2\24\35\7"+
-		"\r\2\2\25\32\5\4\3\2\26\27\7\20\2\2\27\31\5\4\3\2\30\26\3\2\2\2\31\34"+
-		"\3\2\2\2\32\30\3\2\2\2\32\33\3\2\2\2\33\36\3\2\2\2\34\32\3\2\2\2\35\25"+
-		"\3\2\2\2\35\36\3\2\2\2\36\37\3\2\2\2\37&\7!\2\2 &\7,\2\2!\"\7\r\2\2\""+
-		"#\5\4\3\2#$\7!\2\2$&\3\2\2\2%\t\3\2\2\2%\f\3\2\2\2%\16\3\2\2\2%\17\3\2"+
+		"\2\t\4\2\35\35#$\4\2\17\20\22\22\6\2\t\t\13\13\16\16!!\6\2\5\6\b\b\f\f"+
+		"\31\31\5\2\3\3\16\16\37\37\3\2#$\n\2\4\4\7\7\n\n\25\25\27\30\32\32\34"+
+		"\34\36\36g\2\6\3\2\2\2\4%\3\2\2\2\6\7\5\4\3\2\7\b\7\2\2\3\b\3\3\2\2\2"+
+		"\t\n\b\3\1\2\n\13\t\2\2\2\13&\5\4\3\7\f\r\t\3\2\2\r&\5\4\3\6\16&\7)\2"+
+		"\2\17&\7*\2\2\20&\7+\2\2\21&\7,\2\2\22&\t\4\2\2\23\24\7-\2\2\24\35\7\r"+
+		"\2\2\25\32\5\4\3\2\26\27\7\21\2\2\27\31\5\4\3\2\30\26\3\2\2\2\31\34\3"+
+		"\2\2\2\32\30\3\2\2\2\32\33\3\2\2\2\33\36\3\2\2\2\34\32\3\2\2\2\35\25\3"+
+		"\2\2\2\35\36\3\2\2\2\36\37\3\2\2\2\37&\7\"\2\2 &\7-\2\2!\"\7\r\2\2\"#"+
+		"\5\4\3\2#$\7\"\2\2$&\3\2\2\2%\t\3\2\2\2%\f\3\2\2\2%\16\3\2\2\2%\17\3\2"+
 		"\2\2%\20\3\2\2\2%\21\3\2\2\2%\22\3\2\2\2%\23\3\2\2\2% \3\2\2\2%!\3\2\2"+
-		"\2&R\3\2\2\2\'(\f\r\2\2()\7\25\2\2)*\5\4\3\2*+\7\22\2\2+,\5\4\3\16,Q\3"+
-		"\2\2\2-.\f\f\2\2./\7\25\2\2/\60\t\4\2\2\60\61\7\22\2\2\61Q\5\4\3\r\62"+
+		"\2&R\3\2\2\2\'(\f\r\2\2()\7\26\2\2)*\5\4\3\2*+\7\23\2\2+,\5\4\3\16,Q\3"+
+		"\2\2\2-.\f\f\2\2./\7\26\2\2/\60\t\4\2\2\60\61\7\23\2\2\61Q\5\4\3\r\62"+
 		"\63\f\13\2\2\63\64\t\5\2\2\64Q\5\4\3\f\65\66\f\n\2\2\66\67\t\6\2\2\67"+
 		"Q\5\4\3\1389\f\t\2\29:\t\7\2\2:Q\5\4\3\n;<\f\b\2\2<=\t\b\2\2=Q\5\4\3\t"+
-		">?\f\3\2\2?@\7\t\2\2@A\5\4\3\2AB\7\23\2\2BC\5\4\3\4CQ\3\2\2\2DE\f\16\2"+
-		"\2EF\7\25\2\2FG\5\4\3\2GH\7\32\2\2HQ\3\2\2\2IJ\f\5\2\2JK\7\37\2\2KL\7"+
-		"$\2\2LM\7\25\2\2MN\5\4\3\2NO\7\32\2\2OQ\3\2\2\2P\'\3\2\2\2P-\3\2\2\2P"+
-		"\62\3\2\2\2P\65\3\2\2\2P8\3\2\2\2P;\3\2\2\2P>\3\2\2\2PD\3\2\2\2PI\3\2"+
-		"\2\2QT\3\2\2\2RP\3\2\2\2RS\3\2\2\2S\5\3\2\2\2TR\3\2\2\2\7\32\35%PR";
+		">?\f\3\2\2?@\7\t\2\2@A\5\4\3\2AB\7\24\2\2BC\5\4\3\4CQ\3\2\2\2DE\f\16\2"+
+		"\2EF\7\26\2\2FG\5\4\3\2GH\7\33\2\2HQ\3\2\2\2IJ\f\5\2\2JK\7 \2\2KL\7%\2"+
+		"\2LM\7\26\2\2MN\5\4\3\2NO\7\33\2\2OQ\3\2\2\2P\'\3\2\2\2P-\3\2\2\2P\62"+
+		"\3\2\2\2P\65\3\2\2\2P8\3\2\2\2P;\3\2\2\2P>\3\2\2\2PD\3\2\2\2PI\3\2\2\2"+
+		"QT\3\2\2\2RP\3\2\2\2RS\3\2\2\2S\5\3\2\2\2TR\3\2\2\2\7\32\35%PR";
 	public static final ATN _ATN =
 		new ATNDeserializer().deserialize(_serializedATN.toCharArray());
 	static {

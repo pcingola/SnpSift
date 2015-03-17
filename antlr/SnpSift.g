@@ -78,7 +78,7 @@ expression : BOOL_LITERAL                                                       
            | expression op=('+' | '-') expression                                                     # expressionPlus
            | expression op=('=' | '==' | '!=' | '<' | '<=' | '>' | '>=' | '=~' | '!~' ) expression    # expressionComp
            | op=('!' | '-' | '+') expression                                                          # expressionUnary
-           | op=('exists' | 'na') expression                                                          # expressionExists
+           | op=('exists' | 'na' | 'has') expression                                                  # expressionExists
            | expression 'in' 'SET' '[' expression ']'                                                 # expressionSet
            | '(' expression ')'                                                                       # expressionParen
            | expression '?' expression ':' expression                                                 # expressionCond
