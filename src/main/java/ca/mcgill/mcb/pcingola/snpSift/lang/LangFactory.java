@@ -43,6 +43,7 @@ import ca.mcgill.mcb.pcingola.snpSift.lang.expression.FieldNmd;
 import ca.mcgill.mcb.pcingola.snpSift.lang.expression.FieldSub;
 import ca.mcgill.mcb.pcingola.snpSift.lang.expression.Ge;
 import ca.mcgill.mcb.pcingola.snpSift.lang.expression.Gt;
+import ca.mcgill.mcb.pcingola.snpSift.lang.expression.Has;
 import ca.mcgill.mcb.pcingola.snpSift.lang.expression.Le;
 import ca.mcgill.mcb.pcingola.snpSift.lang.expression.Literal;
 import ca.mcgill.mcb.pcingola.snpSift.lang.expression.Lt;
@@ -145,7 +146,7 @@ public class LangFactory {
 			Gpr.debug("\n\tLeaveClassName : " + leaveName //
 					+ "\n\tTxt            : " + tree.getText() //
 					+ "\n\tTree           : " + tree.toStringTree() //
-					);
+			);
 			for (int i = 0; i < tree.getChildCount(); i++)
 				System.err.println("\t\tChild[" + i + "] : " + tree.getChild(i).getText() + "\t\t" + tree.getChild(i).getClass().getSimpleName());
 		}
@@ -207,6 +208,7 @@ public class LangFactory {
 			else if (op.equals("!=")) expression = new Neq(left, right);
 			else if (op.equals("=~")) expression = new Match(left, right);
 			else if (op.equals("!~")) expression = new NotMatch(left, right);
+			else if (op.equals("has")) expression = new Has(left, right);
 			else throw new RuntimeException("Unknown operator '" + op + "'");
 
 		} else if (leaveClass == ExpressionExistsContext.class) { // Exists operators
@@ -231,7 +233,7 @@ public class LangFactory {
 		} else if (leaveClass == VarReferenceContext.class // All fields are preocessed here
 				|| leaveClass == VarReferenceListContext.class //
 				|| leaveClass == VarReferenceListSubContext.class //
-				) {
+		) {
 			// Is it a field?
 			expression = fieldFactory(tree);
 		} else if (leaveClass == LiteralBoolContext.class) { // Literals
@@ -271,7 +273,7 @@ public class LangFactory {
 			Gpr.debug("\n\tLeaveClassName : " + leaveName //
 					+ "\n\tTxt            : " + tree.getText() //
 					+ "\n\tTree           : " + tree.toStringTree() //
-					);
+			);
 			for (int i = 0; i < tree.getChildCount(); i++)
 				System.err.println("\t\tChild[" + i + "] : " + tree.getChild(i).getText() + "\t\t" + tree.getChild(i).getClass().getSimpleName());
 		}
@@ -299,7 +301,7 @@ public class LangFactory {
 			Gpr.debug("\n\tLeaveClassName : " + leaveName //
 					+ "\n\tTxt            : " + tree.getText() //
 					+ "\n\tTree           : " + tree.toStringTree() //
-					);
+			);
 			for (int i = 0; i < tree.getChildCount(); i++)
 				System.err.println("\t\tChild[" + i + "] : " + tree.getChild(i).getText() + "\t\t" + tree.getChild(i).getClass().getSimpleName());
 		}
@@ -355,7 +357,7 @@ public class LangFactory {
 			Gpr.debug("\n\tLeaveClassName : " + leaveName //
 					+ "\n\tTxt            : " + tree.getText() //
 					+ "\n\tTree           : " + tree.toStringTree() //
-					);
+			);
 			for (int i = 0; i < tree.getChildCount(); i++)
 				System.err.println("\t\tChild[" + i + "] : " + tree.getChild(i).getText());
 		}
@@ -391,13 +393,13 @@ public class LangFactory {
 				|| leaveName.equalsIgnoreCase("isHet") //
 				|| leaveName.equalsIgnoreCase("isRef") //
 				|| leaveName.equalsIgnoreCase("isVariant") //
-				) {
+		) {
 			return functionBoolGenotypeFactory(tree);
 		} else if (leaveName.equalsIgnoreCase("countHom") //
 				|| leaveName.equalsIgnoreCase("countHet") //
 				|| leaveName.equalsIgnoreCase("countRef") //
 				|| leaveName.equalsIgnoreCase("countVariant") //
-				) {
+		) {
 			return functionVcfEntryFactory(tree);
 		} else {
 			throw new RuntimeException("Unknown function '" + leaveName + "'");
@@ -415,7 +417,7 @@ public class LangFactory {
 			Gpr.debug("\n\tLeaveClassName : " + leaveName //
 					+ "\n\tTxt            : " + tree.getText() //
 					+ "\n\tTree           : " + tree.toStringTree() //
-					);
+			);
 			for (int i = 0; i < tree.getChildCount(); i++)
 				System.err.println("\t\tChild[" + i + "] : " + tree.getChild(i).getText());
 		}

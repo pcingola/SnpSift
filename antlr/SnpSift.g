@@ -63,24 +63,24 @@ ID             : (ALPHANUM | '_' | '.' )+;
 compilationUnit : expression EOF;
 
 // In SNpSift, everything is an expression
-expression : BOOL_LITERAL                                                                             # literalBool
-           | INT_LITERAL                                                                              # literalInt
-           | FLOAT_LITERAL                                                                            # literalFloat
-           | STRING_LITERAL                                                                           # literalString
-           | idx=('ANY' | '*' | 'ALL' | '?')                                                          # literalIndex
-           | ID '('(expression (',' expression )*)? ')'                                               # functionCall
-           | ID                                                                                       # varReference
-           | expression '[' expression ']'                                                            # varReferenceList
-           | expression '[' expression '].' expression                                                # varReferenceListSub
-           | expression '[' ('ANY' | '*' | 'ALL' | '?') '].' expression                               # varReferenceListSub
-           | expression op=('&' | '&&' | '|' | '||' | '^') expression                                 # expressionLogic
-           | expression op=('*' | '/' | '%') expression                                               # expressionTimes
-           | expression op=('+' | '-') expression                                                     # expressionPlus
-           | expression op=('=' | '==' | '!=' | '<' | '<=' | '>' | '>=' | '=~' | '!~' ) expression    # expressionComp
-           | op=('!' | '-' | '+') expression                                                          # expressionUnary
-           | op=('exists' | 'na' | 'has') expression                                                  # expressionExists
-           | expression 'in' 'SET' '[' expression ']'                                                 # expressionSet
-           | '(' expression ')'                                                                       # expressionParen
-           | expression '?' expression ':' expression                                                 # expressionCond
+expression : BOOL_LITERAL                                                                                     # literalBool
+           | INT_LITERAL                                                                                      # literalInt
+           | FLOAT_LITERAL                                                                                    # literalFloat
+           | STRING_LITERAL                                                                                   # literalString
+           | idx=('ANY' | '*' | 'ALL' | '?')                                                                  # literalIndex
+           | ID '('(expression (',' expression )*)? ')'                                                       # functionCall
+           | ID                                                                                               # varReference
+           | expression '[' expression ']'                                                                    # varReferenceList
+           | expression '[' expression '].' expression                                                        # varReferenceListSub
+           | expression '[' ('ANY' | '*' | 'ALL' | '?') '].' expression                                       # varReferenceListSub
+           | expression op=('&' | '&&' | '|' | '||' | '^') expression                                         # expressionLogic
+           | expression op=('*' | '/' | '%') expression                                                       # expressionTimes
+           | expression op=('+' | '-') expression                                                             # expressionPlus
+           | expression op=('=' | '==' | '!=' | '<' | '<=' | '>' | '>=' | '=~' | '!~' | 'has' ) expression    # expressionComp
+           | op=('!' | '-' | '+') expression                                                                  # expressionUnary
+           | op=('exists' | 'na') expression                                                                  # expressionExists
+           | expression 'in' 'SET' '[' expression ']'                                                         # expressionSet
+           | '(' expression ')'                                                                               # expressionParen
+           | expression '?' expression ':' expression                                                         # expressionCond
            ;
 

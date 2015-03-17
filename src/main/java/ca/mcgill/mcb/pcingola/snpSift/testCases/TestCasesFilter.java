@@ -1505,4 +1505,25 @@ public class TestCasesFilter extends TestCase {
 		Assert.assertEquals(1, list.size());
 	}
 
+	/**
+	 * Filter using 'has' operator
+	 */
+	public void test_53() {
+		Gpr.debug("Test");
+
+		// Filter data
+		SnpSiftCmdFilter snpsiftFilter = new SnpSiftCmdFilter();
+		String expression = "ANN[*].EFFECT has 'synonymous_variant'";
+		List<VcfEntry> list = snpsiftFilter.filter("test/test_filter_has.vcf", expression, true);
+
+		if (verbose) {
+			System.out.println("Expression: '" + expression + "'");
+			for (VcfEntry vcfEntry : list)
+				if (verbose) System.out.println("VCF entry:\t" + vcfEntry);
+		}
+
+		// Check that one line satisfies the condition
+		Assert.assertEquals(1, list.size());
+	}
+
 }
