@@ -343,8 +343,28 @@ public class SnpSiftCmdDbNsfp extends SnpSift {
 		dbNsfpFile.setCollapseRepeatedValues(collapseRepeatedValues);
 		if (tabixCheck && !dbNsfpFile.isTabix()) fatalError("Tabix index not found for database '" + dbFileName + "'.\n\t\tSnpSift dbNSFP only works with tabix indexed databases, please create or download index.");
 
+		//---
 		// Guess data types
-		dbNsfpFile.guessVcfTypes();
+		//---
+		if (verbose) Timer.showStdErr("Guessing data types");
+
+		if (!dbNsfpFile.guessVcfTypes(verbose)) {
+			// Show missing types
+			if (verbose) {
+				String fnames[] = dbNsfpFile.getFieldNamesSorted();
+				VcfInfoType[] types = dbNsfpFile.getTypes();
+				Timer.showStdErr("Some data types are missing (using 'string')");
+				for (int i = 0; i < fnames.length; i++)
+					if (types[i] == null) System.out.println("\tColumn " + (i + 1) + "\t" + fnames[i]);
+			}
+
+			// Force missing types as strings
+			dbNsfpFile.forceMissingTypesAsString();
+		}
+
+		//---
+		// Fields to use
+		//---
 		VcfInfoType types[] = dbNsfpFile.getTypes();
 		String fieldNames[] = dbNsfpFile.getFieldNamesSorted();
 		for (int i = 0; i < fieldNames.length; i++) {
@@ -352,10 +372,13 @@ public class SnpSiftCmdDbNsfp extends SnpSift {
 			fieldsType.put(fieldNames[i], type);
 			fieldsDescription.put(fieldNames[i], "Field '" + fieldNames[i] + "' from dbNSFP");
 		}
+		if (verbose) Timer.showStdErr("Done");
 
 		currentDbEntry = null;
 
+		//---
 		// No field names specified? Use default
+		//---
 		if (fieldsNamesToAdd == null) fieldsNamesToAdd = DEFAULT_FIELDS_NAMES_TO_ADD;
 		for (String fn : fieldsNamesToAdd.split(",")) {
 			if (fieldsDescription.get(fn) == null) usage("Error: Field name '" + fn + "' not found");

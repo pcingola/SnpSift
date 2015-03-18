@@ -12,6 +12,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
 
+import ca.mcgill.mcb.pcingola.util.Gpr;
 import ca.mcgill.mcb.pcingola.vcf.VcfInfoType;
 
 /**
@@ -88,6 +89,27 @@ public class DbNsfpFileIterator extends MarkerFileIterator<DbNsfpEntry> {
 		}
 	}
 
+	public static final int MIN_LINES = 10 * 1000; // Analyze at least this many lines (because some types might change)
+	public static final int MAX_LINES = 100 * 1000; // Analyze at most this many lines
+	public static final String HEADER_PREFIX = "#";
+	public static final char COLUMN_SEPARATOR = '\t';
+	public static final String COLUMN_SEPARATOR_STR = "" + COLUMN_SEPARATOR;
+	public static final String SUBFIELD_SEPARATOR = ";";
+	public static final String SUBFIELD_SEPARATOR_ALT = ",";
+	public static final String COLUMN_CHR_NAME = "chr";
+	public static final String COLUMN_POS_NAME = "pos(1-coor)";
+	public static final String ALT_NAME = "alt";
+
+	private final TObjectIntHashMap<String> columnNames2Idx = new TObjectIntHashMap<String>();
+	boolean collapseRepeatedValues = true;
+	int chromosomeIdx;
+	int startIdx;
+	int altIdx;
+	String fieldNames[] = null; // Field names in same order as file columns
+	VcfInfoType types[] = null; // VCF data types
+	boolean multipleValues[] = null; // Does this column have multiple columns?
+	HashMap<String, Integer> names2index; // Map column name to index
+
 	/**
 	 * Splits a separated string into an array of <code>String</code> tokens. If
 	 * the input string is null, this method returns null.
@@ -115,29 +137,16 @@ public class DbNsfpFileIterator extends MarkerFileIterator<DbNsfpEntry> {
 		return st.tokens(String.class);
 	}
 
-	public static final int MIN_LINES = 10 * 1000; // Analyze at least this many lines (because some types might change)
-	public static final String HEADER_PREFIX = "#";
-	public static final char COLUMN_SEPARATOR = '\t';
-	public static final String COLUMN_SEPARATOR_STR = "" + COLUMN_SEPARATOR;
-	public static final String SUBFIELD_SEPARATOR = ";";
-	public static final String SUBFIELD_SEPARATOR_ALT = ",";
-	public static final String COLUMN_CHR_NAME = "chr";
-	public static final String COLUMN_POS_NAME = "pos(1-coor)";
-
-	public static final String ALT_NAME = "alt";
-	private final TObjectIntHashMap<String> columnNames2Idx = new TObjectIntHashMap<String>();
-	boolean collapseRepeatedValues = true;
-	int chromosomeIdx;
-	int startIdx;
-	int altIdx;
-	String fieldNames[] = null; // Field names in same order as file columns
-	VcfInfoType types[] = null; // VCF data types
-	boolean multipleValues[] = null; // Does this column have multiple columns?
-
-	HashMap<String, Integer> names2index; // Map column name to index
-
 	public DbNsfpFileIterator(String fileName) {
 		super(fileName, 1);
+	}
+
+	/**
+	 * Force missing types as string
+	 */
+	public void forceMissingTypesAsString() {
+		for (int i = 0; i < types.length; i++)
+			if (types[i] == null) types[i] = VcfInfoType.String;
 	}
 
 	public Set<String> getFieldNames() {
@@ -163,8 +172,6 @@ public class DbNsfpFileIterator extends MarkerFileIterator<DbNsfpEntry> {
 
 	/**
 	 * Guess value type
-	 * @param value
-	 * @return
 	 */
 	public VcfInfoType guessDataType(String value) {
 		// Empty? Nothing to do
@@ -219,9 +226,8 @@ public class DbNsfpFileIterator extends MarkerFileIterator<DbNsfpEntry> {
 
 	/**
 	 * Guess data types from file
-	 * @return
 	 */
-	protected boolean guessDataTypes() {
+	protected boolean guessDataTypes(boolean verbose) {
 		boolean header = true;
 		fieldNames = null;
 		types = null;
@@ -284,8 +290,11 @@ public class DbNsfpFileIterator extends MarkerFileIterator<DbNsfpEntry> {
 						done &= (types[i] != null);
 					}
 
+					if (verbose) Gpr.showMark(entryNum, 1000);
+
 					// Have we guessed all types? => We are done
 					if (done && entryNum > MIN_LINES) return true;
+					if (entryNum > MAX_LINES) return false; // Too many lines analyzed? We should be done...
 				}
 			}
 
@@ -299,8 +308,8 @@ public class DbNsfpFileIterator extends MarkerFileIterator<DbNsfpEntry> {
 	/**
 	 * Guess field types: Read many lines and guess the data type for each column
 	 */
-	public boolean guessVcfTypes() {
-		boolean ok = guessDataTypes();
+	public boolean guessVcfTypes(boolean verbose) {
+		boolean ok = guessDataTypes(verbose);
 		init(fileName, inOffset); // We need to re-open the file after guessing data types
 		return ok;
 	}
@@ -388,7 +397,7 @@ public class DbNsfpFileIterator extends MarkerFileIterator<DbNsfpEntry> {
 	@Override
 	protected DbNsfpEntry readNext() {
 		// Do we need to guess data types?
-		if (types == null) guessVcfTypes();
+		if (types == null) throw new RuntimeException("Data types have not been identified. Forgot to invoke guessVcfTypes()?");
 
 		// Read another entry from the file
 		try {
