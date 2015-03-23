@@ -255,6 +255,10 @@ public class SnpSift {
 				if (args.length <= i) usage("Missing argument for command line option '-cpus'");
 				numWorkers = Gpr.parseIntSafe(args[++i]);
 				if (numWorkers <= 0) usage("Error: Number of cpus must be positive");
+			} else if (arg.equalsIgnoreCase("-version")) {
+				// Show version number and exit
+				System.out.println(VERSION_SHORT);
+				System.exit(0);
 			} else argsList.add(args[i]);
 		}
 
