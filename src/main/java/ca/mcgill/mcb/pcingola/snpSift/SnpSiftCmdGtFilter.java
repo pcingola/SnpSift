@@ -232,10 +232,10 @@ public class SnpSiftCmdGtFilter extends SnpSift {
 					String exprFile = args[++i];
 					if (verbose) System.err.println("Reading expression from file '" + exprFile + "'");
 					expression = Gpr.readFile(exprFile);
-				} else usage("Unknow option '" + arg + "'");
+				} else usage("Unknown option '" + arg + "'");
 			} else if (expression == null) expression = arg;
 			else if (vcfInputFile == null) vcfInputFile = arg;
-			else usage("Unknow parameter '" + arg + "'");
+			else usage("Unknown parameter '" + arg + "'");
 		}
 
 		if (expression == null) usage("Missing filter expression!");

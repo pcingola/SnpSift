@@ -86,7 +86,7 @@ public class SnpSiftCmdFilterChrPos extends SnpSift {
 				// No command line options available for this command
 			} else if (chrPosFile == null) chrPosFile = arg;
 			else if (vcfInputFile == null) vcfInputFile = arg;
-			else usage("Unknow parameter '" + arg + "'");
+			else usage("Unknown parameter '" + arg + "'");
 		}
 
 		if (chrPosFile == null) usage("No chrpos.txt file provided.");
