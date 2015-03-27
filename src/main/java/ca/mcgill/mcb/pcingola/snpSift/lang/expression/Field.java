@@ -36,7 +36,7 @@ public class Field extends Expression {
 				|| name.equals("ALT") //
 				|| name.equals("FILTER") //
 				|| name.equals("FORMAT") //
-				) returnType = VcfInfoType.String;
+		) returnType = VcfInfoType.String;
 		else if (name.equals("QUAL")) returnType = VcfInfoType.Float;
 		else if (name.equals("POS")) returnType = VcfInfoType.Integer;
 		else returnType = VcfInfoType.UNKNOWN;
@@ -69,7 +69,7 @@ public class Field extends Expression {
 			return new Value(getFieldString(vcfEntry));
 
 		default:
-			throw new RuntimeException("Unknow return type '" + returnType + "'");
+			throw new RuntimeException("Unknown return type '" + returnType + "'");
 		}
 	}
 
@@ -92,7 +92,7 @@ public class Field extends Expression {
 			return new Value(getFieldString(vcfGenotype));
 
 		default:
-			throw new RuntimeException("Unknow return type '" + returnType + "'");
+			throw new RuntimeException("Unknown return type '" + returnType + "'");
 		}
 	}
 
