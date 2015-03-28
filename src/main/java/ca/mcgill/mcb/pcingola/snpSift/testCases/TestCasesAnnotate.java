@@ -509,4 +509,19 @@ public class TestCasesAnnotate extends TestCase {
 		annotateTest(dbFileName, fileName);
 	}
 
+	/**
+	 * Annotate INFO fields using entries that are duplicated in db.vcf
+	 */
+	public void test_27_repeat_db_entry() {
+		Gpr.debug("Test");
+
+		String dbFileName = "./test/db_test_27.vcf";
+		String fileName = "./test/annotate_27.vcf";
+		List<VcfEntry> res = annotate(dbFileName, fileName, null);
+		for (VcfEntry ve : res) {
+			if (verbose) System.out.println(ve);
+			Assert.assertEquals("121964859,45578238", ve.getInfo("RS"));
+		}
+	}
+
 }

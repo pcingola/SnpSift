@@ -109,14 +109,18 @@ public class TestCasesZzz extends TestCase {
 	}
 
 	/**
-	 * Annotate ID using entries that are duplicated in db.vcf
+	 * Annotate INFO fields using entries that are duplicated in db.vcf
 	 */
-	public void test_26_repeat_db_entry() {
+	public void test_27_repeat_db_entry() {
 		Gpr.debug("Test");
 
-		String dbFileName = "./test/db_test_26.vcf";
-		String fileName = "./test/annotate_26.vcf";
-		annotateTest(dbFileName, fileName);
+		String dbFileName = "./test/db_test_27.vcf";
+		String fileName = "./test/annotate_27.vcf";
+		List<VcfEntry> res = annotate(dbFileName, fileName, null);
+		for (VcfEntry ve : res) {
+			System.out.println(ve);
+			Assert.assertEquals("121964859,45578238", ve.getInfo("RS"));
+		}
 	}
 
 }

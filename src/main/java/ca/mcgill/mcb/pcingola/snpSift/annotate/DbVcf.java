@@ -9,7 +9,6 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import ca.mcgill.mcb.pcingola.fileIterator.VcfFileIterator;
-import ca.mcgill.mcb.pcingola.util.Gpr;
 import ca.mcgill.mcb.pcingola.vcf.VcfEntry;
 import ca.mcgill.mcb.pcingola.vcf.VcfHeaderInfo;
 
@@ -105,7 +104,7 @@ public abstract class DbVcf {
 
 			for (Entry<String, String> entry : info.entrySet()) {
 				String k = entry.getKey();
-				String v = entry.getKey();
+				String v = entry.getValue();
 
 				if (!infoOri.containsKey(k)) infoOri.put(k, v); // This entry is NOT in infoOri, simply add it
 				else infoOri.put(k, infoOri.get(k) + "," + v); // This entry IS in infoOri, append value
@@ -124,7 +123,6 @@ public abstract class DbVcf {
 	 * Clear cached db entries
 	 */
 	protected void clear() {
-		Gpr.debug("CLEAR");
 		dbCurrentId.clear();
 		dbCurrentInfo.clear();
 		dbVcfEntryAdded.clear();
