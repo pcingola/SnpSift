@@ -18,35 +18,28 @@ import ca.mcgill.mcb.pcingola.vcf.VcfEntry;
  */
 public abstract class AnnotateVcfDb {
 
-	public static final int SHOW = 10000;
-	public static final int SHOW_LINES = 100 * SHOW;
 	public static final int MAX_ERRORS = 10; // Report an error no more than X times
 
 	protected boolean verbose, debug;
 	protected boolean useRefAlt = true;
-	protected int countBadRef = 0;
 	protected String chrPrev = "";
 	protected String prependInfoFieldName;
-	protected String dbFileName;
-	protected DbVcfEntry dbCurrentEntry;
-	protected VcfEntry latestVcfDb = null;
+	protected DbVcf dbVcf;
 	protected VcfFileIterator vcfDbFile;
 	protected HashMap<String, Integer> errCount;
 
-	public AnnotateVcfDb(String dbFileName) {
-		this.dbFileName = dbFileName;
-		dbCurrentEntry = new DbVcfEntry();
+	public AnnotateVcfDb() {
 	}
 
 	/**
 	 * Annotate a VCF entry
 	 */
 	public boolean annotate(VcfEntry vcfEntry) throws IOException {
-		readDb(vcfEntry); // Read database up to this point
+		dbVcf.readDb(vcfEntry); // Read database up to this point
 
 		// Add information to vcfEntry
-		boolean annotated = annotateIds(vcfEntry, dbCurrentEntry.findDbId(vcfEntry));
-		annotated |= annotateInfo(vcfEntry, dbCurrentEntry.findDbInfo(vcfEntry));
+		boolean annotated = annotateIds(vcfEntry, dbVcf.findDbId(vcfEntry));
+		annotated |= annotateInfo(vcfEntry, dbVcf.findDbInfo(vcfEntry));
 
 		return annotated;
 	}
@@ -93,20 +86,13 @@ public abstract class AnnotateVcfDb {
 		return true;
 	}
 
-	/**
-	 * Finish up annotation process
-	 */
 	public void close() {
-		if (vcfDbFile != null) {
-			vcfDbFile.close(); // We have to close vcfDbFile because it was opened using a BufferedReader (this sets autoClose to 'false')
-			vcfDbFile = null;
-		}
+		dbVcf.close();
 	}
 
-	/**
-	 * Open database annotation file
-	 */
-	public abstract void open() throws IOException;
+	public void open() {
+		dbVcf.open();
+	}
 
 	/**
 	 * Prepend 'prependInfoFieldName' to all info fields
@@ -121,17 +107,12 @@ public abstract class AnnotateVcfDb {
 
 	}
 
-	/**
-	 * Read all DB entries up to 'vcfEntry'
-	 */
-	protected abstract void readDb(VcfEntry ve);
-
 	public void setDebug(boolean debug) {
 		this.debug = debug;
 	}
 
 	public void setInfoFields(List<String> infoFields) {
-		dbCurrentEntry.setInfoFields(infoFields);
+		dbVcf.setInfoFields(infoFields);
 	}
 
 	public void setPrependInfoFieldName(String prependInfoFieldName) {
@@ -139,15 +120,15 @@ public abstract class AnnotateVcfDb {
 	}
 
 	public void setUseId(boolean useId) {
-		dbCurrentEntry.setUseId(useId);
+		dbVcf.setUseId(useId);
 	}
 
 	public void setUseInfoField(boolean useInfoField) {
-		dbCurrentEntry.setUseInfoField(useInfoField);
+		dbVcf.setUseInfoField(useInfoField);
 	}
 
 	public void setUseRefAlt(boolean useRefAlt) {
-		dbCurrentEntry.setUseRefAlt(useRefAlt);
+		dbVcf.setUseRefAlt(useRefAlt);
 	}
 
 	public void setVerbose(boolean verbose) {

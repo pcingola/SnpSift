@@ -5,45 +5,70 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
+import ca.mcgill.mcb.pcingola.fileIterator.VcfFileIterator;
+import ca.mcgill.mcb.pcingola.util.Gpr;
 import ca.mcgill.mcb.pcingola.vcf.VcfEntry;
 import ca.mcgill.mcb.pcingola.vcf.VcfHeaderInfo;
 
-public class DbVcfEntry {
+/**
+ * Use a VCF file as a database for annotations
+ *
+ * @author pcingola
+ */
+public abstract class DbVcf {
 
-	protected String latestChromo = "";
+	protected boolean debug = false;
+	protected boolean checkRepeat = true;
 	protected boolean useId = true; // Annotate ID fields
 	protected boolean useInfoField = true; // Use all info fields
 	protected boolean useRefAlt = true;
-	protected HashMap<String, Map<String, String>> dbCurrentInfo = new HashMap<String, Map<String, String>>();
+	protected boolean verbose = false;
+	protected int countBadRef = 0;
+	protected String dbFileName;
+	protected String latestChromo = "";
+	protected VcfFileIterator vcfDbFile; // VCF File
+	protected VcfEntry latestVcfDb = null; // Latest entry read form VCF (the information may have not been added/used yet)
+	protected Map<String, Map<String, String>> dbCurrentInfo = new HashMap<String, Map<String, String>>();
 	protected List<String> infoFields; // Use only these INFO fields
-	protected HashMap<String, String> dbCurrentId = new HashMap<String, String>(); // Current DB entries
-	protected HashMap<String, Boolean> vcfInfoPerAllele = new HashMap<String, Boolean>(); // Is a VCF INFO field annotated 'per allele' basis?
-	protected HashMap<String, Boolean> vcfInfoPerAlleleRef = new HashMap<String, Boolean>(); // Is a VCF INFO field annotated 'per allele' basis AND requires reference to be annotated (i.e. VCF header has Number=R)?
+	protected Map<String, String> dbCurrentId = new HashMap<String, String>(); // Current DB entries
+	protected Map<String, Boolean> vcfInfoPerAllele = new HashMap<String, Boolean>(); // Is a VCF INFO field annotated 'per allele' basis?
+	protected Map<String, Boolean> vcfInfoPerAlleleRef = new HashMap<String, Boolean>(); // Is a VCF INFO field annotated 'per allele' basis AND requires reference to be annotated (i.e. VCF header has Number=R)?
+	protected Set<String> dbVcfEntryAdded = new HashSet<String>(); // Entries that have already been added to the database
+
+	public DbVcf(String dbFileName) {
+		this.dbFileName = dbFileName;
+	}
 
 	/**
 	 * Add 'key->id' entries to 'dbCurrent'
 	 */
-	public void addDbCurrent(VcfEntry vcfDb) {
-		latestChromo = vcfDb.getChromosomeName();
-
-		String alts[] = vcfDb.getAlts();
+	protected void add(VcfEntry vcfDb) {
+		// VcfEntry already added?
+		if (checkRepeat) {
+			String keyAdded = key(vcfDb);
+			if (dbVcfEntryAdded.contains(keyAdded)) return;
+			dbVcfEntryAdded.add(keyAdded);
+		}
 
 		//---
 		// Add information for each ALT allele
 		//---
+		updateChromo(vcfDb);
+		String alts[] = vcfDb.getAlts();
 		for (int alleleIdx = 0; alleleIdx < alts.length; alleleIdx++) {
 			String key = key(vcfDb, alleleIdx);
 
 			// Add ID field information
-			dbCurrentId.put(key, vcfDb.getId());
+			addId(key, vcfDb.getId());
 
 			// Add INFO fields to DB?
 			if (useInfoField) {
 				// Add all INFO fields
 				Map<String, String> info = dbInfoFields(vcfDb, alts[alleleIdx]);
-				dbCurrentInfo.put(key, info);
+				addInfo(key, info);
 			}
 		}
 
@@ -56,18 +81,63 @@ public class DbVcfEntry {
 			int alleleIdx = -1; // Negative allele number means 'REF'
 			String key = key(vcfDb, alleleIdx);
 			Map<String, String> info = dbInfoFields(vcfDb, vcfDb.getRef());
-			dbCurrentInfo.put(key, info);
+			addInfo(key, info);
 		}
 
 	}
 
-	public boolean checkChromo(VcfEntry vcfEntry) {
+	/**
+	 * Add VCF ID field
+	 */
+	protected void addId(String key, String id) {
+		if (!dbCurrentId.containsKey(key)) dbCurrentId.put(key, id);
+		else dbCurrentId.put(key, dbCurrentId.get(key) + "," + id);
+	}
+
+	/**
+	 * Add VCF ID field
+	 */
+	protected void addInfo(String key, Map<String, String> info) {
+		if (!dbCurrentInfo.containsKey(key)) dbCurrentInfo.put(key, info);
+		else {
+			// There is information => We need to append to each entry
+			Map<String, String> infoOri = dbCurrentInfo.get(key);
+
+			for (Entry<String, String> entry : info.entrySet()) {
+				String k = entry.getKey();
+				String v = entry.getKey();
+
+				if (!infoOri.containsKey(k)) infoOri.put(k, v); // This entry is NOT in infoOri, simply add it
+				else infoOri.put(k, infoOri.get(k) + "," + v); // This entry IS in infoOri, append value
+			}
+		}
+	}
+
+	/**
+	 * Check if we are still in the latest chromosome
+	 */
+	protected boolean checkChromo(VcfEntry vcfEntry) {
 		return latestChromo.equals(vcfEntry.getChromosomeName());
 	}
 
+	/**
+	 * Clear cached db entries
+	 */
 	protected void clear() {
+		Gpr.debug("CLEAR");
 		dbCurrentId.clear();
 		dbCurrentInfo.clear();
+		dbVcfEntryAdded.clear();
+	}
+
+	/**
+	 * Finish up annotation process
+	 */
+	public void close() {
+		if (vcfDbFile != null) {
+			vcfDbFile.close(); // We have to close vcfDbFile because it was opened using a BufferedReader (this sets autoClose to 'false')
+			vcfDbFile = null;
+		}
 	}
 
 	/**
@@ -172,17 +242,9 @@ public class DbVcfEntry {
 				// Not a 'per allele' INFO field? Then we are done (no need to annotate other alleles)
 				if (!isVcfInfoPerAllele(infoFieldName)) break;
 			}
-
-			if (isVcfInfoPerAlleleRef(infoFieldName)) {
-
-			}
 		}
 
 		return results;
-	}
-
-	public String getLatestChromo() {
-		return latestChromo;
 	}
 
 	/**
@@ -232,6 +294,19 @@ public class DbVcfEntry {
 	}
 
 	/**
+	 * Create a 'key' string to check if an entry has already been added
+	 */
+	protected String key(VcfEntry ve) {
+		return ve.getChromosomeName() //
+				+ "\t" + ve.getStart() //
+				+ "\t" + ve.getId() //
+				+ "\t" + ve.getRef() //
+				+ "\t" + ve.getAltsStr() //
+				+ "\t" + ve.getInfoStr() //
+				;
+	}
+
+	/**
 	 * Create a hash key
 	 */
 	String key(VcfEntry vcfDbEntry, int altIndex) {
@@ -241,6 +316,13 @@ public class DbVcfEntry {
 		}
 		return vcfDbEntry.getChromosomeName() + ":" + vcfDbEntry.getStart();
 	}
+
+	/**
+	 * Open database annotation file
+	 */
+	public abstract void open();
+
+	public abstract void readDb(VcfEntry ve);
 
 	public void setInfoFields(List<String> infoFields) {
 		this.infoFields = infoFields;
@@ -267,7 +349,7 @@ public class DbVcfEntry {
 		StringBuilder sb = new StringBuilder();
 
 		// Show IDs
-		sb.append("IDs:\n");
+		sb.append("IDs (size: " + dbCurrentId.size() + "):\n");
 		for (String key : dbCurrentId.keySet())
 			sb.append("\t" + key + "\t" + dbCurrentId.get(key) + "\n");
 
@@ -283,7 +365,10 @@ public class DbVcfEntry {
 		return sb.toString();
 	}
 
-	public void updateChromo(VcfEntry vcfEntry) {
+	/**
+	 * Update latest chromosome
+	 */
+	protected void updateChromo(VcfEntry vcfEntry) {
 		latestChromo = vcfEntry.getChromosomeName();
 	}
 }

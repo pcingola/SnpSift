@@ -498,4 +498,15 @@ public class TestCasesAnnotate extends TestCase {
 		Assert.assertEquals(0, hasCc); // This onw should NOT be present
 	}
 
+	/**
+	 * Annotate ID using entries that are duplicated in db.vcf
+	 */
+	public void test_26_repeat_db_entry() {
+		Gpr.debug("Test");
+
+		String dbFileName = "./test/db_test_26.vcf";
+		String fileName = "./test/annotate_26.vcf";
+		annotateTest(dbFileName, fileName);
+	}
+
 }
