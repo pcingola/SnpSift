@@ -469,7 +469,7 @@ public class SnpSift {
 				+ "\n\tvarType       : Annotate variant type (SNP,MNP,INS,DEL or MIXED)." //
 				+ "\n\tvcfCheck      : Check that VCF file is well formed." //
 				+ "\n\tvcf2tped      : Convert VCF to TPED." //
-				);
+		);
 
 		usageGenericAndDb();
 
@@ -483,13 +483,13 @@ public class SnpSift {
 		System.err.println("\nOptions common to all SnpSift commands:\n" //
 				+ (needsConfig ? "\t-c , -config <file>  : Specify config file\n" : "") //
 				+ "\t-d                   : Debug.\n" //
-				+ (needsDb ? "\t-db <file>           : Databse file name (for commands that require datbases).\n" : "") //
+				+ (needsDb ? "\t-db <file>           : Database file name (for commands that require databases).\n" : "") //
 				+ "\t-download            : Download database, if not available locally. Default: " + download + ".\n" //
 				+ "\t-noDownload          : Do not download a database, if not available locally.\n" //
 				+ "\t-noLog               : Do not report usage statistics to server.\n" //
 				+ "\t-h                   : Help.\n" //
 				+ "\t-v                   : Verbose.\n" //
-				);
+		);
 	}
 
 	/**
