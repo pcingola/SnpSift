@@ -63,18 +63,19 @@ public class SnpSiftCmdAnnotate extends SnpSift {
 			VcfHeader vcfDbHeader = vcfDb.readHeader();
 
 			// Add all corresponding INFO headers
-			for (VcfHeaderInfo vcfInfoDb : vcfDbHeader.getVcfInfo()) {
+			for (VcfHeaderInfo vcfHeaderDb : vcfDbHeader.getVcfInfo()) {
+				String id = (prependInfoFieldName != null ? prependInfoFieldName : "") + vcfHeaderDb.getId();
 
 				// Get same vcfInfo from file to annotate
-				VcfHeaderInfo vcfInfoFile = vcfFile.getVcfHeader().getVcfInfo(vcfInfoDb.getId());
+				VcfHeaderInfo vcfHeaderFile = vcfFile.getVcfHeader().getVcfInfo(id);
 
 				// Add header entry only if...
-				if (isAnnotateInfo(vcfInfoDb) // Add if it is being used to annotate
-						&& !vcfInfoDb.isImplicit() //  AND it is not an "implicit" header in Db (i.e. created automatically by VcfHeader class)
-						&& ((vcfInfoFile == null) || vcfInfoFile.isImplicit()) // AND it is not already added OR is already added, but it is implicit
-				) {
-					VcfHeaderInfo newHeader = new VcfHeaderInfo(vcfInfoDb);
-					if (prependInfoFieldName != null) newHeader.setId(prependInfoFieldName + newHeader.getId());
+				if (isAnnotateInfo(vcfHeaderDb) // It is used for annotations
+						&& !vcfHeaderDb.isImplicit() //  AND it is not an "implicit" header in Db (i.e. created automatically by VcfHeader class)
+						&& ((vcfHeaderFile == null) || vcfHeaderFile.isImplicit()) // AND it is not already added OR is already added, but it is implicit
+						) {
+					VcfHeaderInfo newHeader = new VcfHeaderInfo(vcfHeaderDb);
+					if (prependInfoFieldName != null) newHeader.setId(id); // Change ID?
 					newHeaders.add(newHeader.toString());
 				}
 			}
@@ -111,7 +112,7 @@ public class SnpSiftCmdAnnotate extends SnpSift {
 					fatalError("Your VCF file should be sorted!" //
 							+ "\n\tPrevious entry " + chr + ":" + pos//
 							+ "\n\tCurrent entry  " + vcfEntry.getChromosomeName() + ":" + (vcfEntry.getStart() + 1)//
-					);
+							);
 				}
 
 				// Annotate
@@ -143,7 +144,7 @@ public class SnpSiftCmdAnnotate extends SnpSift {
 					+ "\n\tTotal entries           : " + count //
 					+ "\n\tPercent                 : " + String.format("%.2f%%", perc) //
 					+ "\n\tErrors (bad references) : " + countBadRef //
-			);
+					);
 		}
 
 		return list;
@@ -287,12 +288,12 @@ public class SnpSiftCmdAnnotate extends SnpSift {
 		if (method == AnnotationMethod.TABIX //
 				&& !dbFileName.endsWith(".gz") //
 				&& Gpr.exists(dbFileName + ".gz") //
-		) dbFileName = dbFileName + ".gz";
+				) dbFileName = dbFileName + ".gz";
 
 		if (verbose) Timer.showStdErr("Annotating\n" //
 				+ "\tInput file    : '" + vcfInputFile + "'\n" //
 				+ "\tDatabase file : '" + dbFileName + "'" //
-		);
+				);
 
 		return annotate(createList);
 	}
