@@ -362,7 +362,7 @@ public class SnpSiftCmdDbNsfp extends SnpSift {
 				VcfInfoType[] types = dbNsfpFile.getTypes();
 				Timer.showStdErr("Some data types are missing (using 'string')");
 				for (int i = 0; i < fnames.length; i++)
-					if (types[i] == null) System.out.println("\tColumn " + (i + 1) + "\t" + fnames[i]);
+					if (types[i] == null) System.err.println("\tColumn " + (i + 1) + "\t" + fnames[i]);
 			}
 
 			// Force missing types as strings
