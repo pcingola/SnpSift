@@ -202,9 +202,9 @@ public class TestCasesFilter extends TestCase {
 		for (VcfEntry vcfEntry : list) {
 			if (verbose) System.out.println("\t" + vcfEntry);
 			Assert.assertTrue( //
-					(vcfEntry.getStart() >= (minPos - 1)) //
+			(vcfEntry.getStart() >= (minPos - 1)) //
 					|| (vcfEntry.getStart() <= (maxPos - 1)) //
-					);
+			);
 		}
 	}
 
@@ -620,7 +620,7 @@ public class TestCasesFilter extends TestCase {
 			for (String a : ap.split(","))
 				any |= Gpr.parseDoubleSafe(a) > 0.8;
 
-				Assert.assertEquals(true, any);
+			Assert.assertEquals(true, any);
 		}
 	}
 
@@ -1524,6 +1524,27 @@ public class TestCasesFilter extends TestCase {
 
 		// Check that one line satisfies the condition
 		Assert.assertEquals(1, list.size());
+	}
+
+	/**
+	 * Filter: Operator precedence issue
+	 */
+	public void test_54() {
+		Gpr.debug("Test");
+
+		// Filter data
+		SnpSiftCmdFilter snpsiftFilter = new SnpSiftCmdFilter();
+		String expression = "ANN[*].IMPACT = 'LOW' | ANN[*].IMPACT = 'MODERATE'";
+		List<VcfEntry> list = snpsiftFilter.filter("test/test_precedence.vcf", expression, true);
+
+		if (verbose) {
+			System.out.println("Expression: '" + expression + "'");
+			for (VcfEntry vcfEntry : list)
+				if (verbose) System.out.println("VCF entry:\t" + vcfEntry);
+		}
+
+		// Check that all lines satisfy the condition
+		Assert.assertEquals(7, list.size());
 	}
 
 }

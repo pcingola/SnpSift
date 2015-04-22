@@ -6,6 +6,7 @@ import java.util.List;
 import junit.framework.Assert;
 import junit.framework.TestCase;
 import ca.mcgill.mcb.pcingola.snpSift.SnpSiftCmdAnnotate;
+import ca.mcgill.mcb.pcingola.snpSift.SnpSiftCmdFilter;
 import ca.mcgill.mcb.pcingola.util.Gpr;
 import ca.mcgill.mcb.pcingola.vcf.VcfEntry;
 
@@ -109,18 +110,24 @@ public class TestCasesZzz extends TestCase {
 	}
 
 	/**
-	 * Annotate INFO fields using entries that are duplicated in db.vcf
+	 * Filter: Operator precedence issue
 	 */
-	public void test_27_repeat_db_entry() {
+	public void test_54() {
 		Gpr.debug("Test");
 
-		String dbFileName = "./test/db_test_27.vcf";
-		String fileName = "./test/annotate_27.vcf";
-		List<VcfEntry> res = annotate(dbFileName, fileName, null);
-		for (VcfEntry ve : res) {
-			System.out.println(ve);
-			Assert.assertEquals("121964859,45578238", ve.getInfo("RS"));
+		// Filter data
+		SnpSiftCmdFilter snpsiftFilter = new SnpSiftCmdFilter();
+		String expression = "ANN[*].IMPACT = 'LOW' | ANN[*].IMPACT = 'MODERATE'";
+		List<VcfEntry> list = snpsiftFilter.filter("test/test_precedence.vcf", expression, true);
+
+		if (verbose) {
+			System.out.println("Expression: '" + expression + "'");
+			for (VcfEntry vcfEntry : list)
+				if (verbose) System.out.println("VCF entry:\t" + vcfEntry);
 		}
+
+		// Check that all lines satisfy the condition
+		Assert.assertEquals(7, list.size());
 	}
 
 }

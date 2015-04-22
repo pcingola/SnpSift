@@ -73,11 +73,11 @@ expression : BOOL_LITERAL                                                       
            | expression '[' expression ']'                                                                    # varReferenceList
            | expression '[' expression '].' expression                                                        # varReferenceListSub
            | expression '[' ('ANY' | '*' | 'ALL' | '?') '].' expression                                       # varReferenceListSub
-           | expression op=('&' | '&&' | '|' | '||' | '^') expression                                         # expressionLogic
            | expression op=('*' | '/' | '%') expression                                                       # expressionTimes
            | expression op=('+' | '-') expression                                                             # expressionPlus
            | expression op=('=' | '==' | '!=' | '<' | '<=' | '>' | '>=' | '=~' | '!~' | 'has' ) expression    # expressionComp
            | op=('!' | '-' | '+') expression                                                                  # expressionUnary
+           | expression op=('&' | '&&' | '|' | '||' | '^') expression                                         # expressionLogic
            | op=('exists' | 'na') expression                                                                  # expressionExists
            | expression 'in' 'SET' '[' expression ']'                                                         # expressionSet
            | '(' expression ')'                                                                               # expressionParen
