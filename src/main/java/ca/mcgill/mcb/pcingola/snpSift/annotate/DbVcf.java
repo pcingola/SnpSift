@@ -180,6 +180,20 @@ public abstract class DbVcf {
 	}
 
 	/**
+	 * Find if a VCF entry exists in the database
+	 */
+	protected boolean findDbExists(VcfEntry vcf) {
+		if (!useId || dbCurrentId.isEmpty()) return false;
+
+		for (int i = 0; i < vcf.getAlts().length; i++) {
+			String key = key(vcf, i);
+			if (dbCurrentId.containsKey(key)) return true;
+		}
+
+		return false;
+	}
+
+	/**
 	 * Find an ID for this VCF entry
 	 */
 	protected String findDbId(VcfEntry vcf) {

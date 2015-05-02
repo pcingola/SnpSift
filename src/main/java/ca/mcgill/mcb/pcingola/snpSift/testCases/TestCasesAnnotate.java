@@ -524,4 +524,24 @@ public class TestCasesAnnotate extends TestCase {
 		}
 	}
 
+	/**
+	 * Annotate if a VCF entry exists in the database file
+	 */
+	public void test_28_exists() {
+		Gpr.debug("Test");
+
+		String dbFileName = "./test/db_test_28.vcf";
+		String fileName = "./test/annotate_28.vcf";
+		String args[] = { "-exists", "EXISTS" };
+
+		List<VcfEntry> res = annotate(dbFileName, fileName, args);
+		for (VcfEntry ve : res) {
+			if (verbose) System.out.println(ve);
+
+			// Check
+			if (ve.getStart() == 201331098) Assert.assertTrue("Existing VCF entry has not been annotated", ve.hasInfo("EXISTS"));
+			else Assert.assertFalse("Non-existing VCF entry has been annotated", ve.hasInfo("EXISTS"));
+		}
+	}
+
 }

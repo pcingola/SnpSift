@@ -23,6 +23,7 @@ public abstract class AnnotateVcfDb {
 	protected boolean verbose, debug;
 	protected boolean useRefAlt = true;
 	protected String chrPrev = "";
+	protected String existsInfoField = null;
 	protected String prependInfoFieldName;
 	protected DbVcf dbVcf;
 	protected VcfFileIterator vcfDbFile;
@@ -40,8 +41,17 @@ public abstract class AnnotateVcfDb {
 		// Add information to vcfEntry
 		boolean annotated = annotateIds(vcfEntry, dbVcf.findDbId(vcfEntry));
 		annotated |= annotateInfo(vcfEntry, dbVcf.findDbInfo(vcfEntry));
+		if (existsInfoField != null && dbVcf.findDbExists(vcfEntry)) annotateExists(vcfEntry);
 
 		return annotated;
+	}
+
+	/**
+	 * Add 'exists' flag to INFO fields
+	 * @param vcfEntry
+	 */
+	protected void annotateExists(VcfEntry vcfEntry) {
+		vcfEntry.addInfo(existsInfoField, null);
 	}
 
 	/**
@@ -109,6 +119,10 @@ public abstract class AnnotateVcfDb {
 
 	public void setDebug(boolean debug) {
 		this.debug = debug;
+	}
+
+	public void setExistsInfoField(String existsInfoField) {
+		this.existsInfoField = existsInfoField;
 	}
 
 	public void setInfoFields(List<String> infoFields) {

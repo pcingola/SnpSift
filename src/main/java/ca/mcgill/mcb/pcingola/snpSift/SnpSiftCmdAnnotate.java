@@ -14,6 +14,7 @@ import ca.mcgill.mcb.pcingola.util.Timer;
 import ca.mcgill.mcb.pcingola.vcf.VcfEntry;
 import ca.mcgill.mcb.pcingola.vcf.VcfHeader;
 import ca.mcgill.mcb.pcingola.vcf.VcfHeaderInfo;
+import ca.mcgill.mcb.pcingola.vcf.VcfInfoType;
 
 /**
  * Annotate a VCF file with ID from another VCF file (database)
@@ -38,6 +39,7 @@ public class SnpSiftCmdAnnotate extends SnpSift {
 	protected int countBadRef = 0;
 	protected String chrPrev = "";
 	protected String prependInfoFieldName;
+	protected String existsInfoField;
 	protected ArrayList<String> infoFields; // Use only info fields
 	protected VcfFileIterator vcfFile;
 	protected AnnotateVcfDb annotateDb;
@@ -59,6 +61,8 @@ public class SnpSiftCmdAnnotate extends SnpSift {
 
 		// Read database header and add INFO fields to the output vcf header
 		if (useInfoField) {
+
+			// Read VCF header
 			VcfFileIterator vcfDb = new VcfFileIterator(dbFileName);
 			VcfHeader vcfDbHeader = vcfDb.readHeader();
 
@@ -73,12 +77,18 @@ public class SnpSiftCmdAnnotate extends SnpSift {
 				if (isAnnotateInfo(vcfHeaderDb) // It is used for annotations
 						&& !vcfHeaderDb.isImplicit() //  AND it is not an "implicit" header in Db (i.e. created automatically by VcfHeader class)
 						&& ((vcfHeaderFile == null) || vcfHeaderFile.isImplicit()) // AND it is not already added OR is already added, but it is implicit
-						) {
+				) {
 					VcfHeaderInfo newHeader = new VcfHeaderInfo(vcfHeaderDb);
 					if (prependInfoFieldName != null) newHeader.setId(id); // Change ID?
 					newHeaders.add(newHeader.toString());
 				}
 			}
+		}
+
+		// Using 'exists' flag?
+		if (existsInfoField != null) {
+			VcfHeaderInfo existsHeader = new VcfHeaderInfo(existsInfoField, VcfInfoType.Flag, "" + 1, "Variant exists in file '" + Gpr.baseName(dbFileName) + "'");
+			newHeaders.add(existsHeader.toString());
 		}
 
 		return newHeaders;
@@ -112,7 +122,7 @@ public class SnpSiftCmdAnnotate extends SnpSift {
 					fatalError("Your VCF file should be sorted!" //
 							+ "\n\tPrevious entry " + chr + ":" + pos//
 							+ "\n\tCurrent entry  " + vcfEntry.getChromosomeName() + ":" + (vcfEntry.getStart() + 1)//
-							);
+					);
 				}
 
 				// Annotate
@@ -144,7 +154,7 @@ public class SnpSiftCmdAnnotate extends SnpSift {
 					+ "\n\tTotal entries           : " + count //
 					+ "\n\tPercent                 : " + String.format("%.2f%%", perc) //
 					+ "\n\tErrors (bad references) : " + countBadRef //
-					);
+			);
 		}
 
 		return list;
@@ -194,6 +204,7 @@ public class SnpSiftCmdAnnotate extends SnpSift {
 		annotateDb.setUseInfoField(useInfoField);
 		annotateDb.setUseRefAlt(useRefAlt);
 		annotateDb.setInfoFields(infoFields);
+		annotateDb.setExistsInfoField(existsInfoField);
 		annotateDb.setPrependInfoFieldName(prependInfoFieldName);
 		annotateDb.setDebug(debug);
 		annotateDb.setVerbose(verbose);
@@ -232,7 +243,8 @@ public class SnpSiftCmdAnnotate extends SnpSift {
 					infoFields = new ArrayList<String>();
 					for (String infoField : args[++i].split(","))
 						infoFields.add(infoField);
-				} else if (arg.equalsIgnoreCase("-noId")) useId = false;
+				} else if (arg.equalsIgnoreCase("-exists")) existsInfoField = args[++i];
+				else if (arg.equalsIgnoreCase("-noId")) useId = false;
 				else if (arg.equalsIgnoreCase("-name")) prependInfoFieldName = args[++i];
 				else if (arg.equalsIgnoreCase("-noAlt")) useRefAlt = false;
 				else if (arg.equalsIgnoreCase("-dbSnp")) {
@@ -288,12 +300,12 @@ public class SnpSiftCmdAnnotate extends SnpSift {
 		if (method == AnnotationMethod.TABIX //
 				&& !dbFileName.endsWith(".gz") //
 				&& Gpr.exists(dbFileName + ".gz") //
-				) dbFileName = dbFileName + ".gz";
+		) dbFileName = dbFileName + ".gz";
 
 		if (verbose) Timer.showStdErr("Annotating\n" //
 				+ "\tInput file    : '" + vcfInputFile + "'\n" //
 				+ "\tDatabase file : '" + dbFileName + "'" //
-				);
+		);
 
 		return annotate(createList);
 	}
@@ -316,19 +328,20 @@ public class SnpSiftCmdAnnotate extends SnpSift {
 		System.err.println("\t-dbsnp               : Use DbSnp database.");
 		System.err.println("\t-clinvar             : Use ClinVar database.");
 		System.err.println("\nCommand Options:");
+		System.err.println("\t-exists <tag>        : Annotate whether the variant exists or not in the database (using 'tag' as an INFO field FALG).");
 		System.err.println("\t-id                  : Only annotate ID field (do not add INFO field). Default: " + !useInfoField);
 		System.err.println("\t-info <list>         : Annotate using a list of info fields (list is a comma separated list of fields). Default: ALL.");
 		System.err.println("\t-mem                 : VCF database is loaded in memory. Default: " + (method == AnnotationMethod.MEMORY));
 		System.err.println("\t-name str            : Prepend 'str' to all annotated INFO fields. Default: ''.");
 		System.err.println("\t-noAlt               : Do not use REF and ALT fields when comparing database.vcf entries to file.vcf entries. Default: " + !useRefAlt);
-		System.err.println("\t-noId                : Do not annotate ID field. Defaul: " + !useId);
+		System.err.println("\t-noId                : Do not annotate ID field. Default: " + !useId);
 		System.err.println("\t-sorted              : VCF database is sorted and uncompressed. Default: " + (method == AnnotationMethod.SORTED_VCF));
 		System.err.println("\t-tabix               : VCF database is tabix-indexed. Default: " + (method == AnnotationMethod.TABIX));
 
 		usageGenericAndDb();
 
 		System.err.println("Note: According the the VCF's database format provided, SnpSift annotate uses different strategies");
-		System.err.println("\t  i) plain VCF       : SnpSift indexes the VCF file (in memory).");
+		System.err.println("\t  i) plain VCF       : SnpSift indexes the VCF file (creating an index in memory).");
 		System.err.println("\t ii) bgzip+tabix     : SnpSift uses tabix's index.");
 		System.err.println("\tiii) gzip            : SnpSift loads the whole VCF file in memory (very inneficient).");
 

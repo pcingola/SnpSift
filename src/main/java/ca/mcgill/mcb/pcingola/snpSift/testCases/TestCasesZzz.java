@@ -6,7 +6,6 @@ import java.util.List;
 import junit.framework.Assert;
 import junit.framework.TestCase;
 import ca.mcgill.mcb.pcingola.snpSift.SnpSiftCmdAnnotate;
-import ca.mcgill.mcb.pcingola.snpSift.SnpSiftCmdFilter;
 import ca.mcgill.mcb.pcingola.util.Gpr;
 import ca.mcgill.mcb.pcingola.vcf.VcfEntry;
 
@@ -18,7 +17,7 @@ import ca.mcgill.mcb.pcingola.vcf.VcfEntry;
 public class TestCasesZzz extends TestCase {
 
 	public static boolean debug = false;
-	public static boolean verbose = true || debug;
+	public static boolean verbose = false || debug;
 
 	protected String[] defaultExtraArgs = null;
 
@@ -110,24 +109,22 @@ public class TestCasesZzz extends TestCase {
 	}
 
 	/**
-	 * Filter: Operator precedence issue
+	 * Annotate if a VCF entry exists in the database file
 	 */
-	public void test_54() {
+	public void test_28_exists() {
 		Gpr.debug("Test");
 
-		// Filter data
-		SnpSiftCmdFilter snpsiftFilter = new SnpSiftCmdFilter();
-		String expression = "ANN[*].IMPACT = 'LOW' | ANN[*].IMPACT = 'MODERATE'";
-		List<VcfEntry> list = snpsiftFilter.filter("test/test_precedence.vcf", expression, true);
+		String dbFileName = "./test/db_test_28.vcf";
+		String fileName = "./test/annotate_28.vcf";
+		String args[] = { "-exists", "EXISTS" };
 
-		if (verbose) {
-			System.out.println("Expression: '" + expression + "'");
-			for (VcfEntry vcfEntry : list)
-				if (verbose) System.out.println("VCF entry:\t" + vcfEntry);
+		List<VcfEntry> res = annotate(dbFileName, fileName, args);
+		for (VcfEntry ve : res) {
+			if (verbose) System.out.println(ve);
+
+			// Check
+			if (ve.getStart() == 201331098) Assert.assertTrue("Existing VCF entry has not been annotated", ve.hasInfo("EXISTS"));
+			else Assert.assertFalse("Non-existing VCF entry has been annotated", ve.hasInfo("EXISTS"));
 		}
-
-		// Check that all lines satisfy the condition
-		Assert.assertEquals(7, list.size());
 	}
-
 }
