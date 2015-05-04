@@ -239,14 +239,21 @@ public class SnpSiftCmdAnnotate extends SnpSift {
 			if (isOpt(arg)) {
 				if (arg.equalsIgnoreCase("-id")) useInfoField = false;
 				else if (arg.equalsIgnoreCase("-info")) {
+					if (args.length <= (i + 1)) usage("Missing parameter -info");
+
 					useInfoField = true;
 					infoFields = new ArrayList<String>();
+
 					for (String infoField : args[++i].split(","))
 						infoFields.add(infoField);
-				} else if (arg.equalsIgnoreCase("-exists")) existsInfoField = args[++i];
-				else if (arg.equalsIgnoreCase("-noId")) useId = false;
-				else if (arg.equalsIgnoreCase("-name")) prependInfoFieldName = args[++i];
-				else if (arg.equalsIgnoreCase("-noAlt")) useRefAlt = false;
+				} else if (arg.equalsIgnoreCase("-exists")) {
+					if (args.length > (i + 1)) existsInfoField = args[++i];
+					else usage("Missing parameter -exists");
+				} else if (arg.equalsIgnoreCase("-noId")) useId = false;
+				else if (arg.equalsIgnoreCase("-name")) {
+					if (args.length > (i + 1)) prependInfoFieldName = args[++i];
+					else usage("Missing parameter -name");
+				} else if (arg.equalsIgnoreCase("-noAlt")) useRefAlt = false;
 				else if (arg.equalsIgnoreCase("-dbSnp")) {
 					dbType = "dbsnp";
 					method = AnnotationMethod.TABIX;
