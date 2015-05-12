@@ -183,7 +183,7 @@ public abstract class DbVcf {
 	 * Find if a VCF entry exists in the database
 	 */
 	protected boolean findDbExists(VcfEntry vcf) {
-		if (!useId || dbCurrentId.isEmpty()) return false;
+		if (dbCurrentId.isEmpty()) return false;
 
 		for (int i = 0; i < vcf.getAlts().length; i++) {
 			String key = key(vcf, i);
@@ -315,7 +315,7 @@ public abstract class DbVcf {
 				+ "\t" + ve.getRef() //
 				+ "\t" + ve.getAltsStr() //
 				+ "\t" + ve.getInfoStr() //
-				;
+		;
 	}
 
 	/**
