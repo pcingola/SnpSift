@@ -125,8 +125,9 @@ public class SnpSiftCmdAnnotate extends SnpSift {
 					);
 				}
 
-				// Annotate
-				boolean annotated = annotateDb.annotate(vcfEntry);
+				// Annotate variants
+				boolean annotated = false;
+				if (vcfEntry.isVariant()) annotated = annotateDb.annotate(vcfEntry);
 
 				// Show
 				print(vcfEntry);
