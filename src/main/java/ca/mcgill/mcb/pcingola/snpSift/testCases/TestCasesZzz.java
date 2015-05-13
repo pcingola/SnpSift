@@ -17,7 +17,7 @@ import ca.mcgill.mcb.pcingola.vcf.VcfEntry;
 public class TestCasesZzz extends TestCase {
 
 	public static boolean debug = false;
-	public static boolean verbose = false || debug;
+	public static boolean verbose = true || debug;
 
 	protected String[] defaultExtraArgs = null;
 
@@ -109,22 +109,27 @@ public class TestCasesZzz extends TestCase {
 	}
 
 	/**
-	 * Annotate if a VCF entry exists in the database file
+	 * Annotate if a VCF entry's ID might have multiple repeated entries
 	 */
-	public void test_28_exists() {
+	public void test_29_repeated_IDs() {
 		Gpr.debug("Test");
 
-		String dbFileName = "./test/db_test_28.vcf";
-		String fileName = "./test/annotate_28.vcf";
+		String dbFileName = "./test/db_test_29.vcf";
+		String fileName = "./test/annotate_29.vcf";
 		String args[] = { "-exists", "EXISTS" };
 
 		List<VcfEntry> res = annotate(dbFileName, fileName, args);
 		for (VcfEntry ve : res) {
 			if (verbose) System.out.println(ve);
 
+			if (ve.getStart() == 838418) Assert.assertEquals("rs1130678", ve.getId());
+			else if (ve.getStart() == 49545) Assert.assertEquals("rs62075716", ve.getId());
+			else if (ve.getStart() == 109567) Assert.assertEquals("rs62076738", ve.getId());
+			else throw new RuntimeException("Position not found: " + ve.getStart());
+
 			// Check
-			if (ve.getStart() == 201331098) Assert.assertTrue("Existing VCF entry has not been annotated", ve.hasInfo("EXISTS"));
-			else Assert.assertFalse("Non-existing VCF entry has been annotated", ve.hasInfo("EXISTS"));
+			//			if (ve.getStart() == 201331098) Assert.assertTrue("Existing VCF entry has not been annotated", ve.hasInfo("EXISTS"));
+			//			else Assert.assertFalse("Non-existing VCF entry has been annotated", ve.hasInfo("EXISTS"));
 		}
 	}
 }

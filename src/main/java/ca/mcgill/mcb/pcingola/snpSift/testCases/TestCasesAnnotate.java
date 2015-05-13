@@ -544,4 +544,26 @@ public class TestCasesAnnotate extends TestCase {
 		}
 	}
 
+	/**
+	 * Annotate if a VCF entry's ID might have multiple repeated entries
+	 */
+	public void test_29_repeated_IDs() {
+		Gpr.debug("Test");
+
+		String dbFileName = "./test/db_test_29.vcf";
+		String fileName = "./test/annotate_29.vcf";
+		String args[] = { "-exists", "EXISTS" };
+
+		List<VcfEntry> res = annotate(dbFileName, fileName, args);
+		for (VcfEntry ve : res) {
+			if (verbose) System.out.println(ve);
+
+			// Check
+			if (ve.getStart() == 838418) Assert.assertEquals("rs1130678", ve.getId());
+			else if (ve.getStart() == 49545) Assert.assertEquals("rs62075716", ve.getId());
+			else if (ve.getStart() == 109567) Assert.assertEquals("rs62076738", ve.getId());
+			else throw new RuntimeException("Position not found: " + ve.getStart());
+		}
+	}
+
 }

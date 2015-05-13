@@ -201,14 +201,26 @@ public abstract class DbVcf {
 
 		// Find for each ALT
 		StringBuilder ids = null;
+		HashSet<String> idSet = null;
+
 		for (int i = 0; i < vcf.getAlts().length; i++) {
 			String key = key(vcf, i);
 			String id = dbCurrentId.get(key);
 			if (id != null) {
 				if (ids == null) ids = new StringBuilder(id);
-				else ids.append("," + id);
+				else {
+					if (idSet == null) {
+						// Initialize idSet and add previous value
+						idSet = new HashSet<String>();
+						idSet.add(ids.toString());
+					}
+
+					// Do not add repeated IDs
+					if (!idSet.contains(id)) ids.append(";" + id);
+				}
 			}
 		}
+
 		return ids == null ? null : ids.toString();
 	}
 
