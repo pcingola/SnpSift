@@ -108,28 +108,10 @@ public class TestCasesZzz extends TestCase {
 		return argsList.toArray(new String[0]);
 	}
 
-	/**
-	 * Annotate if a VCF entry's ID might have multiple repeated entries
-	 */
-	public void test_29_repeated_IDs() {
+	public void test_19() {
 		Gpr.debug("Test");
-
-		String dbFileName = "./test/db_test_29.vcf";
-		String fileName = "./test/annotate_29.vcf";
-		String args[] = { "-exists", "EXISTS" };
-
-		List<VcfEntry> res = annotate(dbFileName, fileName, args);
-		for (VcfEntry ve : res) {
-			if (verbose) System.out.println(ve);
-
-			if (ve.getStart() == 838418) Assert.assertEquals("rs1130678", ve.getId());
-			else if (ve.getStart() == 49545) Assert.assertEquals("rs62075716", ve.getId());
-			else if (ve.getStart() == 109567) Assert.assertEquals("rs62076738", ve.getId());
-			else throw new RuntimeException("Position not found: " + ve.getStart());
-
-			// Check
-			//			if (ve.getStart() == 201331098) Assert.assertTrue("Existing VCF entry has not been annotated", ve.hasInfo("EXISTS"));
-			//			else Assert.assertFalse("Non-existing VCF entry has been annotated", ve.hasInfo("EXISTS"));
-		}
+		String dbFileName = "./test/db_test_multiline.vcf";
+		String fileName = "./test/annotate_multiline.vcf";
+		annotateTest(dbFileName, fileName);
 	}
 }
