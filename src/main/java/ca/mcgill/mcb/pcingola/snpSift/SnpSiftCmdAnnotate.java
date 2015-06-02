@@ -238,8 +238,9 @@ public class SnpSiftCmdAnnotate extends SnpSift {
 
 			// Command line option?
 			if (isOpt(arg)) {
-				if (arg.equalsIgnoreCase("-id")) useInfoField = false;
-				else if (arg.equalsIgnoreCase("-info")) {
+				if (arg.equalsIgnoreCase("-id")) {
+					useInfoField = false;
+				} else if (arg.equalsIgnoreCase("-info")) {
 					if (args.length <= (i + 1)) usage("Missing parameter -info");
 
 					useInfoField = true;
@@ -250,8 +251,11 @@ public class SnpSiftCmdAnnotate extends SnpSift {
 				} else if (arg.equalsIgnoreCase("-exists")) {
 					if (args.length > (i + 1)) existsInfoField = args[++i];
 					else usage("Missing parameter -exists");
-				} else if (arg.equalsIgnoreCase("-noId")) useId = false;
-				else if (arg.equalsIgnoreCase("-name")) {
+				} else if (arg.equalsIgnoreCase("-noId")) {
+					useId = false;
+				} else if (arg.equalsIgnoreCase("-noInfo")) {
+					useInfoField = false;
+				} else if (arg.equalsIgnoreCase("-name")) {
 					if (args.length > (i + 1)) prependInfoFieldName = args[++i];
 					else usage("Missing parameter -name");
 				} else if (arg.equalsIgnoreCase("-noAlt")) useRefAlt = false;
@@ -336,13 +340,14 @@ public class SnpSiftCmdAnnotate extends SnpSift {
 		System.err.println("\t-dbsnp               : Use DbSnp database.");
 		System.err.println("\t-clinvar             : Use ClinVar database.");
 		System.err.println("\nCommand Options:");
-		System.err.println("\t-exists <tag>        : Annotate whether the variant exists or not in the database (using 'tag' as an INFO field FALG).");
+		System.err.println("\t-exists <tag>        : Annotate whether the variant exists or not in the database (using 'tag' as an INFO field FLAG).");
 		System.err.println("\t-id                  : Only annotate ID field (do not add INFO field). Default: " + !useInfoField);
 		System.err.println("\t-info <list>         : Annotate using a list of info fields (list is a comma separated list of fields). Default: ALL.");
 		System.err.println("\t-mem                 : VCF database is loaded in memory. Default: " + (method == AnnotationMethod.MEMORY));
 		System.err.println("\t-name str            : Prepend 'str' to all annotated INFO fields. Default: ''.");
 		System.err.println("\t-noAlt               : Do not use REF and ALT fields when comparing database.vcf entries to file.vcf entries. Default: " + !useRefAlt);
 		System.err.println("\t-noId                : Do not annotate ID field. Default: " + !useId);
+		System.err.println("\t-noInfo              : Do not annotate INFO fields. Default: " + !useInfoField);
 		System.err.println("\t-sorted              : VCF database is sorted and uncompressed. Default: " + (method == AnnotationMethod.SORTED_VCF));
 		System.err.println("\t-tabix               : VCF database is tabix-indexed. Default: " + (method == AnnotationMethod.TABIX));
 
