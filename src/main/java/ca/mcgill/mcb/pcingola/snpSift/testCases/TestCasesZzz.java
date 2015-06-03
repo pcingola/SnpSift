@@ -108,10 +108,15 @@ public class TestCasesZzz extends TestCase {
 		return argsList.toArray(new String[0]);
 	}
 
-	public void test_19() {
+	/**
+	 * Issue when database has REF including 'N' bases
+	 * WARNING: FIXING THIS REQUIRES A MAJOR CHANGE IN TH WAY WE ANNOTATE 
+	 *          VARIANTS (WON'T FIX NOW, BUT NEEDS TO BE FIXED IN THE FUTURE)
+	 */
+	public void test_30_annotate_N_reference_in_db() {
 		Gpr.debug("Test");
-		String dbFileName = "./test/db_test_multiline.vcf";
-		String fileName = "./test/annotate_multiline.vcf";
+		String dbFileName = "./test/db_test_30.vcf";
+		String fileName = "./test/annotate_30.vcf";
 		annotateTest(dbFileName, fileName);
 	}
 }
