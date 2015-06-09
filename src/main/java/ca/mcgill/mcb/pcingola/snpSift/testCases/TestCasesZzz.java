@@ -19,7 +19,9 @@ public class TestCasesZzz extends TestCase {
 	public static boolean debug = false;
 	public static boolean verbose = true || debug;
 
-	protected String[] defaultExtraArgs = null;
+	//	protected String[] defaultExtraArgs = null;
+	//	protected String[] defaultExtraArgs = null;
+	protected String[] defaultExtraArgs = { "-mem" };
 
 	/**
 	 * Annotate

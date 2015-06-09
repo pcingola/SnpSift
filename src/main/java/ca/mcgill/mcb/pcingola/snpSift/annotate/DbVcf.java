@@ -9,6 +9,8 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import ca.mcgill.mcb.pcingola.fileIterator.VcfFileIterator;
+import ca.mcgill.mcb.pcingola.interval.Variant;
+import ca.mcgill.mcb.pcingola.util.Gpr;
 import ca.mcgill.mcb.pcingola.vcf.VcfEntry;
 import ca.mcgill.mcb.pcingola.vcf.VcfHeaderInfo;
 
@@ -57,8 +59,10 @@ public abstract class DbVcf {
 		//---
 		updateChromo(vcfDb);
 		String alts[] = vcfDb.getAlts();
+		// for (int alleleIdx = 0; alleleIdx < alts.length; alleleIdx++) {
 		for (int alleleIdx = 0; alleleIdx < alts.length; alleleIdx++) {
 			String key = key(vcfDb, alleleIdx);
+			Gpr.debug(vcfDb.toStr() + "\tALT[" + alleleIdx + "]\tkey = '" + key + "'");
 
 			// Add ID field information
 			addId(key, vcfDb.getId());
@@ -317,6 +321,11 @@ public abstract class DbVcf {
 		return vcfInfoPerAlleleRef.get(fieldName);
 	}
 
+	String key(Variant variant) {
+		if (useRefAlt) return variant.getChromosomeName() + ":" + variant.getStart() + "_" + variant.getReference() + "/" + variant.getAlt();
+		return variant.getChromosomeName() + ":" + variant.getStart();
+	}
+
 	/**
 	 * Create a 'key' string to check if an entry has already been added
 	 */
@@ -327,7 +336,7 @@ public abstract class DbVcf {
 				+ "\t" + ve.getRef() //
 				+ "\t" + ve.getAltsStr() //
 				+ "\t" + ve.getInfoStr() //
-		;
+				;
 	}
 
 	/**
