@@ -126,8 +126,20 @@ public class TestCasesZzz extends TestCase {
 	 */
 	public void test_31_annotate_minimal_representation_db() {
 		Gpr.debug("Test");
-		String dbFileName = "./test/db_test_30.vcf";
-		String fileName = "./test/annotate_30.vcf";
+		String dbFileName = "./test/db_test_31.vcf";
+		String fileName = "./test/annotate_31.vcf";
 		annotateTest(dbFileName, fileName);
 	}
+
+	//	/**
+	//	 * Issue when query has REF several variants which have to 
+	//	 * be converted into minimal representation
+	//	 */
+	//	public void test_32_annotate_minimal_representation_input() {
+	//		Gpr.debug("Test");
+	//		String dbFileName = "./test/db_test_32.vcf";
+	//		String fileName = "./test/annotate_32.vcf";
+	//		annotateTest(dbFileName, fileName);
+	//	}
+
 }
