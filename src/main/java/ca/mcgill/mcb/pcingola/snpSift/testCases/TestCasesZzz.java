@@ -6,7 +6,6 @@ import java.util.List;
 import junit.framework.Assert;
 import junit.framework.TestCase;
 import ca.mcgill.mcb.pcingola.snpSift.SnpSiftCmdAnnotate;
-import ca.mcgill.mcb.pcingola.util.Gpr;
 import ca.mcgill.mcb.pcingola.vcf.VcfEntry;
 
 /**
@@ -110,24 +109,15 @@ public class TestCasesZzz extends TestCase {
 		return argsList.toArray(new String[0]);
 	}
 
-	public void test_03() {
-		Gpr.debug("Test");
-		String dbFileName = "./test/db_test_2.vcf";
-		String fileName = "./test/annotate_2.vcf";
-		annotateTest(dbFileName, fileName);
-	}
-
 	//	/**
-	//	 * Issue when database has REF including 'N' bases
-	//	 * WARNING: FIXING THIS REQUIRES A MAJOR CHANGE IN TH WAY WE ANNOTATE 
-	//	 *          VARIANTS (WON'T FIX NOW, BUT NEEDS TO BE FIXED IN THE FUTURE)
+	//	 * Issue when query has REF several variants which have to
+	//	 * be converted into minimal representation
 	//	 */
-	//	public void test_30_annotate_N_reference_in_db() {
+	//	public void test_32_annotate_minimal_representation_input() {
 	//		Gpr.debug("Test");
-	//		String dbFileName = "./test/db_test_30.vcf";
-	//		String fileName = "./test/annotate_30.vcf";
+	//		String dbFileName = "./test/db_test_32.vcf";
+	//		String fileName = "./test/annotate_32.vcf";
 	//		annotateTest(dbFileName, fileName);
 	//	}
-	//
 
 }

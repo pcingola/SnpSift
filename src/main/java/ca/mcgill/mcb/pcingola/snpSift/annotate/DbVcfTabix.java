@@ -15,8 +15,6 @@ public class DbVcfTabix extends DbVcf {
 
 	public DbVcfTabix(String dbFileName) {
 		super(dbFileName);
-		Gpr.debug("SETTTING DEBUG!!!!");
-		debug = true;
 	}
 
 	/**
@@ -136,7 +134,7 @@ public class DbVcfTabix extends DbVcf {
 					addNextVcfDb();
 				}
 			} else {
-				// May be we finished reading DB for this chromosome? => Nothing else to do 
+				// May be we finished reading DB for this chromosome? => Nothing else to do
 				if (latestVcfDb != null && latestVcfDb.isSameChromo(veInput)) return;
 
 				// Input is on different chromosome? => seek to chromosome

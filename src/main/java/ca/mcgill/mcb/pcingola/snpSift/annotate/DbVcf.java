@@ -324,7 +324,7 @@ public abstract class DbVcf {
 				+ "\t" + ve.getRef() //
 				+ "\t" + ve.getAltsStr() //
 				+ "\t" + ve.getInfoStr() //
-		;
+				;
 	}
 
 	/**

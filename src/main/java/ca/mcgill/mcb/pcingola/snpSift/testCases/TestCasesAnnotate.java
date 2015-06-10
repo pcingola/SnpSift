@@ -579,4 +579,15 @@ public class TestCasesAnnotate extends TestCase {
 		annotateTest(dbFileName, fileName);
 	}
 
+	/**
+	 * Issue when query has REF several variants which have to
+	 * be converted into minimal representation
+	 */
+	public void test_32_annotate_minimal_representation_input() {
+		Gpr.debug("Test");
+		String dbFileName = "./test/db_test_32.vcf";
+		String fileName = "./test/annotate_32.vcf";
+		annotateTest(dbFileName, fileName);
+	}
+
 }
