@@ -202,9 +202,9 @@ public class SnpSiftCmdAnnotate extends SnpSift {
 
 		// Set parameters & open database file
 		annotateDb.setUseId(useId);
-		annotateDb.setUseInfoField(useInfoField);
+		//		annotateDb.setUseInfoField(useInfoField);
 		annotateDb.setUseRefAlt(useRefAlt);
-		annotateDb.setInfoFields(infoFields);
+		annotateDb.setInfoFields(useInfoField, infoFields);
 		annotateDb.setExistsInfoField(existsInfoField);
 		annotateDb.setPrependInfoFieldName(prependInfoFieldName);
 		annotateDb.setDebug(debug);
@@ -239,15 +239,16 @@ public class SnpSiftCmdAnnotate extends SnpSift {
 			// Command line option?
 			if (isOpt(arg)) {
 				if (arg.equalsIgnoreCase("-id")) {
-					useInfoField = false;
+					useId = true;
 				} else if (arg.equalsIgnoreCase("-info")) {
 					if (args.length <= (i + 1)) usage("Missing parameter -info");
 
 					useInfoField = true;
-					infoFields = new ArrayList<String>();
 
+					infoFields = new ArrayList<String>();
 					for (String infoField : args[++i].split(","))
 						infoFields.add(infoField);
+
 				} else if (arg.equalsIgnoreCase("-exists")) {
 					if (args.length > (i + 1)) existsInfoField = args[++i];
 					else usage("Missing parameter -exists");
@@ -341,7 +342,7 @@ public class SnpSiftCmdAnnotate extends SnpSift {
 		System.err.println("\t-clinvar             : Use ClinVar database.");
 		System.err.println("\nCommand Options:");
 		System.err.println("\t-exists <tag>        : Annotate whether the variant exists or not in the database (using 'tag' as an INFO field FLAG).");
-		System.err.println("\t-id                  : Only annotate ID field (do not add INFO field). Default: " + !useInfoField);
+		System.err.println("\t-id                  : Only annotate ID field (do not add INFO field). Default: " + useId);
 		System.err.println("\t-info <list>         : Annotate using a list of info fields (list is a comma separated list of fields). Default: ALL.");
 		System.err.println("\t-mem                 : VCF database is loaded in memory. Default: " + (method == AnnotationMethod.MEMORY));
 		System.err.println("\t-name str            : Prepend 'str' to all annotated INFO fields. Default: ''.");

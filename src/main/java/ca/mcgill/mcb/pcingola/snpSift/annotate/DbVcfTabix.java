@@ -83,7 +83,7 @@ public class DbVcfTabix extends DbVcf {
 
 					// Still null? well it looks like we don't have any dbEntry for this chromosome
 					if (latestVcfDb == null) {
-						updateChromo(vcfEntry); // Make sure we don't try seeking again
+						updateChomo(vcfEntry); // Make sure we don't try seeking again
 						return;
 					}
 				}
@@ -125,8 +125,7 @@ public class DbVcfTabix extends DbVcf {
 				latestVcfDb = vcfDbFile.next();
 			}
 
-			if (latestVcfDb != null) updateChromo(latestVcfDb);
+			if (latestVcfDb != null) updateChomo(latestVcfDb);
 		}
 	}
-
 }

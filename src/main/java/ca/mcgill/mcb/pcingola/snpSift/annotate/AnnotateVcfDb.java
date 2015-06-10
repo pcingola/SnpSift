@@ -2,6 +2,7 @@ package ca.mcgill.mcb.pcingola.snpSift.annotate;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -44,10 +45,12 @@ public abstract class AnnotateVcfDb {
 		// Add information to vcfEntry
 		boolean annotated = false;
 
-		HashSet<String> idSet = new HashSet<String>();
-		HashMap<String, String> infos = new HashMap<String, String>();
+		Set<String> idSet = new HashSet<>();
+		Map<String, String> infos = new HashMap<>();
 
-		for (Variant var : vcfEntry.variants()) {
+		// Annotate all info fields
+		List<Variant> vars = vcfEntry.variants();
+		for (Variant var : vars) {
 			dbVcf.findDbId(var, idSet);
 			dbVcf.findDbInfo(var, infos);
 			//			if (existsInfoField != null && dbVcf.findDbExists(var)) annotateExists(var);
@@ -138,8 +141,8 @@ public abstract class AnnotateVcfDb {
 		this.existsInfoField = existsInfoField;
 	}
 
-	public void setInfoFields(List<String> infoFields) {
-		dbVcf.setInfoFields(infoFields);
+	public void setInfoFields(boolean useInfoFields, Collection<String> infoFields) {
+		dbVcf.setInfoFields(useInfoFields, infoFields);
 	}
 
 	public void setPrependInfoFieldName(String prependInfoFieldName) {
@@ -148,10 +151,6 @@ public abstract class AnnotateVcfDb {
 
 	public void setUseId(boolean useId) {
 		dbVcf.setUseId(useId);
-	}
-
-	public void setUseInfoField(boolean useInfoField) {
-		dbVcf.setUseInfoField(useInfoField);
 	}
 
 	public void setUseRefAlt(boolean useRefAlt) {

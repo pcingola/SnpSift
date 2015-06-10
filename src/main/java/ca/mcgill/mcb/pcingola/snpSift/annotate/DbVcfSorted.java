@@ -71,7 +71,7 @@ public class DbVcfSorted extends DbVcf {
 		if (latestVcfDb != null) {
 			// Are we still in the same chromosome?
 			if (latestVcfDb.getChromosomeName().equals(chr)) {
-				updateChromo(ve);
+				updateChomo(ve);
 				if (ve.getStart() < latestVcfDb.getStart()) return;
 				if (ve.getStart() == latestVcfDb.getStart()) add(latestVcfDb);
 			} else {
@@ -111,7 +111,7 @@ public class DbVcfSorted extends DbVcf {
 				if (!ve.getRef().equals(vcfDb.getRef()) //
 						&& !ve.getRef().startsWith(vcfDb.getRef()) //
 						&& !vcfDb.getRef().startsWith(ve.getRef()) //
-						) {
+				) {
 					System.err.println("WARNING: Reference in database file '" + dbFileName + "' is '" + vcfDb.getRef() + "' and reference in input file is " + ve.getRef() + "' at " + chr + ":" + (ve.getStart() + 1));
 					countBadRef++;
 				}

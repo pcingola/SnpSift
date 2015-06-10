@@ -110,18 +110,26 @@ public class TestCasesZzz extends TestCase {
 		return argsList.toArray(new String[0]);
 	}
 
-	public void test_18() {
+	/**
+	 * Annotate info fields
+	 */
+	public void test_06() {
 		Gpr.debug("Test");
-		String dbFileName = "./test/test_annotate_18_db.vcf";
-		String fileName = "./test/test_annotate_18.vcf";
-
+		String dbFileName = "./test/db_test_06.vcf";
+		String fileName = "./test/annotate_06.vcf";
 		List<VcfEntry> results = annotate(dbFileName, fileName, null);
-		VcfEntry ve = results.get(0);
-		String ukac = ve.getInfo("UK10KWES_AC");
-		if (verbose) System.out.println("Annotated value: " + ukac);
-		Assert.assertEquals(".,49,44,.,.,.,.,.,.,.,.", ukac);
+
+		// Check
+		Assert.assertEquals("PREVIOUS=annotation;TEST=yes;ABE=0.678;ABZ=47.762;AF=0.002;AN=488;AOI=-410.122;AOZ=-399.575;IOD=0.000;OBS=4,1,1636,2011,3,1,6780,9441;RSPOS=16346045", results.get(0).getInfoStr());
 	}
 
+	//	public void test_104() {
+	//		Gpr.debug("Test");
+	//		String dbFileName = "./test/db_test_large.vcf";
+	//		String fileName = "./test/annotate_large.vcf";
+	//		annotateTest(dbFileName, fileName);
+	//	}
+	//
 	//	/**
 	//	 * Issue when database has REF including 'N' bases
 	//	 * WARNING: FIXING THIS REQUIRES A MAJOR CHANGE IN TH WAY WE ANNOTATE 
