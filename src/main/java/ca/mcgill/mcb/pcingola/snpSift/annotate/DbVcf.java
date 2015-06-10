@@ -202,16 +202,26 @@ public abstract class DbVcf {
 	/**
 	 * Find if a VCF entry exists in the database
 	 */
-	protected boolean findDbExists(VcfEntry vcf) {
+	protected boolean findDbExists(Variant var) {
 		if (dbCurrentId.isEmpty()) return false;
 
-		for (int i = 0; i < vcf.getAlts().length; i++) {
-			String key = key(vcf, i);
-			if (dbCurrentId.containsKey(key)) return true;
-		}
-
-		return false;
+		String key = key(var);
+		return dbCurrentId.containsKey(key);
 	}
+
+	//	/**
+	//	 * Find if a VCF entry exists in the database
+	//	 */
+	//	protected boolean findDbExists(VcfEntry vcf) {
+	//		if (dbCurrentId.isEmpty()) return false;
+	//
+	//		for (int i = 0; i < vcf.getAlts().length; i++) {
+	//			String key = key(vcf, i);
+	//			if (dbCurrentId.containsKey(key)) return true;
+	//		}
+	//
+	//		return false;
+	//	}
 
 	/**
 	 * Find an ID for this variant and add them to idSet

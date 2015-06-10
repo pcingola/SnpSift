@@ -47,24 +47,25 @@ public abstract class AnnotateVcfDb {
 
 		Set<String> idSet = new HashSet<>();
 		Map<String, String> infos = new HashMap<>();
+		boolean exists = false;
 
 		// Annotate all info fields
 		List<Variant> vars = vcfEntry.variants();
 		for (Variant var : vars) {
 			dbVcf.findDbId(var, idSet);
 			dbVcf.findDbInfo(var, infos);
-			//			if (existsInfoField != null && dbVcf.findDbExists(var)) annotateExists(var);
+			if (existsInfoField != null && (!exists)) exists |= dbVcf.findDbExists(var);
 		}
 
 		annotated |= annotateIds(vcfEntry, idSet);
 		annotated |= annotateInfo(vcfEntry, infos);
+		if (exists) annotateExists(vcfEntry);
 
 		return annotated;
 	}
 
 	/**
 	 * Add 'exists' flag to INFO fields
-	 * @param vcfEntry
 	 */
 	protected void annotateExists(VcfEntry vcfEntry) {
 		vcfEntry.addInfo(existsInfoField, null);

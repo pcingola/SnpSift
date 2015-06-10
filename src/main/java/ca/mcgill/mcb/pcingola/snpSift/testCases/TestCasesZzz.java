@@ -111,16 +111,23 @@ public class TestCasesZzz extends TestCase {
 	}
 
 	/**
-	 * Annotate info fields
+	 * Annotate if a VCF entry exists in the database file
 	 */
-	public void test_06() {
+	public void test_28_exists() {
 		Gpr.debug("Test");
-		String dbFileName = "./test/db_test_06.vcf";
-		String fileName = "./test/annotate_06.vcf";
-		List<VcfEntry> results = annotate(dbFileName, fileName, null);
 
-		// Check
-		Assert.assertEquals("PREVIOUS=annotation;TEST=yes;ABE=0.678;ABZ=47.762;AF=0.002;AN=488;AOI=-410.122;AOZ=-399.575;IOD=0.000;OBS=4,1,1636,2011,3,1,6780,9441;RSPOS=16346045", results.get(0).getInfoStr());
+		String dbFileName = "./test/db_test_28.vcf";
+		String fileName = "./test/annotate_28.vcf";
+		String args[] = { "-exists", "EXISTS" };
+
+		List<VcfEntry> res = annotate(dbFileName, fileName, args);
+		for (VcfEntry ve : res) {
+			if (verbose) System.out.println(ve);
+
+			// Check
+			if (ve.getStart() == 201331098) Assert.assertTrue("Existing VCF entry has not been annotated", ve.hasInfo("EXISTS"));
+			else Assert.assertFalse("Non-existing VCF entry has been annotated", ve.hasInfo("EXISTS"));
+		}
 	}
 
 	//	public void test_104() {
