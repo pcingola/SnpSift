@@ -110,33 +110,6 @@ public class TestCasesZzz extends TestCase {
 		return argsList.toArray(new String[0]);
 	}
 
-	/**
-	 * Annotate if a VCF entry exists in the database file
-	 */
-	public void test_28_exists() {
-		Gpr.debug("Test");
-
-		String dbFileName = "./test/db_test_28.vcf";
-		String fileName = "./test/annotate_28.vcf";
-		String args[] = { "-exists", "EXISTS" };
-
-		List<VcfEntry> res = annotate(dbFileName, fileName, args);
-		for (VcfEntry ve : res) {
-			if (verbose) System.out.println(ve);
-
-			// Check
-			if (ve.getStart() == 201331098) Assert.assertTrue("Existing VCF entry has not been annotated", ve.hasInfo("EXISTS"));
-			else Assert.assertFalse("Non-existing VCF entry has been annotated", ve.hasInfo("EXISTS"));
-		}
-	}
-
-	//	public void test_104() {
-	//		Gpr.debug("Test");
-	//		String dbFileName = "./test/db_test_large.vcf";
-	//		String fileName = "./test/annotate_large.vcf";
-	//		annotateTest(dbFileName, fileName);
-	//	}
-	//
 	//	/**
 	//	 * Issue when database has REF including 'N' bases
 	//	 * WARNING: FIXING THIS REQUIRES A MAJOR CHANGE IN TH WAY WE ANNOTATE 
@@ -149,26 +122,16 @@ public class TestCasesZzz extends TestCase {
 	//		annotateTest(dbFileName, fileName);
 	//	}
 	//
-	//	/**
-	//	 * Issue when database has REF several variants which have to 
-	//	 * be converted into minimal representation
-	//	 */
-	//	public void test_31_annotate_minimal_representation_db() {
-	//		Gpr.debug("Test");
-	//		String dbFileName = "./test/db_test_31.vcf";
-	//		String fileName = "./test/annotate_31.vcf";
-	//		annotateTest(dbFileName, fileName);
-	//	}
-	//
-	//	/**
-	//	 * Issue when query has REF several variants which have to 
-	//	 * be converted into minimal representation
-	//	 */
-	//	public void test_32_annotate_minimal_representation_input() {
-	//		Gpr.debug("Test");
-	//		String dbFileName = "./test/db_test_32.vcf";
-	//		String fileName = "./test/annotate_32.vcf";
-	//		annotateTest(dbFileName, fileName);
-	//	}
+
+	/**
+	 * Issue when query has REF several variants which have to 
+	 * be converted into minimal representation
+	 */
+	public void test_32_annotate_minimal_representation_input() {
+		Gpr.debug("Test");
+		String dbFileName = "./test/db_test_32.vcf";
+		String fileName = "./test/annotate_32.vcf";
+		annotateTest(dbFileName, fileName);
+	}
 
 }

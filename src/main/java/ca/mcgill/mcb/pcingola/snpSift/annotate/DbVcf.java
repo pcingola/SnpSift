@@ -209,20 +209,6 @@ public abstract class DbVcf {
 		return dbCurrentId.containsKey(key);
 	}
 
-	//	/**
-	//	 * Find if a VCF entry exists in the database
-	//	 */
-	//	protected boolean findDbExists(VcfEntry vcf) {
-	//		if (dbCurrentId.isEmpty()) return false;
-	//
-	//		for (int i = 0; i < vcf.getAlts().length; i++) {
-	//			String key = key(vcf, i);
-	//			if (dbCurrentId.containsKey(key)) return true;
-	//		}
-	//
-	//		return false;
-	//	}
-
 	/**
 	 * Find an ID for this variant and add them to idSet
 	 */
@@ -399,15 +385,15 @@ public abstract class DbVcf {
 		// Show IDs
 		sb.append("IDs (size: " + dbCurrentId.size() + "):\n");
 		for (String key : dbCurrentId.keySet())
-			sb.append("\t" + key + "\t" + dbCurrentId.get(key) + "\n");
+			sb.append("\t'" + key + "' : '" + dbCurrentId.get(key) + "'\n");
 
 		// Show INFO
 		sb.append("INFOs:\n");
 		for (String key : dbCurrentInfo.keySet()) {
-			sb.append("\t" + key + "\n");
+			sb.append("\t'" + key + "'\n");
 			Map<String, String> vals = dbCurrentInfo.get(key);
 			for (String ikey : vals.keySet())
-				sb.append("\t\t" + ikey + "\t'" + vals.get(ikey) + "'\n");
+				sb.append("\t\t'" + ikey + "' = '" + vals.get(ikey) + "'\n");
 		}
 
 		return sb.toString();

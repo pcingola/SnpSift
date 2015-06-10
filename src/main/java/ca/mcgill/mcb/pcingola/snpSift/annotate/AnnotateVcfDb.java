@@ -173,7 +173,14 @@ public abstract class AnnotateVcfDb {
 
 		// Add all remaining IDs
 		StringBuilder sbId = new StringBuilder();
-		for (String id : idSetDb)
+
+		// Sort alphabetically
+		ArrayList<String> idsSorted = new ArrayList<>();
+		idsSorted.addAll(idSetDb);
+		Collections.sort(idsSorted);
+
+		// Add all items
+		for (String id : idsSorted)
 			sbId.append((sbId.length() > 0 ? ";" : "") + id);
 
 		return sbId.toString();

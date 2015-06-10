@@ -86,4 +86,15 @@ public class TestCasesAnnotateMem extends TestCasesAnnotate {
 		Assert.assertEquals("PREVIOUS=annotation;TEST=yes;ABE=0.678;AF=0.002;AN=488", results.get(0).getInfoStr());
 	}
 
+	/**
+	 * Issue when query has REF several variants which have to 
+	 * be converted into minimal representation
+	 */
+	public void test_32_annotate_minimal_representation_input() {
+		Gpr.debug("Test");
+		String dbFileName = "./test/db_test_32.vcf";
+		String fileName = "./test/annotate_32.vcf";
+		annotateTest(dbFileName, fileName);
+	}
+
 }
