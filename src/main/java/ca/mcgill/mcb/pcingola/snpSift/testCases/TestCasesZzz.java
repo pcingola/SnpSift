@@ -110,19 +110,16 @@ public class TestCasesZzz extends TestCase {
 		return argsList.toArray(new String[0]);
 	}
 
-	public void test_15() {
+	public void test_18() {
 		Gpr.debug("Test");
-		String dbFileName = "./test/annotate_multiple_allele_R.db.vcf";
-		String fileName = "./test/annotate_multiple_allele.2.vcf";
+		String dbFileName = "./test/test_annotate_18_db.vcf";
+		String fileName = "./test/test_annotate_18.vcf";
 
-		// Annotate
 		List<VcfEntry> results = annotate(dbFileName, fileName, null);
-
-		// Check results
 		VcfEntry ve = results.get(0);
-		if (verbose) System.out.println(ve);
-		String allNum = ve.getInfo("ALL_NUM");
-		Assert.assertEquals("value_REF,value_C", allNum);
+		String ukac = ve.getInfo("UK10KWES_AC");
+		if (verbose) System.out.println("Annotated value: " + ukac);
+		Assert.assertEquals(".,49,44,.,.,.,.,.,.,.,.", ukac);
 	}
 
 	//	/**

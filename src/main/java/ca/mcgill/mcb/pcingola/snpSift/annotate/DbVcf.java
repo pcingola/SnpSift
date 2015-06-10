@@ -52,12 +52,21 @@ public abstract class DbVcf {
 			dbVcfEntryAdded.add(keyAdded);
 		}
 
+		// Which INFO fields should we read?
+		Set<String> infoToRead = infoFields;
+		if (infoFields == null) {
+			// Add all INFO fields in alphabetical order
+			infoToRead = new HashSet<String>();
+			infoToRead.addAll(vcfDb.getInfoKeys());
+		}
+
 		//---
-		// Add information for each ALT allele
+		// Add information for each variant
 		//---
 		updateChromo(vcfDb);
 
-		for (Variant var : vcfDb.variants()) {
+		List<Variant> vars = vcfDb.variants();
+		for (Variant var : vars) {
 			String key = key(var);
 
 			// Add ID field information
@@ -66,24 +75,27 @@ public abstract class DbVcf {
 			// Add INFO fields to DB?
 			if (useInfoField) {
 				// Add all INFO fields
-				Map<String, String> info = dbInfoFields(vcfDb, var);
+				Map<String, String> info = dbInfoFields(vcfDb, var, infoToRead, false);
 				addInfo(key, info);
 			}
 		}
 
-		//		//---
-		//		// Add information for each REF allele
-		//		// (e.g. when INFO field has 'Number=R')
-		//		//---
-		//		if (useInfoField) {
-		//			// Add all INFO fields
-		//			int alleleIdx = -1; // Negative allele number means 'REF'
-		//			String key = key(vcfDb, alleleIdx);
-		//			for (Variant var : vcfDb.variants()) {
-		//				Map<String, String> info = dbInfoFields(vcfDb, vcfDb.getRef());
-		//				addInfo(key, info);
-		//			}
-		//		}
+		//---
+		// Add information for each REF allele
+		// (e.g. when INFO field has 'Number=R')
+		//---
+		if (useInfoField) {
+			// Add all INFO fields
+			for (Variant var : vars) {
+				String key = keyRef(var);
+
+				// Only add for different keys
+				if (!dbCurrentInfo.containsKey(key)) {
+					Map<String, String> info = dbInfoFields(vcfDb, var, infoToRead, true);
+					addInfo(key, info);
+				}
+			}
+		}
 
 	}
 
@@ -143,17 +155,17 @@ public abstract class DbVcf {
 	/**
 	 * Extract corresponding info fields
 	 */
-	protected Map<String, String> dbInfoFields(VcfEntry vcfDb, Variant var) {
+	protected Map<String, String> dbInfoFields(VcfEntry vcfDb, Variant var, Set<String> infoToRead, boolean onlyRef) {
 		// Add some INFO fields
 		Map<String, String> info = new HashMap<>();
 
-		// Which INFO fields should we read?
-		Set<String> infoToRead = infoFields;
-		if (infoFields == null) {
-			// Add all INFO fields in alphabetical order
-			infoToRead = new HashSet<String>();
-			infoToRead.addAll(vcfDb.getInfoKeys());
-		}
+		//		// Which INFO fields should we read?
+		//		Set<String> infoToRead = infoFields;
+		//		if (infoFields == null) {
+		//			// Add all INFO fields in alphabetical order
+		//			infoToRead = new HashSet<String>();
+		//			infoToRead.addAll(vcfDb.getInfoKeys());
+		//		}
 
 		// Add each field
 		for (String fieldName : infoToRead) {
@@ -163,19 +175,22 @@ public abstract class DbVcf {
 			String val = null;
 
 			// Check if fields are Number='A' or Number='R' (this also caches results for future reference)
-			boolean perAlleleRef = isVcfInfoPerAlleleRef(fieldName, vcfDb);
-			boolean perAllele = isVcfInfoPerAllele(fieldName, vcfDb);
 
-			if (perAlleleRef) {
-				// In this case we need to add 'REF' value 
-				val = vcfDb.getInfo(fieldName, var.getReference());
+			boolean perAlleleRef = isVcfInfoPerAlleleRef(fieldName, vcfDb);
+
+			if (onlyRef) {
+				if (perAlleleRef) {
+					val = vcfDb.getInfo(fieldName, var.getReference());
+					if (val != null) info.put(fieldName, val);
+				}
+			} else {
+				boolean perAllele = isVcfInfoPerAllele(fieldName, vcfDb);
+
+				// Get value
+				if (perAllele || perAlleleRef) val = vcfDb.getInfo(fieldName, var.getGenotype());
+				else val = vcfDb.getInfo(fieldName);
 				if (val != null) info.put(fieldName, val);
 			}
-
-			// Get value
-			if (perAllele || perAlleleRef) val = vcfDb.getInfo(fieldName, var.getGenotype());
-			else val = vcfDb.getInfo(fieldName);
-			if (val != null) info.put(fieldName, val);
 		}
 
 		return info;
@@ -230,9 +245,16 @@ public abstract class DbVcf {
 		// Prepare INFO field to add
 		//---
 		for (String infoFieldName : infoFieldsToAdd) {
-			// FIXME: THIS WON'T WORK!
-			//			// Allele number '-1' is reference. It's used when the INFO field has 'Number=R'
-			//			int minAlleleNum = isVcfInfoPerAlleleRef(infoFieldName) ? -1 : 0;
+			// Do we need to take care of the 'REF' allele?
+			if (isVcfInfoPerAlleleRef(infoFieldName)) {
+				// Did we already did it in the previous 'variant' iteration?
+				if (!results.containsKey(infoFieldName)) {
+					key = keyRef(var);
+					info = dbCurrentInfo.get(key);
+					String val = (info == null ? "." : info.get(infoFieldName));
+					results.put(infoFieldName, val);
+				}
+			}
 
 			// Get info field annotations
 			key = key(var);
@@ -240,8 +262,8 @@ public abstract class DbVcf {
 
 			// Not a 'per allele' INFO field? Then we are done (no need to annotate other alleles)
 			if (!isVcfInfoPerAllele(infoFieldName) && results.containsKey(infoFieldName)) {
-				// This INFO field has only one entry (not 'per allele') and 
-				// we have already added the value in the previous 'variant' 
+				// This INFO field has only one entry (not 'per allele') and
+				// we have already added the value in the previous 'variant'
 				// iteration, so we can skip it this time
 			} else {
 				// Add each INFO
@@ -326,6 +348,11 @@ public abstract class DbVcf {
 			return vcfDbEntry.getChromosomeName() + ":" + vcfDbEntry.getStart() + "_" + vcfDbEntry.getRef() + "/" + vcfDbEntry.getRef();
 		}
 		return vcfDbEntry.getChromosomeName() + ":" + vcfDbEntry.getStart();
+	}
+
+	String keyRef(Variant variant) {
+		if (useRefAlt) return variant.getChromosomeName() + ":" + variant.getStart() + "_" + variant.getReference() + "/" + variant.getReference();
+		return variant.getChromosomeName() + ":" + variant.getStart();
 	}
 
 	/**
