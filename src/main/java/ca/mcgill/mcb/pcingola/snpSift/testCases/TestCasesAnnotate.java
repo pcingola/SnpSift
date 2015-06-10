@@ -21,9 +21,11 @@ public class TestCasesAnnotate extends TestCase {
 	public static boolean debug = false;
 	public static boolean verbose = false || debug;
 
-	protected String[] defaultExtraArgs = null;
+	protected String[] defaultExtraArgs;
 
 	public TestCasesAnnotate() {
+		String[] memExtraArgs = { "-sorted" };
+		defaultExtraArgs = memExtraArgs;
 	}
 
 	/**
@@ -567,7 +569,7 @@ public class TestCasesAnnotate extends TestCase {
 	}
 
 	/**
-	 * Issue when database has REF several variants which have to 
+	 * Issue when database has REF several variants which have to
 	 * be converted into minimal representation
 	 */
 	public void test_31_annotate_minimal_representation_db() {

@@ -21,7 +21,7 @@ public class TestCasesZzz extends TestCase {
 
 	//	protected String[] defaultExtraArgs = null;
 	//	protected String[] defaultExtraArgs = null;
-	protected String[] defaultExtraArgs = { "-mem" };
+	protected String[] defaultExtraArgs = { "-sorted" };
 
 	/**
 	 * Annotate
@@ -110,6 +110,13 @@ public class TestCasesZzz extends TestCase {
 		return argsList.toArray(new String[0]);
 	}
 
+	public void test_01() {
+		Gpr.debug("Test");
+		String dbFileName = "./test/db_test_1.vcf";
+		String fileName = "./test/annotate_1.vcf";
+		annotateTest(dbFileName, fileName);
+	}
+
 	//	/**
 	//	 * Issue when database has REF including 'N' bases
 	//	 * WARNING: FIXING THIS REQUIRES A MAJOR CHANGE IN TH WAY WE ANNOTATE 
@@ -122,16 +129,5 @@ public class TestCasesZzz extends TestCase {
 	//		annotateTest(dbFileName, fileName);
 	//	}
 	//
-
-	/**
-	 * Issue when query has REF several variants which have to 
-	 * be converted into minimal representation
-	 */
-	public void test_32_annotate_minimal_representation_input() {
-		Gpr.debug("Test");
-		String dbFileName = "./test/db_test_32.vcf";
-		String fileName = "./test/annotate_32.vcf";
-		annotateTest(dbFileName, fileName);
-	}
 
 }

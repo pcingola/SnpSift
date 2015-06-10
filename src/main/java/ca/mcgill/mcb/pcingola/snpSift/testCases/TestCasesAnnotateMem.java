@@ -87,7 +87,7 @@ public class TestCasesAnnotateMem extends TestCasesAnnotate {
 	}
 
 	/**
-	 * Issue when query has REF several variants which have to 
+	 * Issue when query has REF several variants which have to
 	 * be converted into minimal representation
 	 */
 	public void test_32_annotate_minimal_representation_input() {

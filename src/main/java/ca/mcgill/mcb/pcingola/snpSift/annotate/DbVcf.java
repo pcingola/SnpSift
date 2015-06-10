@@ -10,6 +10,7 @@ import java.util.Set;
 
 import ca.mcgill.mcb.pcingola.fileIterator.VcfFileIterator;
 import ca.mcgill.mcb.pcingola.interval.Variant;
+import ca.mcgill.mcb.pcingola.util.Gpr;
 import ca.mcgill.mcb.pcingola.vcf.VcfEntry;
 import ca.mcgill.mcb.pcingola.vcf.VcfHeaderInfo;
 
@@ -27,11 +28,10 @@ public abstract class DbVcf {
 	protected boolean useInfoFieldAll = true; // Use all info fields
 	protected boolean useRefAlt = true;
 	protected boolean verbose = false;
-	protected int countBadRef = 0;
 	protected String dbFileName;
-	protected String latestChromo = "";
 	protected VcfFileIterator vcfDbFile; // VCF File
-	protected VcfEntry latestVcfDb = null; // Latest entry read form VCF (the information may have not been added/used yet)
+	protected VcfEntry latestVcfDb = null; // Latest entry added
+	protected VcfEntry nextVcfDb = null; // Next DB entry to add
 	protected Map<String, Map<String, String>> dbCurrentInfo = new HashMap<String, Map<String, String>>();
 	protected Set<String> infoFields; // Use only these INFO fields
 	protected Map<String, String> dbCurrentId = new HashMap<String, String>(); // Current DB entries
@@ -59,8 +59,6 @@ public abstract class DbVcf {
 		//---
 		// Add information for each variant
 		//---
-		updateChomo(vcfDb);
-
 		List<Variant> vars = vcfDb.variants();
 		for (Variant var : vars) {
 			String key = key(var);
@@ -122,11 +120,11 @@ public abstract class DbVcf {
 		}
 	}
 
-	/**
-	 * Check if we are still in the latest chromosome
-	 */
-	protected boolean checkChromo(VcfEntry vcfEntry) {
-		return latestChromo.equals(vcfEntry.getChromosomeName());
+	protected void addNextVcfDb() {
+		if (debug) Gpr.debug("Adding DB entry: " + nextVcfDb);
+		add(nextVcfDb);
+		latestVcfDb = nextVcfDb;
+		nextVcfDb = null;
 	}
 
 	/**
@@ -136,6 +134,7 @@ public abstract class DbVcf {
 		dbCurrentId.clear();
 		dbCurrentInfo.clear();
 		dbVcfEntryAdded.clear();
+		if (debug) Gpr.debug("Clear: Size: " + size());
 	}
 
 	/**
@@ -375,7 +374,7 @@ public abstract class DbVcf {
 	}
 
 	public int size() {
-		return dbCurrentId.size();
+		return Math.max(dbCurrentId.size(), dbCurrentInfo.size());
 	}
 
 	@Override
@@ -397,12 +396,5 @@ public abstract class DbVcf {
 		}
 
 		return sb.toString();
-	}
-
-	/**
-	 * Update data respect to this VCF entry
-	 */
-	protected void updateChomo(VcfEntry vcfEntry) {
-		latestChromo = vcfEntry.getChromosomeName(); // Update latest chromosome
 	}
 }

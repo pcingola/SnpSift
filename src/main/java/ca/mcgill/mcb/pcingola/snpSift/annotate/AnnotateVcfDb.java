@@ -12,6 +12,7 @@ import java.util.Set;
 
 import ca.mcgill.mcb.pcingola.fileIterator.VcfFileIterator;
 import ca.mcgill.mcb.pcingola.interval.Variant;
+import ca.mcgill.mcb.pcingola.util.Gpr;
 import ca.mcgill.mcb.pcingola.vcf.VcfEntry;
 
 /**
@@ -61,6 +62,7 @@ public abstract class AnnotateVcfDb {
 		annotated |= annotateInfo(vcfEntry, infos);
 		if (exists) annotateExists(vcfEntry);
 
+		if (debug) Gpr.debug("Database size: " + dbVcf.size());
 		return annotated;
 	}
 
