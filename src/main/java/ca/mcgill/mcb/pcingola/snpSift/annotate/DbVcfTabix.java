@@ -15,6 +15,8 @@ public class DbVcfTabix extends DbVcf {
 
 	public DbVcfTabix(String dbFileName) {
 		super(dbFileName);
+		Gpr.debug("SETTTING DEBUG!!!!");
+		debug = true;
 	}
 
 	/**
@@ -66,16 +68,21 @@ public class DbVcfTabix extends DbVcf {
 		//---
 		// Find db entry
 		//---
-		if (debug) System.err.println("ReadDb: Looking for " //
+		if (debug) Gpr.debug("ReadDb: Looking for " //
 				+ veInput.getChromosomeName() + ":" + veInput.getStart() //
-				+ ". Current DB: " + (latestVcfDb == null ? "null" : latestVcfDb.getChromosomeName() + ":" + latestVcfDb.getStart()));
+				+ "\tLatest DB: " + (latestVcfDb == null ? "null" : latestVcfDb.getChromosomeName() + ":" + latestVcfDb.getStart()) //
+				+ "\tNext DB: " + (nextVcfDb == null ? "null" : nextVcfDb.getChromosomeName() + ":" + nextVcfDb.getStart()));
 
+		// Read database
 		while (true) {
+			//---
+			// Do we have a 'nextVcfDb' entry to process?
+			//---
 			if (nextVcfDb == null) {
 				// Null entry, try getting next entry
 				nextVcfDb = vcfDbFile.next(); // Read next DB entry
 
-				// Still null? May be we run out of DB entries for this chromosome
+				// Still null? May be we run out of DB entries
 				if (nextVcfDb == null) {
 					// Is vcfEntry still in 'latestChromo'? Then we have no DbEntry, return null
 					if (latestVcfDb.isSameChromo(veInput)) {
@@ -95,43 +102,51 @@ public class DbVcfTabix extends DbVcf {
 				}
 			}
 
-			if (debug) Gpr.debug("ReadDb: Current Db Entry:" + nextVcfDb.getChromosomeName() + ":" + nextVcfDb.getStart() + "\tLooking for: " + veInput.getChromosomeName() + ":" + veInput.getStart());
+			if (debug) Gpr.debug("ReadDb: Looking for " //
+					+ veInput.getChromosomeName() + ":" + veInput.getStart() //
+					+ "\tLatest DB: " + (latestVcfDb == null ? "null" : latestVcfDb.getChromosomeName() + ":" + latestVcfDb.getStart()) //
+					+ "\tNext DB: " + (nextVcfDb == null ? "null" : nextVcfDb.getChromosomeName() + ":" + nextVcfDb.getStart()));
 
-			// Find entry. Note that at this point nextVcfDb must be non-null
+			//---
+			// Find entry in DB
+			// Note that at this point nextVcfDb must be non-null
+			//---
 			if (nextVcfDb.isSameChromo(veInput)) {
 				// Same chromosome
 
 				// Same position? => Found
-				if (veInput.getStart() == nextVcfDb.getStart()) {
+				if (veInput.getEnd() >= nextVcfDb.getStart()) {
 					// Found db entry! Break loop and proceed with annotations
 					if (debug) Gpr.debug("Found Db Entry:" + nextVcfDb.getChromosomeName() + ":" + nextVcfDb.getStart());
-					add(nextVcfDb);
+					addNextVcfDb();
 					nextVcfDb = vcfDbFile.next();
 				} else if (veInput.getEnd() < nextVcfDb.getStart()) {
 					// Same chromosome, but DB is positioned after input => No (more) db entries found
-					if (debug) Gpr.debug("No db entry found:\t" + veInput.getChromosomeName() + ":" + veInput.getStart());
+					if (debug) Gpr.debug("No (more) db entries found:\t" + veInput.getChromosomeName() + ":" + veInput.getStart());
 					return;
 				} else if ((veInput.getEnd() - nextVcfDb.getStart()) > MIN_SEEK) {
 					// Is it far enough? Don't iterate, seek
 					clear();
 					if (!dbSeek(veInput)) return;
+					addNextVcfDb();
 				} else {
 					// Just read next entry to get closer
-					nextVcfDb = vcfDbFile.next();
 					clear();
+					nextVcfDb = vcfDbFile.next();
+					addNextVcfDb();
 				}
 			} else {
-				// Different chromosome? => seek to chromosome
+				// May be we finished reading DB for this chromosome? => Nothing else to do 
+				if (latestVcfDb != null && latestVcfDb.isSameChromo(veInput)) return;
+
+				// Input is on different chromosome? => seek to chromosome
 				if (debug) Gpr.debug("Chromosome seek:\t" + nextVcfDb.getChromosomeName() + ":" + nextVcfDb.getStart() + "\t->\t" + veInput.getChromosomeName() + ":" + veInput.getStart());
 
-				clear();
-
 				// Seek to new position. If chromosome not found, return null
+				clear();
 				if (!dbSeek(veInput)) return;
+				addNextVcfDb();
 			}
-
-			// Have we managed to get an entry
-			if (nextVcfDb != null) addNextVcfDb();
 		}
 	}
 }
