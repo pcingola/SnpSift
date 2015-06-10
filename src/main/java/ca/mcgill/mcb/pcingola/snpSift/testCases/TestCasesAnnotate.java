@@ -590,4 +590,14 @@ public class TestCasesAnnotate extends TestCase {
 		annotateTest(dbFileName, fileName);
 	}
 
+	/**
+	 * Empty database
+	 */
+	public void test_33_empty_db() {
+		Gpr.debug("Test");
+		String dbFileName = "./test/db_test_33.vcf";
+		String fileName = "./test/annotate_33.vcf";
+		annotateTest(dbFileName, fileName);
+	}
+
 }

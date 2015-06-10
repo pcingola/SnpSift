@@ -47,6 +47,8 @@ public abstract class DbVcf {
 	 * Add 'key->id' entries to 'dbCurrent'
 	 */
 	protected void add(VcfEntry vcfDb) {
+		if (vcfDb == null) return;
+
 		// VcfEntry already added?
 		if (checkRepeat) {
 			String keyAdded = key(vcfDb);
@@ -309,7 +311,7 @@ public abstract class DbVcf {
 		return vcfInfoPerAlleleRef.get(fieldName);
 	}
 
-	String key(Variant variant) {
+	protected String key(Variant variant) {
 		if (useRefAlt) return variant.getChromosomeName() + ":" + variant.getStart() + "_" + variant.getReference() + "/" + variant.getAlt();
 		return variant.getChromosomeName() + ":" + variant.getStart();
 	}
@@ -327,18 +329,7 @@ public abstract class DbVcf {
 				;
 	}
 
-	/**
-	 * Create a hash key
-	 */
-	String key(VcfEntry vcfDbEntry, int altIndex) {
-		if (useRefAlt) {
-			if (altIndex >= 0) return vcfDbEntry.getChromosomeName() + ":" + vcfDbEntry.getStart() + "_" + vcfDbEntry.getRef() + "/" + vcfDbEntry.getAlts()[altIndex];
-			return vcfDbEntry.getChromosomeName() + ":" + vcfDbEntry.getStart() + "_" + vcfDbEntry.getRef() + "/" + vcfDbEntry.getRef();
-		}
-		return vcfDbEntry.getChromosomeName() + ":" + vcfDbEntry.getStart();
-	}
-
-	String keyRef(Variant variant) {
+	protected String keyRef(Variant variant) {
 		if (useRefAlt) return variant.getChromosomeName() + ":" + variant.getStart() + "_" + variant.getReference() + "/" + variant.getReference();
 		return variant.getChromosomeName() + ":" + variant.getStart();
 	}

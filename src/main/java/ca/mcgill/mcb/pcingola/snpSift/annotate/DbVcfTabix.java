@@ -82,6 +82,8 @@ public class DbVcfTabix extends DbVcf {
 
 				// Still null? May be we run out of DB entries
 				if (nextVcfDb == null) {
+					if (latestVcfDb == null) return; // Something is really wrong here (e.g. empty database)
+
 					// Is vcfEntry still in 'latestChromo'? Then we have no DbEntry, return null
 					if (latestVcfDb.isSameChromo(veInput)) {
 						// End of 'latestChromo' section in database
