@@ -110,6 +110,21 @@ public class TestCasesZzz extends TestCase {
 		return argsList.toArray(new String[0]);
 	}
 
+	public void test_15() {
+		Gpr.debug("Test");
+		String dbFileName = "./test/annotate_multiple_allele_R.db.vcf";
+		String fileName = "./test/annotate_multiple_allele.2.vcf";
+
+		// Annotate
+		List<VcfEntry> results = annotate(dbFileName, fileName, null);
+
+		// Check results
+		VcfEntry ve = results.get(0);
+		if (verbose) System.out.println(ve);
+		String allNum = ve.getInfo("ALL_NUM");
+		Assert.assertEquals("value_REF,value_C", allNum);
+	}
+
 	//	/**
 	//	 * Issue when database has REF including 'N' bases
 	//	 * WARNING: FIXING THIS REQUIRES A MAJOR CHANGE IN TH WAY WE ANNOTATE 
@@ -121,18 +136,18 @@ public class TestCasesZzz extends TestCase {
 	//		String fileName = "./test/annotate_30.vcf";
 	//		annotateTest(dbFileName, fileName);
 	//	}
-
-	/**
-	 * Issue when database has REF several variants which have to 
-	 * be converted into minimal representation
-	 */
-	public void test_31_annotate_minimal_representation_db() {
-		Gpr.debug("Test");
-		String dbFileName = "./test/db_test_31.vcf";
-		String fileName = "./test/annotate_31.vcf";
-		annotateTest(dbFileName, fileName);
-	}
-
+	//
+	//	/**
+	//	 * Issue when database has REF several variants which have to 
+	//	 * be converted into minimal representation
+	//	 */
+	//	public void test_31_annotate_minimal_representation_db() {
+	//		Gpr.debug("Test");
+	//		String dbFileName = "./test/db_test_31.vcf";
+	//		String fileName = "./test/annotate_31.vcf";
+	//		annotateTest(dbFileName, fileName);
+	//	}
+	//
 	//	/**
 	//	 * Issue when query has REF several variants which have to 
 	//	 * be converted into minimal representation

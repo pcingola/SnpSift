@@ -4,10 +4,13 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import ca.mcgill.mcb.pcingola.fileIterator.VcfFileIterator;
+import ca.mcgill.mcb.pcingola.interval.Variant;
 import ca.mcgill.mcb.pcingola.vcf.VcfEntry;
 
 /**
@@ -39,9 +42,19 @@ public abstract class AnnotateVcfDb {
 		dbVcf.readDb(vcfEntry); // Read database up to this point
 
 		// Add information to vcfEntry
-		boolean annotated = annotateIds(vcfEntry, dbVcf.findDbId(vcfEntry));
-		annotated |= annotateInfo(vcfEntry, dbVcf.findDbInfo(vcfEntry));
-		if (existsInfoField != null && dbVcf.findDbExists(vcfEntry)) annotateExists(vcfEntry);
+		boolean annotated = false;
+
+		HashSet<String> idSet = new HashSet<String>();
+		HashMap<String, String> infos = new HashMap<String, String>();
+
+		for (Variant var : vcfEntry.variants()) {
+			dbVcf.findDbId(var, idSet);
+			dbVcf.findDbInfo(var, infos);
+			//			if (existsInfoField != null && dbVcf.findDbExists(var)) annotateExists(var);
+		}
+
+		annotated |= annotateIds(vcfEntry, idSet);
+		annotated |= annotateInfo(vcfEntry, infos);
 
 		return annotated;
 	}
@@ -57,13 +70,13 @@ public abstract class AnnotateVcfDb {
 	/**
 	 * Add ID information. Make sure we are no repeating IDs
 	 */
-	protected boolean annotateIds(VcfEntry vcfEntry, String id) {
-		if (id == null) return false;
+	protected boolean annotateIds(VcfEntry vcfEntry, Set<String> idSet) {
+		if (idSet.isEmpty()) return false;
 
 		// Add IDs, make sure we are no repeating them
 		// Get unique IDs (the ones not already present in vcf.id)
 		boolean annotated = false;
-		id = uniqueIds(id, vcfEntry.getId());
+		String id = uniqueIds(idSet, vcfEntry.getId());
 		if (!id.isEmpty()) { // Skip if no new ids found
 			annotated = true;
 
@@ -152,20 +165,16 @@ public abstract class AnnotateVcfDb {
 	/**
 	 * IDs from database not present in VCF
 	 */
-	protected String uniqueIds(String idStrDb, String idStrVcf) {
-		StringBuilder sbId = new StringBuilder();
-		String idsDb[] = idStrDb.split(";");
+	protected String uniqueIds(Set<String> idSetDb, String idStrVcf) {
+		// Remove currently annotated IDs
 		String idsVcf[] = idStrVcf.split(";");
+		for (String id : idsVcf)
+			idSetDb.remove(id);
 
-		for (String idDb : idsDb) {
-			// Add only if there is no other matching ID in VCF
-			boolean skip = false;
-			for (String idVcf : idsVcf)
-				skip |= idDb.equals(idVcf);
-
-			// Append ID?
-			if (!skip) sbId.append((sbId.length() > 0 ? ";" : "") + idDb);
-		}
+		// Add all remaining IDs
+		StringBuilder sbId = new StringBuilder();
+		for (String id : idSetDb)
+			sbId.append((sbId.length() > 0 ? ";" : "") + id);
 
 		return sbId.toString();
 	}
