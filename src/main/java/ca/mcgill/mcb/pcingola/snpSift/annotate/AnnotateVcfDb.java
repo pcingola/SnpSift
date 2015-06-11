@@ -2,12 +2,17 @@ package ca.mcgill.mcb.pcingola.snpSift.annotate;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import ca.mcgill.mcb.pcingola.fileIterator.VcfFileIterator;
+import ca.mcgill.mcb.pcingola.interval.Variant;
+import ca.mcgill.mcb.pcingola.util.Gpr;
 import ca.mcgill.mcb.pcingola.vcf.VcfEntry;
 
 /**
@@ -39,16 +44,30 @@ public abstract class AnnotateVcfDb {
 		dbVcf.readDb(vcfEntry); // Read database up to this point
 
 		// Add information to vcfEntry
-		boolean annotated = annotateIds(vcfEntry, dbVcf.findDbId(vcfEntry));
-		annotated |= annotateInfo(vcfEntry, dbVcf.findDbInfo(vcfEntry));
-		if (existsInfoField != null && dbVcf.findDbExists(vcfEntry)) annotateExists(vcfEntry);
+		boolean annotated = false;
 
+		Set<String> idSet = new HashSet<>();
+		Map<String, String> infos = new HashMap<>();
+		boolean exists = false;
+
+		// Annotate all info fields
+		List<Variant> vars = vcfEntry.variants();
+		for (Variant var : vars) {
+			dbVcf.findDbId(var, idSet);
+			dbVcf.findDbInfo(var, infos);
+			if (existsInfoField != null && (!exists)) exists |= dbVcf.findDbExists(var);
+		}
+
+		annotated |= annotateIds(vcfEntry, idSet);
+		annotated |= annotateInfo(vcfEntry, infos);
+		if (exists) annotateExists(vcfEntry);
+
+		if (debug) Gpr.debug("Database size: " + dbVcf.size());
 		return annotated;
 	}
 
 	/**
 	 * Add 'exists' flag to INFO fields
-	 * @param vcfEntry
 	 */
 	protected void annotateExists(VcfEntry vcfEntry) {
 		vcfEntry.addInfo(existsInfoField, null);
@@ -57,13 +76,13 @@ public abstract class AnnotateVcfDb {
 	/**
 	 * Add ID information. Make sure we are no repeating IDs
 	 */
-	protected boolean annotateIds(VcfEntry vcfEntry, String id) {
-		if (id == null) return false;
+	protected boolean annotateIds(VcfEntry vcfEntry, Set<String> idSet) {
+		if (idSet.isEmpty()) return false;
 
 		// Add IDs, make sure we are no repeating them
 		// Get unique IDs (the ones not already present in vcf.id)
 		boolean annotated = false;
-		id = uniqueIds(id, vcfEntry.getId());
+		String id = uniqueIds(idSet, vcfEntry.getId());
 		if (!id.isEmpty()) { // Skip if no new ids found
 			annotated = true;
 
@@ -125,8 +144,8 @@ public abstract class AnnotateVcfDb {
 		this.existsInfoField = existsInfoField;
 	}
 
-	public void setInfoFields(List<String> infoFields) {
-		dbVcf.setInfoFields(infoFields);
+	public void setInfoFields(boolean useInfoFields, Collection<String> infoFields) {
+		dbVcf.setInfoFields(useInfoFields, infoFields);
 	}
 
 	public void setPrependInfoFieldName(String prependInfoFieldName) {
@@ -135,10 +154,6 @@ public abstract class AnnotateVcfDb {
 
 	public void setUseId(boolean useId) {
 		dbVcf.setUseId(useId);
-	}
-
-	public void setUseInfoField(boolean useInfoField) {
-		dbVcf.setUseInfoField(useInfoField);
 	}
 
 	public void setUseRefAlt(boolean useRefAlt) {
@@ -152,20 +167,23 @@ public abstract class AnnotateVcfDb {
 	/**
 	 * IDs from database not present in VCF
 	 */
-	protected String uniqueIds(String idStrDb, String idStrVcf) {
-		StringBuilder sbId = new StringBuilder();
-		String idsDb[] = idStrDb.split(";");
+	protected String uniqueIds(Set<String> idSetDb, String idStrVcf) {
+		// Remove currently annotated IDs
 		String idsVcf[] = idStrVcf.split(";");
+		for (String id : idsVcf)
+			idSetDb.remove(id);
 
-		for (String idDb : idsDb) {
-			// Add only if there is no other matching ID in VCF
-			boolean skip = false;
-			for (String idVcf : idsVcf)
-				skip |= idDb.equals(idVcf);
+		// Add all remaining IDs
+		StringBuilder sbId = new StringBuilder();
 
-			// Append ID?
-			if (!skip) sbId.append((sbId.length() > 0 ? ";" : "") + idDb);
-		}
+		// Sort alphabetically
+		ArrayList<String> idsSorted = new ArrayList<>();
+		idsSorted.addAll(idSetDb);
+		Collections.sort(idsSorted);
+
+		// Add all items
+		for (String id : idsSorted)
+			sbId.append((sbId.length() > 0 ? ";" : "") + id);
 
 		return sbId.toString();
 	}

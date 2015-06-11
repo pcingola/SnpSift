@@ -4,6 +4,7 @@ import java.io.IOException;
 
 import ca.mcgill.mcb.pcingola.fileIterator.SeekableBufferedReader;
 import ca.mcgill.mcb.pcingola.fileIterator.VcfFileIterator;
+import ca.mcgill.mcb.pcingola.util.Gpr;
 import ca.mcgill.mcb.pcingola.vcf.FileIndexChrPos;
 import ca.mcgill.mcb.pcingola.vcf.VcfEntry;
 
@@ -53,37 +54,56 @@ public class DbVcfSorted extends DbVcf {
 		try {
 			vcfDbFile = new VcfFileIterator(new SeekableBufferedReader(dbFileName));
 			vcfDbFile.setDebug(debug);
-			latestVcfDb = vcfDbFile.next(); // Read first VCf entry from DB file (this also forces to read headers)
-			add(latestVcfDb);
+			nextVcfDb = vcfDbFile.next(); // Read first VCf entry from DB file (this also forces to read headers)
+			addNextVcfDb();
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
 	}
 
 	/**
-	 * Read all DB entries up to 'vcf'
+	 * Read all DB entries up to veInput (VCF entry from the input file)
 	 */
 	@Override
-	public void readDb(VcfEntry ve) {
-		String chr = ve.getChromosomeName();
+	public void readDb(VcfEntry veInput) {
+		if (debug) Gpr.debug("Reading: Input " + veInput.toStr());
 
-		// Do we have a DB entry from our previous iteration?
-		if (latestVcfDb != null) {
+		// Data up to the latest entry can now be cleared, since the input file is beyond that limit
+		if (latestVcfDb != null && latestVcfDb.isSameChromo(veInput) && latestVcfDb.getEnd() < veInput.getStart()) {
+			if (debug) Gpr.debug("Reading: Input beyond DB's latest entry: Clearing.\tqInput: " + veInput.toStr() + "\tlatest: " + latestVcfDb.toStr());
+			clear();
+		}
+
+		String chr = veInput.getChromosomeName();
+
+		//---
+		// Do we have a pending DB entry? (e.g. from a previous iteration)
+		//---
+		if (nextVcfDb != null) {
+
 			// Are we still in the same chromosome?
-			if (latestVcfDb.getChromosomeName().equals(chr)) {
-				updateChromo(ve);
-				if (ve.getStart() < latestVcfDb.getStart()) return;
-				if (ve.getStart() == latestVcfDb.getStart()) add(latestVcfDb);
+			if (nextVcfDb.isSameChromo(veInput)) {
+				if (veInput.getEnd() < nextVcfDb.getStart()) {
+					// We haven't reached next DB's position, nothing to do
+					if (debug) Gpr.debug("Reading: Input has not reached DB position\n" + this);
+					return;
+				}
+
+				// OK, add 'nextVcfDb'
+				addNextVcfDb();
 			} else {
-				// VcfEntry and latestDb entry are in different chromosome?
-				if (checkChromo(ve)) {
-					// Same chromosome.
-					// This means that we finished reading all database entries from the previous chromosome.
-					// There is nothing else to do until it reaches a new chromosome
+				// Input and latestDb entry are in different chromosome?
+				if (latestVcfDb != null && latestVcfDb.isSameChromo(veInput)) {
+					// Same chromosome as latest entry from DB.
+					// This means that we finished reading all database entries from the current 'input' chromosome.
+					// There is nothing else to do until the input VCF reaches a new chromosome
+					if (debug) Gpr.debug("Reading: DB finished reading chromosome " + chr + "\n" + this);
 					return;
 				} else {
 					// This means that we should jump to a database position matching VcfEntry's chromosome
 					clear();
+
+					if (debug) Gpr.debug("Reading: Jumping to chromosme " + chr);
 
 					long filePos = indexDb.getStart(chr);
 					if (filePos < 0) return; // The database file does not have this chromosome
@@ -94,33 +114,42 @@ public class DbVcfSorted extends DbVcf {
 					}
 				}
 			}
-		} else clear();
+		}
 
 		//---
-		// Read more entries from db
+		// Read new DB entries
 		//---
 		for (VcfEntry vcfDb : vcfDbFile) {
-			latestVcfDb = vcfDb;
+			nextVcfDb = vcfDb;
 
-			String chrDb = vcfDb.getChromosomeName();
-			if (!chrDb.equals(chr)) return;
-
-			if (ve.getStart() < vcfDb.getStart()) return;
-			if (ve.getStart() == vcfDb.getStart()) {
-				// Sanity check: Check that references match
-				if (!ve.getRef().equals(vcfDb.getRef()) //
-						&& !ve.getRef().startsWith(vcfDb.getRef()) //
-						&& !vcfDb.getRef().startsWith(ve.getRef()) //
-						) {
-					System.err.println("WARNING: Reference in database file '" + dbFileName + "' is '" + vcfDb.getRef() + "' and reference in input file is " + ve.getRef() + "' at " + chr + ":" + (ve.getStart() + 1));
-					countBadRef++;
-				}
-
-				// Same position: Add all keys to 'db'
-				// Note: VCF allows more than one line with the same position
-				add(vcfDb);
+			// Database has finished with this chromosome?
+			if (!nextVcfDb.getChromosomeName().equals(chr)) {
+				if (debug) Gpr.debug("Reading: Input has not reached DB's chromosome\n" + this);
+				return;
 			}
+
+			// Read database until the current database entry is beyond the current VCF entry
+			// Note: VCF allows more than one line with the same position
+			if (veInput.getEnd() < nextVcfDb.getStart()) {
+				if (debug) Gpr.debug("Reading: DB has passed input's position\n" + this);
+				return;
+			}
+
+			// Add all fields to 'db'
+			addNextVcfDb();
 		}
+
+		if (debug) Gpr.debug("Reading: No more DB entries\n" + this);
+	}
+
+	@Override
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		sb.append("Size: " + size() + "\n");
+		sb.append("\tLatest VCF entry : " + nextVcfDb + "\n");
+		sb.append("\tNext VCF entry   : " + nextVcfDb + "\n");
+		sb.append(super.toString());
+		return sb.toString();
 	}
 
 }

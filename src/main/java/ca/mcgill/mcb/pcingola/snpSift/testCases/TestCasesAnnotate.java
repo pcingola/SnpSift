@@ -21,9 +21,11 @@ public class TestCasesAnnotate extends TestCase {
 	public static boolean debug = false;
 	public static boolean verbose = false || debug;
 
-	protected String[] defaultExtraArgs = null;
+	protected String[] defaultExtraArgs;
 
 	public TestCasesAnnotate() {
+		String[] memExtraArgs = { "-sorted" };
+		defaultExtraArgs = memExtraArgs;
 	}
 
 	/**
@@ -564,6 +566,38 @@ public class TestCasesAnnotate extends TestCase {
 			else if (ve.getStart() == 109567) Assert.assertEquals("rs62076738", ve.getId());
 			else throw new RuntimeException("Position not found: " + ve.getStart());
 		}
+	}
+
+	/**
+	 * Issue when database has REF several variants which have to
+	 * be converted into minimal representation
+	 */
+	public void test_31_annotate_minimal_representation_db() {
+		Gpr.debug("Test");
+		String dbFileName = "./test/db_test_31.vcf";
+		String fileName = "./test/annotate_31.vcf";
+		annotateTest(dbFileName, fileName);
+	}
+
+	/**
+	 * Issue when query has REF several variants which have to
+	 * be converted into minimal representation
+	 */
+	public void test_32_annotate_minimal_representation_input() {
+		Gpr.debug("Test");
+		String dbFileName = "./test/db_test_32.vcf";
+		String fileName = "./test/annotate_32.vcf";
+		annotateTest(dbFileName, fileName);
+	}
+
+	/**
+	 * Empty database
+	 */
+	public void test_33_empty_db() {
+		Gpr.debug("Test");
+		String dbFileName = "./test/db_test_33.vcf";
+		String fileName = "./test/annotate_33.vcf";
+		annotateTest(dbFileName, fileName);
 	}
 
 }

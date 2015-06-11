@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.List;
 
 import junit.framework.Assert;
+import ca.mcgill.mcb.pcingola.util.Gpr;
 import ca.mcgill.mcb.pcingola.vcf.VcfEntry;
 
 /**
@@ -19,24 +20,28 @@ public class TestCasesAnnotateMem extends TestCasesAnnotate {
 	}
 
 	public void test_101() {
+		Gpr.debug("Test");
 		String dbFileName = "./test/db_test_1.vcf";
 		String fileName = "./test/annotate_1.vcf";
 		annotateTest(dbFileName, fileName);
 	}
 
 	public void test_102() {
+		Gpr.debug("Test");
 		String dbFileName = "./test/db_test_10.vcf";
 		String fileName = "./test/annotate_10.vcf";
 		annotateTest(dbFileName, fileName);
 	}
 
 	public void test_103() {
+		Gpr.debug("Test");
 		String dbFileName = "./test/db_test_2.vcf";
 		String fileName = "./test/annotate_2.vcf";
 		annotateTest(dbFileName, fileName);
 	}
 
 	public void test_104() {
+		Gpr.debug("Test");
 		String dbFileName = "./test/db_test_large.vcf";
 		String fileName = "./test/annotate_large.vcf";
 		annotateTest(dbFileName, fileName);
@@ -47,6 +52,7 @@ public class TestCasesAnnotateMem extends TestCasesAnnotate {
 	 * This should work OK as well.
 	 */
 	public void test_105() {
+		Gpr.debug("Test");
 		String dbFileName = "./test/db_test_chr22.vcf";
 		String fileName = "./test/test_chr22.vcf";
 		annotateTest(dbFileName, fileName);
@@ -56,6 +62,7 @@ public class TestCasesAnnotateMem extends TestCasesAnnotate {
 	 * Annotate info fields
 	 */
 	public void test_106() throws IOException {
+		Gpr.debug("Test");
 		String dbFileName = "./test/db_test_06.vcf";
 		String fileName = "./test/annotate_06.vcf";
 		List<VcfEntry> results = annotate(dbFileName, fileName, null);
@@ -68,6 +75,7 @@ public class TestCasesAnnotateMem extends TestCasesAnnotate {
 	 * Annotate only some info fields
 	 */
 	public void test_107() throws IOException {
+		Gpr.debug("Test");
 		String dbFileName = "./test/db_test_06.vcf";
 		String fileName = "./test/annotate_06.vcf";
 		String extraArgs[] = { "-info", "AF,AN,ABE" };
@@ -77,5 +85,4 @@ public class TestCasesAnnotateMem extends TestCasesAnnotate {
 		// Check
 		Assert.assertEquals("PREVIOUS=annotation;TEST=yes;ABE=0.678;AF=0.002;AN=488", results.get(0).getInfoStr());
 	}
-
 }

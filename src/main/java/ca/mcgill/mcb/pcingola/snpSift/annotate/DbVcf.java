@@ -1,6 +1,6 @@
 package ca.mcgill.mcb.pcingola.snpSift.annotate;
 
-import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -24,16 +24,16 @@ public abstract class DbVcf {
 	protected boolean debug = false;
 	protected boolean checkRepeat = true;
 	protected boolean useId = true; // Annotate ID fields
-	protected boolean useInfoField = true; // Use all info fields
+	protected boolean useInfoField = true; // Use info fields
+	protected boolean useInfoFieldAll = true; // Use all info fields
 	protected boolean useRefAlt = true;
 	protected boolean verbose = false;
-	protected int countBadRef = 0;
 	protected String dbFileName;
-	protected String latestChromo = "";
 	protected VcfFileIterator vcfDbFile; // VCF File
-	protected VcfEntry latestVcfDb = null; // Latest entry read form VCF (the information may have not been added/used yet)
+	protected VcfEntry latestVcfDb = null; // Latest entry added
+	protected VcfEntry nextVcfDb = null; // Next DB entry to add
 	protected Map<String, Map<String, String>> dbCurrentInfo = new HashMap<String, Map<String, String>>();
-	protected List<String> infoFields; // Use only these INFO fields
+	protected Set<String> infoFields; // Use only these INFO fields
 	protected Map<String, String> dbCurrentId = new HashMap<String, String>(); // Current DB entries
 	protected Map<String, Boolean> vcfInfoPerAllele = new HashMap<String, Boolean>(); // Is a VCF INFO field annotated 'per allele' basis?
 	protected Map<String, Boolean> vcfInfoPerAlleleRef = new HashMap<String, Boolean>(); // Is a VCF INFO field annotated 'per allele' basis AND requires reference to be annotated (i.e. VCF header has Number=R)?
@@ -47,6 +47,8 @@ public abstract class DbVcf {
 	 * Add 'key->id' entries to 'dbCurrent'
 	 */
 	protected void add(VcfEntry vcfDb) {
+		if (vcfDb == null) return;
+
 		// VcfEntry already added?
 		if (checkRepeat) {
 			String keyAdded = key(vcfDb);
@@ -54,15 +56,14 @@ public abstract class DbVcf {
 			dbVcfEntryAdded.add(keyAdded);
 		}
 
+		if (useInfoField) discoverInfoFields(vcfDb);
+
 		//---
-		// Add information for each ALT allele
+		// Add information for each variant
 		//---
-		updateChromo(vcfDb);
-		String alts[] = vcfDb.getAlts();
-		// for (int alleleIdx = 0; alleleIdx < alts.length; alleleIdx++) {
-		for (int alleleIdx = 0; alleleIdx < alts.length; alleleIdx++) {
-			String key = key(vcfDb, alleleIdx);
-			Gpr.debug(vcfDb.toStr() + "\tALT[" + alleleIdx + "]\tkey = '" + key + "'");
+		List<Variant> vars = vcfDb.variants();
+		for (Variant var : vars) {
+			String key = key(var);
 
 			// Add ID field information
 			addId(key, vcfDb.getId());
@@ -70,7 +71,7 @@ public abstract class DbVcf {
 			// Add INFO fields to DB?
 			if (useInfoField) {
 				// Add all INFO fields
-				Map<String, String> info = dbInfoFields(vcfDb, alts[alleleIdx]);
+				Map<String, String> info = dbInfoFields(vcfDb, var, false);
 				addInfo(key, info);
 			}
 		}
@@ -81,10 +82,15 @@ public abstract class DbVcf {
 		//---
 		if (useInfoField) {
 			// Add all INFO fields
-			int alleleIdx = -1; // Negative allele number means 'REF'
-			String key = key(vcfDb, alleleIdx);
-			Map<String, String> info = dbInfoFields(vcfDb, vcfDb.getRef());
-			addInfo(key, info);
+			for (Variant var : vars) {
+				String key = keyRef(var);
+
+				// Only add for different keys
+				if (!dbCurrentInfo.containsKey(key)) {
+					Map<String, String> info = dbInfoFields(vcfDb, var, true);
+					addInfo(key, info);
+				}
+			}
 		}
 
 	}
@@ -116,11 +122,11 @@ public abstract class DbVcf {
 		}
 	}
 
-	/**
-	 * Check if we are still in the latest chromosome
-	 */
-	protected boolean checkChromo(VcfEntry vcfEntry) {
-		return latestChromo.equals(vcfEntry.getChromosomeName());
+	protected void addNextVcfDb() {
+		if (debug) Gpr.debug("Adding DB entry: " + nextVcfDb);
+		add(nextVcfDb);
+		latestVcfDb = nextVcfDb;
+		nextVcfDb = null;
 	}
 
 	/**
@@ -130,6 +136,7 @@ public abstract class DbVcf {
 		dbCurrentId.clear();
 		dbCurrentInfo.clear();
 		dbVcfEntryAdded.clear();
+		if (debug) Gpr.debug("Clear: Size: " + size());
 	}
 
 	/**
@@ -145,134 +152,117 @@ public abstract class DbVcf {
 	/**
 	 * Extract corresponding info fields
 	 */
-	protected Map<String, String> dbInfoFields(VcfEntry vcfDb, String allele) {
+	protected Map<String, String> dbInfoFields(VcfEntry vcfDb, Variant var, boolean onlyRef) {
 		// Add some INFO fields
 		Map<String, String> info = new HashMap<>();
 
-		// Which INFO fields should we read?
-		List<String> infoToRead = infoFields;
-		if (infoFields == null) {
-			// Add all INFO fields in alphabetical order
-			infoToRead = new ArrayList<String>();
-			infoToRead.addAll(vcfDb.getInfoKeys());
-		}
-
 		// Add each field
-		for (String fieldName : infoToRead) {
+		for (String fieldName : infoFields) {
 			if (fieldName.isEmpty()) continue; // Empty INFO field may cause this
 
 			// Make sure we get allele specific information (if INFO is allele specific)
 			String val = null;
 
 			// Check if fields are Number='A' or Number='R' (this also caches results for future reference)
+
 			boolean perAlleleRef = isVcfInfoPerAlleleRef(fieldName, vcfDb);
-			boolean perAllele = isVcfInfoPerAllele(fieldName, vcfDb);
 
-			if (perAlleleRef) {
-				val = vcfDb.getInfo(fieldName, allele);
-			} else if (perAllele) {
-				val = vcfDb.getInfo(fieldName, allele);
+			if (onlyRef) {
+				if (perAlleleRef) {
+					val = vcfDb.getInfo(fieldName, var.getReference());
+					if (val != null) info.put(fieldName, val);
+				}
 			} else {
-				val = vcfDb.getInfo(fieldName);
-			}
+				boolean perAllele = isVcfInfoPerAllele(fieldName, vcfDb);
 
-			// Any value? => Add
-			if (val != null) info.put(fieldName, val);
+				// Get value
+				if (perAllele || perAlleleRef) val = vcfDb.getInfo(fieldName, var.getGenotype());
+				else val = vcfDb.getInfo(fieldName);
+				if (val != null) info.put(fieldName, val);
+			}
 		}
 
 		return info;
 	}
 
 	/**
-	 * Find if a VCF entry exists in the database
+	 * If 'ALL' info fields are being used, we can try to discover
+	 * new fields that have not already been added to the annotation
+	 * list (e.g. implicit fields not mentioned in the VCF header)
 	 */
-	protected boolean findDbExists(VcfEntry vcf) {
-		if (dbCurrentId.isEmpty()) return false;
+	protected void discoverInfoFields(VcfEntry vcfEntry) {
+		if (!useInfoFieldAll) return; // Not using INFO fields
 
-		for (int i = 0; i < vcf.getAlts().length; i++) {
-			String key = key(vcf, i);
-			if (dbCurrentId.containsKey(key)) return true;
+		// Make sure all fields are added
+		infoFields = new HashSet<String>();
+		for (String info : vcfEntry.getInfoKeys()) {
+			if (!info.isEmpty()) infoFields.add(info);
 		}
-
-		return false;
 	}
 
 	/**
-	 * Find an ID for this VCF entry
+	 * Find if a VCF entry exists in the database
 	 */
-	protected String findDbId(VcfEntry vcf) {
-		if (!useId || dbCurrentId.isEmpty()) return null;
+	protected boolean findDbExists(Variant var) {
+		if (dbCurrentId.isEmpty()) return false;
 
-		// Find for each ALT
-		StringBuilder ids = null;
-		HashSet<String> idSet = null;
+		String key = key(var);
+		return dbCurrentId.containsKey(key);
+	}
 
-		for (int i = 0; i < vcf.getAlts().length; i++) {
-			String key = key(vcf, i);
-			String id = dbCurrentId.get(key);
-			if (id != null) {
-				if (ids == null) ids = new StringBuilder(id);
-				else {
-					if (idSet == null) {
-						// Initialize idSet and add previous value
-						idSet = new HashSet<String>();
-						idSet.add(ids.toString());
-					}
+	/**
+	 * Find an ID for this variant and add them to idSet
+	 */
+	protected void findDbId(Variant var, Set<String> idSet) {
+		if (!useId || dbCurrentId.isEmpty()) return;
+		String key = key(var);
+		String idField = dbCurrentId.get(key);
 
-					// Do not add repeated IDs
-					if (!idSet.contains(id)) ids.append(";" + id);
-				}
-			}
+		if (idField != null) {
+			for (String id : idField.split(";"))
+				idSet.add(id);
 		}
-
-		return ids == null ? null : ids.toString();
 	}
 
 	/**
 	 * Find INFO field for this VCF entry
 	 */
-	protected HashMap<String, String> findDbInfo(VcfEntry vcf) {
-		if (!useInfoField || dbCurrentInfo.isEmpty()) return null;
-
-		//---
-		// Which INFO fields can we annotate?
-		//---
-		Set<String> infoFieldsToAdd = new HashSet<String>();
-		for (int i = 0; i < vcf.getAlts().length; i++) {
-			String key = key(vcf, i);
-			Map<String, String> info = dbCurrentInfo.get(key);
-			if (info != null) {
-				for (String infoFieldName : info.keySet())
-					infoFieldsToAdd.add(infoFieldName);
-			}
-		}
+	protected void findDbInfo(Variant var, Map<String, String> results) {
+		if (!useInfoField || dbCurrentInfo.isEmpty()) return;
 
 		//---
 		// Prepare INFO field to add
 		//---
-		HashMap<String, String> results = new HashMap<>();
-		for (String infoFieldName : infoFieldsToAdd) {
+		String key = key(var);
+		Map<String, String> info = dbCurrentInfo.get(key);
 
-			// Allele number '-1' is reference. It's used when the INFO field has 'Number=R'
-			int minAlleleNum = isVcfInfoPerAlleleRef(infoFieldName) ? -1 : 0;
+		for (String infoFieldName : infoFields) {
+			// Do we need to take care of the 'REF' allele?
+			if (isVcfInfoPerAlleleRef(infoFieldName)) {
+				// Did we already did it in the previous 'variant' iteration?
+				if (!results.containsKey(infoFieldName)) {
+					String keyRef = keyRef(var);
+					Map<String, String> infoRef = dbCurrentInfo.get(keyRef);
+					String val = (infoRef == null ? "." : infoRef.get(infoFieldName));
+					results.put(infoFieldName, val);
+				}
+			}
 
-			for (int i = minAlleleNum; i < vcf.getAlts().length; i++) {
-				// Get info field annotations
-				String key = key(vcf, i);
-				Map<String, String> info = dbCurrentInfo.get(key);
+			// Get info field annotations
 
+			// Not a 'per allele' INFO field? Then we are done (no need to annotate other alleles)
+			if (!isVcfInfoPerAllele(infoFieldName) && results.containsKey(infoFieldName)) {
+				// This INFO field has only one entry (not 'per allele') and
+				// we have already added the value in the previous 'variant'
+				// iteration, so we can skip it this time
+			} else {
 				// Add each INFO
-				String infoVal = info == null ? null : info.get(infoFieldName);
-				String val = results.get(infoFieldName);
-				val = (val == null ? "" : val + ",") + (infoVal == null ? "." : infoVal);
+				String newValue = (info == null ? null : info.get(infoFieldName));
+				String oldValue = results.get(infoFieldName);
+				String val = (oldValue == null ? "" : oldValue + ",") + (newValue == null ? "." : newValue);
 				results.put(infoFieldName, val);
-
-				// Not a 'per allele' INFO field? Then we are done (no need to annotate other alleles)
-				if (!isVcfInfoPerAllele(infoFieldName)) break;
 			}
 		}
-
-		return results;
 	}
 
 	/**
@@ -321,7 +311,7 @@ public abstract class DbVcf {
 		return vcfInfoPerAlleleRef.get(fieldName);
 	}
 
-	String key(Variant variant) {
+	protected String key(Variant variant) {
 		if (useRefAlt) return variant.getChromosomeName() + ":" + variant.getStart() + "_" + variant.getReference() + "/" + variant.getAlt();
 		return variant.getChromosomeName() + ":" + variant.getStart();
 	}
@@ -339,15 +329,9 @@ public abstract class DbVcf {
 				;
 	}
 
-	/**
-	 * Create a hash key
-	 */
-	String key(VcfEntry vcfDbEntry, int altIndex) {
-		if (useRefAlt) {
-			if (altIndex >= 0) return vcfDbEntry.getChromosomeName() + ":" + vcfDbEntry.getStart() + "_" + vcfDbEntry.getRef() + "/" + vcfDbEntry.getAlts()[altIndex];
-			return vcfDbEntry.getChromosomeName() + ":" + vcfDbEntry.getStart() + "_" + vcfDbEntry.getRef() + "/" + vcfDbEntry.getRef();
-		}
-		return vcfDbEntry.getChromosomeName() + ":" + vcfDbEntry.getStart();
+	protected String keyRef(Variant variant) {
+		if (useRefAlt) return variant.getChromosomeName() + ":" + variant.getStart() + "_" + variant.getReference() + "/" + variant.getReference();
+		return variant.getChromosomeName() + ":" + variant.getStart();
 	}
 
 	/**
@@ -357,16 +341,23 @@ public abstract class DbVcf {
 
 	public abstract void readDb(VcfEntry ve);
 
-	public void setInfoFields(List<String> infoFields) {
-		this.infoFields = infoFields;
+	public void setInfoFields(boolean useInfoField, Collection<String> infoFields) {
+		this.useInfoField = useInfoField;
+		useInfoFieldAll = false;
+
+		if (infoFields == null) {
+			this.infoFields = null;
+
+			// We use INFO but do not specify any particular field => Use ALL available INFO fields
+			if (useInfoField) useInfoFieldAll = true;
+		} else {
+			this.infoFields = new HashSet<String>();
+			this.infoFields.addAll(infoFields);
+		}
 	}
 
 	public void setUseId(boolean useId) {
 		this.useId = useId;
-	}
-
-	public void setUseInfoField(boolean useInfoField) {
-		this.useInfoField = useInfoField;
 	}
 
 	public void setUseRefAlt(boolean useRefAlt) {
@@ -374,7 +365,7 @@ public abstract class DbVcf {
 	}
 
 	public int size() {
-		return dbCurrentId.size();
+		return Math.max(dbCurrentId.size(), dbCurrentInfo.size());
 	}
 
 	@Override
@@ -384,24 +375,17 @@ public abstract class DbVcf {
 		// Show IDs
 		sb.append("IDs (size: " + dbCurrentId.size() + "):\n");
 		for (String key : dbCurrentId.keySet())
-			sb.append("\t" + key + "\t" + dbCurrentId.get(key) + "\n");
+			sb.append("\t'" + key + "' : '" + dbCurrentId.get(key) + "'\n");
 
 		// Show INFO
 		sb.append("INFOs:\n");
 		for (String key : dbCurrentInfo.keySet()) {
-			sb.append("\t" + key + "\n");
+			sb.append("\t'" + key + "'\n");
 			Map<String, String> vals = dbCurrentInfo.get(key);
 			for (String ikey : vals.keySet())
-				sb.append("\t\t" + ikey + "\t'" + vals.get(ikey) + "'\n");
+				sb.append("\t\t'" + ikey + "' = '" + vals.get(ikey) + "'\n");
 		}
 
 		return sb.toString();
-	}
-
-	/**
-	 * Update latest chromosome
-	 */
-	protected void updateChromo(VcfEntry vcfEntry) {
-		latestChromo = vcfEntry.getChromosomeName();
 	}
 }
