@@ -13,7 +13,6 @@ import org.junit.runner.JUnitCore;
 public class TestSuiteAll {
 
 	public static void main(String args[]) {
-		// junit.textui.TestRunner.run(suite());
 		JUnitCore.main("ca.mcgill.mcb.pcingola.snpSift.testCases.TestSuiteAll");
 	}
 
