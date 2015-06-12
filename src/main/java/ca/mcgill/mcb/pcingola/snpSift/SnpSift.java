@@ -14,7 +14,6 @@ import ca.mcgill.mcb.pcingola.snpSift.hwe.SnpSiftCmdHwe;
 import ca.mcgill.mcb.pcingola.util.Download;
 import ca.mcgill.mcb.pcingola.util.Gpr;
 import ca.mcgill.mcb.pcingola.util.Timer;
-import flanagan.analysis.Stat;
 
 /**
  * Generic SnpSift tool caller
@@ -63,8 +62,6 @@ public class SnpSift {
 	 * Main
 	 */
 	public static void main(String[] args) {
-		Stat.igSupress(); // Otherwise we can get error messages printed to STDOUT
-
 		SnpSift snpSift = new SnpSift(args, null);
 		snpSift.run();
 	}
