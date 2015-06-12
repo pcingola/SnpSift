@@ -21,9 +21,11 @@ public class TestCasesAnnotate extends TestCase {
 	public static boolean debug = false;
 	public static boolean verbose = false || debug;
 
-	protected String[] defaultExtraArgs = null;
+	protected String[] defaultExtraArgs;
 
 	public TestCasesAnnotate() {
+		String[] memExtraArgs = { "-sorted" };
+		defaultExtraArgs = memExtraArgs;
 	}
 
 	/**
@@ -155,7 +157,7 @@ public class TestCasesAnnotate extends TestCase {
 	/**
 	 * Annotate info fields
 	 */
-	public void test_06() throws IOException {
+	public void test_06() {
 		Gpr.debug("Test");
 		String dbFileName = "./test/db_test_06.vcf";
 		String fileName = "./test/annotate_06.vcf";
@@ -168,7 +170,7 @@ public class TestCasesAnnotate extends TestCase {
 	/**
 	 * Annotate only some info fields
 	 */
-	public void test_07() throws IOException {
+	public void test_07() {
 		Gpr.debug("Test");
 		String dbFileName = "./test/db_test_06.vcf";
 		String fileName = "./test/annotate_06.vcf";
@@ -182,7 +184,7 @@ public class TestCasesAnnotate extends TestCase {
 	/**
 	 * Do not annotate ID column
 	 */
-	public void test_08() throws IOException {
+	public void test_08() {
 		Gpr.debug("Test");
 		String dbFileName = "./test/db_test_06.vcf";
 		String fileName = "./test/annotate_06.vcf";
@@ -194,7 +196,7 @@ public class TestCasesAnnotate extends TestCase {
 	/**
 	 * Annotate only some info fields
 	 */
-	public void test_09() throws IOException {
+	public void test_09() {
 		Gpr.debug("Test");
 		String dbFileName = "./test/db_test_09.vcf";
 		String fileName = "./test/annotate_09.vcf";
@@ -220,7 +222,7 @@ public class TestCasesAnnotate extends TestCase {
 	 * Annotate only some info fields
 	 * @throws IOException
 	 */
-	public void test_11() throws IOException {
+	public void test_11() {
 		Gpr.debug("Test");
 		String dbFileName = "./test/db_test_11.vcf";
 		String fileName = "./test/annotate_11.vcf";
@@ -246,7 +248,7 @@ public class TestCasesAnnotate extends TestCase {
 	/**
 	 * Annotate without REF/ALT fields
 	 */
-	public void test_12() throws IOException {
+	public void test_12() {
 		Gpr.debug("Test");
 		String dbFileName = "./test/db_test_12.vcf";
 		String fileName = "./test/annotate_12.vcf";
@@ -265,7 +267,7 @@ public class TestCasesAnnotate extends TestCase {
 	 *
 	 * @throws IOException
 	 */
-	public void test_13() throws IOException {
+	public void test_13() {
 		Gpr.debug("Test");
 		String dbFileName = "./test/db_test_13.vcf";
 		String fileName = "./test/annotate_13.vcf";
@@ -311,7 +313,7 @@ public class TestCasesAnnotate extends TestCase {
 		VcfEntry ve = results.get(0);
 		if (verbose) System.out.println(ve);
 		String allNum = ve.getInfo("ALL_NUM");
-		Assert.assertEquals("value_C", allNum);
+		Assert.assertEquals("value_REF,value_C", allNum);
 	}
 
 	public void test_16() {
@@ -377,7 +379,7 @@ public class TestCasesAnnotate extends TestCase {
 	/**
 	 * Annotate info fields
 	 */
-	public void test_20() throws IOException {
+	public void test_20() {
 		Gpr.debug("Test");
 		String dbFileName = "./test/db_test_20.vcf";
 		String fileName = "./test/annotate_20.vcf";
@@ -390,7 +392,7 @@ public class TestCasesAnnotate extends TestCase {
 	/**
 	 * Annotate two consecutive variants in the same position
 	 */
-	public void test_21() throws IOException {
+	public void test_21() {
 		Gpr.debug("Test");
 		String dbFileName = "./test/db_test_21.vcf";
 		String fileName = "./test/annotate_21.vcf";
@@ -415,12 +417,187 @@ public class TestCasesAnnotate extends TestCase {
 	/**
 	 * Annotate first base in a chromosome
 	 */
-	public void test_22() throws IOException {
+	public void test_22() {
 		Gpr.debug("Test");
 		String dbFileName = "./test/db_test_2.vcf";
 		String fileName = "./test/annotate_22.vcf";
 		annotate(dbFileName, fileName, null);
 		// We simply check that no exception was thrown
+	}
+
+	/**
+	 * Database has one entry and VCF has multiple ALTs
+	 */
+	public void test_23_allele_specific_annotation_missing_R() {
+		Gpr.debug("Test");
+		String dbFileName = "./test/db_test_23.vcf";
+		String fileName = "./test/annotate_23.vcf";
+		List<VcfEntry> results = annotate(dbFileName, fileName, null);
+
+		// Check results
+		VcfEntry ve = results.get(0);
+		String caf = ve.getInfo("CAF");
+		if (verbose) System.out.println(ve + "\n\tCAF: " + caf);
+		Assert.assertEquals("0.9642,.,0.03581", caf);
+
+	}
+
+	/**
+	 * Annotate using "-name" to prepend a name to VCF fields (e.g. "AA" -> "PREPEND_AA")
+	 * Header should be added changing the ID accordingly
+	 */
+	public void test_24() {
+		Gpr.debug("Test");
+
+		String dbFileName = "./test/db_test_24.vcf";
+		String fileName = "./test/annotate_24.vcf";
+		String infoName = "PREPEND_";
+		String extraArgs[] = { "-name", infoName };
+
+		// Annotate
+		String out = annotateOut(dbFileName, fileName, extraArgs);
+
+		// Make sure output header for "PREPEND_AA"  and "PREPEND_BB" are present ONLY ONCE.
+		if (verbose) System.out.println(out);
+		int hasAa = 0, hasBb = 0, hasCc = 0;
+		for (String line : out.split("\n")) {
+			if (line.startsWith("##INFO=<ID=PREPEND_AA")) hasAa++;
+			if (line.startsWith("##INFO=<ID=PREPEND_BB")) hasBb++;
+			if (line.startsWith("##INFO=<ID=PREPEND_CC")) hasCc++;
+		}
+
+		Assert.assertEquals(1, hasAa);
+		Assert.assertEquals(1, hasBb);
+		Assert.assertEquals(1, hasCc);
+	}
+
+	/**
+	 * Annotate using "-name" to prepend a name to VCF fields (e.g. "AA" -> "PREPEND_AA")
+	 * Header should be added changing the ID accordingly
+	 */
+	public void test_25() {
+		Gpr.debug("Test");
+
+		String dbFileName = "./test/db_test_24.vcf";
+		String fileName = "./test/annotate_24.vcf";
+		String infoName = "PREPEND_";
+		String extraArgs[] = { "-name", infoName, "-info", "AA,BB" }; // Note: We don't include 'CC' annotation
+
+		// Annotate
+		String out = annotateOut(dbFileName, fileName, extraArgs);
+
+		// Make sure output header for "PREPEND_AA"  and "PREPEND_BB" are present ONLY ONCE.
+		if (verbose) System.out.println(out);
+		int hasAa = 0, hasBb = 0, hasCc = 0;
+		for (String line : out.split("\n")) {
+			if (line.startsWith("##INFO=<ID=PREPEND_AA")) hasAa++;
+			if (line.startsWith("##INFO=<ID=PREPEND_BB")) hasBb++;
+			if (line.startsWith("##INFO=<ID=PREPEND_CC")) hasCc++;
+		}
+
+		Assert.assertEquals(1, hasAa);
+		Assert.assertEquals(1, hasBb);
+		Assert.assertEquals(0, hasCc); // This onw should NOT be present
+	}
+
+	/**
+	 * Annotate ID using entries that are duplicated in db.vcf
+	 */
+	public void test_26_repeat_db_entry() {
+		Gpr.debug("Test");
+
+		String dbFileName = "./test/db_test_26.vcf";
+		String fileName = "./test/annotate_26.vcf";
+		annotateTest(dbFileName, fileName);
+	}
+
+	/**
+	 * Annotate INFO fields using entries that are duplicated in db.vcf
+	 */
+	public void test_27_repeat_db_entry() {
+		Gpr.debug("Test");
+
+		String dbFileName = "./test/db_test_27.vcf";
+		String fileName = "./test/annotate_27.vcf";
+		List<VcfEntry> res = annotate(dbFileName, fileName, null);
+		for (VcfEntry ve : res) {
+			if (verbose) System.out.println(ve);
+			Assert.assertEquals("121964859,45578238", ve.getInfo("RS"));
+		}
+	}
+
+	/**
+	 * Annotate if a VCF entry exists in the database file
+	 */
+	public void test_28_exists() {
+		Gpr.debug("Test");
+
+		String dbFileName = "./test/db_test_28.vcf";
+		String fileName = "./test/annotate_28.vcf";
+		String args[] = { "-exists", "EXISTS" };
+
+		List<VcfEntry> res = annotate(dbFileName, fileName, args);
+		for (VcfEntry ve : res) {
+			if (verbose) System.out.println(ve);
+
+			// Check
+			if (ve.getStart() == 201331098) Assert.assertTrue("Existing VCF entry has not been annotated", ve.hasInfo("EXISTS"));
+			else Assert.assertFalse("Non-existing VCF entry has been annotated", ve.hasInfo("EXISTS"));
+		}
+	}
+
+	/**
+	 * Annotate if a VCF entry's ID might have multiple repeated entries
+	 */
+	public void test_29_repeated_IDs() {
+		Gpr.debug("Test");
+
+		String dbFileName = "./test/db_test_29.vcf";
+		String fileName = "./test/annotate_29.vcf";
+		String args[] = { "-exists", "EXISTS" };
+
+		List<VcfEntry> res = annotate(dbFileName, fileName, args);
+		for (VcfEntry ve : res) {
+			if (verbose) System.out.println(ve);
+
+			// Check
+			if (ve.getStart() == 838418) Assert.assertEquals("rs1130678", ve.getId());
+			else if (ve.getStart() == 49545) Assert.assertEquals("rs62075716", ve.getId());
+			else if (ve.getStart() == 109567) Assert.assertEquals("rs62076738", ve.getId());
+			else throw new RuntimeException("Position not found: " + ve.getStart());
+		}
+	}
+
+	/**
+	 * Issue when database has REF several variants which have to
+	 * be converted into minimal representation
+	 */
+	public void test_31_annotate_minimal_representation_db() {
+		Gpr.debug("Test");
+		String dbFileName = "./test/db_test_31.vcf";
+		String fileName = "./test/annotate_31.vcf";
+		annotateTest(dbFileName, fileName);
+	}
+
+	/**
+	 * Issue when query has REF several variants which have to
+	 * be converted into minimal representation
+	 */
+	public void test_32_annotate_minimal_representation_input() {
+		Gpr.debug("Test");
+		String dbFileName = "./test/db_test_32.vcf";
+		String fileName = "./test/annotate_32.vcf";
+		annotateTest(dbFileName, fileName);
+	}
+
+	/**
+	 * Empty database
+	 */
+	public void test_33_empty_db() {
+		Gpr.debug("Test");
+		String dbFileName = "./test/db_test_33.vcf";
+		String fileName = "./test/annotate_33.vcf";
+		annotateTest(dbFileName, fileName);
 	}
 
 }

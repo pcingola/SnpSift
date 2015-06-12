@@ -1,0 +1,4 @@
+##INFO=<ID=AA,Number=1,Type=String,Description="Some made up info">
+##INFO=<ID=BB,Number=1,Type=String,Description="Some made up info">
+##INFO=<ID=CC,Number=1,Type=String,Description="Some made up info">
+1	872687	rs76166080	C	G	0	.	AA=Field_Value;BB=AnotherValue

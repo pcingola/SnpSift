@@ -6,7 +6,8 @@ import java.util.List;
 
 import ca.mcgill.mcb.pcingola.fileIterator.VcfFileIterator;
 import ca.mcgill.mcb.pcingola.snpSift.lang.LangFactory;
-import ca.mcgill.mcb.pcingola.snpSift.lang.expression.Field;
+import ca.mcgill.mcb.pcingola.snpSift.lang.Value;
+import ca.mcgill.mcb.pcingola.snpSift.lang.expression.Expression;
 import ca.mcgill.mcb.pcingola.snpSift.lang.expression.FieldIterator;
 import ca.mcgill.mcb.pcingola.vcf.VcfEntry;
 
@@ -22,8 +23,8 @@ public class SnpSiftCmdExtractFields extends SnpSift {
 	String vcfFile;
 	String sameFieldSeparator; // Separate within field
 	String emptyFieldString; // Use this string in case of empty results
-	ArrayList<String> fieldNames;
-	ArrayList<Field> fields;
+	List<String> expressionStrs;
+	List<Expression> expressions;
 
 	public SnpSiftCmdExtractFields(String args[]) {
 		super(args, "extractFields");
@@ -32,20 +33,21 @@ public class SnpSiftCmdExtractFields extends SnpSift {
 	/**
 	 * Iterate over all possible 'FieldIterator' values until one 'true' is found, otherwise return false.
 	 */
-	String evaluate(Field field, VcfEntry vcfEntry) {
+	String evaluate(Expression expr, VcfEntry vcfEntry) {
 		FieldIterator fieldIterator = FieldIterator.get();
 		fieldIterator.reset();
 
 		StringBuilder values = new StringBuilder();
 		do {
 			// Get value
-			String value = field.getFieldString(vcfEntry);
+			Value value = expr.eval(vcfEntry);
 
 			// Separate
 			if (values.length() > 0) values.append(sameFieldSeparator);
 
 			// Append values
-			if (value == null || value.isEmpty()) values.append(emptyFieldString);
+			String valStr = value.asString();
+			if (valStr == null || valStr.isEmpty()) values.append(emptyFieldString);
 			else values.append(value);
 
 			// Iterate?
@@ -70,7 +72,7 @@ public class SnpSiftCmdExtractFields extends SnpSift {
 	public void parse(String[] args) {
 		if (args.length == 0) usage(null);
 
-		fieldNames = new ArrayList<String>();
+		expressionStrs = new ArrayList<String>();
 		for (int i = 0; i < args.length; i++) {
 			String arg = args[i];
 
@@ -80,29 +82,28 @@ public class SnpSiftCmdExtractFields extends SnpSift {
 			} else {
 				// Non-option parameters
 				if (vcfFile == null) vcfFile = arg; // VCF file
-				else fieldNames.add(arg); // Read all field names expressions
+				else expressionStrs.add(arg); // Read all field names expressions
 			}
 		}
 
-		if (fieldNames.isEmpty()) usage("Missing field names");
+		if (expressionStrs.isEmpty()) usage("Missing field names");
 	}
 
 	/**
 	 * Parse fields
 	 */
-	ArrayList<Field> parseFields(ArrayList<String> fieldNames) {
-		ArrayList<Field> fields = new ArrayList<Field>();
-		for (String fieldName : fieldNames) {
+	List<Expression> parseFields(List<String> expressionsStr) {
+		List<Expression> fields = new ArrayList<Expression>();
+		for (String exprStr : expressionsStr) {
 			// Parse and create field
 			// Field field = new Field(fieldName);
 			LangFactory lf = new LangFactory();
-			Field field;
+			Expression field;
 			try {
-				field = lf.parseField(fieldName);
+				field = lf.compile(exprStr);
 			} catch (Exception e) {
-				throw new RuntimeException("Error parsing field '" + fieldName + "'", e);
+				throw new RuntimeException("Error parsing expression '" + exprStr + "'", e);
 			}
-			field.setExceptionIfNotFound(false); // Otherwise exceptions are thrown
 			fields.add(field);
 		}
 		return fields;
@@ -120,12 +121,12 @@ public class SnpSiftCmdExtractFields extends SnpSift {
 		LinkedList<String> list = new LinkedList<String>();
 
 		// Parse fiels
-		fields = parseFields(fieldNames);
+		expressions = parseFields(expressionStrs);
 
 		// Show title
 		if (!createList) {
 			String sep = "#";
-			for (String fieldName : fieldNames) {
+			for (String fieldName : expressionStrs) {
 				System.out.print(sep + fieldName);
 				sep = "\t";
 			}
@@ -140,7 +141,7 @@ public class SnpSiftCmdExtractFields extends SnpSift {
 
 		for (VcfEntry ve : vcf) {
 			StringBuilder out = new StringBuilder();
-			for (Field f : fields) {
+			for (Expression f : expressions) {
 				String val = evaluate(f, ve);
 				out.append(val + "\t");
 			}
@@ -171,7 +172,7 @@ public class SnpSiftCmdExtractFields extends SnpSift {
 				+ "\nOptions:" //
 				+ "\n\t-s     : Same field separator. Default: '" + sameFieldSeparator + "'" //
 				+ "\n\t-e     : Empty field. Default: '" + emptyFieldString + "'" //
-		);
+				);
 
 		System.exit(1);
 	}

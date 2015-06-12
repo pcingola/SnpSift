@@ -22,6 +22,7 @@ public class TestSuiteAll {
 
 		suite.addTestSuite(TestCasesFilter.class);
 		suite.addTestSuite(TestCasesFilterALL.class);
+		suite.addTestSuite(TestCasesFilterGt.class);
 		suite.addTestSuite(TestCasesHwe.class);
 		suite.addTestSuite(TestCasesLd.class);
 		suite.addTestSuite(TestCasesCaseControl.class);

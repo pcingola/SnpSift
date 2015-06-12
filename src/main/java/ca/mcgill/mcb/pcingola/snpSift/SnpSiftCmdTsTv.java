@@ -1,7 +1,11 @@
 package ca.mcgill.mcb.pcingola.snpSift;
 
 import ca.mcgill.mcb.pcingola.fileIterator.VcfFileIterator;
+import ca.mcgill.mcb.pcingola.stats.AlleleCountStats;
+import ca.mcgill.mcb.pcingola.stats.HomHetStats;
 import ca.mcgill.mcb.pcingola.stats.TsTvStats;
+import ca.mcgill.mcb.pcingola.stats.VariantTypeStats;
+import ca.mcgill.mcb.pcingola.util.Gpr;
 import ca.mcgill.mcb.pcingola.util.Timer;
 import ca.mcgill.mcb.pcingola.vcf.VcfEntry;
 
@@ -12,10 +16,13 @@ import ca.mcgill.mcb.pcingola.vcf.VcfEntry;
  */
 public class SnpSiftCmdTsTv extends SnpSift {
 
-	public static final int SHOW_EVERY = 1000;
+	public static final int SHOW_EVERY = 1;
 	public static final int SHOW_EVERY_NL = 100 * SHOW_EVERY;
 
 	TsTvStats tsTvStats;
+	HomHetStats homHetStats;
+	AlleleCountStats alleleCountStats;
+	VariantTypeStats variantTypeStats;
 	String vcfFileName;
 
 	public SnpSiftCmdTsTv(String[] args) {
@@ -50,10 +57,13 @@ public class SnpSiftCmdTsTv extends SnpSift {
 	public void run() {
 		Timer.showStdErr("Analysing '" + vcfFileName + "'");
 
-		tsTvStats = new TsTvStats(); // Create stats object
+		// Create stats objects
+		tsTvStats = new TsTvStats();
+		homHetStats = new HomHetStats();
+		alleleCountStats = new AlleleCountStats();
+		variantTypeStats = new VariantTypeStats();
 
 		VcfFileIterator vcfFile = new VcfFileIterator(vcfFileName);
-		vcfFile.setCreateChromos(true); // Create chromosomes when needed
 		vcfFile.setDebug(debug);
 
 		// Read all vcfEntries
@@ -61,13 +71,15 @@ public class SnpSiftCmdTsTv extends SnpSift {
 		for (VcfEntry vcfEntry : vcfFile) {
 			try {
 				entryNum++;
+
+				// Perform all stats
 				tsTvStats.sample(vcfEntry);
+				homHetStats.sample(vcfEntry);
+				alleleCountStats.sample(vcfEntry);
+				variantTypeStats.sample(vcfEntry);
 
 				// Show progress
-				if (entryNum % SHOW_EVERY == 0) {
-					if (entryNum % SHOW_EVERY_NL == 0) System.err.println('.');
-					else System.err.print('.');
-				}
+				Gpr.showMark(entryNum, 1);
 
 			} catch (Throwable t) {
 				error(t, "Error while processing VCF entry (line " + vcfFile.getLineNum() + ") :\n\t" + vcfEntry + "\n" + t);
@@ -75,8 +87,19 @@ public class SnpSiftCmdTsTv extends SnpSift {
 
 		}
 
-		System.err.println("");
+		// Show results
+		System.out.println("\nTS/TV stats:");
 		System.out.println(tsTvStats);
+
+		System.out.println("\nHom/Het stats:");
+		System.out.println(homHetStats);
+
+		System.out.println("\nVariant type stats:");
+		System.out.println(variantTypeStats);
+
+		System.out.println("\nAllele count stats:");
+		System.out.println(alleleCountStats);
+
 		Timer.showStdErr("Done");
 	}
 

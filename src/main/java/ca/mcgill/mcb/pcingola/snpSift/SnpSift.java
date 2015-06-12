@@ -51,7 +51,7 @@ public class SnpSift {
 	protected String vcfInputFile; // VCF Input file
 	protected String dbFileName;
 	protected String dbType;
-	protected int numWorkers = Gpr.NUM_CORES; // Max number of threads (if multi-threaded version is available)
+	protected int numWorkers = 1; //  Max number of threads (if multi-threaded version is available)
 	protected StringBuilder output = new StringBuilder();
 	protected HashMap<String, Integer> errCount;
 	protected String configFile; // Config file
@@ -203,7 +203,7 @@ public class SnpSift {
 		// Read config file
 		if (configFile == null || configFile.isEmpty()) configFile = Config.DEFAULT_CONFIG_FILE; // Default config file
 		if (verbose) Timer.showStdErr("Reading configuration file '" + configFile + "'");
-		config = new Config("", configFile, dataDir); // Read configuration
+		config = new Config("", configFile, dataDir, null); // Read configuration
 		if (verbose) Timer.showStdErr("done");
 	}
 
@@ -252,6 +252,10 @@ public class SnpSift {
 				if (args.length <= i) usage("Missing argument for command line option '-cpus'");
 				numWorkers = Gpr.parseIntSafe(args[++i]);
 				if (numWorkers <= 0) usage("Error: Number of cpus must be positive");
+			} else if (arg.equalsIgnoreCase("-version")) {
+				// Show version number and exit
+				System.out.println(VERSION_SHORT);
+				System.exit(0);
 			} else argsList.add(args[i]);
 		}
 
@@ -386,8 +390,10 @@ public class SnpSift {
 	 */
 	public void showCmd() {
 		System.err.print(SnpSift.class.getSimpleName() + " " + command + " ");
-		for (String a : args)
-			System.err.print(a + " ");
+		if (args != null) {
+			for (String a : args)
+				System.err.print(a + " ");
+		}
 		System.err.println("");
 	}
 
@@ -474,7 +480,7 @@ public class SnpSift {
 		System.err.println("\nOptions common to all SnpSift commands:\n" //
 				+ (needsConfig ? "\t-c , -config <file>  : Specify config file\n" : "") //
 				+ "\t-d                   : Debug.\n" //
-				+ (needsDb ? "\t-db <file>           : Databse file name (for commands that require datbases).\n" : "") //
+				+ (needsDb ? "\t-db <file>           : Database file name (for commands that require databases).\n" : "") //
 				+ "\t-download            : Download database, if not available locally. Default: " + download + ".\n" //
 				+ "\t-noDownload          : Do not download a database, if not available locally.\n" //
 				+ "\t-noLog               : Do not report usage statistics to server.\n" //

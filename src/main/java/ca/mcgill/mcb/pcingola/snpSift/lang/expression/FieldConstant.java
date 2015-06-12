@@ -4,7 +4,7 @@ import ca.mcgill.mcb.pcingola.vcf.VcfInfoType;
 
 /**
  * A 'constant' field: e.g. 'NaN', 'Inf'
- * 
+ *
  * @author pablocingolani
  */
 public class FieldConstant extends Field {
@@ -20,8 +20,6 @@ public class FieldConstant extends Field {
 
 	/**
 	 * Create fields from constant names
-	 * @param name
-	 * @return
 	 */
 	public static Field factory(String name) {
 		if (!isConstantField(name)) throw new RuntimeException("Unknown constant name '" + name + "'");
@@ -41,8 +39,6 @@ public class FieldConstant extends Field {
 
 	/**
 	 * Is this string a constant's name?
-	 * @param name
-	 * @return
 	 */
 	public static boolean isConstantField(String name) {
 		for (FieldConstantNames fcn : FieldConstantNames.values())

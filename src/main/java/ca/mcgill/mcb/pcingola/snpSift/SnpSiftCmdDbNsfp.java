@@ -2,9 +2,12 @@ package ca.mcgill.mcb.pcingola.snpSift;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import ca.mcgill.mcb.pcingola.fileIterator.DbNsfpEntry;
 import ca.mcgill.mcb.pcingola.fileIterator.DbNsfpFileIterator;
@@ -56,6 +59,7 @@ public class SnpSiftCmdDbNsfp extends SnpSift {
 	protected Map<String, String> fieldsType;
 	protected boolean annotateEmpty; // Annotate empty fields as well?
 	protected boolean collapseRepeatedValues; // Collapse values if repeated?
+	protected boolean inverseFieldSelection; // Inverse field selection
 	protected boolean tabixCheck = true;
 	protected String vcfFileName;
 	protected int count = 0;
@@ -90,6 +94,9 @@ public class SnpSiftCmdDbNsfp extends SnpSift {
 		}
 	}
 
+	/**
+	 * Annotate a VCF file using dbNSFP
+	 */
 	ArrayList<VcfEntry> annotate(boolean createList) {
 		ArrayList<VcfEntry> list = (createList ? new ArrayList<VcfEntry>() : null);
 
@@ -101,6 +108,7 @@ public class SnpSiftCmdDbNsfp extends SnpSift {
 		}
 
 		// Annotate VCF file
+		if (verbose) Timer.showStdErr("Annotating file '" + vcfFileName + "'");
 		boolean showHeader = true;
 		int pos = -1;
 		String chr = "";
@@ -158,7 +166,7 @@ public class SnpSiftCmdDbNsfp extends SnpSift {
 	}
 
 	/**
-	 * Annotate a vcf entry
+	 * Annotate a VCF entry
 	 */
 	public void annotate(VcfEntry vcf) throws IOException {
 		// Find in database
@@ -216,7 +224,6 @@ public class SnpSiftCmdDbNsfp extends SnpSift {
 
 	/**
 	 * Check that all fields to add are available
-	 * @throws IOException
 	 */
 	public void checkFieldsToAdd() throws IOException {
 		// Check that all fields have a descriptor (used in VCF header)
@@ -343,8 +350,28 @@ public class SnpSiftCmdDbNsfp extends SnpSift {
 		dbNsfpFile.setCollapseRepeatedValues(collapseRepeatedValues);
 		if (tabixCheck && !dbNsfpFile.isTabix()) fatalError("Tabix index not found for database '" + dbFileName + "'.\n\t\tSnpSift dbNSFP only works with tabix indexed databases, please create or download index.");
 
+		//---
 		// Guess data types
-		dbNsfpFile.guessVcfTypes();
+		//---
+		if (verbose) Timer.showStdErr("Guessing data types");
+
+		if (!dbNsfpFile.guessVcfTypes(verbose)) {
+			// Show missing types
+			if (verbose) {
+				String fnames[] = dbNsfpFile.getFieldNamesSorted();
+				VcfInfoType[] types = dbNsfpFile.getTypes();
+				Timer.showStdErr("Some data types are missing (using 'string')");
+				for (int i = 0; i < fnames.length; i++)
+					if (types[i] == null) System.err.println("\tColumn " + (i + 1) + "\t" + fnames[i]);
+			}
+
+			// Force missing types as strings
+			dbNsfpFile.forceMissingTypesAsString();
+		}
+
+		//---
+		// Fields to use
+		//---
 		VcfInfoType types[] = dbNsfpFile.getTypes();
 		String fieldNames[] = dbNsfpFile.getFieldNamesSorted();
 		for (int i = 0; i < fieldNames.length; i++) {
@@ -352,21 +379,61 @@ public class SnpSiftCmdDbNsfp extends SnpSift {
 			fieldsType.put(fieldNames[i], type);
 			fieldsDescription.put(fieldNames[i], "Field '" + fieldNames[i] + "' from dbNSFP");
 		}
+		if (verbose) Timer.showStdErr("Done");
 
 		currentDbEntry = null;
 
+		//---
 		// No field names specified? Use default
-		if (fieldsNamesToAdd == null) fieldsNamesToAdd = DEFAULT_FIELDS_NAMES_TO_ADD;
-		for (String fn : fieldsNamesToAdd.split(",")) {
-			if (fieldsDescription.get(fn) == null) usage("Error: Field name '" + fn + "' not found");
-			fieldsToAdd.put(fn, fieldsDescription.get(fn));
+		//---
+		if (inverseFieldSelection) {
+			// Inverted selection: Start with ALL fields and then remove the ones selected
+
+			// Add all fields
+			Set<String> fields = new HashSet<String>();
+			fields.addAll(fieldsDescription.keySet());
+
+			// Remove selected fields
+			if (fieldsNamesToAdd != null) {
+				for (String fn : fieldsNamesToAdd.split(","))
+					fields.remove(fn);
+			}
+
+			// Sort
+			ArrayList<String> fieldsSort = new ArrayList<String>();
+			fieldsSort.addAll(fields);
+			Collections.sort(fieldsSort);
+
+			// Fields to be added
+			for (String fn : fieldsSort)
+				fieldsToAdd.put(fn, fieldsDescription.get(fn));
+
+		} else {
+
+			// No fields specified? Use default list of fields to add
+			if (fieldsNamesToAdd == null) fieldsNamesToAdd = DEFAULT_FIELDS_NAMES_TO_ADD;
+
+			// Add them to the list
+			for (String fn : fieldsNamesToAdd.split(",")) {
+				if (fieldsDescription.get(fn) == null) usage("Error: Field name '" + fn + "' not found");
+				fieldsToAdd.put(fn, fieldsDescription.get(fn));
+			}
+		}
+
+		// Show selected fields
+		if (verbose) {
+			ArrayList<String> fieldsSort = new ArrayList<String>();
+			fieldsSort.addAll(fieldsToAdd.keySet());
+			Collections.sort(fieldsSort);
+
+			Timer.showStdErr("Fields to add:");
+			for (String fn : fieldsSort)
+				System.err.println("\t\t\t" + fn);
 		}
 	}
 
 	/**
 	 * Are all values empty?
-	 * @param values
-	 * @return
 	 */
 	boolean isDbNsfpValueEmpty(String values) {
 		// Single value check
@@ -393,6 +460,7 @@ public class SnpSiftCmdDbNsfp extends SnpSift {
 			else if (arg.equals("-f")) fieldsNamesToAdd = args[++i]; // Filed to be used
 			else if (arg.equalsIgnoreCase("-noCollapse")) collapseRepeatedValues = false;
 			else if (arg.equalsIgnoreCase("-collapse")) collapseRepeatedValues = true;
+			else if (arg.equalsIgnoreCase("-n")) inverseFieldSelection = true;
 			else {
 				if (vcfFileName == null) vcfFileName = arg;
 				else usage("Unknown extra parameter '" + arg + "'");
@@ -449,6 +517,7 @@ public class SnpSiftCmdDbNsfp extends SnpSift {
 				+ "\t-a            : Annotate fields, even if the database has an empty value (annotates using '.' for empty).\n" //
 				+ "\t-collapse     : Collapse repeated values from dbNSFP. Default: " + collapseRepeatedValues + "\n" //
 				+ "\t-noCollapse   : Switch off 'collapsing' repeated values from dbNSFP. Default: " + !collapseRepeatedValues + "\n" //
+				+ "\t-n            : Invert 'fields to add' selection (i.e. use all fields except the ones specified in option '-f').\n" //
 				+ "\t-f            : A comma separated list of fields to add.\n" //
 				+ "\t                Default fields to add:\n" + sb //
 		);

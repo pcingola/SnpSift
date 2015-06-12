@@ -71,7 +71,7 @@ public class ZzzAffectedSamples {
 			for (VcfEffect veff : ve.parseEffects()) {
 				if ((veff.getImpact() == VariantEffect.EffectImpact.HIGH) || (veff.getImpact() == VariantEffect.EffectImpact.MODERATE)) {
 					//if (veff.getImpact() == ChangeEffect.EffectImpact.HIGH) {
-					String geneName = ve.getChromosomeName() + "\t" + veff.getGene();
+					String geneName = ve.getChromosomeName() + "\t" + veff.getGeneName();
 
 					// Do not count twice
 					VariantCounter variantCounter = getVarCounter(geneName, ve);

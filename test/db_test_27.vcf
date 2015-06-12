@@ -1,0 +1,3 @@
+##INFO=<ID=RS,Number=1,Type=Integer,Description="Chr position reported in dbSNP">
+1	201331098	rs121964859	ATCT	A	.	.	RS=121964859
+1	201331098	rs45578238	ATCT	A	.	.	RS=45578238

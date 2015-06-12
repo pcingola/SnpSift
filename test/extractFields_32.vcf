@@ -1,0 +1,5 @@
+##SnpEffVersion="4.1alpha (build 2015-01-04), by Pablo Cingolani"
+##SnpEffCmd="SnpEff  testHg3775Chr1 test03.vcf "
+##INFO=<ID=ANN,Number=.,Type=String,Description="Functional annotations: 'Allele | Annotation | Annotation_Impact | Gene_Name | Gene_ID | Feature_Type | Feature_ID | Transcript_BioType | Rank | HGVS.c | HGVS.p | cDNA.pos / cDNA.length | CDS.pos / CDS.length | AA.pos / AA.length | Distance | ERRORS / WARNINGS / INFO' ">
+#CHROM	POS	ID	REF	ALT	QUAL	FILTER	INFO
+1	69134	.	A	G	0.0	SVM	NS=157;ANN=G|missense_variant|MODERATE|OR4F5|ENSG00000186092|transcript|ENST00000335137|protein_coding|1/1|c.44A>G|p.Glu15Gly|44/918|44/918|15/305||

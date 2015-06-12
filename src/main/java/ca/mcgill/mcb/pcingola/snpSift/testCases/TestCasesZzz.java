@@ -1,6 +1,5 @@
 package ca.mcgill.mcb.pcingola.snpSift.testCases;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,15 +17,18 @@ import ca.mcgill.mcb.pcingola.vcf.VcfEntry;
 public class TestCasesZzz extends TestCase {
 
 	public static boolean debug = false;
-	public static boolean verbose = false || debug;
+	public static boolean verbose = true || debug;
 
-	protected String[] defaultExtraArgs = null;
+	//	protected String[] defaultExtraArgs = null;
+	//	protected String[] defaultExtraArgs = { "-sorted" };
+	//	protected String[] defaultExtraArgs = { "-tabix" };
+	protected String[] defaultExtraArgs = { "-mem" };
 
 	/**
 	 * Annotate
 	 */
 	public List<VcfEntry> annotate(String dbFileName, String fileName, String[] extraArgs) {
-		System.out.println("Annotate: " + dbFileName + "\t" + fileName);
+		if (verbose) System.out.println("Annotate: " + dbFileName + "\t" + fileName);
 
 		// Create command line
 		String args[] = argsList(dbFileName, fileName, extraArgs);
@@ -48,7 +50,7 @@ public class TestCasesZzz extends TestCase {
 	 * Annotate and return STDOUT as a string
 	 */
 	public String annotateOut(String dbFileName, String fileName, String[] extraArgs) {
-		System.out.println("Annotate: " + dbFileName + "\t" + fileName);
+		if (verbose) System.out.println("Annotate: " + dbFileName + "\t" + fileName);
 
 		// Create command line
 		String args[] = argsList(dbFileName, fileName, extraArgs);
@@ -86,7 +88,7 @@ public class TestCasesZzz extends TestCase {
 				if (expectedIds.equals(".")) expectedIds = "";
 
 				// Compare
-				Assert.assertEquals(expectedIds, idstr);
+				Assert.assertEquals("Expected ID does not match annotated ID", expectedIds, idstr);
 			} else fail("EXP_IDS (expected ids) INFO field missing in " + fileName + ", entry:\n" + vcf);
 		}
 	}
@@ -110,34 +112,27 @@ public class TestCasesZzz extends TestCase {
 	}
 
 	/**
-	 * Annotate two consecutive variants in the same position
+	 * Issue when database has REF including 'N' bases
+	 * WARNING: FIXING THIS REQUIRES A MAJOR CHANGE IN TH WAY WE ANNOTATE
+	 *          VARIANTS (WON'T FIX NOW, BUT NEEDS TO BE FIXED IN THE FUTURE)
 	 */
-	public void test_21() throws IOException {
-		// !!!!!!!!!!!!!!!!!!
-		// FIXME: bgzip not installed in my laptop, could not test tabix version
-		// !!!!!!!!!!!!!!!!!!
-		String[] memExtraArgs = { "-tabix" };
-		defaultExtraArgs = memExtraArgs;
-
+	public void test_30_annotate_N_ALT_in_db() {
 		Gpr.debug("Test");
-		String dbFileName = "./test/db_test_21.vcf";
-		String fileName = "./test/annotate_21.vcf";
-		List<VcfEntry> results = annotate(dbFileName, fileName, null);
-
-		// Third entry is the one not being annotated
-
-		// Check third entry
-		VcfEntry ve = results.get(2);
-		String ann = ve.getInfo("clinvar_db");
-		if (debug) Gpr.debug("Annotation: '" + ann + "'");
-		Assert.assertNotNull(ann);
-
-		// Check second entry
-		ve = results.get(1);
-		ann = ve.getInfo("clinvar_db");
-		if (debug) Gpr.debug("Annotation: '" + ann + "'");
-		Assert.assertNotNull(ann);
-
+		String dbFileName = "./test/db_test_30.vcf";
+		String fileName = "./test/annotate_30.vcf";
+		annotateTest(dbFileName, fileName);
 	}
+
+	//	/**
+	//	 * Issue when database has REF including 'N' bases
+	//	 * WARNING: FIXING THIS REQUIRES A MAJOR CHANGE IN TH WAY WE ANNOTATE
+	//	 *          VARIANTS (WON'T FIX NOW, BUT NEEDS TO BE FIXED IN THE FUTURE)
+	//	 */
+	//	public void test_34_annotate_N_reference_in_db() {
+	//		Gpr.debug("Test");
+	//		String dbFileName = "./test/db_test_34.vcf";
+	//		String fileName = "./test/annotate_34.vcf";
+	//		annotateTest(dbFileName, fileName);
+	//	}
 
 }

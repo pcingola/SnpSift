@@ -3,37 +3,41 @@ package ca.mcgill.mcb.pcingola.snpSift.lang.expression;
 import java.util.List;
 
 import ca.mcgill.mcb.pcingola.snpSift.lang.expression.FieldIterator.IteratorType;
+import ca.mcgill.mcb.pcingola.vcf.EffFormatVersion;
 import ca.mcgill.mcb.pcingola.vcf.VcfEffect;
-import ca.mcgill.mcb.pcingola.vcf.VcfEffect.FormatVersion;
 import ca.mcgill.mcb.pcingola.vcf.VcfEntry;
+import ca.mcgill.mcb.pcingola.vcf.VcfHeader;
+import ca.mcgill.mcb.pcingola.vcf.VcfHeaderInfo;
+import ca.mcgill.mcb.pcingola.vcf.VcfInfoType;
 
 /**
  * An 'EFF' field form SnpEff:
- * 
+ *
  * E.g.:  'EFF[2].GENE'
- * 
+ *
  * @author pablocingolani
  */
 public class FieldEff extends FieldSub {
 
-	int fieldNum = -1;
-	FormatVersion formatVersion = null;
+	String fieldName;
+	EffFormatVersion formatVersion = null;
 
 	/**
 	 * Constructor
 	 * @param formatVersion : Can be null (it will be guessed)
 	 */
-	public FieldEff(String name, int index, FormatVersion formatVersion) {
-		super("EFF." + name, index); // Add an 'EFF.' at the beginning
+	public FieldEff(String name, Expression idxExpr, EffFormatVersion formatVersion, String fieldName) {
+		super(name, idxExpr);
 		this.formatVersion = formatVersion;
+		this.fieldName = fieldName.toUpperCase();
 	}
 
 	/**
-	 * Get field number by name
+	 * Should this be 'EFF' or 'ANN'?
 	 */
-	int fieldNum(String name, VcfEffect eff) {
-		if (formatVersion == null) formatVersion = eff.formatVersion();
-		return VcfEffect.fieldNum(name, formatVersion);
+	String annEff() {
+		if (formatVersion == null) return fieldName;
+		return (formatVersion.isAnn() ? "ANN" : "EFF");
 	}
 
 	/**
@@ -44,6 +48,9 @@ public class FieldEff extends FieldSub {
 		// Get all effects
 		List<VcfEffect> effects = vcfEntry.parseEffects(formatVersion);
 		if (effects.size() <= 0) return null;
+
+		// Find index value
+		int index = evalIndex(vcfEntry);
 
 		// Find field
 		if (index >= effects.size()) return null;
@@ -58,18 +65,7 @@ public class FieldEff extends FieldSub {
 
 		// Find sub-field
 		VcfEffect eff = effects.get(idx);
-		if (eff == null) return (String) fieldNotFound(vcfEntry);
-
-		// Field number not set? Try to guess it
-		if (fieldNum < 0) {
-			fieldNum = fieldNum(name, eff);
-			if (fieldNum < 0) throw new RuntimeException("No such EFF subfield '" + name + "'");
-		}
-
-		eff.formatVersion();
-
-		String value = eff.get(fieldNum);
-		if (value == null) return (String) fieldNotFound(vcfEntry);
+		String value = getSubField(eff, vcfEntry);
 		return value;
 	}
 
@@ -79,7 +75,38 @@ public class FieldEff extends FieldSub {
 	}
 
 	@Override
+	public VcfInfoType getReturnType(VcfEntry vcfEntry) {
+		if (name == null) return VcfInfoType.String;
+		if (returnType != VcfInfoType.UNKNOWN) return returnType;
+
+		VcfHeader vcfHeader = vcfEntry.getVcfFileIterator().getVcfHeader();
+
+		// Is there a field 'name'
+		String headerName = annEff() + "." + name;
+		VcfHeaderInfo vcfInfo = vcfHeader.getVcfInfo(headerName);
+		if (vcfInfo != null) returnType = vcfInfo.getVcfInfoType();
+		else throw new RuntimeException("Sub-field '" + headerName + "' not found in VCF header");
+
+		return returnType;
+	}
+
+	/**
+	 * Find sub-field
+	 */
+	String getSubField(VcfEffect eff, VcfEntry vcfEntry) {
+		if (eff == null) return (String) fieldNotFound(vcfEntry);
+
+		// No sub-field? => Use the whole field
+		if (name == null) return eff.getVcfFieldString();
+
+		// Find sub-field
+		String value = eff.getFieldByName(name);
+		if (value == null) return (String) fieldNotFound(vcfEntry);
+		return value;
+	}
+
+	@Override
 	public String toString() {
-		return "EFF[" + indexStr(index) + "]." + name;
+		return annEff() + "[" + indexExpr + "]" + (name != null ? "." + name : "");
 	}
 }

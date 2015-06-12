@@ -12,19 +12,16 @@ import ca.mcgill.mcb.pcingola.vcf.VcfGenotype;
  */
 public class FieldGenotype extends FieldSub {
 
-	int genotypeIndex = -1;
-
-	public FieldGenotype(String name, int genotypeIndex) {
-		super(name, -1);
-		this.genotypeIndex = genotypeIndex;
+	public FieldGenotype(String name, Expression indexExpr) {
+		super(name, indexExpr);
 	}
 
 	/**
-	 * Get a field (as a Float) from VcfEntry
+	 * Evaluate expressions and return VcfGenotype
 	 */
-	@Override
-	public String getFieldString(VcfEntry vcfEntry) {
-		String value = null;
+	protected VcfGenotype evalGenotype(VcfEntry vcfEntry) {
+		// Find index value
+		int genotypeIndex = evalIndex(vcfEntry);
 
 		// Sanity check
 		int maxIdx = vcfEntry.getVcfGenotypes().size() - 1;
@@ -40,7 +37,19 @@ public class FieldGenotype extends FieldSub {
 
 		// Genotype field => Look for genotype and then field
 		VcfGenotype vcfGenotype = vcfEntry.getVcfGenotype(idx);
-		value = vcfGenotype.get(name);
+		return vcfGenotype;
+	}
+
+	/**
+	 * Get a field from VcfEntry
+	 */
+	@Override
+	public String getFieldString(VcfEntry vcfEntry) {
+		// Genotype field => Look for genotype and then field
+		VcfGenotype vcfGenotype = evalGenotype(vcfEntry);
+
+		// Find value
+		String value = getValue(vcfGenotype);
 
 		// Not found? Should we raise an exception?
 		if ((value == null) && exceptionIfNotFound) throw new RuntimeException("Error: Genotype field '" + name + "' not available in this entry.\n\t" + this);
@@ -53,18 +62,30 @@ public class FieldGenotype extends FieldSub {
 	 */
 	@Override
 	public String getFieldString(VcfGenotype vcfGenotype) {
-		String value = vcfGenotype.get(name);
+		// Find value
+		String value = getValue(vcfGenotype);
+
+		// Not found? Should we raise an exception?
 		if (value == null) return (String) gtFieldNotFound(vcfGenotype);
+
 		return value;
 	}
 
+	/**
+	 * Find value within genotype
+	 */
+	String getValue(VcfGenotype vcfGenotype) {
+		if (name == null) return vcfGenotype.toString(); // No sub-field? Use whole genotype
+		return vcfGenotype.get(name);
+	}
+
 	@Override
-	public String getName() {
-		return name;
+	protected boolean isSub() {
+		return false;
 	}
 
 	@Override
 	public String toString() {
-		return "GEN[" + indexStr(genotypeIndex) + "]." + name;
+		return "GEN[" + indexExpr + "]" + (name != null ? "." + name : "");
 	}
 }

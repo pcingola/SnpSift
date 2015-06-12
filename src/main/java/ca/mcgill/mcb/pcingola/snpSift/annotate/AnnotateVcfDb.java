@@ -2,12 +2,17 @@ package ca.mcgill.mcb.pcingola.snpSift.annotate;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import ca.mcgill.mcb.pcingola.fileIterator.VcfFileIterator;
+import ca.mcgill.mcb.pcingola.interval.Variant;
+import ca.mcgill.mcb.pcingola.util.Gpr;
 import ca.mcgill.mcb.pcingola.vcf.VcfEntry;
 
 /**
@@ -18,49 +23,66 @@ import ca.mcgill.mcb.pcingola.vcf.VcfEntry;
  */
 public abstract class AnnotateVcfDb {
 
-	public static final int SHOW = 10000;
-	public static final int SHOW_LINES = 100 * SHOW;
 	public static final int MAX_ERRORS = 10; // Report an error no more than X times
 
 	protected boolean verbose, debug;
 	protected boolean useRefAlt = true;
-	protected int countBadRef = 0;
 	protected String chrPrev = "";
+	protected String existsInfoField = null;
 	protected String prependInfoFieldName;
-	protected String dbFileName;
-	protected DbVcfEntry dbCurrentEntry;
-	protected VcfEntry latestVcfDb = null;
+	protected DbVcf dbVcf;
 	protected VcfFileIterator vcfDbFile;
 	protected HashMap<String, Integer> errCount;
 
-	public AnnotateVcfDb(String dbFileName) {
-		this.dbFileName = dbFileName;
-		dbCurrentEntry = new DbVcfEntry();
+	public AnnotateVcfDb() {
 	}
 
 	/**
 	 * Annotate a VCF entry
 	 */
 	public boolean annotate(VcfEntry vcfEntry) throws IOException {
-		readDb(vcfEntry); // Read database up to this point
+		dbVcf.readDb(vcfEntry); // Read database up to this point
 
 		// Add information to vcfEntry
-		boolean annotated = annotateIds(vcfEntry, dbCurrentEntry.findDbId(vcfEntry));
-		annotated |= annotateInfo(vcfEntry, dbCurrentEntry.findDbInfo(vcfEntry));
+		boolean annotated = false;
 
+		Set<String> idSet = new HashSet<>();
+		Map<String, String> infos = new HashMap<>();
+		boolean exists = false;
+
+		// Annotate all info fields
+		List<Variant> vars = vcfEntry.variants();
+		for (Variant var : vars) {
+			dbVcf.findDbId(var, idSet);
+			dbVcf.findDbInfo(var, infos);
+			if (existsInfoField != null && (!exists)) exists |= dbVcf.findDbExists(var);
+		}
+
+		annotated |= annotateIds(vcfEntry, idSet);
+		annotated |= annotateInfo(vcfEntry, infos);
+		if (exists) annotateExists(vcfEntry);
+
+		if (debug) Gpr.debug("Database size: " + dbVcf.size());
 		return annotated;
+	}
+
+	/**
+	 * Add 'exists' flag to INFO fields
+	 */
+	protected void annotateExists(VcfEntry vcfEntry) {
+		vcfEntry.addInfo(existsInfoField, null);
 	}
 
 	/**
 	 * Add ID information. Make sure we are no repeating IDs
 	 */
-	protected boolean annotateIds(VcfEntry vcfEntry, String id) {
-		if (id == null) return false;
+	protected boolean annotateIds(VcfEntry vcfEntry, Set<String> idSet) {
+		if (idSet.isEmpty()) return false;
 
 		// Add IDs, make sure we are no repeating them
 		// Get unique IDs (the ones not already present in vcf.id)
 		boolean annotated = false;
-		id = uniqueIds(id, vcfEntry.getId());
+		String id = uniqueIds(idSet, vcfEntry.getId());
 		if (!id.isEmpty()) { // Skip if no new ids found
 			annotated = true;
 
@@ -93,20 +115,13 @@ public abstract class AnnotateVcfDb {
 		return true;
 	}
 
-	/**
-	 * Finish up annotation process
-	 */
 	public void close() {
-		if (vcfDbFile != null) {
-			vcfDbFile.close(); // We have to close vcfDbFile because it was opened using a BufferedReader (this sets autoClose to 'false')
-			vcfDbFile = null;
-		}
+		dbVcf.close();
 	}
 
-	/**
-	 * Open database annotation file
-	 */
-	public abstract void open() throws IOException;
+	public void open() {
+		dbVcf.open();
+	}
 
 	/**
 	 * Prepend 'prependInfoFieldName' to all info fields
@@ -121,17 +136,16 @@ public abstract class AnnotateVcfDb {
 
 	}
 
-	/**
-	 * Read all DB entries up to 'vcfEntry'
-	 */
-	protected abstract void readDb(VcfEntry ve);
-
 	public void setDebug(boolean debug) {
 		this.debug = debug;
 	}
 
-	public void setInfoFields(List<String> infoFields) {
-		dbCurrentEntry.setInfoFields(infoFields);
+	public void setExistsInfoField(String existsInfoField) {
+		this.existsInfoField = existsInfoField;
+	}
+
+	public void setInfoFields(boolean useInfoFields, Collection<String> infoFields) {
+		dbVcf.setInfoFields(useInfoFields, infoFields);
 	}
 
 	public void setPrependInfoFieldName(String prependInfoFieldName) {
@@ -139,15 +153,11 @@ public abstract class AnnotateVcfDb {
 	}
 
 	public void setUseId(boolean useId) {
-		dbCurrentEntry.setUseId(useId);
-	}
-
-	public void setUseInfoField(boolean useInfoField) {
-		dbCurrentEntry.setUseInfoField(useInfoField);
+		dbVcf.setUseId(useId);
 	}
 
 	public void setUseRefAlt(boolean useRefAlt) {
-		dbCurrentEntry.setUseRefAlt(useRefAlt);
+		dbVcf.setUseRefAlt(useRefAlt);
 	}
 
 	public void setVerbose(boolean verbose) {
@@ -157,20 +167,23 @@ public abstract class AnnotateVcfDb {
 	/**
 	 * IDs from database not present in VCF
 	 */
-	protected String uniqueIds(String idStrDb, String idStrVcf) {
-		StringBuilder sbId = new StringBuilder();
-		String idsDb[] = idStrDb.split(";");
+	protected String uniqueIds(Set<String> idSetDb, String idStrVcf) {
+		// Remove currently annotated IDs
 		String idsVcf[] = idStrVcf.split(";");
+		for (String id : idsVcf)
+			idSetDb.remove(id);
 
-		for (String idDb : idsDb) {
-			// Add only if there is no other matching ID in VCF
-			boolean skip = false;
-			for (String idVcf : idsVcf)
-				skip |= idDb.equals(idVcf);
+		// Add all remaining IDs
+		StringBuilder sbId = new StringBuilder();
 
-			// Append ID?
-			if (!skip) sbId.append((sbId.length() > 0 ? ";" : "") + idDb);
-		}
+		// Sort alphabetically
+		ArrayList<String> idsSorted = new ArrayList<>();
+		idsSorted.addAll(idSetDb);
+		Collections.sort(idsSorted);
+
+		// Add all items
+		for (String id : idsSorted)
+			sbId.append((sbId.length() > 0 ? ";" : "") + id);
 
 		return sbId.toString();
 	}

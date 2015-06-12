@@ -1,0 +1,3 @@
+##INFO=<ID=EFF,Number=.,Type=String,Description="Predicted effects for this variant.Format: 'Effect ( Effect_Impact | Functional_Class | Codon_Change | Amino_Acid_Change| Amino_Acid_length | Gene_Name | Transcript_BioType | Gene_Coding | Transcript_ID | Exon_Rank  | Genotype_Number [ | ERRORS | WARNINGS ] )'">
+#CHROM	POS	ID	REF	ALT	QUAL	FILTER	INFO
+1	2415843	.	C	A	.	PASS	EFF=downstream_gene_variant(MODIFIER||4600|c.*568C>A|110|PLCH2|protein_coding|CODING|ENST00000609981||A|WARNING_TRANSCRIPT_NO_STOP_CODON)

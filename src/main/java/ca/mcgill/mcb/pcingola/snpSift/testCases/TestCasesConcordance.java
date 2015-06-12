@@ -168,5 +168,4 @@ public class TestCasesConcordance extends TestCase {
 
 		checkConcordance("test/concordance_ref_12.vcf", "test/concordance_test_12.vcf", count);
 	}
-
 }

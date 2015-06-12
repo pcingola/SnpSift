@@ -1,0 +1,4 @@
+# In the example above CAF=[0.9642,0.03581] has two frequency, one related
+# to G (reference) and the other to T (the variant).
+##INFO=<ID=CAF,Number=R,Type=String,Description="Allele frequency">
+1	9325085	rs386543499	G	T	.	.	CAF=0.9642,0.03581

@@ -1,0 +1,214 @@
+##fileformat=VCFv4.1
+##FILTER=<ID=PASS,Description="All filters passed">
+##FILTER=<ID=REJECT,Description="Rejected as a confident somatic mutation">
+##FORMAT=<ID=AD,Number=.,Type=Integer,Description="Allelic depths for the ref and alt alleles in the order listed">
+##FORMAT=<ID=BQ,Number=A,Type=Float,Description="Average base quality for reads supporting alleles">
+##FORMAT=<ID=DP,Number=1,Type=Integer,Description="Approximate read depth (reads with MQ=255 or with bad mates are filtered)">
+##FORMAT=<ID=FA,Number=A,Type=Float,Description="Allele fraction of the alternate allele with regard to reference">
+##FORMAT=<ID=GQ,Number=1,Type=Integer,Description="Genotype Quality">
+##FORMAT=<ID=GT,Number=1,Type=String,Description="Genotype">
+##FORMAT=<ID=PL,Number=G,Type=Integer,Description="Normalized, Phred-scaled likelihoods for genotypes as defined in the VCF specification">
+##FORMAT=<ID=SS,Number=1,Type=Integer,Description="Variant status relative to non-adjacent Normal,0=wildtype,1=germline,2=somatic,3=LOH,4=post-transcriptional modification,5=unknown">
+##INFO=<ID=DB,Number=0,Type=Flag,Description="dbSNP Membership">
+##INFO=<ID=MQ0,Number=1,Type=Integer,Description="Total Mapping Quality Zero Reads">
+##INFO=<ID=SOMATIC,Number=0,Type=Flag,Description="Somatic event">
+##INFO=<ID=VT,Number=1,Type=String,Description="Variant type, can be SNP, INS or DEL">
+##MuTect="analysis_type=MuTect input_file=[BT.bam, AT.bam] read_buffer_size=null phone_home=STANDARD gatk_key=null tag=NA read_filter=[BadCigar] intervals=null excludeIntervals=null interval_set_rule=UNION interval_merging=ALL interval_padding=0 reference_sequence=/well/tomlinson/fcastro/data/genomes/hs37d5/hs37d5.fa nonDeterministicRandomSeed=false disableRandomization=false maxRuntime=-1 maxRuntimeUnits=MINUTES downsampling_type=BY_SAMPLE downsample_to_fraction=null downsample_to_coverage=1000 enable_experimental_downsampling=false baq=OFF baqGapOpenPenalty=40.0 performanceLog=null useOriginalQualities=false BQSR=null quantize_quals=0 disable_indel_quals=false emit_original_quals=false preserve_qscores_less_than=6 defaultBaseQualities=-1 validation_strictness=SILENT remove_program_records=false keep_program_records=false unsafe=null num_threads=1 num_cpu_threads_per_data_thread=1 num_io_threads=0 monitorThreadEfficiency=false num_bam_file_handles=null read_group_black_list=null pedigree=[] pedigreeString=[] pedigreeValidationType=STRICT allow_intervals_with_unindexed_bam=false generateShadowBCF=false logging_level=INFO log_to_file=null help=false noop=false enable_extended_output=true artifact_detection_mode=false tumor_sample_name=RG101 bam_tumor_sample_name=null normal_sample_name=RG045 force_output=false force_alleles=false only_passing_calls=false initial_tumor_lod=4.0 tumor_lod=6.3 fraction_contamination=0.02 minimum_mutation_cell_fraction=0.0 normal_lod=2.2 normal_artifact_lod=1.0 strand_artifact_lod=2.0 strand_artifact_power_threshold=0.9 dbsnp_normal_lod=5.5 somatic_classification_normal_power_threshold=0.95 minimum_normal_allele_fraction=0.0 tumor_f_pretest=0.0050 min_qscore=20 gap_events_threshold=3 heavily_clipped_read_fraction=0.3 clipping_bias_pvalue_threshold=0.05 fraction_mapq0_threshold=0.5 pir_median_threshold=10.0 pir_mad_threshold=3.0 required_maximum_alt_allele_mapping_quality_score=20 max_alt_alleles_in_normal_count=2 max_alt_alleles_in_normal_qscore_sum=20 max_alt_allele_in_normal_fraction=0.03 power_constant_qscore=30 absolute_copy_number_data=null power_constant_af=0.30000001192092896 vcf=org.broadinstitute.sting.gatk.io.stubs.VariantContextWriterStub no_cmdline_in_header=org.broadinstitute.sting.gatk.io.stubs.VariantContextWriterStub sites_only=org.broadinstitute.sting.gatk.io.stubs.VariantContextWriterStub bcf=org.broadinstitute.sting.gatk.io.stubs.VariantContextWriterStub dbsnp=[(RodBinding name=dbsnp source=/well/tomlinson/fcastro/data/gatk/bundle/2.8/b37/dbsnp_138.b37.vcf)] cosmic=[(RodBinding name=cosmic source=/well/tomlinson/fcastro/data/annotation/hg19/COSMIC/CosmicVariants_v68_b37.vcf)] normal_panel=[(RodBinding name=normal_panel source=/well/tomlinson/fcastro/data/gatk/mutect/PON/PON.b37.vcf)] coverage_file=null coverage_20_q20_file=null power_file=null tumor_depth_file=null normal_depth_file=null filter_mismatching_base_and_quals=false"
+##contig=<ID=1,length=249250621>
+##contig=<ID=2,length=243199373>
+##contig=<ID=3,length=198022430>
+##contig=<ID=4,length=191154276>
+##contig=<ID=5,length=180915260>
+##contig=<ID=6,length=171115067>
+##contig=<ID=7,length=159138663>
+##contig=<ID=8,length=146364022>
+##contig=<ID=9,length=141213431>
+##contig=<ID=10,length=135534747>
+##contig=<ID=11,length=135006516>
+##contig=<ID=12,length=133851895>
+##contig=<ID=13,length=115169878>
+##contig=<ID=14,length=107349540>
+##contig=<ID=15,length=102531392>
+##contig=<ID=16,length=90354753>
+##contig=<ID=17,length=81195210>
+##contig=<ID=18,length=78077248>
+##contig=<ID=19,length=59128983>
+##contig=<ID=20,length=63025520>
+##contig=<ID=21,length=48129895>
+##contig=<ID=22,length=51304566>
+##contig=<ID=X,length=155270560>
+##contig=<ID=Y,length=59373566>
+##contig=<ID=MT,length=16569>
+##contig=<ID=GL000207.1,length=4262>
+##contig=<ID=GL000226.1,length=15008>
+##contig=<ID=GL000229.1,length=19913>
+##contig=<ID=GL000231.1,length=27386>
+##contig=<ID=GL000210.1,length=27682>
+##contig=<ID=GL000239.1,length=33824>
+##contig=<ID=GL000235.1,length=34474>
+##contig=<ID=GL000201.1,length=36148>
+##contig=<ID=GL000247.1,length=36422>
+##contig=<ID=GL000245.1,length=36651>
+##contig=<ID=GL000197.1,length=37175>
+##contig=<ID=GL000203.1,length=37498>
+##contig=<ID=GL000246.1,length=38154>
+##contig=<ID=GL000249.1,length=38502>
+##contig=<ID=GL000196.1,length=38914>
+##contig=<ID=GL000248.1,length=39786>
+##contig=<ID=GL000244.1,length=39929>
+##contig=<ID=GL000238.1,length=39939>
+##contig=<ID=GL000202.1,length=40103>
+##contig=<ID=GL000234.1,length=40531>
+##contig=<ID=GL000232.1,length=40652>
+##contig=<ID=GL000206.1,length=41001>
+##contig=<ID=GL000240.1,length=41933>
+##contig=<ID=GL000236.1,length=41934>
+##contig=<ID=GL000241.1,length=42152>
+##contig=<ID=GL000243.1,length=43341>
+##contig=<ID=GL000242.1,length=43523>
+##contig=<ID=GL000230.1,length=43691>
+##contig=<ID=GL000237.1,length=45867>
+##contig=<ID=GL000233.1,length=45941>
+##contig=<ID=GL000204.1,length=81310>
+##contig=<ID=GL000198.1,length=90085>
+##contig=<ID=GL000208.1,length=92689>
+##contig=<ID=GL000191.1,length=106433>
+##contig=<ID=GL000227.1,length=128374>
+##contig=<ID=GL000228.1,length=129120>
+##contig=<ID=GL000214.1,length=137718>
+##contig=<ID=GL000221.1,length=155397>
+##contig=<ID=GL000209.1,length=159169>
+##contig=<ID=GL000218.1,length=161147>
+##contig=<ID=GL000220.1,length=161802>
+##contig=<ID=GL000213.1,length=164239>
+##contig=<ID=GL000211.1,length=166566>
+##contig=<ID=GL000199.1,length=169874>
+##contig=<ID=GL000217.1,length=172149>
+##contig=<ID=GL000216.1,length=172294>
+##contig=<ID=GL000215.1,length=172545>
+##contig=<ID=GL000205.1,length=174588>
+##contig=<ID=GL000219.1,length=179198>
+##contig=<ID=GL000224.1,length=179693>
+##contig=<ID=GL000223.1,length=180455>
+##contig=<ID=GL000195.1,length=182896>
+##contig=<ID=GL000212.1,length=186858>
+##contig=<ID=GL000222.1,length=186861>
+##contig=<ID=GL000200.1,length=187035>
+##contig=<ID=GL000193.1,length=189789>
+##contig=<ID=GL000194.1,length=191469>
+##contig=<ID=GL000225.1,length=211173>
+##contig=<ID=GL000192.1,length=547496>
+##contig=<ID=NC_007605,length=171823>
+##contig=<ID=hs37d5,length=35477943>
+##reference=file:///well/tomlinson/fcastro/data/genomes/hs37d5/hs37d5.fa
+##INFO=<ID=MUTECT.ATBT,Number=1,Type=Integer,Description="Mutect detected variant for ATBT">
+##SnpEffVersion="4.1 (build 2015-01-07), by Pablo Cingolani"
+##SnpEffCmd="SnpEff  -formatEff -sequenceOntology -lof -hgvs -oicr -noStats GRCh37.75 /data/data/fcastro/projects/OES/data/mutect/trio23/trio23.mutect.ATBT.somatic.vcf.gz "
+##INFO=<ID=EFF,Number=.,Type=String,Description="Predicted effects for this variant.Format: 'Effect ( Effect_Impact | Functional_Class | Codon_Change | Amino_Acid_Change| Amino_Acid_length | Gene_Name | Transcript_BioType | Gene_Coding | Transcript_ID | Exon_Rank  | Genotype_Number [ | ERRORS | WARNINGS ] )'">
+##INFO=<ID=LOF,Number=.,Type=String,Description="Predicted loss of function effects for this variant. Format: 'Gene_Name | Gene_ID | Number_of_transcripts_in_gene | Percent_of_transcripts_affected'">
+##INFO=<ID=NMD,Number=.,Type=String,Description="Predicted nonsense mediated decay effects for this variant. Format: 'Gene_Name | Gene_ID | Number_of_transcripts_in_gene | Percent_of_transcripts_affected'">
+##INFO=<ID=OICR,Number=.,Type=String,Description="Format: ( Transcript | Distance from begining cDNA )">
+##SnpSiftVersion="SnpSift 4.1 (build 2015-01-07), by Pablo Cingolani"
+##SnpSiftCmd="SnpSift annotate -info RS,dbSNPBuildID,G5A,COMMON,GMAF /well/tomlinson/fcastro/data/annotation/hg19/DBSNP/dbSNP_All.vcf trio23.mutect.ATBT.somatic.tmp1.vcf"
+##INFO=<ID=G5A,Number=0,Type=Flag,Description=">5% minor allele frequency in each and all populations">
+##INFO=<ID=GMAF,Number=1,Type=Float,Description="GMAF for 1000 genomes">
+##INFO=<ID=COMMON,Number=1,Type=Integer,Description="RS is a common SNP.  A common SNP is one that has at least one 1000Genomes population with a minor allele of frequency >= 1% and for which 2 or more founders contribute to that minor allele frequency.">
+##INFO=<ID=dbSNPBuildID,Number=1,Type=Integer,Description="First dbSNP Build for RS">
+##INFO=<ID=RS,Number=1,Type=Integer,Description="dbSNP ID (i.e. rs number)">
+##SnpSiftCmd="SnpSift annotate -info LDAF,AVGPOST,RSQ,ERATE,THETA,CIEND,CIPOS,END,HOMLEN,HOMSEQ,SVLEN,SVTYPE,AC,AN,AA,1000Gp1_AF,1000Gp1_AMR_AF,1000Gp1_ASN_AF,1000Gp1_AFR_AF,1000Gp1_EUR_AF,VT,SNPSOURCE /well/tomlinson/fcastro/data/annotation/hg19/1000G/1000G.wgs.vcf trio23.mutect.ATBT.somatic.tmp1.vcf"
+##INFO=<ID=1000Gp1_ASN_AF,Number=1,Type=Float,Description="Allele Frequency for samples from ASN based on AC/AN">
+##INFO=<ID=1000Gp1_AMR_AF,Number=1,Type=Float,Description="Allele Frequency for samples from AMR based on AC/AN">
+##INFO=<ID=LDAF,Number=1,Type=Float,Description="MLE Allele Frequency Accounting for LD">
+##INFO=<ID=ERATE,Number=1,Type=Float,Description="Per-marker Mutation rate from MaCH/Thunder">
+##INFO=<ID=AC,Number=.,Type=Integer,Description="Alternate Allele Count">
+##INFO=<ID=AA,Number=1,Type=String,Description="Ancestral Allele, ftp://ftp.1000genomes.ebi.ac.uk/vol1/ftp/pilot_data/technical/reference/ancestral_alignments/README">
+##INFO=<ID=SVLEN,Number=1,Type=Integer,Description="Difference in length between REF and ALT alleles">
+##INFO=<ID=RSQ,Number=1,Type=Float,Description="Genotype imputation quality from MaCH/Thunder">
+##INFO=<ID=AN,Number=1,Type=Integer,Description="Total Allele Count">
+##INFO=<ID=CIEND,Number=2,Type=Integer,Description="Confidence interval around END for imprecise variants">
+##INFO=<ID=1000Gp1_AFR_AF,Number=1,Type=Float,Description="Allele Frequency for samples from AFR based on AC/AN">
+##INFO=<ID=1000Gp1_AF,Number=1,Type=Float,Description="Global Allele Frequency based on AC/AN">
+##INFO=<ID=THETA,Number=1,Type=Float,Description="Per-marker Transition rate from MaCH/Thunder">
+##INFO=<ID=CIPOS,Number=2,Type=Integer,Description="Confidence interval around POS for imprecise variants">
+##INFO=<ID=SVTYPE,Number=1,Type=String,Description="Type of structural variant">
+##INFO=<ID=HOMSEQ,Number=.,Type=String,Description="Sequence of base pair identical micro-homology at event breakpoints">
+##INFO=<ID=1000Gp1_EUR_AF,Number=1,Type=Float,Description="Allele Frequency for samples from EUR based on AC/AN">
+##INFO=<ID=HOMLEN,Number=.,Type=Integer,Description="Length of base pair identical micro-homology at event breakpoints">
+##INFO=<ID=END,Number=1,Type=Integer,Description="End position of the variant described in this record">
+##INFO=<ID=SNPSOURCE,Number=.,Type=String,Description="indicates if a snp was called when analysing the low coverage or exome alignment data">
+##INFO=<ID=AVGPOST,Number=1,Type=Float,Description="Average posterior probability from MaCH/Thunder">
+##SnpSiftCmd="SnpSift annotate -info ESP6500_EA_AF,ESP6500_AA_AF,ESP6500_All_AF /well/tomlinson/fcastro/data/annotation/hg19/ESP6500/ESP6500SI.all.snps_indels.vcf trio23.mutect.ATBT.somatic.tmp1.vcf"
+##INFO=<ID=ESP6500_All_AF,Number=.,Type=String,Description="Minor Allele Frequency in percent in ESP6500 All">
+##INFO=<ID=ESP6500_EA_AF,Number=.,Type=String,Description="Minor Allele Frequency in percent in ESP6500 EA">
+##INFO=<ID=ESP6500_AA_AF,Number=.,Type=String,Description="Minor Allele Frequency in percent in ESP6500 AA">
+##SnpSiftCmd="SnpSift annotate -info CG69AF /well/tomlinson/fcastro/data/annotation/hg19/CG69/CG69_unrelated_54.vcf trio23.mutect.ATBT.somatic.tmp1.vcf"
+##INFO=<ID=CG69AF,Number=A,Type=Float,Description="Complete Genomics 69 genomes Allele Frequency">
+##SnpSiftCmd="SnpSift annotate -info TC500,PC500 /well/tomlinson/fcastro/data/annotation/hg19/WGS500/WGS500_union_raw_f5.vcf trio23.mutect.ATBT.somatic.tmp1.vcf"
+##INFO=<ID=PC500,Number=1,Type=Float,Description="Proportion of occurrences in WG500 union file">
+##INFO=<ID=TC500,Number=1,Type=Integer,Description="Total number of occurrences in WG500 union file">
+##SnpSiftCmd="SnpSift annotate -info CNT,Cosmic,CosmicID /well/tomlinson/fcastro/data/annotation/hg19/COSMIC/CosmicVariants_v68.vcf trio23.mutect.ATBT.somatic.tmp1.vcf"
+##INFO=<ID=CNT,Number=1,Type=Integer,Description="Cosmic. How many samples have this mutation">
+##INFO=<ID=Cosmic,Number=1,Type=String,Description="Cosmic mutation. Values: coding, noncoding">
+##INFO=<ID=CosmicID,Number=1,Type=String,Description="Cosmic mutation ID">
+##SnpSiftCmd="SnpSift annotate -info CLNDBN,CLNSIG /well/tomlinson/fcastro/data/annotation/hg19/CLINVAR/clinvar.vcf trio23.mutect.ATBT.somatic.tmp1.vcf"
+##INFO=<ID=CLNSIG,Number=.,Type=String,Description="Variant Clinical Significance, 0 - unknown, 1 - untested, 2 - non-pathogenic, 3 - probable-non-pathogenic, 4 - probable-pathogenic, 5 - pathogenic, 6 - drug-response, 7 - histocompatibility, 255 - other">
+##INFO=<ID=CLNDBN,Number=.,Type=String,Description="Variant disease name">
+##SnpSiftCmd="SnpSift gwasCat trio23.mutect.ATBT.somatic.tmp1.vcf"
+##INFO=<ID=GWASCAT,Number=.,Type=String,Description="Trait related to this chromosomal position, according to GWAS catalog">
+##INFO=<ID=PhastCons,Number=1,Type=Float,Description="PhastCons conservation score">
+##SnpSiftCmd="SnpSift geneSets /well/tomlinson/fcastro/data/annotation/hg19/MSIGDB/msigdb.v4.0.symbols.gmt trio23.mutect.ATBT.somatic.tmp1.vcf"
+##INFO=<ID=MSigDb,Number=.,Type=String,Description="Gene set from MSigDB database (GSEA)">
+##SnpSiftCmd="SnpSift dbnsfp -f SIFT_score,SIFT_pred,Polyphen2_HDIV_pred,Polyphen2_HVAR_pred,LRT_pred,MutationTaster_pred,MutationAssessor_pred,FATHMM_pred,RadialSVM_pred,LR_pred,CADD_raw,CADD_raw_rankscore,GERP_RS,phyloP46way_primate,phyloP46way_placental,phyloP100way_vertebrate,SiPhy_29way_logOdds trio23.mutect.ATBT.somatic.tmp1.vcf"
+##INFO=<ID=GERP_RS,Number=A,Type=Float,Description="Field 'GERP_RS' from dbNSFP">
+##INFO=<ID=MutationAssessor_pred,Number=A,Type=Character,Description="Field 'MutationAssessor_pred' from dbNSFP">
+##INFO=<ID=SiPhy_29way_logOdds,Number=A,Type=Float,Description="Field 'SiPhy_29way_logOdds' from dbNSFP">
+##INFO=<ID=phyloP100way_vertebrate,Number=A,Type=Float,Description="Field 'phyloP100way_vertebrate' from dbNSFP">
+##INFO=<ID=MutationTaster_pred,Number=A,Type=Character,Description="Field 'MutationTaster_pred' from dbNSFP">
+##INFO=<ID=SIFT_pred,Number=A,Type=Character,Description="Field 'SIFT_pred' from dbNSFP">
+##INFO=<ID=FATHMM_pred,Number=A,Type=Character,Description="Field 'FATHMM_pred' from dbNSFP">
+##INFO=<ID=RadialSVM_pred,Number=A,Type=Character,Description="Field 'RadialSVM_pred' from dbNSFP">
+##INFO=<ID=CADD_raw,Number=A,Type=Float,Description="Field 'CADD_raw' from dbNSFP">
+##INFO=<ID=LR_pred,Number=A,Type=Character,Description="Field 'LR_pred' from dbNSFP">
+##INFO=<ID=phyloP46way_placental,Number=A,Type=Float,Description="Field 'phyloP46way_placental' from dbNSFP">
+##INFO=<ID=phyloP46way_primate,Number=A,Type=Float,Description="Field 'phyloP46way_primate' from dbNSFP">
+##INFO=<ID=Polyphen2_HDIV_pred,Number=A,Type=Character,Description="Field 'Polyphen2_HDIV_pred' from dbNSFP">
+##INFO=<ID=CADD_raw_rankscore,Number=A,Type=Float,Description="Field 'CADD_raw_rankscore' from dbNSFP">
+##INFO=<ID=LRT_pred,Number=A,Type=Character,Description="Field 'LRT_pred' from dbNSFP">
+##INFO=<ID=Polyphen2_HVAR_pred,Number=A,Type=Character,Description="Field 'Polyphen2_HVAR_pred' from dbNSFP">
+##INFO=<ID=SIFT_score,Number=A,Type=Float,Description="Field 'SIFT_score' from dbNSFP">
+##SnpSiftCmd="SnpSift dbnsfp -f CADD,CADD_PHRED trio23.mutect.ATBT.somatic.tmp1.vcf"
+##INFO=<ID=CADD,Number=A,Type=Float,Description="Field 'CADD' from dbNSFP">
+##INFO=<ID=CADD_PHRED,Number=A,Type=Float,Description="Field 'CADD_PHRED' from dbNSFP">
+##INFO=<ID=genomicSuperDups,Number=1,Type=Integer,Description="Segmental duplications in genome">
+##source_20150009.1=vcf-annotate(r797) -a /well/tomlinson/fcastro/data/annotation/hg19/GENOME_TRACKS/hg19_UCSC_segdup.bed.gz -d key=INFO,ID=genomicSuperDups,Number=1,Type=Integer,Description=Segmental duplications in genome -c CHROM,FROM,TO,INFO/genomicSuperDups
+##INFO=<ID=dgv,Number=1,Type=String,Description="Database of Genomic Variants that contains annotations for reported structural variations. Type of variation">
+##source_20150009.2=vcf-annotate(r797) -a /well/tomlinson/fcastro/data/annotation/hg19/GENOME_TRACKS/hg19_UCSC_dgv.bed.gz -d key=INFO,ID=dgv,Number=1,Type=String,Description=Database of Genomic Variants that contains annotations for reported structural variations. Type of variation -c CHROM,FROM,TO,INFO/dgv
+##INFO=<ID=homoP,Number=1,Type=Integer,Description="Homopolymer region">
+##source_20150009.3=vcf-annotate(r797) -a /well/tomlinson/fcastro/data/annotation/hg19/GENOME_TRACKS/hg19_UCSC_homoP.bed.gz -d key=INFO,ID=homoP,Number=1,Type=Integer,Description=Homopolymer region -c CHROM,FROM,TO,INFO/homoP
+##INFO=<ID=rmsk,Number=1,Type=String,Description="Repeat masker element Type_Name">
+##source_20150009.4=vcf-annotate(r797) -a /well/tomlinson/fcastro/data/annotation/hg19/GENOME_TRACKS/hg19_UCSC_rmsk.bed.gz -d key=INFO,ID=rmsk,Number=1,Type=String,Description=Repeat masker element Type_Name -c CHROM,FROM,TO,INFO/rmsk
+##INFO=<ID=cpgIslandExt,Number=1,Type=Float,Description="Percentage of island that is CpG">
+##source_20150009.5=vcf-annotate(r797) -a /well/tomlinson/fcastro/data/annotation/hg19/GENOME_TRACKS/hg19_UCSC_cpgIslandExt.bed.gz -d key=INFO,ID=cpgIslandExt,Number=1,Type=Float,Description=Percentage of island that is CpG -c CHROM,FROM,TO,INFO/cpgIslandExt
+##INFO=<ID=tfbsConsSites,Number=1,Type=Float,Description="Transcription factor binding sites conserved in the human-mouse-rat alignment. The default Z score cutoff for display in the browser is 2.33, corresponding to a p-value of 0.01. This cutoff can be adjusted at the top of this page">
+##source_20150009.6=vcf-annotate(r797) -a /well/tomlinson/fcastro/data/annotation/hg19/GENOME_TRACKS/hg19_UCSC_tfbsConsSites.zScore.bed.gz -d key=INFO,ID=tfbsConsSites,Number=1,Type=Float,Description=Transcription factor binding sites conserved in the human-mouse-rat alignment. The default Z score cutoff for display in the browser is 2.33, corresponding to a p-value of 0.01. This cutoff can be adjusted at the top of this page -c CHROM,FROM,TO,INFO/tfbsConsSites
+##INFO=<ID=wgRna,Number=1,Type=Float,Description="snoRNA and microRNAs, based on the miRBase Release and snoRNABase">
+##source_20150009.7=vcf-annotate(r797) -a /well/tomlinson/fcastro/data/annotation/hg19/GENOME_TRACKS/hg19_UCSC_wgRna.bed.gz -d key=INFO,ID=wgRna,Number=1,Type=Float,Description=snoRNA and microRNAs, based on the miRBase Release and snoRNABase -c CHROM,FROM,TO,INFO/wgRna
+##INFO=<ID=miRNAbs,Number=1,Type=Float,Description="conserved mammalian microRNA regulatory target sites for conserved microRNA families in the 3' UTR regions of Refseq Genes, as predicted by TargetScanHuman 5.1.">
+##source_20150009.8=vcf-annotate(r797) -a /well/tomlinson/fcastro/data/annotation/hg19/GENOME_TRACKS/hg19_UCSC_targetScanS.bed.gz -d key=INFO,ID=miRNAbs,Number=1,Type=Float,Description=conserved mammalian microRNA regulatory target sites for conserved microRNA families in the 3' UTR regions of Refseq Genes, as predicted by TargetScanHuman 5.1. -c CHROM,FROM,TO,INFO/miRNAbs
+##INFO=<ID=ccds,Number=1,Type=String,Description="CCDS exon Id">
+##source_20150009.9=vcf-annotate(r797) -a /well/tomlinson/fcastro/data/annotation/hg19/GENOME_TRACKS/ccds_exons_hg19.bed.gz -d key=INFO,ID=ccds,Number=1,Type=String,Description=CCDS exon Id -c CHROM,FROM,TO,INFO/ccds
+##INFO=<ID=recombRate,Number=1,Type=Float,Description="Recombination rate">
+##source_20150009.10=vcf-annotate(r797) -a /well/tomlinson/fcastro/data/annotation/hg19/GENOME_TRACKS/hg19_UCSC_recombRate.bed.gz -d key=INFO,ID=recombRate,Number=1,Type=Float,Description=Recombination rate -c CHROM,FROM,TO,INFO/recombRate
+##INFO=<ID=cytoBand,Number=1,Type=Float,Description="CytoBand">
+##source_20150009.11=vcf-annotate(r797) -a /well/tomlinson/fcastro/data/annotation/hg19/GENOME_TRACKS/hg19_UCSC_cytoBand.bed.gz -d key=INFO,ID=cytoBand,Number=1,Type=Float,Description=CytoBand -c CHROM,FROM,TO,INFO/cytoBand
+##INFO=<ID=cse,Number=1,Type=Integer,Description="Positions that are prone to context-specific errors (CSEs) by Allhoff BMC Bioinformatics 2013">
+##source_20150009.12=vcf-annotate(r797) -a /well/tomlinson/fcastro/data/annotation/hg19/CSE/GAIIx-hg-8_4.bed.gz -d key=INFO,ID=cse,Number=1,Type=Integer,Description=Positions that are prone to context-specific errors (CSEs) by Allhoff BMC Bioinformatics 2013 -c CHROM,FROM,TO,INFO/cse
+##INFO=<ID=GRCpatch,Number=1,Type=String,Description="Association with patch and fix regions from the Genome Reference Consortium">
+##source_20150009.13=vcf-annotate(r797) -a /well/tomlinson/fcastro/data/annotation/hg19/GRC_PATCH/GRC_patch_regions.bed.gz -d key=INFO,ID=GRCpatch,Number=1,Type=String,Description=Association with patch and fix regions from the Genome Reference Consortium -c CHROM,FROM,TO,INFO/GRCpatch
+##INFO=<ID=mapp,Number=1,Type=Float,Description="GEM mappability score. 1 represents a completely unique sequence and 0 representing a sequence that occurs more than 4 times in the genome">
+##bcftools_annotateVersion=0.2.0-rc7-8-g6e5079a+htslib-0.2.0-rc7-9-g0180921
+##bcftools_annotateCommand=annotate -a /well/tomlinson/fcastro/data/annotation/hg19/MAPABILITY/hg19_UCSC_wgEncodeCrgMapabilityAlign100mer.bed.gz -h trio23.mutect.ATBT.somatic.tmp1.vcf.gz.header -c CHROM,FROM,TO,INFO/mapp trio23.mutect.ATBT.somatic.tmp1.vcf.gz
+##INFO=<ID=LCRegions,Number=1,Type=String,Description="Low Complexity regions defined by Dust algorithm">
+##source_20150009.14=vcf-annotate(r797) -a /well/tomlinson/fcastro/data/annotation/hg19/LOWCOMPLEX/hg19.LCR.bed.gz -d key=INFO,ID=LCRegions,Number=1,Type=String,Description=Low Complexity regions defined by Dust algorithm -c CHROM,FROM,TO,INFO/LCRegions
+#CHROM	POS	ID	REF	ALT	QUAL	FILTER	INFO	FORMAT	RG101	RG045
+1	2415843	.	C	A	.	PASS	SOMATIC;VT=SNP;MUTECT.ATBT=1;EFF=downstream_gene_variant(MODIFIER||4600|c.*568C>A|110|PLCH2|protein_coding|CODING|ENST00000609981||A|WARNING_TRANSCRIPT_NO_STOP_CODON),intron_variant(MODIFIER|||c.646-44C>A|1416|PLCH2|protein_coding|CODING|ENST00000378486|4|A),intron_variant(MODIFIER|||c.565-44C>A|1129|PLCH2|protein_coding|CODING|ENST00000449969|4|A),intron_variant(MODIFIER|||c.213+4594C>A|499|PLCH2|protein_coding|CODING|ENST00000288766|3|A),intron_variant(MODIFIER|||c.646-44C>A|1380|PLCH2|protein_coding|CODING|ENST00000378488|4|A),intron_variant(MODIFIER|||c.646-44C>A|1416|PLCH2|protein_coding|CODING|ENST00000419816|4|A),intron_variant(MODIFIER|||n.1019-44C>A||PLCH2|retained_intron|CODING|ENST00000343889|2|A),intron_variant(MODIFIER|||c.220-44C>A|1238|PLCH2|protein_coding|CODING|ENST00000278878|2|A|WARNING_TRANSCRIPT_NO_START_CODON);MSigDb=ACEVEDO_METHYLATED_IN_LIVER_CANCER_DN,GSE1432_CTRL_VS_IFNG_1H_MICROGLIA_DN,GSE1460_INTRATHYMIC_T_PROGENITOR_VS_DP_THYMOCYTE_DN,GSE22886_NAIVE_CD4_TCELL_VS_12H_ACT_TH1_UP,GSE27786_CD4_TCELL_VS_NKTCELL_DN,GSE27786_LSK_VS_ERYTHROBLAST_DN,GSE27786_NKCELL_VS_ERYTHROBLAST_DN,GSE29615_CTRL_VS_DAY7_LAIV_FLU_VACCINE_PBMC_UP,GSE29615_CTRL_VS_LAIV_FLU_VACCINE_PBMC_UP,GSE30083_SP2_VS_SP4_THYMOCYTE_UP,GSE360_CTRL_VS_B_MALAYI_LOW_DOSE_DC_UP,GSE360_DC_VS_MAC_M_TUBERCULOSIS_DN,GSE360_HIGH_DOSE_B_MALAYI_VS_M_TUBERCULOSIS_MAC_DN,GSE360_T_GONDII_VS_B_MALAYI_LOW_DOSE_DC_UP,GSE3982_BCELL_VS_BASOPHIL_UP,GSE3982_EOSINOPHIL_VS_BASOPHIL_UP,GSE3982_EOSINOPHIL_VS_BCELL_DN,GSE3982_EOSINOPHIL_VS_NKCELL_DN,GSE3982_EOSINOPHIL_VS_TH2_UP,IWANAGA_CARCINOGENESIS_BY_KRAS_PTEN_UP,JAERVINEN_AMPLIFIED_IN_LARYNGEAL_CANCER,KRAS.AMP.LUNG_UP.V1_DN,KRAS.DF.V1_UP,KRAS.LUNG_UP.V1_DN,KRAS.PROSTATE_UP.V1_UP,LIM_MAMMARY_LUMINAL_PROGENITOR_DN,LIM_MAMMARY_STEM_CELL_UP,MARTENS_TRETINOIN_RESPONSE_UP,MODULE_100,MODULE_11,MODULE_137,MODULE_55,MODULE_66,MODULE_88,MODULE_94,SCHAEFFER_PROSTATE_DEVELOPMENT_48HR_UP,chr1p36;dgv=Loss,Loss,Loss,Loss,Loss,Loss,Loss,Loss,Gain,Gain+Loss,Loss,Gain,Loss,Loss,Loss,Loss,Gain,Loss,Gain;recombRate=1.24407;cytoBand=0;mapp=1	GT:AD:BQ:DP:FA:SS	0/1:16,2:40:18:0.111:2	0:20,0:.:20:0:0

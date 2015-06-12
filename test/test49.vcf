@@ -1,0 +1,6 @@
+##INFO=<ID=AC,Number=1,Type=Integer,Description="Some number">
+##INFO=<ID=DP,Number=1,Type=Integer,Description="Some number">
+#CHROM	POS	ID	REF	ALT	QUAL	FILTER	INFO
+NT_166464	100	.	G	C	.	.	DP=7;AC=4;
+NT_166464	200	.	G	C	.	.	DP=20;AC=1;
+NT_166464	300	.	G	C	.	.	DP=60;AC=2;
