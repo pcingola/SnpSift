@@ -266,8 +266,8 @@ public class SnpSiftCmdFilter extends SnpSift {
 				else if (arg.equals("-n") || arg.equalsIgnoreCase("--inverse")) inverse = true;
 				else if (arg.equalsIgnoreCase("--format")) {
 					String formatVer = args[++i];
-					if (formatVer.equals("2")) formatVersion = FormatVersion.FORMAT_SNPEFF_2;
-					else if (formatVer.equals("3")) formatVersion = FormatVersion.FORMAT_SNPEFF_3;
+					if (formatVer.equals("2")) formatVersion = FormatVersion.FORMAT_EFF_2;
+					else if (formatVer.equals("3")) formatVersion = FormatVersion.FORMAT_EFF_3;
 					else usage("Unknown format version '" + formatVer + "'");
 				} else if (arg.equals("-e") || arg.equalsIgnoreCase("--exprfile")) {
 					String exprFile = args[++i];

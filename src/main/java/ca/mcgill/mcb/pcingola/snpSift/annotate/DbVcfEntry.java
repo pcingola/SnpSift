@@ -8,7 +8,7 @@ import java.util.Map;
 import java.util.Set;
 
 import ca.mcgill.mcb.pcingola.vcf.VcfEntry;
-import ca.mcgill.mcb.pcingola.vcf.VcfInfo;
+import ca.mcgill.mcb.pcingola.vcf.VcfHeaderInfo;
 
 public class DbVcfEntry {
 
@@ -158,7 +158,7 @@ public class DbVcfEntry {
 		if (vcfInfoPerAllele.get(fieldName) == null) {
 			if (vcfDb == null) return false; // No VCF information? I cannot look it up...nothing to do
 
-			VcfInfo vcfInfo = vcfDb.getVcfInfo(fieldName);
+			VcfHeaderInfo vcfInfo = vcfDb.getVcfInfo(fieldName);
 			boolean isPerAllele = vcfInfo != null && (vcfInfo.isNumberOnePerAllele() || vcfInfo.isNumberAllAlleles());
 			vcfInfoPerAllele.put(fieldName, isPerAllele);
 		}

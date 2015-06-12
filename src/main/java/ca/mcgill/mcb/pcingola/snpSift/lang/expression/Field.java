@@ -5,8 +5,8 @@ import ca.mcgill.mcb.pcingola.util.Gpr;
 import ca.mcgill.mcb.pcingola.vcf.VcfEntry;
 import ca.mcgill.mcb.pcingola.vcf.VcfGenotype;
 import ca.mcgill.mcb.pcingola.vcf.VcfHeader;
-import ca.mcgill.mcb.pcingola.vcf.VcfInfo;
-import ca.mcgill.mcb.pcingola.vcf.VcfInfoGenotype;
+import ca.mcgill.mcb.pcingola.vcf.VcfHeaderInfo;
+import ca.mcgill.mcb.pcingola.vcf.VcfHeaderInfoGenotype;
 import ca.mcgill.mcb.pcingola.vcf.VcfInfoType;
 
 /**
@@ -47,11 +47,11 @@ public class Field extends Expression {
 			VcfHeader vcfHeader = vcfEntry.getVcfFileIterator().getVcfHeader();
 
 			// Is there a filed 'name'
-			VcfInfo vcfInfo = vcfHeader.getVcfInfo(name);
+			VcfHeaderInfo vcfInfo = vcfHeader.getVcfInfo(name);
 			if (vcfInfo != null) returnType = vcfInfo.getVcfInfoType();
 			else {
 				// Is there a genotype 'name'
-				VcfInfoGenotype vcfInfoGenotype = vcfHeader.getVcfInfoGenotype(name);
+				VcfHeaderInfoGenotype vcfInfoGenotype = vcfHeader.getVcfInfoGenotype(name);
 				if (vcfInfoGenotype != null)	returnType = vcfInfoGenotype.getVcfInfoType();
 				else {
 					// Is this a special field name?
@@ -68,7 +68,7 @@ public class Field extends Expression {
 		if (returnType == VcfInfoType.UNKNOWN) {
 			// Is there a field 'name'
 			VcfHeader vcfHeader = vcfGenotype.getVcfEntry().getVcfFileIterator().getVcfHeader();
-			VcfInfoGenotype vcfInfoGenotype = vcfHeader.getVcfInfoGenotype(name);
+			VcfHeaderInfoGenotype vcfInfoGenotype = vcfHeader.getVcfInfoGenotype(name);
 			if (vcfInfoGenotype == null) {
 				// Is this a special field name?
 				if (FieldConstant.isConstantField(name)) return FieldConstantNames.valueOf(name).getType();
@@ -209,7 +209,7 @@ public class Field extends Expression {
 		if (name.equals("QUAL")) return "" + vcfEntry.getQuality();
 
 		// Is there a filed 'name'
-		VcfInfo vcfInfo = vcfEntry.getVcfFileIterator().getVcfHeader().getVcfInfo(name);
+		VcfHeaderInfo vcfInfo = vcfEntry.getVcfFileIterator().getVcfHeader().getVcfInfo(name);
 		if (vcfInfo == null) return (String) fieldHeaderNotFound(vcfEntry);
 
 		// Get field value

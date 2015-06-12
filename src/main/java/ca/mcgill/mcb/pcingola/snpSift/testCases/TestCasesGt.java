@@ -15,10 +15,13 @@ import ca.mcgill.mcb.pcingola.util.Gpr;
 public class TestCasesGt extends TestCase {
 
 	public static boolean debug = false;
+	public static boolean verbose = false;
 
 	/**
 	 */
 	public void test_01() {
+		Gpr.debug("Test");
+
 		String file = "test/gt_test.01.vcf";
 		String fileGt = "test/gt_test.01.gt.vcf";
 
@@ -27,7 +30,7 @@ public class TestCasesGt extends TestCase {
 		//---
 		String args[] = { file };
 		SnpSiftCmdGt cmd = new SnpSiftCmdGt(args);
-		cmd.setVerbose(true);
+		cmd.setVerbose(verbose);
 		cmd.setDebug(debug);
 		cmd.setSaveOutput(true);
 		cmd.run();
@@ -41,7 +44,7 @@ public class TestCasesGt extends TestCase {
 		//---
 		String argsUn[] = { "-u", fileGt };
 		SnpSiftCmdGt cmdUn = new SnpSiftCmdGt(argsUn);
-		cmdUn.setVerbose(true);
+		cmdUn.setVerbose(verbose);
 		cmdUn.setDebug(debug);
 		cmdUn.setSaveOutput(true);
 		cmdUn.run();

@@ -1,6 +1,6 @@
 package ca.mcgill.mcb.pcingola.snpSift;
 
-import ca.mcgill.mcb.pcingola.fileIterator.NeedlemanWunsch;
+import ca.mcgill.mcb.pcingola.align.NeedlemanWunsch;
 import ca.mcgill.mcb.pcingola.fileIterator.VcfFileIterator;
 import ca.mcgill.mcb.pcingola.vcf.VcfEntry;
 

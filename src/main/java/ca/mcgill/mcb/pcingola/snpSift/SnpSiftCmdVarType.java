@@ -50,11 +50,11 @@ public class SnpSiftCmdVarType extends SnpSift {
 	 */
 	public void annotate(VcfEntry vcfEntry) {
 		// Entry type?
-		if (vcfEntry.getVariantType() != null) vcfEntry.addInfo(vcfEntry.getVariantType().toString());
+		if (vcfEntry.getVariantType() != null) vcfEntry.addInfo(vcfEntry.getVariantType().toString(), null);
 
 		// Heterozygous?
 		Boolean isHet = vcfEntry.calcHetero();
-		if (isHet != null) vcfEntry.addInfo(isHet ? "HET" : "HOM");
+		if (isHet != null) vcfEntry.addInfo(isHet ? "HET" : "HOM", null);
 
 		// Add vartype according to alleles
 		StringBuilder sb = new StringBuilder();

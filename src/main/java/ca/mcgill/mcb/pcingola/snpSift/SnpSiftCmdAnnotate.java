@@ -13,7 +13,7 @@ import ca.mcgill.mcb.pcingola.util.Gpr;
 import ca.mcgill.mcb.pcingola.util.Timer;
 import ca.mcgill.mcb.pcingola.vcf.VcfEntry;
 import ca.mcgill.mcb.pcingola.vcf.VcfHeader;
-import ca.mcgill.mcb.pcingola.vcf.VcfInfo;
+import ca.mcgill.mcb.pcingola.vcf.VcfHeaderInfo;
 
 /**
  * Annotate a VCF file with ID from another VCF file (database)
@@ -63,10 +63,10 @@ public class SnpSiftCmdAnnotate extends SnpSift {
 			VcfHeader vcfDbHeader = vcfDb.readHeader();
 
 			// Add all corresponding INFO headers
-			for (VcfInfo vcfInfoDb : vcfDbHeader.getVcfInfo()) {
+			for (VcfHeaderInfo vcfInfoDb : vcfDbHeader.getVcfInfo()) {
 
 				// Get same vcfInfo from file to annotate
-				VcfInfo vcfInfoFile = vcfFile.getVcfHeader().getVcfInfo(vcfInfoDb.getId());
+				VcfHeaderInfo vcfInfoFile = vcfFile.getVcfHeader().getVcfInfo(vcfInfoDb.getId());
 
 				// Add header entry only if...
 				if (isAnnotateInfo(vcfInfoDb) // Add if it is being used to annotate
@@ -198,7 +198,7 @@ public class SnpSiftCmdAnnotate extends SnpSift {
 	/**
 	 * Are we annotating using this info field?
 	 */
-	boolean isAnnotateInfo(VcfInfo vcfInfo) {
+	boolean isAnnotateInfo(VcfHeaderInfo vcfInfo) {
 		// All fields selected?
 		if (infoFields == null) return true;
 

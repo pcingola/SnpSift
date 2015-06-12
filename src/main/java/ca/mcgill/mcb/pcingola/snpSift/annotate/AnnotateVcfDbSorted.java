@@ -68,7 +68,7 @@ public class AnnotateVcfDbSorted extends AnnotateVcfDb {
 			if (latestVcfDb.getChromosomeName().equals(chr)) {
 				dbCurrentEntry.updateChromo(ve);
 				if (ve.getStart() < latestVcfDb.getStart()) {
-					dbCurrentEntry.clear();
+					// dbCurrentEntry.clear();
 					return;
 				}
 
