@@ -439,6 +439,7 @@ public class SnpSift implements VcfAnnotator {
 		cmd.quiet = quiet;
 		cmd.debug = debug;
 		cmd.help = help;
+		cmd.suppressOutput = suppressOutput;
 
 		cmd.numWorkers = numWorkers;
 
