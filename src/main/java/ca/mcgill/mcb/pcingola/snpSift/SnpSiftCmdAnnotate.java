@@ -81,7 +81,7 @@ public class SnpSiftCmdAnnotate extends SnpSift {
 					fatalError("Your VCF file should be sorted!" //
 							+ "\n\tPrevious entry " + chr + ":" + pos//
 							+ "\n\tCurrent entry  " + vcfEntry.getChromosomeName() + ":" + (vcfEntry.getStart() + 1)//
-					);
+							);
 				}
 
 				// Annotate variants
@@ -106,7 +106,7 @@ public class SnpSiftCmdAnnotate extends SnpSift {
 					+ "\n\tTotal entries           : " + count //
 					+ "\n\tPercent                 : " + String.format("%.2f%%", perc) //
 					+ "\n\tErrors (bad references) : " + countBadRef //
-			);
+					);
 		}
 
 		return list;
@@ -141,7 +141,19 @@ public class SnpSiftCmdAnnotate extends SnpSift {
 	 */
 	@Override
 	public boolean annotateInit(VcfFileIterator vcfFile) {
-		// Type of database
+		// Find or download database
+		dbFileName = databaseFindOrDownload();
+
+		// Guess annotation method if none is provided
+		method = guessAnnotationMethod();
+
+		dbFileName = fixDbName();
+		if (verbose) Timer.showStdErr("Annotating\n" //
+				+ "\tInput file    : '" + vcfInputFile + "'\n" //
+				+ "\tDatabase file : '" + dbFileName + "'" //
+				);
+
+		// Create annotateDb object
 		switch (method) {
 
 		case MEMORY:
@@ -173,6 +185,30 @@ public class SnpSiftCmdAnnotate extends SnpSift {
 		return false;
 	}
 
+	String fixDbName() {
+		// For tabix databases, if the 'gz' file exists, try opening that one instead
+		if (method == AnnotationMethod.TABIX //
+				&& !dbFileName.endsWith(".gz") //
+				&& Gpr.exists(dbFileName + ".gz") //
+				) return dbFileName + ".gz";
+
+		return dbFileName;
+	}
+
+	/**
+	 * Guess annotation (if none is provided) method and check database file
+	 */
+	AnnotationMethod guessAnnotationMethod() {
+		if (method != null) return method;
+
+		if (dbFileName.endsWith(".gz")) {
+			if (Gpr.exists(dbFileName + ".tbi")) return AnnotationMethod.TABIX;
+			else return AnnotationMethod.MEMORY;
+		} else if (Gpr.exists(dbFileName + ".gz") && Gpr.exists(dbFileName + ".gz.tbi")) return AnnotationMethod.TABIX;
+
+		return AnnotationMethod.SORTED_VCF;
+	}
+
 	/**
 	 * Build headers to add
 	 */
@@ -198,7 +234,7 @@ public class SnpSiftCmdAnnotate extends SnpSift {
 				if (isAnnotateInfo(vcfHeaderDb) // It is used for annotations
 						&& !vcfHeaderDb.isImplicit() //  AND it is not an "implicit" header in Db (i.e. created automatically by VcfHeader class)
 						&& ((vcfHeaderFile == null) || vcfHeaderFile.isImplicit()) // AND it is not already added OR is already added, but it is implicit
-				) {
+						) {
 					VcfHeaderInfo newHeader = new VcfHeaderInfo(vcfHeaderDb);
 					if (prependInfoFieldName != null) newHeader.setId(id); // Change ID?
 					headerInfos.add(newHeader);
@@ -315,29 +351,7 @@ public class SnpSiftCmdAnnotate extends SnpSift {
 		// Read config
 		if (config == null) loadConfig();
 
-		// Find or download database
-		dbFileName = databaseFindOrDownload();
-
-		// Guess annotation method if none is provided
-		if (method == null) {
-			if (dbFileName.endsWith(".gz")) {
-				if (Gpr.exists(dbFileName + ".tbi")) method = AnnotationMethod.TABIX;
-				else method = AnnotationMethod.MEMORY;
-			} else if (Gpr.exists(dbFileName + ".gz") && Gpr.exists(dbFileName + ".gz.tbi")) method = AnnotationMethod.TABIX;
-			else method = AnnotationMethod.SORTED_VCF;
-		}
-
-		// For tabix databases, if the 'gz' file exists, try opening that one instead
-		if (method == AnnotationMethod.TABIX //
-				&& !dbFileName.endsWith(".gz") //
-				&& Gpr.exists(dbFileName + ".gz") //
-		) dbFileName = dbFileName + ".gz";
-
-		if (verbose) Timer.showStdErr("Annotating\n" //
-				+ "\tInput file    : '" + vcfInputFile + "'\n" //
-				+ "\tDatabase file : '" + dbFileName + "'" //
-		);
-
+		// Annotate
 		return annotate(createList);
 	}
 

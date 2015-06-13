@@ -107,6 +107,8 @@ public class SnpSift implements VcfAnnotator {
 	 * Show command line
 	 */
 	protected String commandLineStr() {
+		if (args == null) return "";
+
 		StringBuilder argsList = new StringBuilder();
 		argsList.append("SnpSift " + command + " ");
 
@@ -190,6 +192,14 @@ public class SnpSift implements VcfAnnotator {
 		System.exit(-1);
 	}
 
+	public Config getConfig() {
+		return config;
+	}
+
+	public String getConfigFile() {
+		return configFile;
+	}
+
 	public String getOutput() {
 		return output.toString();
 	}
@@ -221,11 +231,19 @@ public class SnpSift implements VcfAnnotator {
 	 * Read config file
 	 */
 	protected void loadConfig() {
+		if (config != null) return; // Already loaded?
+
 		// Read config file
 		if (configFile == null || configFile.isEmpty()) configFile = Config.DEFAULT_CONFIG_FILE; // Default config file
+
 		if (verbose) Timer.showStdErr("Reading configuration file '" + configFile + "'");
+
 		config = new Config("", configFile, dataDir, null); // Read configuration
 		if (verbose) Timer.showStdErr("done");
+
+		// Set some parameters
+		config.setDebug(debug);
+		config.setVerbose(verbose);
 	}
 
 	/**
@@ -246,7 +264,7 @@ public class SnpSift implements VcfAnnotator {
 		if (args.length < 1) usage(null);
 
 		// Get command
-		command = args[0].trim().toUpperCase();
+		command = args[0];
 
 		// Create new array shifting everything 1 position
 		ArrayList<String> argsList = new ArrayList<String>();
@@ -309,77 +327,19 @@ public class SnpSift implements VcfAnnotator {
 		return "";
 	}
 
-	/**
-	 * Run: Executes the appropriate class
-	 */
 	public void run() {
-		SnpSift cmd = null;
-
-		if (command.startsWith("ALL")) cmd = new SnpSiftCmdAlleleMatrix(args);
-		else if (command.startsWith("ANN")) cmd = new SnpSiftCmdAnnotate(args);
-		else if (command.startsWith("CA")) cmd = new SnpSiftCmdCaseControl(args);
-		else if (command.startsWith("CCS")) cmd = new SnpSiftCmdCaseControlSummary(args);
-		else if (command.startsWith("CONC")) cmd = new SnpSiftCmdConcordance(args);
-		else if (command.startsWith("COVMAT")) cmd = new SnpSiftCmdCovarianceMatrix(args);
-		else if (command.startsWith("DBNSFP")) cmd = new SnpSiftCmdDbNsfp(args);
-		else if (command.startsWith("EX")) cmd = new SnpSiftCmdExtractFields(args);
-		else if (command.startsWith("FILTERC")) cmd = new SnpSiftCmdFilterChrPos(args);
-		else if (command.startsWith("FI")) cmd = new SnpSiftCmdFilter(args);
-		else if (command.startsWith("GENESETS")) cmd = new SnpSiftCmdGeneSets(args);
-		else if (command.startsWith("GTF")) cmd = new SnpSiftCmdGtFilter(args);
-		else if (command.startsWith("GT")) cmd = new SnpSiftCmdGt(args);
-		else if (command.startsWith("GWASCAT")) cmd = new SnpSiftCmdGwasCatalog(args);
-		else if (command.startsWith("HW")) cmd = new SnpSiftCmdHwe(args);
-		else if (command.startsWith("INTIDX")) cmd = new SnpSiftCmdIntervalsIndex(args);
-		else if (command.startsWith("INTERS")) cmd = new SnpSiftCmdIntersect(args);
-		else if (command.startsWith("INTERV")) cmd = new SnpSiftCmdIntervals(args);
-		else if (command.startsWith("JOIN")) cmd = new SnpSiftCmdJoin(args);
-		else if (command.startsWith("PEDSHOW")) cmd = new SnpSiftCmdPedShow(args);
-		else if (command.startsWith("PHASTCONS")) cmd = new SnpSiftCmdPhastCons(args);
-		else if (command.startsWith("PRIVATE")) cmd = new SnpSiftCmdPrivate(args);
-		else if (command.startsWith("RMINFO")) cmd = new SnpSiftCmdRmInfo(args);
-		else if (command.startsWith("RMREF")) cmd = new SnpSiftCmdRemoveReferenceGenotypes(args);
-		else if (command.startsWith("SIMPLIFYINDELS")) cmd = new SnpSiftCmdSimplifyIndels(args);
-		else if (command.startsWith("SPLIT")) cmd = new SnpSiftCmdSplit(args);
-		else if (command.startsWith("TS")) cmd = new SnpSiftCmdTsTv(args);
-		else if (command.startsWith("VARTYPE")) cmd = new SnpSiftCmdVarType(args);
-		else if (command.startsWith("VCF2TPED")) cmd = new SnpSiftCmdVcf2Tped(args);
-		else if (command.startsWith("VCFCHECK")) cmd = new SnpSiftCmdVcfCheck(args);
-		else usage("Unknown command '" + command + "'");
-
-		// Help? Show help and exit
-		if (help) {
-			cmd.usage(null);
-			return;
-		}
-
-		// Show version and command
-		if (!help && (verbose || debug)) {
-			Timer.showStdErr("SnpSift version " + VERSION);
-			Timer.showStdErr("Command: '" + command + "'");
-		}
-
-		// Copy parsed parameters
-		cmd.verbose = verbose;
-		cmd.quiet = quiet;
-		cmd.debug = debug;
-		cmd.help = help;
-
-		cmd.numWorkers = numWorkers;
-
-		cmd.needsConfig = needsConfig;
-		cmd.configFile = configFile;
-		cmd.config = config;
-
-		cmd.download = download;
-		cmd.log = log;
-
-		cmd.needsDb = needsDb;
-		if (cmd.dbFileName == null) cmd.dbFileName = dbFileName;
-		if (cmd.dbType == null) cmd.dbType = dbType;
+		SnpSift cmd = snpSiftCmd();
 
 		// Execute command
 		cmd.run();
+	}
+
+	public void setConfig(Config config) {
+		this.config = config;
+	}
+
+	public void setConfigFile(String configFile) {
+		this.configFile = configFile;
 	}
 
 	public void setDbFileName(String dbFileName) {
@@ -423,6 +383,78 @@ public class SnpSift implements VcfAnnotator {
 	 */
 	public void showVersion() {
 		System.err.println(SnpSift.class.getSimpleName() + " version " + VERSION + "\n");
+	}
+
+	/**
+	 * Run: Executes the appropriate class
+	 */
+	public SnpSift snpSiftCmd() {
+		SnpSift cmd = null;
+
+		command = command.trim().toUpperCase();
+
+		if (command.startsWith("ALL")) cmd = new SnpSiftCmdAlleleMatrix(args);
+		else if (command.startsWith("ANN")) cmd = new SnpSiftCmdAnnotate(args);
+		else if (command.startsWith("CA")) cmd = new SnpSiftCmdCaseControl(args);
+		else if (command.startsWith("CCS")) cmd = new SnpSiftCmdCaseControlSummary(args);
+		else if (command.startsWith("CONC")) cmd = new SnpSiftCmdConcordance(args);
+		else if (command.startsWith("COVMAT")) cmd = new SnpSiftCmdCovarianceMatrix(args);
+		else if (command.startsWith("DBNSFP")) cmd = new SnpSiftCmdDbNsfp(args);
+		else if (command.startsWith("EX")) cmd = new SnpSiftCmdExtractFields(args);
+		else if (command.startsWith("FILTERC")) cmd = new SnpSiftCmdFilterChrPos(args);
+		else if (command.startsWith("FI")) cmd = new SnpSiftCmdFilter(args);
+		else if (command.startsWith("GENESETS")) cmd = new SnpSiftCmdGeneSets(args);
+		else if (command.startsWith("GTF")) cmd = new SnpSiftCmdGtFilter(args);
+		else if (command.startsWith("GT")) cmd = new SnpSiftCmdGt(args);
+		else if (command.startsWith("GWASCAT")) cmd = new SnpSiftCmdGwasCatalog(args);
+		else if (command.startsWith("HW")) cmd = new SnpSiftCmdHwe(args);
+		else if (command.startsWith("INTIDX")) cmd = new SnpSiftCmdIntervalsIndex(args);
+		else if (command.startsWith("INTERS")) cmd = new SnpSiftCmdIntersect(args);
+		else if (command.startsWith("INTERV")) cmd = new SnpSiftCmdIntervals(args);
+		else if (command.startsWith("JOIN")) cmd = new SnpSiftCmdJoin(args);
+		else if (command.startsWith("PEDSHOW")) cmd = new SnpSiftCmdPedShow(args);
+		else if (command.startsWith("PHASTCONS")) cmd = new SnpSiftCmdPhastCons(args);
+		else if (command.startsWith("PRIVATE")) cmd = new SnpSiftCmdPrivate(args);
+		else if (command.startsWith("RMINFO")) cmd = new SnpSiftCmdRmInfo(args);
+		else if (command.startsWith("RMREF")) cmd = new SnpSiftCmdRemoveReferenceGenotypes(args);
+		else if (command.startsWith("SIMPLIFYINDELS")) cmd = new SnpSiftCmdSimplifyIndels(args);
+		else if (command.startsWith("SPLIT")) cmd = new SnpSiftCmdSplit(args);
+		else if (command.startsWith("TS")) cmd = new SnpSiftCmdTsTv(args);
+		else if (command.startsWith("VARTYPE")) cmd = new SnpSiftCmdVarType(args);
+		else if (command.startsWith("VCF2TPED")) cmd = new SnpSiftCmdVcf2Tped(args);
+		else if (command.startsWith("VCFCHECK")) cmd = new SnpSiftCmdVcfCheck(args);
+		else usage("Unknown command '" + command + "'");
+
+		// Help? Show help and exit
+		if (help) cmd.usage(null);
+
+		// Show version and command
+		if (!help && (verbose || debug)) {
+			Timer.showStdErr("SnpSift version " + VERSION);
+			Timer.showStdErr("Command: '" + command + "'");
+		}
+
+		// Copy parsed parameters
+		cmd.verbose = verbose;
+		cmd.quiet = quiet;
+		cmd.debug = debug;
+		cmd.help = help;
+
+		cmd.numWorkers = numWorkers;
+
+		cmd.needsConfig = needsConfig;
+		cmd.configFile = configFile;
+		cmd.config = config;
+
+		cmd.download = download;
+		cmd.log = log;
+
+		cmd.needsDb = needsDb;
+		if (cmd.dbFileName == null) cmd.dbFileName = dbFileName;
+		if (cmd.dbType == null) cmd.dbType = dbType;
+
+		// Execute command
+		return cmd;
 	}
 
 	/**
@@ -487,7 +519,7 @@ public class SnpSift implements VcfAnnotator {
 				+ "\n\tvarType       : Annotate variant type (SNP,MNP,INS,DEL or MIXED)." //
 				+ "\n\tvcfCheck      : Check that VCF file is well formed." //
 				+ "\n\tvcf2tped      : Convert VCF to TPED." //
-				);
+		);
 
 		usageGenericAndDb();
 
@@ -507,7 +539,7 @@ public class SnpSift implements VcfAnnotator {
 				+ "\t-noLog               : Do not report usage statistics to server.\n" //
 				+ "\t-h                   : Help.\n" //
 				+ "\t-v                   : Verbose.\n" //
-				);
+		);
 	}
 
 	/**
