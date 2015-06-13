@@ -129,7 +129,7 @@ public class SnpSiftCmdIntervalsIndex extends SnpSift {
 		VcfFileIterator vcfFileIt = new VcfFileIterator(vcfFile);
 		vcfFileIt.setDebug(debug);
 		vcfFileIt.iterator().next(); // Read header (by reading first vcf entry)
-		addHeader(vcfFileIt);
+		addHeaders(vcfFileIt);
 		String headerStr = vcfFileIt.getVcfHeader().toString();
 		if (!headerStr.isEmpty()) System.out.println(headerStr);
 		vcfFileIt.close();

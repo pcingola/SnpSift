@@ -13,6 +13,7 @@ import ca.mcgill.mcb.pcingola.util.Gpr;
 import ca.mcgill.mcb.pcingola.util.Timer;
 import ca.mcgill.mcb.pcingola.vcf.VcfEntry;
 import ca.mcgill.mcb.pcingola.vcf.VcfHeader;
+import ca.mcgill.mcb.pcingola.vcf.VcfHeaderEntry;
 import ca.mcgill.mcb.pcingola.vcf.VcfHeaderInfo;
 import ca.mcgill.mcb.pcingola.vcf.VcfInfoType;
 
@@ -37,6 +38,7 @@ public class SnpSiftCmdAnnotate extends SnpSift {
 	protected boolean useRefAlt;
 	protected AnnotationMethod method;
 	protected int countBadRef = 0;
+	int countAnnotated = 0, count = 0;
 	protected String chrPrev = "";
 	protected String prependInfoFieldName;
 	protected String existsInfoField;
@@ -53,11 +55,130 @@ public class SnpSiftCmdAnnotate extends SnpSift {
 	}
 
 	/**
+	 * Annotate VCF file
+	 *
+	 * @param createList : If true, return a list with all annotated entries (used for test cases & debugging)
+	 */
+	ArrayList<VcfEntry> annotate(boolean createList) {
+		ArrayList<VcfEntry> list = (createList ? new ArrayList<VcfEntry>() : null);
+		if (verbose) Timer.showStdErr("Annotating entries from: '" + vcfInputFile + "'");
+
+		vcfFile = openVcfInputFile(); // Open input VCF
+		try {
+			annotateInit(vcfFile);
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+
+		int pos = -1;
+		String chr = "";
+		for (VcfEntry vcfEntry : vcfFile) {
+			try {
+				processVcfHeader(vcfFile);
+
+				// Check if file is sorted
+				if (vcfEntry.getChromosomeName().equals(chr) && vcfEntry.getStart() < pos) {
+					fatalError("Your VCF file should be sorted!" //
+							+ "\n\tPrevious entry " + chr + ":" + pos//
+							+ "\n\tCurrent entry  " + vcfEntry.getChromosomeName() + ":" + (vcfEntry.getStart() + 1)//
+					);
+				}
+
+				// Annotate variants
+				annotate(vcfEntry);
+				if (list != null) list.add(vcfEntry);
+
+				// Update chr:pos
+				chr = vcfEntry.getChromosomeName();
+				pos = vcfEntry.getStart();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+
+		annotateDb.close();
+
+		// Show some statistics
+		if (verbose) {
+			double perc = (100.0 * countAnnotated) / count;
+			Timer.showStdErr("Done." //
+					+ "\n\tTotal annotated entries : " + countAnnotated //
+					+ "\n\tTotal entries           : " + count //
+					+ "\n\tPercent                 : " + String.format("%.2f%%", perc) //
+					+ "\n\tErrors (bad references) : " + countBadRef //
+			);
+		}
+
+		return list;
+	}
+
+	@Override
+	public void annotate(VcfEntry vcfEntry) {
+		boolean annotated = false;
+
+		if (vcfEntry.isVariant()) {
+			try {
+				annotated = annotateDb.annotate(vcfEntry);
+			} catch (IOException e) {
+				throw new RuntimeException(e);
+			}
+		}
+
+		// Show
+		print(vcfEntry);
+
+		if (annotated) countAnnotated++;
+		count++;
+	}
+
+	@Override
+	public boolean annotateFinish() {
+		return false;
+	}
+
+	/**
+	 * Initialize database for annotation process
+	 */
+	@Override
+	public boolean annotateInit(VcfFileIterator vcfFile) {
+		// Type of database
+		switch (method) {
+
+		case MEMORY:
+			annotateDb = new AnnotateVcfDbMem(dbFileName);
+			break;
+
+		case SORTED_VCF:
+			annotateDb = new AnnotateVcfDbSorted(dbFileName);
+			break;
+
+		case TABIX:
+			annotateDb = new AnnotateVcfDbTabix(dbFileName);
+			break;
+
+		default:
+			throw new RuntimeException("Unknwon method '" + method + "'");
+		}
+
+		// Set parameters & open database file
+		annotateDb.setUseId(useId);
+		annotateDb.setUseRefAlt(useRefAlt);
+		annotateDb.setInfoFields(useInfoField, infoFields);
+		annotateDb.setExistsInfoField(existsInfoField);
+		annotateDb.setPrependInfoFieldName(prependInfoFieldName);
+		annotateDb.setDebug(debug);
+		annotateDb.setVerbose(verbose);
+		annotateDb.open();// Open database
+
+		return false;
+	}
+
+	/**
 	 * Build headers to add
 	 */
 	@Override
-	protected List<String> addHeader() {
-		List<String> newHeaders = super.addHeader();
+	protected List<VcfHeaderEntry> headers() {
+		List<VcfHeaderEntry> headerInfos = super.headers();
 
 		// Read database header and add INFO fields to the output vcf header
 		if (useInfoField) {
@@ -80,7 +201,7 @@ public class SnpSiftCmdAnnotate extends SnpSift {
 				) {
 					VcfHeaderInfo newHeader = new VcfHeaderInfo(vcfHeaderDb);
 					if (prependInfoFieldName != null) newHeader.setId(id); // Change ID?
-					newHeaders.add(newHeader.toString());
+					headerInfos.add(newHeader);
 				}
 			}
 		}
@@ -88,77 +209,10 @@ public class SnpSiftCmdAnnotate extends SnpSift {
 		// Using 'exists' flag?
 		if (existsInfoField != null) {
 			VcfHeaderInfo existsHeader = new VcfHeaderInfo(existsInfoField, VcfInfoType.Flag, "" + 1, "Variant exists in file '" + Gpr.baseName(dbFileName) + "'");
-			newHeaders.add(existsHeader.toString());
+			headerInfos.add(existsHeader);
 		}
 
-		return newHeaders;
-	}
-
-	/**
-	 * Annotate VCF file
-	 *
-	 * @param createList : If true, return a list with all annotated entries (used for test cases & debugging)
-	 */
-	ArrayList<VcfEntry> annotate(boolean createList) {
-		ArrayList<VcfEntry> list = (createList ? new ArrayList<VcfEntry>() : null);
-		if (verbose) Timer.showStdErr("Annotating entries from: '" + vcfInputFile + "'");
-
-		try {
-			initAnnotateDb();
-		} catch (Exception e) {
-			throw new RuntimeException(e);
-		}
-
-		int countAnnotated = 0, count = 0;
-		int pos = -1;
-		String chr = "";
-		vcfFile = openVcfInputFile(); // Open input VCF
-		for (VcfEntry vcfEntry : vcfFile) {
-			try {
-				processVcfHeader(vcfFile);
-
-				// Check if file is sorted
-				if (vcfEntry.getChromosomeName().equals(chr) && vcfEntry.getStart() < pos) {
-					fatalError("Your VCF file should be sorted!" //
-							+ "\n\tPrevious entry " + chr + ":" + pos//
-							+ "\n\tCurrent entry  " + vcfEntry.getChromosomeName() + ":" + (vcfEntry.getStart() + 1)//
-					);
-				}
-
-				// Annotate variants
-				boolean annotated = false;
-				if (vcfEntry.isVariant()) annotated = annotateDb.annotate(vcfEntry);
-
-				// Show
-				print(vcfEntry);
-				if (list != null) list.add(vcfEntry);
-
-				if (annotated) countAnnotated++;
-				count++;
-
-				// Update chr:pos
-				chr = vcfEntry.getChromosomeName();
-				pos = vcfEntry.getStart();
-
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		}
-
-		annotateDb.close();
-
-		// Show some statistics
-		if (verbose) {
-			double perc = (100.0 * countAnnotated) / count;
-			Timer.showStdErr("Done." //
-					+ "\n\tTotal annotated entries : " + countAnnotated //
-					+ "\n\tTotal entries           : " + count //
-					+ "\n\tPercent                 : " + String.format("%.2f%%", perc) //
-					+ "\n\tErrors (bad references) : " + countBadRef //
-			);
-		}
-
-		return list;
+		return headerInfos;
 	}
 
 	/**
@@ -174,42 +228,6 @@ public class SnpSiftCmdAnnotate extends SnpSift {
 		needsConfig = true;
 		needsDb = true;
 		dbTabix = true;
-	}
-
-	/**
-	 * Initialize database for annotation process
-	 */
-	void initAnnotateDb() throws IOException {
-
-		// Type of database
-		switch (method) {
-
-		case MEMORY:
-			annotateDb = new AnnotateVcfDbMem(dbFileName);
-			break;
-
-		case SORTED_VCF:
-			annotateDb = new AnnotateVcfDbSorted(dbFileName);
-			break;
-
-		case TABIX:
-			annotateDb = new AnnotateVcfDbTabix(dbFileName);
-			break;
-
-		default:
-			throw new RuntimeException("Unknwon method '" + method + "'");
-		}
-
-		// Set parameters & open database file
-		annotateDb.setUseId(useId);
-		//		annotateDb.setUseInfoField(useInfoField);
-		annotateDb.setUseRefAlt(useRefAlt);
-		annotateDb.setInfoFields(useInfoField, infoFields);
-		annotateDb.setExistsInfoField(existsInfoField);
-		annotateDb.setPrependInfoFieldName(prependInfoFieldName);
-		annotateDb.setDebug(debug);
-		annotateDb.setVerbose(verbose);
-		annotateDb.open();// Open database
 	}
 
 	/**
@@ -361,4 +379,5 @@ public class SnpSiftCmdAnnotate extends SnpSift {
 
 		System.exit(1);
 	}
+
 }

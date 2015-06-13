@@ -13,6 +13,10 @@ import ca.mcgill.mcb.pcingola.stats.CountByType;
 import ca.mcgill.mcb.pcingola.util.Timer;
 import ca.mcgill.mcb.pcingola.vcf.VcfEffect;
 import ca.mcgill.mcb.pcingola.vcf.VcfEntry;
+import ca.mcgill.mcb.pcingola.vcf.VcfHeaderEntry;
+import ca.mcgill.mcb.pcingola.vcf.VcfHeaderInfo;
+import ca.mcgill.mcb.pcingola.vcf.VcfHeaderInfo.VcfInfoNumber;
+import ca.mcgill.mcb.pcingola.vcf.VcfInfoType;
 
 /**
  * Annotate a VCF file using Gene sets (MSigDb) or gene ontology (GO)
@@ -36,17 +40,11 @@ public class SnpSiftCmdGeneSets extends SnpSift {
 		countByGeneSet = new CountByType();
 	}
 
-	@Override
-	protected List<String> addHeader() {
-		List<String> newHeaders = super.addHeader();
-		newHeaders.add("##INFO=<ID=" + INFO_GENE_SETS + ",Number=.,Type=String,Description=\"Gene set from MSigDB database (GSEA)\">");
-		return newHeaders;
-	}
-
 	/**
 	 * Annotate one entry
 	 * @param vcfEntry
 	 */
+	@Override
 	public void annotate(VcfEntry vcfEntry) {
 		HashSet<String> sets = null;
 
@@ -93,6 +91,13 @@ public class SnpSiftCmdGeneSets extends SnpSift {
 		}
 	}
 
+	@Override
+	protected List<VcfHeaderEntry> headers() {
+		List<VcfHeaderEntry> newHeaders = super.headers();
+		newHeaders.add(new VcfHeaderInfo(INFO_GENE_SETS, VcfInfoType.String, VcfInfoNumber.UNLIMITED.toString(), "Gene set from MSigDB database (GSEA)"));
+		return newHeaders;
+	}
+
 	/**
 	 * Parse command line arguments
 	 */
@@ -132,7 +137,7 @@ public class SnpSiftCmdGeneSets extends SnpSift {
 		for (VcfEntry vcfEntry : vcf) {
 			// Show header?
 			if (vcf.isHeadeSection()) {
-				addHeader(vcf);
+				addHeaders(vcf);
 				String headerStr = vcf.getVcfHeader().toString();
 				if (!headerStr.isEmpty()) print(headerStr);
 			}

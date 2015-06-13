@@ -15,6 +15,7 @@ import ca.mcgill.mcb.pcingola.util.Gpr;
 import ca.mcgill.mcb.pcingola.vcf.EffFormatVersion;
 import ca.mcgill.mcb.pcingola.vcf.VcfEntry;
 import ca.mcgill.mcb.pcingola.vcf.VcfGenotype;
+import ca.mcgill.mcb.pcingola.vcf.VcfHeaderEntry;
 
 /**
  * Generic SnpSift genotype filter
@@ -43,14 +44,6 @@ public class SnpSiftCmdGtFilter extends SnpSift {
 
 	public SnpSiftCmdGtFilter(String args[]) {
 		super(args, "filter");
-	}
-
-	@Override
-	protected List<String> addHeader() {
-		List<String> addHeader = super.addHeader();
-		String expr = expression.replace('\n', ' ').replace('\r', ' ').replace('\t', ' ').trim();
-		if (!filterId.isEmpty()) addHeader.add("##FILTER=<ID=" + filterId + ",Description=\"" + VERSION + ", Expression used: " + expr + "\">");
-		return addHeader;
 	}
 
 	/**
@@ -186,6 +179,14 @@ public class SnpSiftCmdGtFilter extends SnpSift {
 		vcfInputFile = fileName;
 		this.expression = expression;
 		return run(createList);
+	}
+
+	@Override
+	protected List<VcfHeaderEntry> headers() {
+		List<VcfHeaderEntry> addHeader = super.headers();
+		String expr = expression.replace('\n', ' ').replace('\r', ' ').replace('\t', ' ').trim();
+		if (!filterId.isEmpty()) addHeader.add(new VcfHeaderEntry("##FILTER=<ID=" + filterId + ",Description=\"" + VERSION + ", Expression used: " + expr + "\">"));
+		return addHeader;
 	}
 
 	/**

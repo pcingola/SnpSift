@@ -5,6 +5,10 @@ import java.util.List;
 import ca.mcgill.mcb.pcingola.fileIterator.VcfFileIterator;
 import ca.mcgill.mcb.pcingola.util.Gpr;
 import ca.mcgill.mcb.pcingola.vcf.VcfEntry;
+import ca.mcgill.mcb.pcingola.vcf.VcfHeaderEntry;
+import ca.mcgill.mcb.pcingola.vcf.VcfHeaderInfo;
+import ca.mcgill.mcb.pcingola.vcf.VcfHeaderInfo.VcfInfoNumber;
+import ca.mcgill.mcb.pcingola.vcf.VcfInfoType;
 
 /**
  * Add genotype information to INFO fields
@@ -25,18 +29,17 @@ public class SnpSiftCmdGt extends SnpSift {
 	}
 
 	@Override
-	protected List<String> addHeader() {
-		List<String> newHeaders = super.addHeader();
-		newHeaders.add("##INFO=<ID=" + VcfEntry.VCF_INFO_HOMS + ",Number=.,Type=Integer,Description=\"List of sample indexes having homozygous ALT genotypes\">");
-		newHeaders.add("##INFO=<ID=" + VcfEntry.VCF_INFO_HETS + ",Number=.,Type=Integer,Description=\"List of sample indexes having heterozygous ALT genotypes\">");
-		newHeaders.add("##INFO=<ID=" + VcfEntry.VCF_INFO_NAS + ",Number=.,Type=Integer,Description=\"List of sample indexes having missing genotypes\">");
-		newHeaders.add("##SnpSiftCmd=\"" + commandLineStr() + "\"");
-		return newHeaders;
+	public String getOutput() {
+		return output.toString();
 	}
 
 	@Override
-	public String getOutput() {
-		return output.toString();
+	protected List<VcfHeaderEntry> headers() {
+		List<VcfHeaderEntry> newHeaders = super.headers();
+		newHeaders.add(new VcfHeaderInfo(VcfEntry.VCF_INFO_HOMS, VcfInfoType.Integer, VcfInfoNumber.UNLIMITED.toString(), "List of sample indexes having homozygous ALT genotypes"));
+		newHeaders.add(new VcfHeaderInfo(VcfEntry.VCF_INFO_HETS, VcfInfoType.Integer, VcfInfoNumber.UNLIMITED.toString(), "List of sample indexes having heterozygous ALT genotypes"));
+		newHeaders.add(new VcfHeaderInfo(VcfEntry.VCF_INFO_NAS, VcfInfoType.Integer, VcfInfoNumber.UNLIMITED.toString(), "List of sample indexes having missing genotypes"));
+		return newHeaders;
 	}
 
 	/**

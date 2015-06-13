@@ -15,6 +15,7 @@ import ca.mcgill.mcb.pcingola.util.Gpr;
 import ca.mcgill.mcb.pcingola.util.Timer;
 import ca.mcgill.mcb.pcingola.vcf.VcfEntry;
 import ca.mcgill.mcb.pcingola.vcf.VcfGenotype;
+import ca.mcgill.mcb.pcingola.vcf.VcfHeaderEntry;
 
 /**
  * Count number of cases and controls
@@ -48,25 +49,10 @@ public class SnpSiftCmdCaseControl extends SnpSift {
 	}
 
 	/**
-	 * Lines to be added to VCF header
-	 */
-	@Override
-	protected List<String> addHeader() {
-		List<String> addh = super.addHeader();
-		addh.add("##INFO=<ID=" + VCF_INFO_CASE + name + ",Number=3,Type=Integer,Description=\"Number of variants in cases: Hom, Het, Count\">");
-		addh.add("##INFO=<ID=" + VCF_INFO_CONTROL + name + ",Number=3,Type=Integer,Description=\"Number of variants in controls: Hom, Het, Count\">");
-		addh.add("##INFO=<ID=" + VCF_INFO_CC_DOM + name + ",Number=1,Type=Float,Description=\"p-value using dominant model (Fisher exact test)\">");
-		addh.add("##INFO=<ID=" + VCF_INFO_CC_REC + name + ",Number=1,Type=Float,Description=\"p-value using recessive model (Fisher exact test)\">");
-		addh.add("##INFO=<ID=" + VCF_INFO_CC_ALL + name + ",Number=1,Type=Float,Description=\"p-value using allele count model (Fisher exact test)\">");
-		addh.add("##INFO=<ID=" + VCF_INFO_CC_GENO + name + ",Number=1,Type=Float,Description=\"p-value using genotypic model (ChiSquare)\">");
-		addh.add("##INFO=<ID=" + VCF_INFO_CC_TREND + name + ",Number=1,Type=Float,Description=\"p-value using trend model (CochranArmitage)\">");
-		return addh;
-	}
-
-	/**
 	 * Annotate VCF entry
 	 */
-	void annotate(VcfEntry vcfEntry) {
+	@Override
+	public void annotate(VcfEntry vcfEntry) {
 		int casesHom = 0, casesHet = 0, cases = 0;
 		int ctrlHom = 0, ctrlHet = 0, ctrl = 0;
 		int nCase[] = new int[3];
@@ -128,6 +114,22 @@ public class SnpSiftCmdCaseControl extends SnpSift {
 		vcfEntry.addInfo(VCF_INFO_CC_ALL + name, "" + pValueStr(vcfEntry, pAllelic(nControl, nCase, pvalueThreshold)));
 		vcfEntry.addInfo(VCF_INFO_CC_DOM + name, "" + pValueStr(vcfEntry, pDominant(nControl, nCase, pvalueThreshold)));
 		vcfEntry.addInfo(VCF_INFO_CC_REC + name, "" + pValueStr(vcfEntry, pRecessive(nControl, nCase, pvalueThreshold)));
+	}
+
+	/**
+	 * Lines to be added to VCF header
+	 */
+	@Override
+	protected List<VcfHeaderEntry> headers() {
+		List<VcfHeaderEntry> addh = super.headers();
+		addh.add(new VcfHeaderEntry("##INFO=<ID=" + VCF_INFO_CASE + name + ",Number=3,Type=Integer,Description=\"Number of variants in cases: Hom, Het, Count\">"));
+		addh.add(new VcfHeaderEntry("##INFO=<ID=" + VCF_INFO_CONTROL + name + ",Number=3,Type=Integer,Description=\"Number of variants in controls: Hom, Het, Count\">"));
+		addh.add(new VcfHeaderEntry("##INFO=<ID=" + VCF_INFO_CC_DOM + name + ",Number=1,Type=Float,Description=\"p-value using dominant model (Fisher exact test)\">"));
+		addh.add(new VcfHeaderEntry("##INFO=<ID=" + VCF_INFO_CC_REC + name + ",Number=1,Type=Float,Description=\"p-value using recessive model (Fisher exact test)\">"));
+		addh.add(new VcfHeaderEntry("##INFO=<ID=" + VCF_INFO_CC_ALL + name + ",Number=1,Type=Float,Description=\"p-value using allele count model (Fisher exact test)\">"));
+		addh.add(new VcfHeaderEntry("##INFO=<ID=" + VCF_INFO_CC_GENO + name + ",Number=1,Type=Float,Description=\"p-value using genotypic model (ChiSquare)\">"));
+		addh.add(new VcfHeaderEntry("##INFO=<ID=" + VCF_INFO_CC_TREND + name + ",Number=1,Type=Float,Description=\"p-value using trend model (CochranArmitage)\">"));
+		return addh;
 	}
 
 	@Override
@@ -364,7 +366,7 @@ public class SnpSiftCmdCaseControl extends SnpSift {
 					+ "\tchr: " + vcfEntry.getChromosomeName() //
 					+ "\tpos: " + (vcfEntry.getStart() + 1) //
 					+ (!vcfEntry.getId().isEmpty() ? "\tid: " + vcfEntry.getId() : "") //
-			);
+					);
 
 		if ((p > 0) && (p < pValueMin)) {
 			pValueMin = p;

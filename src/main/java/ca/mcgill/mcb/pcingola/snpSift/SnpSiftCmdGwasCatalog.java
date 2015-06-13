@@ -7,6 +7,10 @@ import ca.mcgill.mcb.pcingola.snpSift.gwasCatalog.GwasCatalog;
 import ca.mcgill.mcb.pcingola.snpSift.gwasCatalog.GwasCatalogEntry;
 import ca.mcgill.mcb.pcingola.util.Timer;
 import ca.mcgill.mcb.pcingola.vcf.VcfEntry;
+import ca.mcgill.mcb.pcingola.vcf.VcfHeaderEntry;
+import ca.mcgill.mcb.pcingola.vcf.VcfHeaderInfo;
+import ca.mcgill.mcb.pcingola.vcf.VcfHeaderInfo.VcfInfoNumber;
+import ca.mcgill.mcb.pcingola.vcf.VcfInfoType;
 
 /**
  * Annotate a VCF file using GWAS catalog database
@@ -28,13 +32,6 @@ public class SnpSiftCmdGwasCatalog extends SnpSift {
 		super(args, "gwasCat");
 	}
 
-	@Override
-	protected List<String> addHeader() {
-		List<String> newHeaders = super.addHeader();
-		newHeaders.add("##INFO=<ID=" + GWAS_CATALOG_TRAIT + ",Number=.,Type=String,Description=\"Trait related to this chromosomal position, according to GWAS catalog\">");
-		return newHeaders;
-	}
-
 	void annotate() {
 		readDb();
 
@@ -46,7 +43,7 @@ public class SnpSiftCmdGwasCatalog extends SnpSift {
 		for (VcfEntry vcfEntry : vcf) {
 			// Show header?
 			if (showHeader) {
-				addHeader(vcf);
+				addHeaders(vcf);
 				String headerStr = vcf.getVcfHeader().toString();
 				if (!headerStr.isEmpty()) System.out.println(headerStr);
 				showHeader = false;
@@ -76,6 +73,13 @@ public class SnpSiftCmdGwasCatalog extends SnpSift {
 				+ "\n\tTotal entries           : " + count //
 				+ "\n\tPercent                 : " + String.format("%.2f%%", perc) //
 				);
+	}
+
+	@Override
+	protected List<VcfHeaderEntry> headers() {
+		List<VcfHeaderEntry> newHeaders = super.headers();
+		newHeaders.add(new VcfHeaderInfo(GWAS_CATALOG_TRAIT, VcfInfoType.String, VcfInfoNumber.UNLIMITED.toString(), "Trait related to this chromosomal position, according to GWAS catalog"));
+		return newHeaders;
 	}
 
 	/**

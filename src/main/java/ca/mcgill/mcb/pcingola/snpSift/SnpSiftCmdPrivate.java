@@ -19,6 +19,7 @@ import ca.mcgill.mcb.pcingola.vcf.VcfGenotype;
 public class SnpSiftCmdPrivate extends SnpSift {
 
 	boolean headerSummary = true;
+	int countLines = 0, countAnnotated = 0;
 	String tfamFile; // File names
 	String[] sampleNum2group;
 	List<String> sampleIds; // Sample IDs
@@ -31,15 +32,17 @@ public class SnpSiftCmdPrivate extends SnpSift {
 	/**
 	 * Parse a single VCF entry
 	 */
-	boolean annotate(VcfEntry ve) {
+	@Override
+	public void annotate(VcfEntry ve) {
 		String privateGorup = privateGroup(ve);
 
 		// Is there a private group?
 		if (privateGorup != null) {
 			ve.addInfo(VcfEntry.VCF_INFO_PRIVATE, privateGorup);
-			return true;
+			countAnnotated++;
 		}
-		return false;
+
+		countLines++;
 	}
 
 	/**
@@ -140,7 +143,8 @@ public class SnpSiftCmdPrivate extends SnpSift {
 		loadTfam();
 
 		// Read VCF
-		int countLines = 0, countAnnotated = 0;
+		countLines = 0;
+		countAnnotated = 0;
 		ArrayList<VcfEntry> vcfEntries = new ArrayList<VcfEntry>();
 		VcfFileIterator vcf = openVcfInputFile();
 		vcf.setDebug(debug);
@@ -157,8 +161,7 @@ public class SnpSiftCmdPrivate extends SnpSift {
 				if (!createList) System.out.println(vcf.getVcfHeader());
 			}
 
-			if (annotate(ve)) countAnnotated++;
-			countLines++;
+			annotate(ve);
 
 			// Show (or add to list)
 			if (createList) vcfEntries.add(ve);

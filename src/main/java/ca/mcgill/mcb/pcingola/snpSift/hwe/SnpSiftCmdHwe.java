@@ -7,6 +7,9 @@ import ca.mcgill.mcb.pcingola.snpSift.SnpSift;
 import ca.mcgill.mcb.pcingola.util.Gpr;
 import ca.mcgill.mcb.pcingola.util.Timer;
 import ca.mcgill.mcb.pcingola.vcf.VcfEntry;
+import ca.mcgill.mcb.pcingola.vcf.VcfHeaderEntry;
+import ca.mcgill.mcb.pcingola.vcf.VcfHeaderInfo;
+import ca.mcgill.mcb.pcingola.vcf.VcfInfoType;
 
 /**
  * Calculate Hardy-Weimberg equilibrium and goodness of fit for each entry in a VCF file
@@ -34,11 +37,11 @@ public class SnpSiftCmdHwe extends SnpSift {
 	}
 
 	@Override
-	protected List<String> addHeader() {
-		List<String> addh = super.addHeader();
-		addh.add("##INFO=<ID=HWE,Number=1,Type=Float,Description=\"Hardy€“Weinberg 'p'.\">");
-		addh.add("##INFO=<ID=HWEP,Number=1,Type=Float,Description=\"HardyWeinberg p-value using Fisher exact test.\">");
-		addh.add("##INFO=<ID=HWEPCHI,Number=1,Type=Float,Description=\"HardyWeinberg p-value using Chi sqaure approximation.\">");
+	protected List<VcfHeaderEntry> headers() {
+		List<VcfHeaderEntry> addh = super.headers();
+		addh.add(new VcfHeaderInfo("HWE", VcfInfoType.Float, "1", "Hardy€“Weinberg 'p'"));
+		addh.add(new VcfHeaderInfo("HWEP", VcfInfoType.Float, "1", "HardyWeinberg p-value using Fisher exact test"));
+		addh.add(new VcfHeaderInfo("HHWEPCHIWE", VcfInfoType.Float, "1", "HardyWeinberg p-value using Chi sqaure approximation"));
 		return addh;
 	}
 
@@ -85,7 +88,7 @@ public class SnpSiftCmdHwe extends SnpSift {
 		for (VcfEntry vcfEntry : vcfFile) {
 
 			if (entryNum == 1) {
-				addHeader();
+				headers();
 				String headerStr = vcfFile.getVcfHeader().toString();
 				if (!headerStr.isEmpty()) System.out.println(headerStr);
 			}

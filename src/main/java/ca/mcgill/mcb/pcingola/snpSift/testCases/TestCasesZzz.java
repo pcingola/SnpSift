@@ -112,27 +112,19 @@ public class TestCasesZzz extends TestCase {
 	}
 
 	/**
-	 * Issue when database has REF including 'N' bases
-	 * WARNING: FIXING THIS REQUIRES A MAJOR CHANGE IN TH WAY WE ANNOTATE
-	 *          VARIANTS (WON'T FIX NOW, BUT NEEDS TO BE FIXED IN THE FUTURE)
+	 * Database has one entry and VCF has multiple ALTs
 	 */
-	public void test_30_annotate_N_ALT_in_db() {
+	public void test_23_allele_specific_annotation_missing_R() {
 		Gpr.debug("Test");
-		String dbFileName = "./test/db_test_30.vcf";
-		String fileName = "./test/annotate_30.vcf";
-		annotateTest(dbFileName, fileName);
-	}
+		String dbFileName = "./test/db_test_23.vcf";
+		String fileName = "./test/annotate_23.vcf";
+		List<VcfEntry> results = annotate(dbFileName, fileName, null);
 
-	//	/**
-	//	 * Issue when database has REF including 'N' bases
-	//	 * WARNING: FIXING THIS REQUIRES A MAJOR CHANGE IN TH WAY WE ANNOTATE
-	//	 *          VARIANTS (WON'T FIX NOW, BUT NEEDS TO BE FIXED IN THE FUTURE)
-	//	 */
-	//	public void test_34_annotate_N_reference_in_db() {
-	//		Gpr.debug("Test");
-	//		String dbFileName = "./test/db_test_34.vcf";
-	//		String fileName = "./test/annotate_34.vcf";
-	//		annotateTest(dbFileName, fileName);
-	//	}
+		// Check results
+		VcfEntry ve = results.get(0);
+		String caf = ve.getInfo("CAF");
+		if (verbose) System.out.println(ve + "\n\tCAF: " + caf);
+		Assert.assertEquals("0.9642,.,0.03581", caf);
+	}
 
 }

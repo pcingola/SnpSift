@@ -7,6 +7,10 @@ import ca.mcgill.mcb.pcingola.fileIterator.VcfFileIterator;
 import ca.mcgill.mcb.pcingola.interval.Variant;
 import ca.mcgill.mcb.pcingola.util.Timer;
 import ca.mcgill.mcb.pcingola.vcf.VcfEntry;
+import ca.mcgill.mcb.pcingola.vcf.VcfHeaderEntry;
+import ca.mcgill.mcb.pcingola.vcf.VcfHeaderInfo;
+import ca.mcgill.mcb.pcingola.vcf.VcfHeaderInfo.VcfInfoNumber;
+import ca.mcgill.mcb.pcingola.vcf.VcfInfoType;
 
 /**
  * Annotate a VCF file with variant type
@@ -27,27 +31,10 @@ public class SnpSiftCmdVarType extends SnpSift {
 		super(args, "varType");
 	}
 
-	@Override
-	protected List<String> addHeader() {
-		List<String> newHeaders = super.addHeader();
-		newHeaders.add("##INFO=<ID=" + VARTYPE + ",Number=A,Type=Flag,Description=\"Variant types {SNP,MNP,INS,DEL,Mixed}\">");
-		//
-		newHeaders.add("##INFO=<ID=SNP,Number=0,Type=Flag,Description=\"Variant is a SNP\">");
-		newHeaders.add("##INFO=<ID=MNP,Number=0,Type=Flag,Description=\"Variant is an MNP\">");
-		newHeaders.add("##INFO=<ID=INS,Number=0,Type=Flag,Description=\"Variant is an insertion\">");
-		newHeaders.add("##INFO=<ID=DEL,Number=0,Type=Flag,Description=\"Variant is an deletion\">");
-		newHeaders.add("##INFO=<ID=MIXED,Number=0,Type=Flag,Description=\"Variant is mixture of INS/DEL/SNP/MNP\">");
-		//
-		newHeaders.add("##INFO=<ID=HOM,Number=0,Type=Flag,Description=\"Variant is homozygous\">");
-		newHeaders.add("##INFO=<ID=HET,Number=0,Type=Flag,Description=\"Variant is heterozygous\">");
-		//
-		newHeaders.add("##INFO=<ID=" + VARTYPE + ",Number=A,Type=String,Description=\"Comma separated list of variant types. One per allele\">");
-		return newHeaders;
-	}
-
 	/**
 	 * Annotate one entry
 	 */
+	@Override
 	public void annotate(VcfEntry vcfEntry) {
 		// Entry type?
 		if (vcfEntry.getVariantType() != null) vcfEntry.addInfo(vcfEntry.getVariantType().toString(), null);
@@ -64,6 +51,24 @@ public class SnpSiftCmdVarType extends SnpSift {
 		}
 
 		if (sb.length() > 0) vcfEntry.addInfo(VARTYPE, sb.toString());
+	}
+
+	@Override
+	protected List<VcfHeaderEntry> headers() {
+		List<VcfHeaderEntry> newHeaders = super.headers();
+
+		newHeaders.add(new VcfHeaderInfo(VARTYPE, VcfInfoType.String, VcfInfoNumber.ALLELE.toString(), "Comma separated list of variant types. One per allele"));
+
+		newHeaders.add(new VcfHeaderInfo("SNP", VcfInfoType.Flag, VcfInfoNumber.ALLELE.toString(), "Variant is a SNP"));
+		newHeaders.add(new VcfHeaderInfo("MNP", VcfInfoType.Flag, VcfInfoNumber.ALLELE.toString(), "Variant is a MNP"));
+		newHeaders.add(new VcfHeaderInfo("INS", VcfInfoType.Flag, VcfInfoNumber.ALLELE.toString(), "Variant is a INS"));
+		newHeaders.add(new VcfHeaderInfo("DEL", VcfInfoType.Flag, VcfInfoNumber.ALLELE.toString(), "Variant is a DEL"));
+		newHeaders.add(new VcfHeaderInfo("MIXED", VcfInfoType.Flag, VcfInfoNumber.ALLELE.toString(), "Variant is a MIXED"));
+
+		newHeaders.add(new VcfHeaderInfo("HOM", VcfInfoType.Flag, VcfInfoNumber.ALLELE.toString(), "Variant is homozygous"));
+		newHeaders.add(new VcfHeaderInfo("HET", VcfInfoType.Flag, VcfInfoNumber.ALLELE.toString(), "Variant is heterozygous"));
+
+		return newHeaders;
 	}
 
 	/**
@@ -92,7 +97,7 @@ public class SnpSiftCmdVarType extends SnpSift {
 		for (VcfEntry vcfEntry : vcf) {
 			// Show header?
 			if (showHeader) {
-				addHeader(vcf);
+				addHeaders(vcf);
 				String headerStr = vcf.getVcfHeader().toString();
 				if (!headerStr.isEmpty()) System.out.println(headerStr);
 				showHeader = false;

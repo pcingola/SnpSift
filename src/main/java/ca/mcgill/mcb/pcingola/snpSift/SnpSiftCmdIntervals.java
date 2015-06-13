@@ -106,7 +106,7 @@ public class SnpSiftCmdIntervals extends SnpSift {
 		for (VcfEntry vcfEntry : vcfFile) {
 			// Show header
 			if (showHeader) {
-				addHeader(vcfFile);
+				addHeaders(vcfFile);
 				String headerStr = vcfFile.getVcfHeader().toString();
 				if (!headerStr.isEmpty()) print(headerStr);
 				showHeader = false;

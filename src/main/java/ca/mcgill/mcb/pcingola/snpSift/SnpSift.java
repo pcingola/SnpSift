@@ -7,6 +7,7 @@ import java.util.List;
 import ca.mcgill.mcb.pcingola.Pcingola;
 import ca.mcgill.mcb.pcingola.fileIterator.VcfFileIterator;
 import ca.mcgill.mcb.pcingola.snpEffect.Config;
+import ca.mcgill.mcb.pcingola.snpEffect.VcfAnnotator;
 import ca.mcgill.mcb.pcingola.snpEffect.commandLine.SnpEff;
 import ca.mcgill.mcb.pcingola.snpSift.caseControl.SnpSiftCmdCaseControl;
 import ca.mcgill.mcb.pcingola.snpSift.caseControl.SnpSiftCmdCaseControlSummary;
@@ -14,13 +15,15 @@ import ca.mcgill.mcb.pcingola.snpSift.hwe.SnpSiftCmdHwe;
 import ca.mcgill.mcb.pcingola.util.Download;
 import ca.mcgill.mcb.pcingola.util.Gpr;
 import ca.mcgill.mcb.pcingola.util.Timer;
+import ca.mcgill.mcb.pcingola.vcf.VcfEntry;
+import ca.mcgill.mcb.pcingola.vcf.VcfHeaderEntry;
 
 /**
  * Generic SnpSift tool caller
  *
  * @author pablocingolani
  */
-public class SnpSift {
+public class SnpSift implements VcfAnnotator {
 
 	// Version info (in sync with SnpEff)
 	public static final String BUILD = SnpEff.BUILD;
@@ -75,21 +78,29 @@ public class SnpSift {
 	}
 
 	/**
-	 * Headers to add
+	 * Add VCF headers
 	 */
-	protected List<String> addHeader() {
-		ArrayList<String> newHeaders = new ArrayList<String>();
-		newHeaders.add("##SnpSiftVersion=\"" + VERSION + "\"");
-		newHeaders.add("##SnpSiftCmd=\"" + commandLineStr() + "\"");
-		return newHeaders;
+	@Override
+	public boolean addHeaders(VcfFileIterator vcfFile) {
+		for (VcfHeaderEntry hinf : headers())
+			vcfFile.getVcfHeader().add(hinf);
+
+		return false;
 	}
 
-	/**
-	 * Add some lines to header before showing it
-	 */
-	protected void addHeader(VcfFileIterator vcfFile) {
-		for (String h : addHeader())
-			vcfFile.getVcfHeader().addLine(h);
+	@Override
+	public void annotate(VcfEntry vcfEntry) {
+		throw new RuntimeException("Unimplemented method!");
+	}
+
+	@Override
+	public boolean annotateFinish() {
+		throw new RuntimeException("Unimplemented method!");
+	}
+
+	@Override
+	public boolean annotateInit(VcfFileIterator vcfFile) {
+		throw new RuntimeException("Unimplemented method!");
 	}
 
 	/**
@@ -181,6 +192,16 @@ public class SnpSift {
 
 	public String getOutput() {
 		return output.toString();
+	}
+
+	/**
+	 * Headers to add
+	 */
+	protected List<VcfHeaderEntry> headers() {
+		ArrayList<VcfHeaderEntry> newHeaders = new ArrayList<VcfHeaderEntry>();
+		newHeaders.add(new VcfHeaderEntry("##SnpSiftVersion=\"" + VERSION + "\""));
+		newHeaders.add(new VcfHeaderEntry("##SnpSiftCmd=\"" + commandLineStr() + "\""));
+		return newHeaders;
 	}
 
 	/**
@@ -277,7 +298,7 @@ public class SnpSift {
 		if (!vcf.isHeadeSection() && vcf.getLineNum() > 1) return ""; // First line is always a header
 
 		// Add lines to header
-		addHeader(vcf);
+		addHeaders(vcf);
 
 		if (showHeader) {
 			String headerStr = vcf.getVcfHeader().toString();
@@ -466,7 +487,7 @@ public class SnpSift {
 				+ "\n\tvarType       : Annotate variant type (SNP,MNP,INS,DEL or MIXED)." //
 				+ "\n\tvcfCheck      : Check that VCF file is well formed." //
 				+ "\n\tvcf2tped      : Convert VCF to TPED." //
-		);
+				);
 
 		usageGenericAndDb();
 
@@ -486,7 +507,7 @@ public class SnpSift {
 				+ "\t-noLog               : Do not report usage statistics to server.\n" //
 				+ "\t-h                   : Help.\n" //
 				+ "\t-v                   : Verbose.\n" //
-		);
+				);
 	}
 
 	/**

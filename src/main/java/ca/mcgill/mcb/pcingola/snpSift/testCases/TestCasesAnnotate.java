@@ -439,7 +439,6 @@ public class TestCasesAnnotate extends TestCase {
 		String caf = ve.getInfo("CAF");
 		if (verbose) System.out.println(ve + "\n\tCAF: " + caf);
 		Assert.assertEquals("0.9642,.,0.03581", caf);
-
 	}
 
 	/**
