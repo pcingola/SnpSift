@@ -33,6 +33,7 @@ public class SnpSiftCmdAnnotate extends SnpSift {
 	public static final int SHOW = 10000;
 	public static final int SHOW_LINES = 100 * SHOW;
 
+	protected boolean annotateEmpty; // Annotate empty fields as well?
 	protected boolean useId; // Annotate ID fields
 	protected boolean useInfoField; // Use all info fields
 	protected boolean useRefAlt;
@@ -81,7 +82,7 @@ public class SnpSiftCmdAnnotate extends SnpSift {
 					fatalError("Your VCF file should be sorted!" //
 							+ "\n\tPrevious entry " + chr + ":" + pos//
 							+ "\n\tCurrent entry  " + vcfEntry.getChromosomeName() + ":" + (vcfEntry.getStart() + 1)//
-					);
+							);
 				}
 
 				// Annotate variants
@@ -106,7 +107,7 @@ public class SnpSiftCmdAnnotate extends SnpSift {
 					+ "\n\tTotal entries           : " + count //
 					+ "\n\tPercent                 : " + String.format("%.2f%%", perc) //
 					+ "\n\tErrors (bad references) : " + countBadRef //
-			);
+					);
 		}
 
 		return list;
@@ -149,9 +150,9 @@ public class SnpSiftCmdAnnotate extends SnpSift {
 
 		dbFileName = fixDbName();
 		if (verbose) Timer.showStdErr("Annotating\n" //
-				+ "\tInput file    : '" + vcfInputFile + "'\n" //
+				+ (vcfInputFile != null ? "\tInput file    : '" + vcfInputFile + "'\n" : "") //
 				+ "\tDatabase file : '" + dbFileName + "'" //
-		);
+				);
 
 		// Create annotateDb object
 		switch (method) {
@@ -190,7 +191,7 @@ public class SnpSiftCmdAnnotate extends SnpSift {
 		if (method == AnnotationMethod.TABIX //
 				&& !dbFileName.endsWith(".gz") //
 				&& Gpr.exists(dbFileName + ".gz") //
-		) return dbFileName + ".gz";
+				) return dbFileName + ".gz";
 
 		return dbFileName;
 	}
@@ -234,7 +235,7 @@ public class SnpSiftCmdAnnotate extends SnpSift {
 				if (isAnnotateInfo(vcfHeaderDb) // It is used for annotations
 						&& !vcfHeaderDb.isImplicit() //  AND it is not an "implicit" header in Db (i.e. created automatically by VcfHeader class)
 						&& ((vcfHeaderFile == null) || vcfHeaderFile.isImplicit()) // AND it is not already added OR is already added, but it is implicit
-				) {
+						) {
 					VcfHeaderInfo newHeader = new VcfHeaderInfo(vcfHeaderDb);
 					if (prependInfoFieldName != null) newHeader.setId(id); // Change ID?
 					headerInfos.add(newHeader);
@@ -292,7 +293,8 @@ public class SnpSiftCmdAnnotate extends SnpSift {
 
 			// Command line option?
 			if (isOpt(arg)) {
-				if (arg.equalsIgnoreCase("-id")) {
+				if (arg.equals("-a")) annotateEmpty = true;
+				else if (arg.equalsIgnoreCase("-id")) {
 					useId = true;
 				} else if (arg.equalsIgnoreCase("-info")) {
 					if (args.length <= (i + 1)) usage("Missing parameter -info");
@@ -355,6 +357,10 @@ public class SnpSiftCmdAnnotate extends SnpSift {
 		return annotate(createList);
 	}
 
+	public void setAnnotateEmpty(boolean annotateEmpty) {
+		this.annotateEmpty = annotateEmpty;
+	}
+
 	/**
 	 * Show usage message
 	 */
@@ -373,6 +379,7 @@ public class SnpSiftCmdAnnotate extends SnpSift {
 		System.err.println("\t-dbsnp               : Use DbSnp database.");
 		System.err.println("\t-clinvar             : Use ClinVar database.");
 		System.err.println("\nCommand Options:");
+		System.err.println("\t-a                   : Annotate fields, even if the database has an empty value (annotates using '.' for empty).");
 		System.err.println("\t-exists <tag>        : Annotate whether the variant exists or not in the database (using 'tag' as an INFO field FLAG).");
 		System.err.println("\t-id                  : Only annotate ID field (do not add INFO field). Default: " + useId);
 		System.err.println("\t-info <list>         : Annotate using a list of info fields (list is a comma separated list of fields). Default: ALL.");

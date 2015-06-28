@@ -79,45 +79,40 @@ public class DbVcfSorted extends DbVcf {
 		//---
 		// Do we have a pending DB entry? (e.g. from a previous iteration)
 		//---
-		if (nextVcfDb != null) {
 
-			// Are we still in the same chromosome?
-			if (nextVcfDb.isSameChromo(veInput)) {
-				if (veInput.getEnd() < nextVcfDb.getStart()) {
-					// We haven't reached next DB's position, nothing to do
-					if (debug) Gpr.debug("Reading: Input has not reached DB position\n" + this);
-					return;
-				}
+		// Are we still in the same chromosome?
+		if (nextVcfDb != null && nextVcfDb.isSameChromo(veInput)) {
+			if (veInput.getEnd() < nextVcfDb.getStart()) {
+				// We haven't reached next DB's position, nothing to do
+				if (debug) Gpr.debug("Reading: Input has not reached DB position\n" + this);
+				return;
+			}
 
-				// OK, add 'nextVcfDb'
-				addNextVcfDb();
-			} else {
-				// Input and latestDb entry are in different chromosome?
-				if (latestVcfDb != null && latestVcfDb.isSameChromo(veInput)) {
-					// Same chromosome as latest entry from DB.
-					// This means that we finished reading all database entries from the current 'input' chromosome.
-					// There is nothing else to do until the input VCF reaches a new chromosome
-					if (debug) Gpr.debug("Reading: DB finished reading chromosome " + chr + "\n" + this);
-					return;
-				} else {
-					// This means that we should jump to a database position matching VcfEntry's chromosome
-					clear();
+			// OK, add 'nextVcfDb'
+			addNextVcfDb();
+		} else if (nextVcfDb != null && latestVcfDb != null && latestVcfDb.isSameChromo(veInput)) { // Input and latestDb entry are in different chromosome?
+			// Same chromosome as latest entry from DB.
+			// This means that we finished reading all database entries from the current 'input' chromosome.
+			// There is nothing else to do until the input VCF reaches a new chromosome
+			if (debug) Gpr.debug("Reading: DB finished reading chromosome " + chr + "\n" + this);
+			return;
+		} else {
+			// This means that we should jump to a database position matching VcfEntry's chromosome
+			clear();
 
-					if (debug) Gpr.debug("Reading: Jumping to chromosme " + chr);
+			if (debug) Gpr.debug("Reading: Jumping to chromosme " + chr);
 
-					long filePos = indexDb.getStart(chr);
-					if (filePos < 0) return; // The database file does not have this chromosome
-					try {
-						vcfDbFile.seek(filePos);
-					} catch (IOException e) {
-						throw new RuntimeException(e);
-					}
-				}
+			long filePos = indexDb.getStart(chr);
+			if (filePos < 0) return; // The database file does not have this chromosome
+			try {
+				vcfDbFile.seek(filePos);
+			} catch (IOException e) {
+				throw new RuntimeException(e);
 			}
 		}
 
 		//---
-		// Read new DB entries
+		// Read next DB entries
 		//---
 		for (VcfEntry vcfDb : vcfDbFile) {
 			nextVcfDb = vcfDb;
@@ -146,7 +141,7 @@ public class DbVcfSorted extends DbVcf {
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
 		sb.append("Size: " + size() + "\n");
-		sb.append("\tLatest VCF entry : " + nextVcfDb + "\n");
+		sb.append("\tLatest VCF entry : " + latestVcfDb + "\n");
 		sb.append("\tNext VCF entry   : " + nextVcfDb + "\n");
 		sb.append(super.toString());
 		return sb.toString();

@@ -256,7 +256,7 @@ public abstract class DbVcf {
 				// we have already added the value in the previous 'variant'
 				// iteration, so we can skip it this time
 			} else {
-				// Add each INFO
+				// Add each INFO for each 'ALT'
 				String newValue = (info == null ? null : info.get(infoFieldName));
 				String oldValue = results.get(infoFieldName);
 				String val = (oldValue == null ? "" : oldValue + ",") + (newValue == null ? "." : newValue);

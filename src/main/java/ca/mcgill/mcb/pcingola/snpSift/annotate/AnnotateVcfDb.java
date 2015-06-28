@@ -27,6 +27,7 @@ public abstract class AnnotateVcfDb {
 
 	protected boolean verbose, debug;
 	protected boolean useRefAlt = true;
+	protected boolean annotateEmpty;
 	protected String chrPrev = "";
 	protected String existsInfoField = null;
 	protected String prependInfoFieldName;
@@ -108,6 +109,11 @@ public abstract class AnnotateVcfDb {
 		// Add keys sorted alphabetically
 		for (String key : keys) {
 			String value = info.get(key);
+
+			// Skip empty fields?
+			if (!annotateEmpty && (value == null || value.equals(VcfFileIterator.MISSING))) continue;
+
+			// Add INFO entry
 			if (prependInfoFieldName != null) key = prependInfoName(key);
 			vcfEntry.addInfo(key, value);
 		}
@@ -134,6 +140,10 @@ public abstract class AnnotateVcfDb {
 			sb.append((sb.length() > 0 ? ";" : "") + prependInfoFieldName + f);
 		return sb.toString();
 
+	}
+
+	public void setAnnotateEmpty(boolean annotateEmpty) {
+		this.annotateEmpty = annotateEmpty;
 	}
 
 	public void setDebug(boolean debug) {

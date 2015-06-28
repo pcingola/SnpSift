@@ -382,7 +382,7 @@ public class SnpSift implements VcfAnnotator {
 	 * Show version number
 	 */
 	public void showVersion() {
-		System.err.println(SnpSift.class.getSimpleName() + " version " + VERSION + "\n");
+		System.err.println(SnpSift.class.getSimpleName() + " version " + VERSION_NO_NAME + "\n");
 	}
 
 	/**
@@ -430,7 +430,7 @@ public class SnpSift implements VcfAnnotator {
 
 		// Show version and command
 		if (!help && (verbose || debug)) {
-			Timer.showStdErr("SnpSift version " + VERSION);
+			Timer.showStdErr("SnpSift version " + VERSION_NO_NAME);
 			Timer.showStdErr("Command: '" + command + "'");
 		}
 

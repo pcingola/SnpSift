@@ -599,4 +599,20 @@ public class TestCasesAnnotate extends TestCase {
 		annotateTest(dbFileName, fileName);
 	}
 
+	/**
+	 * Database has one entry and VCF has multiple ALTs
+	 */
+	public void test_34_dbStartsOnDifferentChromo() {
+		Gpr.debug("Test");
+		String dbFileName = "./test/db_test_34.vcf";
+		String fileName = "./test/annotate_34.vcf";
+		List<VcfEntry> results = annotate(dbFileName, fileName, null);
+
+		// Check results
+		VcfEntry ve = results.get(0);
+		String rs = ve.getInfo("RS");
+		if (verbose) System.out.println(ve + "\n\tRS: " + rs);
+		Assert.assertEquals("207477890", rs);
+	}
+
 }

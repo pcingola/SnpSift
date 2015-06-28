@@ -16,13 +16,14 @@ import ca.mcgill.mcb.pcingola.vcf.VcfEntry;
  */
 public class TestCasesZzz extends TestCase {
 
-	public static boolean debug = false;
+	public static boolean debug = true;
 	public static boolean verbose = true || debug;
 
 	//	protected String[] defaultExtraArgs = null;
-	//	protected String[] defaultExtraArgs = { "-sorted" };
+	protected String[] defaultExtraArgs = { "-sorted" };
+
 	//	protected String[] defaultExtraArgs = { "-tabix" };
-	protected String[] defaultExtraArgs = { "-mem" };
+	//	protected String[] defaultExtraArgs = { "-mem" };
 
 	/**
 	 * Annotate
@@ -114,17 +115,24 @@ public class TestCasesZzz extends TestCase {
 	/**
 	 * Database has one entry and VCF has multiple ALTs
 	 */
-	public void test_23_allele_specific_annotation_missing_R() {
+	public void test_34_dbStartsOnDifferentChromo() {
 		Gpr.debug("Test");
-		String dbFileName = "./test/db_test_23.vcf";
-		String fileName = "./test/annotate_23.vcf";
+		String dbFileName = "./test/db_test_34.vcf";
+		String fileName = "./test/annotate_34.vcf";
 		List<VcfEntry> results = annotate(dbFileName, fileName, null);
 
 		// Check results
 		VcfEntry ve = results.get(0);
-		String caf = ve.getInfo("CAF");
-		if (verbose) System.out.println(ve + "\n\tCAF: " + caf);
-		Assert.assertEquals("0.9642,.,0.03581", caf);
+		String rs = ve.getInfo("RS");
+		if (verbose) System.out.println(ve + "\n\tRS: " + rs);
+		Assert.assertEquals("207477890", rs);
 	}
+
+	//	public void test_02() {
+	//		Gpr.debug("Test");
+	//		String dbFileName = "./test/db_test_10.vcf";
+	//		String fileName = "./test/annotate_10.vcf";
+	//		annotateTest(dbFileName, fileName);
+	//	}
 
 }
