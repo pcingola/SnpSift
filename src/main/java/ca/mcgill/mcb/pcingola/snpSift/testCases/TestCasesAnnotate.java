@@ -615,4 +615,21 @@ public class TestCasesAnnotate extends TestCase {
 		Assert.assertEquals("207477890", rs);
 	}
 
+	/**
+	 * Annotate flags without '=true'
+	 */
+	public void test_35() {
+		Gpr.debug("Test");
+		String dbFileName = "./test/db_test_35.vcf";
+		String fileName = "./test/annotate_35.vcf";
+		String extraArgs[] = { "-noId" };
+		List<VcfEntry> results = annotate(dbFileName, fileName, extraArgs);
+
+		VcfEntry ve = results.get(0);
+		String infoStr = ve.getInfoStr();
+
+		// Check that trailing '=true' is not added
+		Assert.assertEquals("FLAG_ADD", infoStr);
+	}
+
 }

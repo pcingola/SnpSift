@@ -113,26 +113,19 @@ public class TestCasesZzz extends TestCase {
 	}
 
 	/**
-	 * Database has one entry and VCF has multiple ALTs
+	 * Do not annotate flags without '=true'
 	 */
-	public void test_34_dbStartsOnDifferentChromo() {
+	public void test_35() {
 		Gpr.debug("Test");
-		String dbFileName = "./test/db_test_34.vcf";
-		String fileName = "./test/annotate_34.vcf";
-		List<VcfEntry> results = annotate(dbFileName, fileName, null);
+		String dbFileName = "./test/db_test_35.vcf";
+		String fileName = "./test/annotate_35.vcf";
+		String extraArgs[] = { "-noId" };
+		List<VcfEntry> results = annotate(dbFileName, fileName, extraArgs);
 
-		// Check results
 		VcfEntry ve = results.get(0);
-		String rs = ve.getInfo("RS");
-		if (verbose) System.out.println(ve + "\n\tRS: " + rs);
-		Assert.assertEquals("207477890", rs);
+		String infoStr = ve.getInfoStr();
+
+		// Check that trailing '=true' is not added
+		Assert.assertEquals("FLAG_ADD", infoStr);
 	}
-
-	//	public void test_02() {
-	//		Gpr.debug("Test");
-	//		String dbFileName = "./test/db_test_10.vcf";
-	//		String fileName = "./test/annotate_10.vcf";
-	//		annotateTest(dbFileName, fileName);
-	//	}
-
 }
