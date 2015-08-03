@@ -12,7 +12,7 @@ import ca.mcgill.mcb.pcingola.vcf.VcfHeaderInfo;
 import ca.mcgill.mcb.pcingola.vcf.VcfInfoType;
 
 /**
- * Calculate Hardy-Weimberg equilibrium and goodness of fit for each entry in a VCF file
+ * Calculate Hardy-Weinberg equilibrium and goodness of fit for each entry in a VCF file
  *
  * @author pablocingolani
  */
@@ -39,7 +39,7 @@ public class SnpSiftCmdHwe extends SnpSift {
 	@Override
 	protected List<VcfHeaderEntry> headers() {
 		List<VcfHeaderEntry> addh = super.headers();
-		addh.add(new VcfHeaderInfo("HWE", VcfInfoType.Float, "1", "Hardy€“Weinberg 'p'"));
+		addh.add(new VcfHeaderInfo("HWE", VcfInfoType.Float, "1", "HardyWeinberg 'p'"));
 		addh.add(new VcfHeaderInfo("HWEP", VcfInfoType.Float, "1", "HardyWeinberg p-value using Fisher exact test"));
 		addh.add(new VcfHeaderInfo("HHWEPCHIWE", VcfInfoType.Float, "1", "HardyWeinberg p-value using Chi sqaure approximation"));
 		return addh;
@@ -47,7 +47,6 @@ public class SnpSiftCmdHwe extends SnpSift {
 
 	/**
 	 * Parse command line arguments
-	 * @param args
 	 */
 	@Override
 	public void parse(String[] args) {
