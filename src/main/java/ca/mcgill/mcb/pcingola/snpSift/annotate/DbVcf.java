@@ -251,16 +251,22 @@ public abstract class DbVcf {
 			// Get info field annotations
 
 			// Not a 'per allele' INFO field? Then we are done (no need to annotate other alleles)
-			if (!isVcfInfoPerAllele(infoFieldName) && results.containsKey(infoFieldName)) {
-				// This INFO field has only one entry (not 'per allele') and
-				// we have already added the value in the previous 'variant'
-				// iteration, so we can skip it this time
-			} else {
+			if (isVcfInfoPerAllele(infoFieldName)) {
 				// Add each INFO for each 'ALT'
 				String newValue = (info == null ? null : info.get(infoFieldName));
 				String oldValue = results.get(infoFieldName);
 				String val = (oldValue == null ? "" : oldValue + ",") + (newValue == null ? "." : newValue);
 				results.put(infoFieldName, val);
+			} else {
+				// Add only one INFO
+				if (!results.containsKey(infoFieldName)) {
+					String newValue = (info == null ? null : info.get(infoFieldName));
+					if (newValue != null) results.put(infoFieldName, newValue);
+				} else {
+					// This INFO field has only one entry (not 'per allele') and
+					// we have already added the value in the previous 'variant'
+					// iteration, so we can skip it this time
+				}
 			}
 		}
 	}

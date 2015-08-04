@@ -112,20 +112,15 @@ public class TestCasesZzz extends TestCase {
 		return argsList.toArray(new String[0]);
 	}
 
-	/**
-	 * Do not annotate flags without '=true'
-	 */
-	public void test_35() {
+	public void test_18() {
 		Gpr.debug("Test");
-		String dbFileName = "./test/db_test_35.vcf";
-		String fileName = "./test/annotate_35.vcf";
-		String extraArgs[] = { "-noId" };
-		List<VcfEntry> results = annotate(dbFileName, fileName, extraArgs);
+		String dbFileName = "./test/test_annotate_18_db.vcf";
+		String fileName = "./test/test_annotate_18.vcf";
 
+		List<VcfEntry> results = annotate(dbFileName, fileName, null);
 		VcfEntry ve = results.get(0);
-		String infoStr = ve.getInfoStr();
-
-		// Check that trailing '=true' is not added
-		Assert.assertEquals("FLAG_ADD", infoStr);
+		String ukac = ve.getInfo("UK10KWES_AC");
+		if (verbose) System.out.println("Annotated value: " + ukac);
+		Assert.assertEquals(".,49,44,.,.,.,.,.,.,.,.", ukac);
 	}
 }

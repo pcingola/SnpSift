@@ -632,4 +632,22 @@ public class TestCasesAnnotate extends TestCase {
 		Assert.assertEquals("FLAG_ADD", infoStr);
 	}
 
+	/**
+	 * Annotate multi-allelic
+	 */
+	public void test_36() {
+		Gpr.debug("Test");
+		String dbFileName = "./test/db_test_36.vcf";
+		String fileName = "./test/annotate_36.vcf";
+		String extraArgs[] = {};
+		List<VcfEntry> results = annotate(dbFileName, fileName, extraArgs);
+
+		VcfEntry ve = results.get(0);
+		if (verbose) System.out.println(ve);
+		String infoStr = ve.getInfoStr();
+
+		// Check that trailing '=true' is not added
+		Assert.assertEquals("GENE=NPHP4", infoStr);
+	}
+
 }
