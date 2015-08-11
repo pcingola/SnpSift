@@ -2,11 +2,11 @@ package ca.mcgill.mcb.pcingola.snpSift.testCases;
 
 import java.util.List;
 
-import junit.framework.Assert;
-import junit.framework.TestCase;
 import ca.mcgill.mcb.pcingola.snpSift.SnpSiftCmdFilter;
 import ca.mcgill.mcb.pcingola.util.Gpr;
 import ca.mcgill.mcb.pcingola.vcf.VcfEntry;
+import junit.framework.Assert;
+import junit.framework.TestCase;
 
 /**
  * Filter test cases for 'ALL' index
@@ -27,7 +27,7 @@ public class TestCasesFilterALL extends TestCase {
 		List<VcfEntry> list = vcfFilter.filter("test/downstream.vcf", expression, true);
 
 		// Check that it satisfies the condition
-		System.out.println("Expression: '" + expression + "'");
+		if (verbose) System.out.println("Expression: '" + expression + "'");
 		for (VcfEntry vcfEntry : list) {
 			if (verbose) System.out.println("\t" + vcfEntry);
 

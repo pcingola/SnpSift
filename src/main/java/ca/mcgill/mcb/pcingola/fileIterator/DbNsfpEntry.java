@@ -8,9 +8,9 @@ import ca.mcgill.mcb.pcingola.collections.AutoHashMap;
 import ca.mcgill.mcb.pcingola.interval.Marker;
 
 /**
- * DbNSFP database entry: 
+ * DbNSFP database entry:
  * Reference	https://sites.google.com/site/jpopgen/dbNSFP
- * 
+ *
  * @author lletourn
  */
 public class DbNsfpEntry extends Marker {
@@ -19,15 +19,16 @@ public class DbNsfpEntry extends Marker {
 	AutoHashMap<String, HashMap<String, String>> values = new AutoHashMap<String, HashMap<String, String>>(new HashMap<String, String>());
 	boolean collapseRepeatedValues = true;
 
+	public DbNsfpEntry() {
+		super();
+	}
+
 	public DbNsfpEntry(Marker parent, int start) {
 		super(parent, start, start, false, "");
 	}
 
 	/**
 	 * Add a value
-	 * @param alt
-	 * @param columnName
-	 * @param valuesToAdd
 	 */
 	public void add(String alt, String columnName, String valuesToAdd) {
 		// Get map by alt
@@ -66,11 +67,15 @@ public class DbNsfpEntry extends Marker {
 
 	}
 
+	@Override
+	public DbNsfpEntry cloneShallow() {
+		DbNsfpEntry clone = (DbNsfpEntry) super.cloneShallow();
+		clone.collapseRepeatedValues = collapseRepeatedValues;
+		return clone;
+	}
+
 	/**
 	 * Get tab-separated list of values (null if not found)
-	 * @param alt
-	 * @param key
-	 * @return
 	 */
 	public String get(String alt, String key) {
 		HashMap<String, String> altVals = values.get(alt);
@@ -80,9 +85,6 @@ public class DbNsfpEntry extends Marker {
 
 	/**
 	 * Get comma separated list of values (null if not found)
-	 * @param alt
-	 * @param key
-	 * @return
 	 */
 	public String getCsv(String alt, String key) {
 		String val = get(alt, key);
@@ -92,8 +94,6 @@ public class DbNsfpEntry extends Marker {
 
 	/**
 	 * Do we have values for this allele
-	 * @param allele
-	 * @return
 	 */
 	public boolean hasValues(String allele) {
 		return values.containsKey(allele);
