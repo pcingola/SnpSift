@@ -112,10 +112,10 @@ public class TestCasesZzz extends TestCase {
 	 * Chromosomes in VCF file are called 'chr22' instead of '22'.
 	 * This should work OK as well.
 	 */
-	public void test_05() {
+	public void test_37() {
 		Gpr.debug("Test");
-		String dbFileName = "./test/db_test_chr22.vcf";
-		String fileName = "./test/test_chr22.vcf";
+		String dbFileName = "./test/db_test_37.vcf";
+		String fileName = "./test/annotate_37.vcf";
 		annotateTest(dbFileName, fileName);
 	}
 }
