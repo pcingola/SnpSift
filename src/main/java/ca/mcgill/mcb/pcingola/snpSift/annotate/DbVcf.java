@@ -133,10 +133,10 @@ public abstract class DbVcf {
 	 * Clear cached db entries
 	 */
 	protected void clear() {
+		if (debug) Gpr.debug("Clear: Current size " + size());
 		dbCurrentId.clear();
 		dbCurrentInfo.clear();
 		dbVcfEntryAdded.clear();
-		if (debug) Gpr.debug("Clear: Size: " + size());
 	}
 
 	/**
@@ -347,6 +347,10 @@ public abstract class DbVcf {
 
 	public abstract void readDb(VcfEntry ve);
 
+	public void setDebug(boolean debug) {
+		this.debug = debug;
+	}
+
 	public void setInfoFields(boolean useInfoField, Collection<String> infoFields) {
 		this.useInfoField = useInfoField;
 		useInfoFieldAll = false;
@@ -368,6 +372,10 @@ public abstract class DbVcf {
 
 	public void setUseRefAlt(boolean useRefAlt) {
 		this.useRefAlt = useRefAlt;
+	}
+
+	public void setVerbose(boolean verbose) {
+		this.verbose = verbose;
 	}
 
 	public int size() {

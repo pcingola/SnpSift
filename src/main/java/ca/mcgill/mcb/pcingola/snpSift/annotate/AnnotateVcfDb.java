@@ -148,6 +148,7 @@ public abstract class AnnotateVcfDb {
 
 	public void setDebug(boolean debug) {
 		this.debug = debug;
+		dbVcf.setDebug(debug);
 	}
 
 	public void setExistsInfoField(String existsInfoField) {
@@ -172,6 +173,7 @@ public abstract class AnnotateVcfDb {
 
 	public void setVerbose(boolean verbose) {
 		this.verbose = verbose;
+		dbVcf.setVerbose(verbose);
 	}
 
 	/**
