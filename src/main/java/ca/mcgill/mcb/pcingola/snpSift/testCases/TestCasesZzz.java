@@ -3,11 +3,11 @@ package ca.mcgill.mcb.pcingola.snpSift.testCases;
 import java.util.ArrayList;
 import java.util.List;
 
-import junit.framework.Assert;
-import junit.framework.TestCase;
 import ca.mcgill.mcb.pcingola.snpSift.SnpSiftCmdAnnotate;
 import ca.mcgill.mcb.pcingola.util.Gpr;
 import ca.mcgill.mcb.pcingola.vcf.VcfEntry;
+import junit.framework.Assert;
+import junit.framework.TestCase;
 
 /**
  * Try test cases in this class before adding them to long test cases
@@ -16,14 +16,10 @@ import ca.mcgill.mcb.pcingola.vcf.VcfEntry;
  */
 public class TestCasesZzz extends TestCase {
 
-	public static boolean debug = true;
-	public static boolean verbose = true || debug;
+	public static boolean debug = false;
+	public static boolean verbose = false || debug;
 
-	//	protected String[] defaultExtraArgs = null;
 	protected String[] defaultExtraArgs = { "-sorted" };
-
-	//	protected String[] defaultExtraArgs = { "-tabix" };
-	//	protected String[] defaultExtraArgs = { "-mem" };
 
 	/**
 	 * Annotate
@@ -112,15 +108,14 @@ public class TestCasesZzz extends TestCase {
 		return argsList.toArray(new String[0]);
 	}
 
-	public void test_18() {
+	/**
+	 * Chromosomes in VCF file are called 'chr22' instead of '22'.
+	 * This should work OK as well.
+	 */
+	public void test_05() {
 		Gpr.debug("Test");
-		String dbFileName = "./test/test_annotate_18_db.vcf";
-		String fileName = "./test/test_annotate_18.vcf";
-
-		List<VcfEntry> results = annotate(dbFileName, fileName, null);
-		VcfEntry ve = results.get(0);
-		String ukac = ve.getInfo("UK10KWES_AC");
-		if (verbose) System.out.println("Annotated value: " + ukac);
-		Assert.assertEquals(".,49,44,.,.,.,.,.,.,.,.", ukac);
+		String dbFileName = "./test/db_test_chr22.vcf";
+		String fileName = "./test/test_chr22.vcf";
+		annotateTest(dbFileName, fileName);
 	}
 }

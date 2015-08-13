@@ -17,7 +17,35 @@ public abstract class DbVcfIndex extends DbVcf {
 	/**
 	 * Seek to a new position. Make sure we advance at least one entry
 	 */
-	protected abstract boolean dbSeek(VcfEntry vcfEntry);
+	protected abstract boolean dbSeek(String chr, int pos);
+
+	/**
+	 * Seek to a new position. Make sure we advance at least one entry
+	 */
+	protected boolean dbSeek(VcfEntry vcfEntry) {
+		// Current coordinates
+		String chr = "";
+		int pos = -1;
+
+		if (nextVcfDb != null) {
+			pos = nextVcfDb.getStart();
+			chr = nextVcfDb.getChromosomeName();
+			if (debug) Gpr.debug("Position seek:\t" + chr + ":" + pos + "\t->\t" + vcfEntry.getChromosomeName() + ":" + vcfEntry.getStart());
+		}
+
+		// Seek
+		if (!dbSeek(vcfEntry.getChromosomeName(), vcfEntry.getStart())) return false;
+
+		// Make sure we actually advance at least one entry
+		do {
+			nextVcfDb = vcfDbFile.next();
+			if (nextVcfDb == null) return false; // Not found
+
+			if (debug) Gpr.debug("After seek: " + nextVcfDb.getChromosomeName() + ":" + nextVcfDb.getStart() + "\t" + chr + ":" + pos);
+		} while (nextVcfDb.getChromosomeName().equals(chr) && nextVcfDb.getStart() <= pos);
+
+		return true;
+	}
 
 	/**
 	 * Open VCF database annotation file
@@ -81,21 +109,20 @@ public abstract class DbVcfIndex extends DbVcf {
 			if (nextVcfDb.isSameChromo(veInput)) {
 				// Same chromosome
 
-				// Same position? => Found
-				if (veInput.getEnd() >= nextVcfDb.getStart()) {
+				if (shouldSeek(veInput)) {
+					// Is it far enough? Don't iterate, seek
+					clear();
+					if (!dbSeek(veInput)) return;
+					addNextVcfDb();
+				} else if (veInput.getEnd() >= nextVcfDb.getStart()) {
 					// Found db entry! Break loop and proceed with annotations
 					if (debug) Gpr.debug("Found Db Entry:" + nextVcfDb.getChromosomeName() + ":" + nextVcfDb.getStart());
 					addNextVcfDb();
 					nextVcfDb = vcfDbFile.next();
 				} else if (veInput.getEnd() < nextVcfDb.getStart()) {
-					// Same chromosome, but DB is positioned after input => No (more) db entries found
+					// DB is positioned after input => No (more) db entries found
 					if (debug) Gpr.debug("No (more) db entries found:\t" + veInput.getChromosomeName() + ":" + veInput.getStart());
 					return;
-				} else if (shouldSeek(veInput)) {
-					// Is it far enough? Don't iterate, seek
-					clear();
-					if (!dbSeek(veInput)) return;
-					addNextVcfDb();
 				} else {
 					// Just read next entry to get closer
 					clear();
@@ -103,6 +130,8 @@ public abstract class DbVcfIndex extends DbVcf {
 					addNextVcfDb();
 				}
 			} else {
+				// Different chromosome
+
 				// May be we finished reading DB for this chromosome? => Nothing else to do
 				if (latestVcfDb != null && latestVcfDb.isSameChromo(veInput)) return;
 

@@ -17,33 +17,38 @@ public class DbVcfTabix extends DbVcfIndex {
 		super(dbFileName);
 	}
 
-	/**
-	 * Seek to a new position. Make sure we advance at least one entry
-	 */
+	//	/**
+	//	 * Seek to a new position. Make sure we advance at least one entry
+	//	 */
+	//	@Override
+	//	protected boolean dbSeek(VcfEntry vcfEntry) {
+	//		// Current coordinates
+	//		String chr = "";
+	//		int pos = -1;
+	//
+	//		if (nextVcfDb != null) {
+	//			pos = nextVcfDb.getStart();
+	//			chr = nextVcfDb.getChromosomeName();
+	//			if (debug) Gpr.debug("Position seek:\t" + chr + ":" + pos + "\t->\t" + vcfEntry.getChromosomeName() + ":" + vcfEntry.getStart());
+	//		}
+	//
+	//		// Seek
+	//		if (!dbSeek(vcfEntry.getChromosomeName(), vcfEntry.getStart())) return false;
+	//
+	//		// Make sure we actually advance at least one entry
+	//		do {
+	//			nextVcfDb = vcfDbFile.next();
+	//			if (nextVcfDb == null) return false; // Not found
+	//
+	//			if (debug) Gpr.debug("After seek: " + nextVcfDb.getChromosomeName() + ":" + nextVcfDb.getStart() + "\t" + chr + ":" + pos);
+	//		} while (nextVcfDb.getChromosomeName().equals(chr) && nextVcfDb.getStart() <= pos);
+	//
+	//		return true;
+	//	}
+
 	@Override
-	protected boolean dbSeek(VcfEntry vcfEntry) {
-		// Current coordinates
-		String chr = "";
-		int pos = -1;
-
-		if (nextVcfDb != null) {
-			pos = nextVcfDb.getStart();
-			chr = nextVcfDb.getChromosomeName();
-			if (debug) Gpr.debug("Position seek:\t" + chr + ":" + pos + "\t->\t" + vcfEntry.getChromosomeName() + ":" + vcfEntry.getStart());
-		}
-
-		// Seek
-		if (!vcfDbFile.seek(vcfEntry.getChromosomeName(), vcfEntry.getStart())) return false;
-
-		// Make sure we actually advance at least one entry
-		do {
-			nextVcfDb = vcfDbFile.next();
-			if (nextVcfDb == null) return false; // Not found
-
-			if (debug) Gpr.debug("After seek: " + nextVcfDb.getChromosomeName() + ":" + nextVcfDb.getStart() + "\t" + chr + ":" + pos);
-		} while (nextVcfDb.getChromosomeName().equals(chr) && nextVcfDb.getStart() <= pos);
-
-		return true;
+	protected boolean dbSeek(String chr, int pos) {
+		return vcfDbFile.seek(chr, pos);
 	}
 
 	/**

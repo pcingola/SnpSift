@@ -22,10 +22,18 @@ import ca.mcgill.mcb.pcingola.vcf.VcfEntry;
  */
 public class DbVcfSorted extends DbVcfIndex {
 
+	public static final int MIN_SEEK = 1000;
+
 	protected FileIndexChrPos indexDb;
 
 	public DbVcfSorted(String dbFileName) {
 		super(dbFileName);
+	}
+
+	@Override
+	public void close() {
+		super.close();
+		indexDb.close();
 	}
 
 	/**
@@ -39,19 +47,58 @@ public class DbVcfSorted extends DbVcfIndex {
 		indexDb.setDebug(debug);
 		indexDb.open();
 		indexDb.index();
-		indexDb.close();
 
 		if (debug) System.err.println("Index:\n" + indexDb);
 	}
 
-	@Override
-	protected boolean dbSeek(VcfEntry vcfEntry) {
-		String chr = vcfEntry.getChromosomeName();
-		long filePos = indexDb.getStart(chr);
+	//	@Override
+	//	protected boolean dbSeek(VcfEntry vcfEntry) {
+	//		String chr = vcfEntry.getChromosomeName();
+	//
+	//		long filePosChr = indexDb.getStart(chr);
+	//		if (filePosChr < 0) return false; // The database file does not have this chromosome
+	//
+	//		try {
+	//			long filePos = indexDb.find(chr, vcfEntry.getStart(), true);
+	//			if (filePos < 0) {
+	//				// The database file does not have this position
+	//				vcfDbFile.seek(filePosChr); // Jump to chromosome
+	//				return false;
+	//			}
+	//
+	//			// Jump to position
+	//			vcfDbFile.seek(filePos);
+	//
+	//			// Make sure we actually advance at least one entry
+	//			do {
+	//				nextVcfDb = vcfDbFile.next();
+	//				if (nextVcfDb == null) return false; // Not found
+	//
+	//				if (debug) Gpr.debug("After seek: " + nextVcfDb.getChromosomeName() + ":" + nextVcfDb.getStart() + "\t" + chr + ":" + pos);
+	//			} while (nextVcfDb.getChromosomeName().equals(chr) && nextVcfDb.getStart() <= pos);
+	//
+	//			return true;
+	//		} catch (IOException e) {
+	//			throw new RuntimeException(e);
+	//		}
+	//	}
 
-		if (filePos < 0) return false; // The database file does not have this chromosome
+	@Override
+	protected boolean dbSeek(String chr, int pos) {
+		long filePosChr = indexDb.getStart(chr);
+		if (filePosChr < 0) return false; // The database file does not have this chromosome
+
 		try {
+			long filePos = indexDb.find(chr, pos, true);
+			if (filePos < 0) {
+				// The database file does not have this position
+				vcfDbFile.seek(filePosChr); // Jump to chromosome
+				return false;
+			}
+
+			// Jump to position
 			vcfDbFile.seek(filePos);
+
 			return true;
 		} catch (IOException e) {
 			throw new RuntimeException(e);
@@ -71,7 +118,7 @@ public class DbVcfSorted extends DbVcfIndex {
 		// Re-open VCF db file
 		try {
 			vcfDbFile = new VcfFileIterator(new SeekableBufferedReader(dbFileName));
-			vcfDbFile.setDebug(debug);
+			vcfDbFile.setDebug(false); // Don't check errors, since we are doing random access (the file will appear is if it was not sorted)
 			nextVcfDb = vcfDbFile.next(); // Read first VCf entry from DB file (this also forces to read headers)
 			addNextVcfDb();
 		} catch (IOException e) {
@@ -81,7 +128,7 @@ public class DbVcfSorted extends DbVcfIndex {
 
 	@Override
 	protected boolean shouldSeek(VcfEntry vcfEntry) {
-		return false;
+		return ((vcfEntry.getEnd() - nextVcfDb.getStart()) > MIN_SEEK);
 	}
 
 	//	/**
