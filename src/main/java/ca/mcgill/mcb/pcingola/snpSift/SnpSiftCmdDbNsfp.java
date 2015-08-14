@@ -49,7 +49,7 @@ public class SnpSiftCmdDbNsfp extends SnpSift {
 			+ "phastCons100way_vertebrate," // Conservation
 			+ "1000Gp1_AF,1000Gp1_AFR_AF,1000Gp1_EUR_AF,1000Gp1_AMR_AF,1000Gp1_ASN_AF," // Allele frequencies 1000 Genomes project
 			+ "ESP6500_AA_AF,ESP6500_EA_AF" // Allele frequencies Exome sequencing project
-	;
+			;
 
 	public static final int MIN_JUMP = 100;
 	public static final int SHOW_ANNOTATED = 1;
@@ -416,8 +416,18 @@ public class SnpSiftCmdDbNsfp extends SnpSift {
 
 			// Add them to the list
 			for (String fn : fieldsNamesToAdd.split(",")) {
-				if (fieldsDescription.get(fn) == null) usage("Error: Field name '" + fn + "' not found");
-				fieldsToAdd.put(fn, fieldsDescription.get(fn));
+				if (fieldsDescription.get(fn) == null) {
+					// Field not found
+					if (fieldsNamesToAdd == DEFAULT_FIELDS_NAMES_TO_ADD) {
+						// Was it one of the default fields? => Ignore
+						if (verbose) Timer.showStdErr("Warning: Default field name '" + fn + "' not found, ignoring");
+					} else {
+						usage("Error: Field name '" + fn + "' not found");
+					}
+				} else {
+					// Add field
+					fieldsToAdd.put(fn, fieldsDescription.get(fn));
+				}
 			}
 		}
 

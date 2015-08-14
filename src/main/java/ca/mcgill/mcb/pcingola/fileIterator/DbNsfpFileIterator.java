@@ -1,7 +1,5 @@
 package ca.mcgill.mcb.pcingola.fileIterator;
 
-import gnu.trove.map.hash.TObjectIntHashMap;
-
 import java.io.IOException;
 import java.lang.reflect.Array;
 import java.lang.reflect.Constructor;
@@ -14,6 +12,7 @@ import java.util.Set;
 
 import ca.mcgill.mcb.pcingola.util.Gpr;
 import ca.mcgill.mcb.pcingola.vcf.VcfInfoType;
+import gnu.trove.map.hash.TObjectIntHashMap;
 
 /**
  * DbNSFP database:
@@ -97,7 +96,8 @@ public class DbNsfpFileIterator extends MarkerFileIterator<DbNsfpEntry> {
 	public static final String SUBFIELD_SEPARATOR = ";";
 	public static final String SUBFIELD_SEPARATOR_ALT = ",";
 	public static final String COLUMN_CHR_NAME = "chr";
-	public static final String COLUMN_POS_NAME = "pos(1-coor)";
+	public static final String COLUMN_POS_NAME_v2 = "pos(1-coor)";
+	public static final String COLUMN_POS_NAME_v3 = "pos(1-based)";
 	public static final String ALT_NAME = "alt";
 
 	private final TObjectIntHashMap<String> columnNames2Idx = new TObjectIntHashMap<String>();
@@ -383,14 +383,28 @@ public class DbNsfpFileIterator extends MarkerFileIterator<DbNsfpEntry> {
 			columnNames2Idx.put(values[idx].trim(), idx);
 
 			// Chromosome and position column numbers
-			if (values[idx].equals(COLUMN_CHR_NAME)) chromosomeIdx = idx;
-			else if (values[idx].equals(COLUMN_POS_NAME)) startIdx = idx;
-			else if (values[idx].equals(ALT_NAME)) altIdx = idx;
+			switch (values[idx].toLowerCase()) {
+			case COLUMN_CHR_NAME:
+				chromosomeIdx = idx;
+				break;
+
+			case COLUMN_POS_NAME_v2:
+			case COLUMN_POS_NAME_v3:
+				startIdx = idx;
+				break;
+
+			case ALT_NAME:
+				altIdx = idx;
+				break;
+
+			default:
+				break;
+			}
 		}
 
 		// Errors?
 		if (chromosomeIdx == -1) throw new RuntimeException("Missing '" + COLUMN_CHR_NAME + "' columns in dbNSFP file");
-		if (startIdx == -1) throw new RuntimeException("Missing '" + COLUMN_POS_NAME + "' columns in dbNSFP file");
+		if (startIdx == -1) throw new RuntimeException("Missing '" + COLUMN_POS_NAME_v2 + "' columns in dbNSFP file");
 		if (altIdx == -1) throw new RuntimeException("Missing '" + ALT_NAME + "' columns in dbNSFP file");
 	}
 
