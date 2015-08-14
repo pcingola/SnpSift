@@ -39,16 +39,28 @@ public class SnpSiftCmdDbNsfp extends SnpSift {
 
 	public static final String VCF_INFO_PREFIX = "dbNSFP_";
 	public static final String DEFAULT_FIELDS_NAMES_TO_ADD = "" // Default fields to add
-			+ "Uniprot_acc," //
-			+ "Interpro_domain," // Domain
-			+ "SIFT_pred," // SIFT predictions
-			+ "Polyphen2_HDIV_pred,Polyphen2_HVAR_pred," // Polyphen predictions
-			+ "LRT_pred," // LRT predictions
-			+ "MutationTaster_pred," // MutationTaser predictions
-			+ "GERP++_NR,GERP++_RS," // GERP
-			+ "phastCons100way_vertebrate," // Conservation
-			+ "1000Gp1_AF,1000Gp1_AFR_AF,1000Gp1_EUR_AF,1000Gp1_AMR_AF,1000Gp1_ASN_AF," // Allele frequencies 1000 Genomes project
-			+ "ESP6500_AA_AF,ESP6500_EA_AF" // Allele frequencies Exome sequencing project
+			// DbNSFP version 2
+			+ "Uniprot_acc" //
+			+ ",Interpro_domain" // Domain
+			+ ",SIFT_pred" // SIFT predictions
+			+ ",Polyphen2_HDIV_pred,Polyphen2_HVAR_pred" // Polyphen predictions
+			+ ",LRT_pred" // LRT predictions
+			+ ",MutationTaster_pred" // MutationTaser predictions
+			+ ",GERP++_NR" // GERP
+			+ ",GERP++_RS" // 
+			+ ",phastCons100way_vertebrate," // Conservation
+			+ ",1000Gp1_AF,1000Gp1_AFR_AF,1000Gp1_EUR_AF,1000Gp1_AMR_AF,1000Gp1_ASN_AF" // Allele frequencies 1000 Genomes project
+			+ ",ESP6500_AA_AF,ESP6500_EA_AF" // Allele frequencies Exome sequencing project
+	// DbNSFP version 3 fields (some fields have different names than in version 2)
+			+ ",MutationTaster_pred" //
+			+ ",MutationAssessor_pred" //
+			+ ",FATHMM_pred" //
+			+ ",PROVEAN_pred" //
+			+ ",CADD_phred" //
+			+ ",MetaSVM_pred" //
+			+ ",1000Gp3_AC,1000Gp3_AF,1000Gp3_AFR_AC,1000Gp3_AFR_AF,1000Gp3_EUR_AC,1000Gp3_EUR_AF,1000Gp3_AMR_AC,1000Gp3_AMR_AF,1000Gp3_EAS_AC,1000Gp3_EAS_AF,1000Gp3_SAS_AC,1000Gp3_SAS_AF" //
+			+ ",ESP6500_AA_AC,ESP6500_AA_AF,ESP6500_EA_AC,ESP6500_EA_AF"//
+			+ ",ExAC_AC,ExAC_AF,ExAC_Adj_AC,ExAC_Adj_AF,ExAC_AFR_AC,ExAC_AFR_AF,ExAC_AMR_AC,ExAC_AMR_AF,ExAC_EAS_AC,ExAC_EAS_AF,ExAC_FIN_AC,ExAC_FIN_AF,ExAC_NFE_AC,ExAC_NFE_AF,ExAC_SAS_AC,ExAC_SAS_AF" //
 			;
 
 	public static final int MIN_JUMP = 100;
@@ -370,17 +382,19 @@ public class SnpSiftCmdDbNsfp extends SnpSift {
 			dbNsfpFile.forceMissingTypesAsString();
 		}
 
+		if (verbose) Timer.showStdErr("Done");
 		//---
 		// Fields to use
 		//---
 		VcfInfoType types[] = dbNsfpFile.getTypes();
 		String fieldNames[] = dbNsfpFile.getFieldNamesSorted();
+		if (verbose) Timer.showStdErr("Database fields:");
 		for (int i = 0; i < fieldNames.length; i++) {
 			String type = (types[i] != null ? types[i].toString() : "String");
 			fieldsType.put(fieldNames[i], type);
 			fieldsDescription.put(fieldNames[i], "Field '" + fieldNames[i] + "' from dbNSFP");
+			if (verbose) System.err.println("\t'" + fieldNames[i] + "'");
 		}
-		if (verbose) Timer.showStdErr("Done");
 
 		currentDbEntry = null;
 
