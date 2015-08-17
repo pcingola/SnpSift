@@ -36,6 +36,7 @@ public class SnpSift implements VcfAnnotator {
 	public static final String VERSION = SOFTWARE_NAME + " " + VERSION_NO_NAME;
 	public static final int MAX_ERRORS = 10; // Report an error no more than X times
 	public static int SHOW_EVERY_VCFLINES = 100; // Show a mark every N vcf lines processed
+	public static final String[] EMPTY_ARGS = new String[0];
 
 	protected boolean help; // Be verbose
 	protected boolean verbose; // Be verbose

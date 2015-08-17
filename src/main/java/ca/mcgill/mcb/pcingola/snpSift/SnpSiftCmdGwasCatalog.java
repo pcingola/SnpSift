@@ -39,7 +39,7 @@ public class SnpSiftCmdGwasCatalog extends SnpSift {
 	IntervalForest intervalForest;
 
 	public SnpSiftCmdGwasCatalog() {
-		super(new String[0], "gwasCat");
+		this(null);
 	}
 
 	public SnpSiftCmdGwasCatalog(String args[]) {
@@ -124,6 +124,7 @@ public class SnpSiftCmdGwasCatalog extends SnpSift {
 	public boolean annotateInit(VcfFileIterator vcfFile) {
 
 		// Get database name from config file?
+		// Note this can happen when invoked a VcfAnnotator (e.g. form ClinEff)
 		if (dbFileName == null && config != null) {
 			String configKey = CONFIG_GWAS_DB_FILE;
 			String coordinates = config.getString(Config.KEY_COORDINATES);

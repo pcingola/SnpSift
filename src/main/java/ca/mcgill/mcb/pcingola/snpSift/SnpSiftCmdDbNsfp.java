@@ -12,6 +12,7 @@ import java.util.Set;
 import ca.mcgill.mcb.pcingola.fileIterator.DbNsfpEntry;
 import ca.mcgill.mcb.pcingola.fileIterator.DbNsfpFileIterator;
 import ca.mcgill.mcb.pcingola.fileIterator.VcfFileIterator;
+import ca.mcgill.mcb.pcingola.snpEffect.Config;
 import ca.mcgill.mcb.pcingola.util.Gpr;
 import ca.mcgill.mcb.pcingola.util.Timer;
 import ca.mcgill.mcb.pcingola.vcf.VcfEntry;
@@ -38,6 +39,7 @@ import ca.mcgill.mcb.pcingola.vcf.VcfInfoType;
 public class SnpSiftCmdDbNsfp extends SnpSift {
 
 	public static final String VCF_INFO_PREFIX = "dbNSFP_";
+
 	public static final String DEFAULT_FIELDS_NAMES_TO_ADD = "" // Default fields to add
 			// DbNSFP version 2
 			+ "Uniprot_acc" //
@@ -62,9 +64,10 @@ public class SnpSiftCmdDbNsfp extends SnpSift {
 			+ ",ESP6500_AA_AC,ESP6500_AA_AF,ESP6500_EA_AC,ESP6500_EA_AF"//
 			+ ",ExAC_AC,ExAC_AF,ExAC_Adj_AC,ExAC_Adj_AF,ExAC_AFR_AC,ExAC_AFR_AF,ExAC_AMR_AC,ExAC_AMR_AF,ExAC_EAS_AC,ExAC_EAS_AF,ExAC_FIN_AC,ExAC_FIN_AF,ExAC_NFE_AC,ExAC_NFE_AF,ExAC_SAS_AC,ExAC_SAS_AF" //
 			;
-
 	public static final int MIN_JUMP = 100;
+
 	public static final int SHOW_ANNOTATED = 1;
+	public final String CONFIG_DBNSFP_DB_FILE = "database.local.dbnsfp";
 
 	protected Map<String, String> fieldsToAdd;
 	protected Map<String, String> fieldsDescription;
@@ -81,6 +84,10 @@ public class SnpSiftCmdDbNsfp extends SnpSift {
 	protected DbNsfpEntry currentDbEntry;
 	protected String fieldsNamesToAdd;
 	String latestChromo = "";
+
+	public SnpSiftCmdDbNsfp() {
+		this(null);
+	}
 
 	public SnpSiftCmdDbNsfp(String args[]) {
 		super(args, "dbnsfp");
@@ -112,9 +119,13 @@ public class SnpSiftCmdDbNsfp extends SnpSift {
 	ArrayList<VcfEntry> annotate(boolean createList) {
 		ArrayList<VcfEntry> list = (createList ? new ArrayList<VcfEntry>() : null);
 
+		// Open VCF file
+		vcfFile = new VcfFileIterator(vcfFileName);
+		vcfFile.setDebug(debug);
+
 		// Initialize annotations
 		try {
-			initAnnotate();
+			annotateInit(vcfFile);
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
@@ -162,7 +173,8 @@ public class SnpSiftCmdDbNsfp extends SnpSift {
 			}
 		}
 
-		endAnnotate();
+		annotateFinish();
+		vcfFile.close();
 
 		// Show some stats
 		if (verbose) {
@@ -237,6 +249,128 @@ public class SnpSiftCmdDbNsfp extends SnpSift {
 		return annotated;
 	}
 
+	@Override
+	public boolean annotateFinish() {
+		dbNsfpFile.close();
+		return true;
+	}
+
+	/**
+	 * Initialize annotation process
+	 */
+	@Override
+	public boolean annotateInit(VcfFileIterator vcfFile) {
+		this.vcfFile = vcfFile;
+
+		// Get database name from config file?
+		// Note this can happen when invoked a VcfAnnotator (e.g. form ClinEff)
+		if (dbFileName == null && config != null) {
+			String configKey = CONFIG_DBNSFP_DB_FILE;
+			String coordinates = config.getString(Config.KEY_COORDINATES);
+			if (coordinates != null) configKey += "." + coordinates;
+			dbFileName = config.getString(configKey);
+		}
+
+		// Check and open dbNsfp
+		dbNsfpFile = new DbNsfpFileIterator(dbFileName);
+		dbNsfpFile.setCollapseRepeatedValues(collapseRepeatedValues);
+		if (tabixCheck && !dbNsfpFile.isTabix()) fatalError("Tabix index not found for database '" + dbFileName + "'.\n\t\tSnpSift dbNSFP only works with tabix indexed databases, please create or download index.");
+
+		// Guess database fields types
+		if (verbose) Timer.showStdErr("Guessing data types");
+
+		if (!dbNsfpFile.guessVcfTypes(verbose)) {
+			// Show missing types
+			if (verbose) {
+				String fnames[] = dbNsfpFile.getFieldNamesSorted();
+				VcfInfoType[] types = dbNsfpFile.getTypes();
+				Timer.showStdErr("Some data types are missing (using 'string')");
+				for (int i = 0; i < fnames.length; i++)
+					if (types[i] == null) System.err.println("\tColumn " + (i + 1) + "\t" + fnames[i]);
+			}
+
+			// Force missing types as strings
+			dbNsfpFile.forceMissingTypesAsString();
+		}
+
+		if (verbose) Timer.showStdErr("Done");
+
+		// Initialize fields to annotate
+		annotateInitFields();
+
+		return true;
+	}
+
+	/**
+	 * Initialize fields to annotate
+	 */
+	void annotateInitFields() {
+		//---
+		// Fields to use
+		//---
+		VcfInfoType types[] = dbNsfpFile.getTypes();
+		String fieldNames[] = dbNsfpFile.getFieldNamesSorted();
+		if (verbose) Timer.showStdErr("Database fields:");
+		for (int i = 0; i < fieldNames.length; i++) {
+			String type = (types[i] != null ? types[i].toString() : "String");
+			fieldsType.put(fieldNames[i], type);
+			fieldsDescription.put(fieldNames[i], "Field '" + fieldNames[i] + "' from dbNSFP");
+			if (verbose) System.err.println("\t'" + fieldNames[i] + "'");
+		}
+
+		currentDbEntry = null;
+
+		if (inverseFieldSelection) {
+			// Inverted selection: Start with ALL fields and then remove the ones selected
+
+			// Add all fields
+			Set<String> fields = new HashSet<String>();
+			fields.addAll(fieldsDescription.keySet());
+
+			// Remove selected fields
+			if (fieldsNamesToAdd != null) {
+				for (String fn : fieldsNamesToAdd.split(","))
+					fields.remove(fn);
+			}
+
+			// Sort
+			ArrayList<String> fieldsSort = new ArrayList<String>();
+			fieldsSort.addAll(fields);
+			Collections.sort(fieldsSort);
+
+			// Fields to be added
+			for (String fn : fieldsSort)
+				fieldsToAdd.put(fn, fieldsDescription.get(fn));
+
+		} else {
+			// No fields specified? Use default list of fields to add
+			if (fieldsNamesToAdd == null) fieldsNamesToAdd = DEFAULT_FIELDS_NAMES_TO_ADD;
+
+			// Add them to the list
+			for (String fn : fieldsNamesToAdd.split(",")) {
+				if (fieldsDescription.get(fn) == null) {
+					// Field not found
+					if (fieldsNamesToAdd == DEFAULT_FIELDS_NAMES_TO_ADD) {
+						// Was it one of the default fields? => Ignore
+						if (verbose) Timer.showStdErr("Warning: Default field name '" + fn + "' not found, ignoring");
+					} else usage("Error: Field name '" + fn + "' not found");
+				} else fieldsToAdd.put(fn, fieldsDescription.get(fn)); // Add field
+
+			}
+		}
+
+		// Show selected fields
+		if (verbose) {
+			ArrayList<String> fieldsSort = new ArrayList<String>();
+			fieldsSort.addAll(fieldsToAdd.keySet());
+			Collections.sort(fieldsSort);
+
+			Timer.showStdErr("Fields to add:");
+			for (String fn : fieldsSort)
+				System.err.println("\t\t\t" + fn);
+		}
+	}
+
 	/**
 	 * Check that all fields to add are available
 	 */
@@ -250,14 +384,6 @@ public class SnpSiftCmdDbNsfp extends SnpSift {
 		// Check that all "field to add" are in the database
 		for (String fieldKey : fieldsToAdd.keySet())
 			if (!dbNsfpFile.hasField(fieldKey)) fatalError("dbNsfp does not have field '" + fieldKey + "' (file '" + dbFileName + "')");
-	}
-
-	/**
-	 * Finish up annotation process
-	 */
-	public void endAnnotate() {
-		vcfFile.close();
-		dbNsfpFile.close();
 	}
 
 	/**
@@ -353,113 +479,6 @@ public class SnpSiftCmdDbNsfp extends SnpSift {
 	}
 
 	/**
-	 * Initialize annotation process
-	 */
-	public void initAnnotate() throws IOException {
-		// Open VCF file
-		vcfFile = new VcfFileIterator(vcfFileName);
-		vcfFile.setDebug(debug);
-
-		// Check and open dbNsfp
-		dbNsfpFile = new DbNsfpFileIterator(dbFileName);
-		dbNsfpFile.setCollapseRepeatedValues(collapseRepeatedValues);
-		if (tabixCheck && !dbNsfpFile.isTabix()) fatalError("Tabix index not found for database '" + dbFileName + "'.\n\t\tSnpSift dbNSFP only works with tabix indexed databases, please create or download index.");
-
-		//---
-		// Guess data types
-		//---
-		if (verbose) Timer.showStdErr("Guessing data types");
-
-		if (!dbNsfpFile.guessVcfTypes(verbose)) {
-			// Show missing types
-			if (verbose) {
-				String fnames[] = dbNsfpFile.getFieldNamesSorted();
-				VcfInfoType[] types = dbNsfpFile.getTypes();
-				Timer.showStdErr("Some data types are missing (using 'string')");
-				for (int i = 0; i < fnames.length; i++)
-					if (types[i] == null) System.err.println("\tColumn " + (i + 1) + "\t" + fnames[i]);
-			}
-
-			// Force missing types as strings
-			dbNsfpFile.forceMissingTypesAsString();
-		}
-
-		if (verbose) Timer.showStdErr("Done");
-		//---
-		// Fields to use
-		//---
-		VcfInfoType types[] = dbNsfpFile.getTypes();
-		String fieldNames[] = dbNsfpFile.getFieldNamesSorted();
-		if (verbose) Timer.showStdErr("Database fields:");
-		for (int i = 0; i < fieldNames.length; i++) {
-			String type = (types[i] != null ? types[i].toString() : "String");
-			fieldsType.put(fieldNames[i], type);
-			fieldsDescription.put(fieldNames[i], "Field '" + fieldNames[i] + "' from dbNSFP");
-			if (verbose) System.err.println("\t'" + fieldNames[i] + "'");
-		}
-
-		currentDbEntry = null;
-
-		//---
-		// No field names specified? Use default
-		//---
-		if (inverseFieldSelection) {
-			// Inverted selection: Start with ALL fields and then remove the ones selected
-
-			// Add all fields
-			Set<String> fields = new HashSet<String>();
-			fields.addAll(fieldsDescription.keySet());
-
-			// Remove selected fields
-			if (fieldsNamesToAdd != null) {
-				for (String fn : fieldsNamesToAdd.split(","))
-					fields.remove(fn);
-			}
-
-			// Sort
-			ArrayList<String> fieldsSort = new ArrayList<String>();
-			fieldsSort.addAll(fields);
-			Collections.sort(fieldsSort);
-
-			// Fields to be added
-			for (String fn : fieldsSort)
-				fieldsToAdd.put(fn, fieldsDescription.get(fn));
-
-		} else {
-
-			// No fields specified? Use default list of fields to add
-			if (fieldsNamesToAdd == null) fieldsNamesToAdd = DEFAULT_FIELDS_NAMES_TO_ADD;
-
-			// Add them to the list
-			for (String fn : fieldsNamesToAdd.split(",")) {
-				if (fieldsDescription.get(fn) == null) {
-					// Field not found
-					if (fieldsNamesToAdd == DEFAULT_FIELDS_NAMES_TO_ADD) {
-						// Was it one of the default fields? => Ignore
-						if (verbose) Timer.showStdErr("Warning: Default field name '" + fn + "' not found, ignoring");
-					} else {
-						usage("Error: Field name '" + fn + "' not found");
-					}
-				} else {
-					// Add field
-					fieldsToAdd.put(fn, fieldsDescription.get(fn));
-				}
-			}
-		}
-
-		// Show selected fields
-		if (verbose) {
-			ArrayList<String> fieldsSort = new ArrayList<String>();
-			fieldsSort.addAll(fieldsToAdd.keySet());
-			Collections.sort(fieldsSort);
-
-			Timer.showStdErr("Fields to add:");
-			for (String fn : fieldsSort)
-				System.err.println("\t\t\t" + fn);
-		}
-	}
-
-	/**
 	 * Are all values empty?
 	 */
 	boolean isDbNsfpValueEmpty(String values) {
@@ -503,6 +522,9 @@ public class SnpSiftCmdDbNsfp extends SnpSift {
 		run(false);
 	}
 
+	/**
+	 * Run annotation algorithm
+	 */
 	public List<VcfEntry> run(boolean createList) {
 		// Read config
 		if (config == null) loadConfig();
@@ -524,7 +546,6 @@ public class SnpSiftCmdDbNsfp extends SnpSift {
 
 	/**
 	 * Show usage message
-	 * @param msg
 	 */
 	@Override
 	public void usage(String msg) {
