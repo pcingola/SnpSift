@@ -9,6 +9,7 @@ import ca.mcgill.mcb.pcingola.interval.Genome;
 import ca.mcgill.mcb.pcingola.interval.Marker;
 import ca.mcgill.mcb.pcingola.interval.Markers;
 import ca.mcgill.mcb.pcingola.interval.tree.IntervalForest;
+import ca.mcgill.mcb.pcingola.snpEffect.Config;
 import ca.mcgill.mcb.pcingola.snpSift.gwasCatalog.GwasCatalog;
 import ca.mcgill.mcb.pcingola.snpSift.gwasCatalog.GwasCatalogEntry;
 import ca.mcgill.mcb.pcingola.util.Gpr;
@@ -124,7 +125,10 @@ public class SnpSiftCmdGwasCatalog extends SnpSift {
 
 		// Get database name from config file?
 		if (dbFileName == null && config != null) {
-			dbFileName = config.getString(CONFIG_GWAS_DB_FILE);
+			String configKey = CONFIG_GWAS_DB_FILE;
+			String coordinates = config.getString(Config.KEY_COORDINATES);
+			if (coordinates != null) configKey += "." + coordinates;
+			dbFileName = config.getString(configKey);
 		}
 
 		// Read database
