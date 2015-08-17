@@ -114,7 +114,7 @@ public class SnpSiftCmdAnnotate extends SnpSift {
 	}
 
 	@Override
-	public void annotate(VcfEntry vcfEntry) {
+	public boolean annotate(VcfEntry vcfEntry) {
 		boolean annotated = false;
 
 		if (vcfEntry.isVariant()) {
@@ -130,6 +130,8 @@ public class SnpSiftCmdAnnotate extends SnpSift {
 
 		if (annotated) countAnnotated++;
 		count++;
+
+		return annotated;
 	}
 
 	@Override

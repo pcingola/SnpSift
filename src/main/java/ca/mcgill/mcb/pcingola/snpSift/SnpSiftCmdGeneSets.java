@@ -45,8 +45,9 @@ public class SnpSiftCmdGeneSets extends SnpSift {
 	 * @param vcfEntry
 	 */
 	@Override
-	public void annotate(VcfEntry vcfEntry) {
+	public boolean annotate(VcfEntry vcfEntry) {
 		HashSet<String> sets = null;
+		boolean annotated = false;
 
 		// For all effects
 		for (VcfEffect eff : vcfEntry.parseEffects()) {
@@ -88,7 +89,10 @@ public class SnpSiftCmdGeneSets extends SnpSift {
 
 			// Add INFO field
 			vcfEntry.addInfo(INFO_GENE_SETS, setssb.toString());
+			annotated = true;
 		}
+
+		return annotated;
 	}
 
 	@Override

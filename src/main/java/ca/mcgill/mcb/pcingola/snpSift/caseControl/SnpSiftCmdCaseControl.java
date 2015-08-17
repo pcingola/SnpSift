@@ -52,7 +52,7 @@ public class SnpSiftCmdCaseControl extends SnpSift {
 	 * Annotate VCF entry
 	 */
 	@Override
-	public void annotate(VcfEntry vcfEntry) {
+	public boolean annotate(VcfEntry vcfEntry) {
 		int casesHom = 0, casesHet = 0, cases = 0;
 		int ctrlHom = 0, ctrlHet = 0, ctrl = 0;
 		int nCase[] = new int[3];
@@ -114,6 +114,8 @@ public class SnpSiftCmdCaseControl extends SnpSift {
 		vcfEntry.addInfo(VCF_INFO_CC_ALL + name, "" + pValueStr(vcfEntry, pAllelic(nControl, nCase, pvalueThreshold)));
 		vcfEntry.addInfo(VCF_INFO_CC_DOM + name, "" + pValueStr(vcfEntry, pDominant(nControl, nCase, pvalueThreshold)));
 		vcfEntry.addInfo(VCF_INFO_CC_REC + name, "" + pValueStr(vcfEntry, pRecessive(nControl, nCase, pvalueThreshold)));
+
+		return true;
 	}
 
 	/**
@@ -366,7 +368,7 @@ public class SnpSiftCmdCaseControl extends SnpSift {
 					+ "\tchr: " + vcfEntry.getChromosomeName() //
 					+ "\tpos: " + (vcfEntry.getStart() + 1) //
 					+ (!vcfEntry.getId().isEmpty() ? "\tid: " + vcfEntry.getId() : "") //
-					);
+		);
 
 		if ((p > 0) && (p < pValueMin)) {
 			pValueMin = p;

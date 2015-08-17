@@ -21,25 +21,32 @@ import ca.mcgill.mcb.pcingola.vcf.VcfInfoType;
  */
 public class SnpSiftCmdGwasCatalog extends SnpSift {
 
-	public final String GWAS_CATALOG_TRAIT = "GWASCAT";
-
 	public static final int SHOW = 10000;
 	public static final int SHOW_LINES = 100 * SHOW;
 
+	public final String GWAS_CATALOG_TRAIT = "GWASCAT";
+	public final String CONFIG_GWAS_DB_FILE = "database.local.gwascatalog";
+
 	GwasCatalog gwasCatalog;
+
+	public SnpSiftCmdGwasCatalog() {
+		super(new String[0], "gwasCat");
+	}
 
 	public SnpSiftCmdGwasCatalog(String args[]) {
 		super(args, "gwasCat");
 	}
 
 	void annotate() {
-		readDb();
-
+		// Open file
 		VcfFileIterator vcf = openVcfInputFile();
 		vcf.setDebug(debug);
 
+		annotateInit(vcf);
+
 		int countAnnotated = 0, count = 0;
 		boolean showHeader = true;
+
 		for (VcfEntry vcfEntry : vcf) {
 			// Show header?
 			if (showHeader) {
@@ -49,16 +56,7 @@ public class SnpSiftCmdGwasCatalog extends SnpSift {
 				showHeader = false;
 			}
 
-			// Anything found? => Annotate
-			boolean annotated = false;
-			List<GwasCatalogEntry> list = gwasCatalog.get(vcfEntry.getChromosomeName(), vcfEntry.getStart());
-
-			// Any annotations? Add them
-			if ((list != null) && (!list.isEmpty())) {
-				annotated = true;
-				String annotation = vcfAnnotation(list);
-				vcfEntry.addInfo(GWAS_CATALOG_TRAIT, annotation);
-			}
+			boolean annotated = annotate(vcfEntry);
 
 			// Show entry
 			System.out.println(vcfEntry);
@@ -67,12 +65,46 @@ public class SnpSiftCmdGwasCatalog extends SnpSift {
 			count++;
 		}
 
+		annotateFinish();
+
 		double perc = (100.0 * countAnnotated) / count;
 		if (verbose) Timer.showStdErr("Done." //
 				+ "\n\tTotal annotated entries : " + countAnnotated //
 				+ "\n\tTotal entries           : " + count //
 				+ "\n\tPercent                 : " + String.format("%.2f%%", perc) //
-				);
+		);
+	}
+
+	@Override
+	public boolean annotate(VcfEntry vcfEntry) {
+		// Anything found? => Annotate
+		boolean annotated = false;
+		List<GwasCatalogEntry> list = gwasCatalog.get(vcfEntry.getChromosomeName(), vcfEntry.getStart());
+
+		// Any annotations? Add them
+		if ((list != null) && (!list.isEmpty())) {
+			annotated = true;
+			String annotation = vcfAnnotation(list);
+			vcfEntry.addInfo(GWAS_CATALOG_TRAIT, annotation);
+		}
+
+		return annotated;
+	}
+
+	@Override
+	public boolean annotateFinish() {
+		return true; // Nothing to do
+	}
+
+	@Override
+	public boolean annotateInit(VcfFileIterator vcfFile) {
+		// Get database name from config file?
+		if (dbFileName == null && config != null) {
+			dbFileName = config.getString(CONFIG_GWAS_DB_FILE);
+		}
+
+		readDb();
+		return true;
 	}
 
 	@Override
@@ -130,7 +162,7 @@ public class SnpSiftCmdGwasCatalog extends SnpSift {
 		if (verbose) Timer.showStdErr("Annotating\n" //
 				+ "\tInput file    : '" + (vcfInputFile != null ? vcfInputFile : "STDIN") + "'\n" //
 				+ "\tDatabase file : '" + dbFileName + "'" //
-				);
+		);
 
 		annotate();
 	}
@@ -146,9 +178,7 @@ public class SnpSiftCmdGwasCatalog extends SnpSift {
 		}
 
 		showVersion();
-
 		System.err.println("Usage: java -jar " + SnpSift.class.getSimpleName() + ".jar gwasCat [file.vcf] > newFile.vcf.");
-
 		usageGenericAndDb();
 
 		System.exit(1);
@@ -168,4 +198,5 @@ public class SnpSiftCmdGwasCatalog extends SnpSift {
 
 		return sb.toString();
 	}
+
 }

@@ -33,16 +33,27 @@ public class SnpSiftCmdPrivate extends SnpSift {
 	 * Parse a single VCF entry
 	 */
 	@Override
-	public void annotate(VcfEntry ve) {
+	public boolean annotate(VcfEntry ve) {
 		String privateGorup = privateGroup(ve);
 
 		// Is there a private group?
 		if (privateGorup != null) {
 			ve.addInfo(VcfEntry.VCF_INFO_PRIVATE, privateGorup);
 			countAnnotated++;
+			return true;
 		}
 
 		countLines++;
+		return false;
+	}
+
+	@Override
+	public boolean annotateInit(VcfFileIterator vcfFile) {
+		loadTfam();
+
+		countLines = 0;
+		countAnnotated = 0;
+		return true;
 	}
 
 	/**
@@ -139,15 +150,13 @@ public class SnpSiftCmdPrivate extends SnpSift {
 	 * Run annotations. Create a list of VcfEntries if 'createList' is true (use for test cases)
 	 */
 	public List<VcfEntry> run(boolean createList) {
-		// Load Tfam file
-		loadTfam();
-
-		// Read VCF
-		countLines = 0;
-		countAnnotated = 0;
 		ArrayList<VcfEntry> vcfEntries = new ArrayList<VcfEntry>();
 		VcfFileIterator vcf = openVcfInputFile();
 		vcf.setDebug(debug);
+
+		annotateInit(vcf);
+
+		// Read VCF
 		for (VcfEntry ve : vcf) {
 			// Read header info
 			if (vcf.isHeadeSection()) {
@@ -169,6 +178,9 @@ public class SnpSiftCmdPrivate extends SnpSift {
 		}
 
 		if (verbose) Timer.showStdErr("Done.\n\tVCF entries: " + countLines + "\n\tVCF entries annotated: " + countAnnotated);
+
+		annotateFinish();
+
 		return vcfEntries;
 	}
 

@@ -47,7 +47,7 @@ public class SnpSiftCmdDbNsfp extends SnpSift {
 			+ ",LRT_pred" // LRT predictions
 			+ ",MutationTaster_pred" // MutationTaser predictions
 			+ ",GERP++_NR" // GERP
-			+ ",GERP++_RS" // 
+			+ ",GERP++_RS" //
 			+ ",phastCons100way_vertebrate," // Conservation
 			+ ",1000Gp1_AF,1000Gp1_AFR_AF,1000Gp1_EUR_AF,1000Gp1_AMR_AF,1000Gp1_ASN_AF" // Allele frequencies 1000 Genomes project
 			+ ",ESP6500_AA_AF,ESP6500_EA_AF" // Allele frequencies Exome sequencing project
@@ -181,10 +181,10 @@ public class SnpSiftCmdDbNsfp extends SnpSift {
 	 * Annotate a VCF entry
 	 */
 	@Override
-	public void annotate(VcfEntry vcf) {
+	public boolean annotate(VcfEntry vcf) {
 		// Find in database
 		DbNsfpEntry dbEntry = findDbEntry(vcf);
-		if (dbEntry == null) return;
+		if (dbEntry == null) return false;
 
 		// Add all INFO fields that refer to this allele
 		boolean annotated = false;
@@ -233,6 +233,8 @@ public class SnpSiftCmdDbNsfp extends SnpSift {
 				}
 			}
 		}
+
+		return annotated;
 	}
 
 	/**

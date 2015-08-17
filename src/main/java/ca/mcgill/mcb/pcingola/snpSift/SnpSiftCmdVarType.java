@@ -35,13 +35,17 @@ public class SnpSiftCmdVarType extends SnpSift {
 	 * Annotate one entry
 	 */
 	@Override
-	public void annotate(VcfEntry vcfEntry) {
+	public boolean annotate(VcfEntry vcfEntry) {
 		// Entry type?
 		if (vcfEntry.getVariantType() != null) vcfEntry.addInfo(vcfEntry.getVariantType().toString(), null);
 
 		// Heterozygous?
+		boolean annotated = false;
 		Boolean isHet = vcfEntry.calcHetero();
-		if (isHet != null) vcfEntry.addInfo(isHet ? "HET" : "HOM", null);
+		if (isHet != null) {
+			vcfEntry.addInfo(isHet ? "HET" : "HOM", null);
+			annotated = true;
+		}
 
 		// Add vartype according to alleles
 		StringBuilder sb = new StringBuilder();
@@ -50,7 +54,12 @@ public class SnpSiftCmdVarType extends SnpSift {
 			sb.append(sq.getVariantType());
 		}
 
-		if (sb.length() > 0) vcfEntry.addInfo(VARTYPE, sb.toString());
+		if (sb.length() > 0) {
+			vcfEntry.addInfo(VARTYPE, sb.toString());
+			annotated = true;
+		}
+
+		return annotated;
 	}
 
 	@Override

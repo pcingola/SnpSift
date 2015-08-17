@@ -89,18 +89,18 @@ public class SnpSift implements VcfAnnotator {
 	}
 
 	@Override
-	public void annotate(VcfEntry vcfEntry) {
+	public boolean annotate(VcfEntry vcfEntry) {
 		throw new RuntimeException("Unimplemented method!");
 	}
 
 	@Override
 	public boolean annotateFinish() {
-		throw new RuntimeException("Unimplemented method!");
+		return true; // By default nothing is done
 	}
 
 	@Override
 	public boolean annotateInit(VcfFileIterator vcfFile) {
-		throw new RuntimeException("Unimplemented method!");
+		return true; // By default nothing is done
 	}
 
 	/**
@@ -334,6 +334,7 @@ public class SnpSift implements VcfAnnotator {
 		cmd.run();
 	}
 
+	@Override
 	public void setConfig(Config config) {
 		this.config = config;
 	}
