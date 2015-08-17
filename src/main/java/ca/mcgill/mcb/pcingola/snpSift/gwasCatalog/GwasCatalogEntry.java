@@ -2,11 +2,11 @@ package ca.mcgill.mcb.pcingola.snpSift.gwasCatalog;
 
 /**
  * Entry from a GWAS-catalog
- * 
+ *
  * References:
  * 			http://www.genome.gov/gwastudies/#download
  *  		http://www.genome.gov/Pages/About/OD/OPG/GWAS%20Catalog/Tab_delimited_column_descriptions_09_27.pdf
- * 
+ *
  * @author pablocingolani
  *
  */
@@ -46,10 +46,11 @@ public class GwasCatalogEntry {
 	public String ci95;
 	public String platform;
 	public String cnv;
+	public String mappedTrait;
+	public String mappedTraitUri;
 
 	/**
 	 * Trait as a 'code' (only alpha-num chars)
-	 * @return
 	 */
 	public String getTraitCode() {
 		String traitCode = trait.trim().replaceAll("\\W+", "_");
@@ -100,7 +101,9 @@ public class GwasCatalogEntry {
 				+ "ci95                   : " + ci95 + "\n" //
 				+ "platform               : " + platform + "\n" //
 				+ "cnv                    : " + cnv + "\n" //
-		;
+				+ "mappedTrait            : " + mappedTrait + "\n" //
+				+ "mappedTraitUri         : " + mappedTraitUri + "\n" //
+				;
 	}
 
 }

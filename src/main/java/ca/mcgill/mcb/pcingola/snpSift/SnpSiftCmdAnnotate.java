@@ -144,6 +144,8 @@ public class SnpSiftCmdAnnotate extends SnpSift {
 	 */
 	@Override
 	public boolean annotateInit(VcfFileIterator vcfFile) {
+		this.vcfFile = vcfFile;
+
 		// Find or download database
 		dbFileName = databaseFindOrDownload();
 
@@ -223,7 +225,6 @@ public class SnpSiftCmdAnnotate extends SnpSift {
 
 		// Read database header and add INFO fields to the output vcf header
 		if (useInfoField) {
-
 			// Read VCF header
 			VcfFileIterator vcfDb = new VcfFileIterator(dbFileName);
 			VcfHeader vcfDbHeader = vcfDb.readHeader();

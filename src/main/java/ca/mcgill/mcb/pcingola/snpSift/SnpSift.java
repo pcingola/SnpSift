@@ -347,6 +347,7 @@ public class SnpSift implements VcfAnnotator {
 		this.dbFileName = dbFileName;
 	}
 
+	@Override
 	public void setDebug(boolean debug) {
 		this.debug = debug;
 	}
@@ -363,6 +364,7 @@ public class SnpSift implements VcfAnnotator {
 		this.suppressOutput = suppressOutput;
 	}
 
+	@Override
 	public void setVerbose(boolean verbose) {
 		this.verbose = verbose;
 	}
