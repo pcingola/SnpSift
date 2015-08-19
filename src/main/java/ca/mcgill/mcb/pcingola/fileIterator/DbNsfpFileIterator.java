@@ -1,5 +1,6 @@
 package ca.mcgill.mcb.pcingola.fileIterator;
 
+import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Array;
 import java.lang.reflect.Constructor;
@@ -11,6 +12,7 @@ import java.util.List;
 import java.util.Set;
 
 import ca.mcgill.mcb.pcingola.util.Gpr;
+import ca.mcgill.mcb.pcingola.util.Timer;
 import ca.mcgill.mcb.pcingola.vcf.VcfInfoType;
 import gnu.trove.map.hash.TObjectIntHashMap;
 
@@ -142,6 +144,25 @@ public class DbNsfpFileIterator extends MarkerFileIterator<DbNsfpEntry> {
 	}
 
 	/**
+	 * Guess field types: Read many lines and guess the data type for each column
+	 */
+	public boolean dataTypes() {
+		// Data types have been cached before?
+		boolean ok = false;
+
+		String cacheFileName = fileName + ".data_types";
+
+		if (!loadCachedDataTypes(cacheFileName)) {
+			// Not cached? Calculate data types
+			ok = guessDataTypes();
+			saveDataTypesCache(cacheFileName);
+		}
+
+		init(fileName, inOffset); // We need to re-open the file after guessing data types
+		return ok;
+	}
+
+	/**
 	 * Force missing types as string
 	 */
 	public void forceMissingTypesAsString() {
@@ -227,7 +248,7 @@ public class DbNsfpFileIterator extends MarkerFileIterator<DbNsfpEntry> {
 	/**
 	 * Guess data types from file
 	 */
-	protected boolean guessDataTypes(boolean verbose) {
+	protected boolean guessDataTypes() {
 		boolean header = true;
 		fieldNames = null;
 		types = null;
@@ -306,15 +327,6 @@ public class DbNsfpFileIterator extends MarkerFileIterator<DbNsfpEntry> {
 	}
 
 	/**
-	 * Guess field types: Read many lines and guess the data type for each column
-	 */
-	public boolean guessVcfTypes(boolean verbose) {
-		boolean ok = guessDataTypes(verbose);
-		init(fileName, inOffset); // We need to re-open the file after guessing data types
-		return ok;
-	}
-
-	/**
 	 * Do we have a column 'colName'?
 	 */
 	public boolean hasField(String filedName) {
@@ -327,6 +339,51 @@ public class DbNsfpFileIterator extends MarkerFileIterator<DbNsfpEntry> {
 	 */
 	boolean isMultipleValues(String value) {
 		return value.indexOf(SUBFIELD_SEPARATOR) >= 0 || value.indexOf(SUBFIELD_SEPARATOR_ALT) >= 0;
+	}
+
+	/**
+	 * Read data types form cache
+	 * @return true on success
+	 */
+	boolean loadCachedDataTypes(String cacheFileName) {
+		if (verbose) Timer.showStdErr("Loading data types from file '" + cacheFileName + "'");
+
+		// File doesn't exist, cannot load
+		if (!Gpr.canRead(cacheFileName)) return false;
+
+		// Is cache older than database file? Then we need to update the cache
+		File db = new File(fileName);
+		File cache = new File(cacheFileName);
+		if (db.lastModified() > cache.lastModified()) return false;
+
+		// Read file
+		String lines[] = Gpr.readFile(cacheFileName).split("\n");
+
+		// Initialize
+		fieldNames = new String[lines.length];
+		types = new VcfInfoType[lines.length];
+		multipleValues = new boolean[lines.length];
+
+		// Parse lines
+		for (int i = 0; i < lines.length; i++) {
+			String fields[] = lines[i].split("\t");
+
+			if (fields.length != 3) throw new RuntimeException("Error parsing line " + (i + 1) + " from file '" + fileName + "':\n" + lines[i]);
+
+			Gpr.debug("line:" + i + "\tfields[0]:" + fields[0] + "\tfields[1]:" + fields[1] + "\tfields[2]:" + fields[2]);
+			fieldNames[i] = fields[0];
+			types[i] = (fields[1].equals("null") ? null : VcfInfoType.valueOf(fields[1]));
+			multipleValues[i] = Gpr.parseBoolSafe(fields[2]);
+		}
+
+		// Names to index mapping
+		names2index = new HashMap<String, Integer>();
+		for (int i = 0; i < fieldNames.length; i++) {
+			fieldNames[i] = fieldNames[i].trim();
+			names2index.put(fieldNames[i], i);
+		}
+
+		return true;
 	}
 
 	/**
@@ -450,11 +507,18 @@ public class DbNsfpFileIterator extends MarkerFileIterator<DbNsfpEntry> {
 		}
 	}
 
-	//	@Override
-	//	public void seek(long pos) throws IOException {
-	//		super.seek(pos);
-	//		nextLine = null;
-	//	}
+	/**
+	 * Save data types to cache file
+	 */
+	void saveDataTypesCache(String cacheFileName) {
+		if (verbose) Timer.showStdErr("Saving data types to file '" + cacheFileName + "'");
+		StringBuilder sb = new StringBuilder();
+
+		for (int i = 0; i < fieldNames.length; i++)
+			sb.append(fieldNames[i] + "\t" + types[i] + "\t" + multipleValues[i] + "\n");
+
+		Gpr.toFile(cacheFileName, sb);
+	}
 
 	public void setCollapseRepeatedValues(boolean collapseRepeatedValues) {
 		this.collapseRepeatedValues = collapseRepeatedValues;

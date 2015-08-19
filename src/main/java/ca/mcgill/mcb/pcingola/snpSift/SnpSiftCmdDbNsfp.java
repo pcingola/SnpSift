@@ -273,13 +273,15 @@ public class SnpSiftCmdDbNsfp extends SnpSift {
 
 		// Check and open dbNsfp
 		dbNsfpFile = new DbNsfpFileIterator(dbFileName);
+		dbNsfpFile.setDebug(debug);
+		dbNsfpFile.setVerbose(verbose);
 		dbNsfpFile.setCollapseRepeatedValues(collapseRepeatedValues);
 		if (tabixCheck && !dbNsfpFile.isTabix()) fatalError("Tabix index not found for database '" + dbFileName + "'.\n\t\tSnpSift dbNSFP only works with tabix indexed databases, please create or download index.");
 
 		// Guess database fields types
 		if (verbose) Timer.showStdErr("Guessing data types");
 
-		if (!dbNsfpFile.guessVcfTypes(verbose)) {
+		if (!dbNsfpFile.dataTypes()) {
 			// Show missing types
 			if (verbose) {
 				String fnames[] = dbNsfpFile.getFieldNamesSorted();
