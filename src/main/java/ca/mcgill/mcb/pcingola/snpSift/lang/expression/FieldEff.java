@@ -46,7 +46,7 @@ public class FieldEff extends FieldSub {
 	@Override
 	public String getFieldString(VcfEntry vcfEntry) {
 		// Get all effects
-		List<VcfEffect> effects = vcfEntry.parseEffects(formatVersion);
+		List<VcfEffect> effects = vcfEntry.getVcfEffects(formatVersion);
 		if (effects.size() <= 0) return null;
 
 		// Find index value

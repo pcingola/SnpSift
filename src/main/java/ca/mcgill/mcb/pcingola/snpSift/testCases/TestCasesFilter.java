@@ -1096,7 +1096,7 @@ public class TestCasesFilter extends TestCase {
 			if (verbose) System.out.println("\t" + vcfEntry);
 
 			boolean any = false;
-			for (VcfEffect eff : vcfEntry.parseEffects(null)) {
+			for (VcfEffect eff : vcfEntry.getVcfEffects(null)) {
 				Assert.assertEquals("BICD1", eff.getGeneName());
 				any = true;
 			}
@@ -1123,7 +1123,7 @@ public class TestCasesFilter extends TestCase {
 			if (verbose) System.out.println("\t" + vcfEntry);
 
 			boolean any = false;
-			for (VcfEffect eff : vcfEntry.parseEffects(null)) {
+			for (VcfEffect eff : vcfEntry.getVcfEffects(null)) {
 				Assert.assertEquals("BICD1", eff.getGeneName());
 				any = true;
 			}

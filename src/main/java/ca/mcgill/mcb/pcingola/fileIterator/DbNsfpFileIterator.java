@@ -370,7 +370,6 @@ public class DbNsfpFileIterator extends MarkerFileIterator<DbNsfpEntry> {
 
 			if (fields.length != 3) throw new RuntimeException("Error parsing line " + (i + 1) + " from file '" + fileName + "':\n" + lines[i]);
 
-			Gpr.debug("line:" + i + "\tfields[0]:" + fields[0] + "\tfields[1]:" + fields[1] + "\tfields[2]:" + fields[2]);
 			fieldNames[i] = fields[0];
 			types[i] = (fields[1].equals("null") ? null : VcfInfoType.valueOf(fields[1]));
 			multipleValues[i] = Gpr.parseBoolSafe(fields[2]);

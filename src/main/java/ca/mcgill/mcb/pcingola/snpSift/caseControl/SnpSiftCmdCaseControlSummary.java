@@ -217,7 +217,7 @@ public class SnpSiftCmdCaseControlSummary extends SnpSift {
 		StringBuilder otherInfo = new StringBuilder();
 
 		// Find highest impact effect
-		for (VcfEffect eff : ve.parseEffects(formatVersion)) {
+		for (VcfEffect eff : ve.getVcfEffects(formatVersion)) {
 			if ((eff.getFunClass() != null) && (funcClass.ordinal() < eff.getFunClass().ordinal())) {
 				funcClass = eff.getFunClass();
 				effMax = eff;

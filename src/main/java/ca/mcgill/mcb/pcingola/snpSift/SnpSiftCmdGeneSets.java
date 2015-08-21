@@ -50,7 +50,7 @@ public class SnpSiftCmdGeneSets extends SnpSift {
 		boolean annotated = false;
 
 		// For all effects
-		for (VcfEffect eff : vcfEntry.parseEffects()) {
+		for (VcfEffect eff : vcfEntry.getVcfEffects()) {
 			String gene = eff.getGeneName();
 
 			// Do we have gene name field?

@@ -68,7 +68,7 @@ public class ZzzAffectedSamples {
 			// Genes counted in this entry
 			HashSet<String> genesCounted = new HashSet<String>();
 
-			for (VcfEffect veff : ve.parseEffects()) {
+			for (VcfEffect veff : ve.getVcfEffects()) {
 				if ((veff.getImpact() == VariantEffect.EffectImpact.HIGH) || (veff.getImpact() == VariantEffect.EffectImpact.MODERATE)) {
 					//if (veff.getImpact() == ChangeEffect.EffectImpact.HIGH) {
 					String geneName = ve.getChromosomeName() + "\t" + veff.getGeneName();
