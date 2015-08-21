@@ -52,7 +52,11 @@ public class DbVcfSorted extends DbVcfIndex {
 	}
 
 	@Override
-	protected boolean dbSeek(String chr, int pos) {
+	protected boolean dbSeekEntry(VcfEntry vcfEntry) {
+		// Using simple chromosome name
+		String chr = vcfEntry.getChromosomeName();
+		int pos = vcfEntry.getStart();
+
 		long filePosChr = indexDb.getStart(chr);
 		if (filePosChr < 0) return false; // The database file does not have this chromosome
 

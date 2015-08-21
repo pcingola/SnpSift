@@ -18,8 +18,9 @@ public class DbVcfTabix extends DbVcfIndex {
 	}
 
 	@Override
-	protected boolean dbSeek(String chr, int pos) {
-		return vcfDbFile.seek(chr, pos);
+	protected boolean dbSeekEntry(VcfEntry vcfEntry) {
+		// Using original chromosome name
+		return vcfDbFile.seek(vcfEntry.getChromosomeNameOri(), vcfEntry.getStart());
 	}
 
 	/**
