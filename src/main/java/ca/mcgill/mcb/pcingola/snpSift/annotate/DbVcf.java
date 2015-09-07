@@ -3,6 +3,7 @@ package ca.mcgill.mcb.pcingola.snpSift.annotate;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -201,6 +202,24 @@ public abstract class DbVcf {
 	}
 
 	/**
+	 * Find matching entries in the database
+	 */
+	public abstract List<VcfEntry> find(Variant variant);
+
+	/**
+	 * Find matching entries in the database
+	 */
+	public List<VcfEntry> find(VcfEntry vcfEntry) {
+		List<Variant> vars = vcfEntry.variants();
+		List<VcfEntry> ves = new LinkedList<>();
+
+		for (Variant var : vars)
+			ves.addAll(find(var));
+
+		return ves;
+	}
+
+	/**
 	 * Find if a VCF entry exists in the database
 	 */
 	protected boolean findDbExists(Variant var) {
@@ -344,8 +363,6 @@ public abstract class DbVcf {
 	 * Open database annotation file
 	 */
 	public abstract void open();
-
-	public abstract void readDb(VcfEntry ve);
 
 	public void setDebug(boolean debug) {
 		this.debug = debug;

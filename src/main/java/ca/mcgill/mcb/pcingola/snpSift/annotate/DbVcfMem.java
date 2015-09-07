@@ -1,6 +1,9 @@
 package ca.mcgill.mcb.pcingola.snpSift.annotate;
 
+import java.util.List;
+
 import ca.mcgill.mcb.pcingola.fileIterator.VcfFileIterator;
+import ca.mcgill.mcb.pcingola.interval.Variant;
 import ca.mcgill.mcb.pcingola.util.Timer;
 import ca.mcgill.mcb.pcingola.vcf.FileIndexChrPos;
 import ca.mcgill.mcb.pcingola.vcf.VcfEntry;
@@ -26,6 +29,21 @@ public class DbVcfMem extends DbVcf {
 
 	public DbVcfMem(String dbFileName) {
 		super(dbFileName);
+	}
+
+	@Override
+	public List<VcfEntry> find(Variant variant) {
+		// Nothing to do, the whole database is already loaded into memory
+		return null;
+	}
+
+	/**
+	 * Read all DB entries up to 'vcf'
+	 */
+	@Override
+	public List<VcfEntry> find(VcfEntry ve) {
+		// Nothing to do, the whole database is already loaded into memory
+		return null;
 	}
 
 	/**
@@ -62,14 +80,6 @@ public class DbVcfMem extends DbVcf {
 	@Override
 	public void open() {
 		loadDatabase();
-	}
-
-	/**
-	 * Read all DB entries up to 'vcf'
-	 */
-	@Override
-	public void readDb(VcfEntry ve) {
-		// Nothing to do, the whole database is already loaded into memory
 	}
 
 }

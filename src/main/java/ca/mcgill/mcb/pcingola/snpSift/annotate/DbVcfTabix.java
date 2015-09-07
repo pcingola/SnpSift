@@ -1,6 +1,9 @@
 package ca.mcgill.mcb.pcingola.snpSift.annotate;
 
+import java.util.List;
+
 import ca.mcgill.mcb.pcingola.fileIterator.VcfFileIterator;
+import ca.mcgill.mcb.pcingola.interval.Variant;
 import ca.mcgill.mcb.pcingola.util.Gpr;
 import ca.mcgill.mcb.pcingola.vcf.VcfEntry;
 
@@ -20,6 +23,11 @@ public class DbVcfTabix extends DbVcfIndex {
 	@Override
 	protected boolean dbSeek(String chr, int pos) {
 		return vcfDbFile.seek(chr, pos);
+	}
+
+	@Override
+	public List<VcfEntry> find(Variant variant) {
+		throw new RuntimeException("Unimplemented");
 	}
 
 	/**

@@ -5,11 +5,11 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import junit.framework.Assert;
-import junit.framework.TestCase;
 import ca.mcgill.mcb.pcingola.snpSift.SnpSiftCmdAnnotate;
 import ca.mcgill.mcb.pcingola.util.Gpr;
 import ca.mcgill.mcb.pcingola.vcf.VcfEntry;
+import junit.framework.Assert;
+import junit.framework.TestCase;
 
 /**
  * Annotate test case
@@ -648,6 +648,18 @@ public class TestCasesAnnotate extends TestCase {
 
 		// Check that trailing '=true' is not added
 		Assert.assertEquals("GENE=NPHP4", infoStr);
+	}
+
+	/**
+	 * Input VCf triggers a seek to a position after chromosome sections 
+	 * ends in database.
+	 * Previously a bug it forced an infinite loop
+	 */
+	public void test_38() {
+		Gpr.debug("Test");
+		String dbFileName = "./test/db_test_38.vcf";
+		String fileName = "./test/annotate_38.vcf";
+		annotateTest(dbFileName, fileName);
 	}
 
 }

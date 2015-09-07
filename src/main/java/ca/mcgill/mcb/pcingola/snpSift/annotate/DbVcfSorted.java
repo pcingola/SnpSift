@@ -1,9 +1,11 @@
 package ca.mcgill.mcb.pcingola.snpSift.annotate;
 
 import java.io.IOException;
+import java.util.List;
 
 import ca.mcgill.mcb.pcingola.fileIterator.SeekableBufferedReader;
 import ca.mcgill.mcb.pcingola.fileIterator.VcfFileIterator;
+import ca.mcgill.mcb.pcingola.interval.Variant;
 import ca.mcgill.mcb.pcingola.util.Gpr;
 import ca.mcgill.mcb.pcingola.vcf.FileIndexChrPos;
 import ca.mcgill.mcb.pcingola.vcf.VcfEntry;
@@ -71,6 +73,11 @@ public class DbVcfSorted extends DbVcfIndex {
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
+	}
+
+	@Override
+	public List<VcfEntry> find(Variant variant) {
+		throw new RuntimeException("Unimplemented");
 	}
 
 	/**

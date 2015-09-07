@@ -118,4 +118,5 @@ public class TestCasesZzz extends TestCase {
 		String fileName = "./test/annotate_37.vcf";
 		annotateTest(dbFileName, fileName);
 	}
+
 }

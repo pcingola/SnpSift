@@ -42,7 +42,7 @@ public abstract class AnnotateVcfDb {
 	 * Annotate a VCF entry
 	 */
 	public boolean annotate(VcfEntry vcfEntry) throws IOException {
-		dbVcf.readDb(vcfEntry); // Read database up to this point
+		dbVcf.find(vcfEntry); // Read database up to this point
 
 		// Add information to vcfEntry
 		boolean annotated = false;
@@ -59,6 +59,7 @@ public abstract class AnnotateVcfDb {
 			if (existsInfoField != null && (!exists)) exists |= dbVcf.findDbExists(var);
 		}
 
+		// Annotate input vcfEntry
 		annotated |= annotateIds(vcfEntry, idSet);
 		annotated |= annotateInfo(vcfEntry, infos);
 		if (exists) annotateExists(vcfEntry);
