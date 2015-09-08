@@ -2,6 +2,10 @@ package ca.mcgill.mcb.pcingola.snpSift.annotate;
 
 import java.util.Arrays;
 
+import ca.mcgill.mcb.pcingola.interval.Chromosome;
+import ca.mcgill.mcb.pcingola.interval.Genome;
+import ca.mcgill.mcb.pcingola.interval.Marker;
+
 /**
  * Represents a set of intervals stored in an (uncompressed) file
  * All intervals belong to the same chromosome
@@ -14,13 +18,15 @@ public class IntervalFileChromo {
 
 	public static final int MIN_CAPACITY = 1024;
 
+	Genome genome;
 	String chromosome;
 	int start[]; // Intervals start position
 	int end[]; // Intervals end position
 	long fileIdx[]; // Position within a file
 	int size; // Arrays size
 
-	public IntervalFileChromo(String chromosome) {
+	public IntervalFileChromo(Genome genome, String chromosome) {
+		this.genome = genome;
 		this.chromosome = chromosome;
 		start = new int[MIN_CAPACITY];
 		end = new int[MIN_CAPACITY];
@@ -48,6 +54,22 @@ public class IntervalFileChromo {
 		return start.length;
 	}
 
+	public String getChromosome() {
+		return chromosome;
+	}
+
+	public int getEnd(int idx) {
+		return end[idx];
+	}
+
+	public long getFileIdx(int idx) {
+		return fileIdx[idx];
+	}
+
+	public int getStart(int idx) {
+		return start[idx];
+	}
+
 	void grow(int minCapacity) {
 		// overflow-conscious code
 		int oldCapacity = capacity();
@@ -56,6 +78,31 @@ public class IntervalFileChromo {
 		start = Arrays.copyOf(start, newCapacity);
 		end = Arrays.copyOf(end, newCapacity);
 		fileIdx = Arrays.copyOf(fileIdx, newCapacity);
+	}
+
+	/**
+	 * Does interval at position 'idx' intersect positions 'pos'?
+	 */
+	public boolean intersects(int idx, int pos) {
+		return (start[idx] <= pos) && (pos <= end[idx]);
+	}
+
+	/**
+	 * Does interval at position 'idx' intersect 'marker'?
+	 */
+	public boolean intersects(int idx, Marker marker) {
+		if (!chromosome.equals(marker.getChromosomeName())) return false;
+		int istart = Math.max(start[idx], marker.getStart());
+		int iend = Math.min(end[idx], marker.getEnd());
+		return (istart <= iend);
+	}
+
+	/**
+	 * Create a marker form data at position 'idx'
+	 */
+	public Marker marker(int idx) {
+		Chromosome chr = genome.getOrCreateChromosome(chromosome);
+		return new MarkerFile(chr, start[idx], end[idx], fileIdx[idx]);
 	}
 
 	public int size() {
