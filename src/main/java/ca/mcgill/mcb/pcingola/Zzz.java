@@ -11,7 +11,8 @@ import ca.mcgill.mcb.pcingola.vcf.VcfEntry;
 
 public class Zzz {
 
-	static boolean verbose = false;
+	static boolean debug = false;
+	static boolean verbose = true;
 
 	public static void main(String[] args) {
 		Timer.show("Start");
@@ -26,7 +27,7 @@ public class Zzz {
 		Timer.show("Checking");
 		VcfFileIterator vcf = new VcfFileIterator(fileName);
 		for (VcfEntry ve : vcf) {
-			if (verbose) System.out.println(ve.toStr());
+			if (debug) System.out.println(ve.toStr());
 
 			// Query database
 			Markers results = vcfIndex.query(ve);
@@ -38,7 +39,7 @@ public class Zzz {
 
 				MarkerFile resmf = (MarkerFile) res;
 				VcfEntry veIdx = vcfIndex.read(resmf);
-				if (verbose) System.out.println("\t" + res + "\t" + veIdx);
+				if (debug) System.out.println("\t" + res + "\t" + veIdx);
 
 				// Check that result does intersect query
 				if (!ve.intersects(veIdx)) throw new RuntimeException("Selected interval does not intersect marker form file!");

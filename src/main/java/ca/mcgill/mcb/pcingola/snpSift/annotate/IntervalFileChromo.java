@@ -1,5 +1,9 @@
 package ca.mcgill.mcb.pcingola.snpSift.annotate;
 
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.EOFException;
+import java.io.IOException;
 import java.util.Arrays;
 
 import ca.mcgill.mcb.pcingola.interval.Chromosome;
@@ -24,6 +28,11 @@ public class IntervalFileChromo {
 	int end[]; // Intervals end position
 	long fileIdx[]; // Position within a file
 	int size; // Arrays size
+
+	public IntervalFileChromo(Genome genome) {
+		this.genome = genome;
+		size = 0;
+	}
 
 	public IntervalFileChromo(Genome genome, String chromosome) {
 		this.genome = genome;
@@ -98,11 +107,61 @@ public class IntervalFileChromo {
 	}
 
 	/**
+	 * Read data from input stream
+	 * @return true on success
+	 */
+	public boolean load(DataInputStream in) {
+		try {
+			size = in.readInt();
+			if (size < 0) return false;
+
+			chromosome = in.readUTF();
+
+			// Allocate arrays
+			start = new int[size];
+			end = new int[size];
+			fileIdx = new long[size];
+
+			// Read array data
+			for (int i = 0; i < size; i++) {
+				start[i] = in.readInt();
+				end[i] = in.readInt();
+				fileIdx[i] = in.readLong();
+			}
+		} catch (EOFException e) {
+			return false;
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
+
+		return true;
+	}
+
+	/**
 	 * Create a marker form data at position 'idx'
 	 */
 	public Marker marker(int idx) {
 		Chromosome chr = genome.getOrCreateChromosome(chromosome);
 		return new MarkerFile(chr, start[idx], end[idx], fileIdx[idx]);
+	}
+
+	/**
+	 * Save to output stream
+	 */
+	public void save(DataOutputStream out) {
+		try {
+			out.writeInt(size);
+			out.writeUTF(chromosome);
+
+			// Dump array data
+			for (int i = 0; i < size; i++) {
+				out.writeInt(start[i]);
+				out.writeInt(end[i]);
+				out.writeLong(fileIdx[i]);
+			}
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
 	}
 
 	public int size() {

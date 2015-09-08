@@ -38,7 +38,7 @@ public class IntervalTreeFileChromo {
 	}
 
 	public void index() {
-		index(0, intervalFileChromo.size());
+		index(0, intervalFileChromo.size() - 1);
 	}
 
 	/**
@@ -49,14 +49,35 @@ public class IntervalTreeFileChromo {
 		if (debug) Gpr.debug("index( " + startIdx + ", " + endIdx + " )");
 		if (startIdx >= endIdx) return -1;
 
-		// Get middle point
+		// Find middle position
 		int midIdx = (startIdx + endIdx) / 2;
-		int posMid = intervalFileChromo.getStart(midIdx);
+		int midPos = intervalFileChromo.getStart(midIdx);
 
+		//---
 		// Add entry
+		//---
 		int addIdx = size++;
-		mid[addIdx] = posMid;
-		intersect[addIdx] = intersect(startIdx, endIdx, posMid);
+		mid[addIdx] = midPos;
+
+		// Too few intervals? Just add them to the intersect array
+		// and finish recursion here.
+		int count = endIdx - startIdx + 1;
+		if (count <= 3) {
+			// When we have 3 or less entries, we cannot partition them in 2 groups
+			// of 2 entries for a balanced recursion. Plus is not efficient to
+			// keep adding nodes if there is so little to divide (a simple linear
+			// search can do as well)
+			int inter[] = new int[count];
+			for (int i = startIdx, j = 0; i <= endIdx; i++, j++)
+				inter[j] = i;
+
+			intersect[addIdx] = inter;
+			left[addIdx] = right[addIdx] = -1;
+			return addIdx;
+		}
+
+		// Recurse
+		intersect[addIdx] = intersect(startIdx, endIdx, midPos);
 		left[addIdx] = index(startIdx, midIdx);
 		right[addIdx] = index(midIdx + 1, endIdx);
 
@@ -101,6 +122,8 @@ public class IntervalTreeFileChromo {
 	}
 
 	public void query(Marker marker, int idx, Markers results) {
+		if (debug) Gpr.debug("query( " + marker.toStr() + ", " + idx + " )");
+
 		// Negative index? Nothing to do
 		if (idx < 0) return;
 
@@ -114,8 +137,23 @@ public class IntervalTreeFileChromo {
 		}
 
 		// Recurse left or right
-		if (marker.getEnd() < mid[idx]) query(marker, left[idx], results);
-		if (mid[idx] < marker.getStart()) query(marker, right[idx], results);
+		int midPos = mid[idx];
+		if (debug) Gpr.debug("midPos:" + midPos);
+		if (marker.getEnd() < midPos) {
+			query(marker, left[idx], results);
+		}
+
+		if (midPos < marker.getStart()) {
+			query(marker, right[idx], results);
+		}
+	}
+
+	public void setDebug(boolean debug) {
+		this.debug = debug;
+	}
+
+	public void setVerbose(boolean verbose) {
+		this.verbose = verbose;
 	}
 
 	public int size() {
