@@ -1,5 +1,6 @@
 package ca.mcgill.mcb.pcingola;
 
+import ca.mcgill.mcb.pcingola.fileIterator.SeekableBufferedReader;
 import ca.mcgill.mcb.pcingola.fileIterator.VcfFileIterator;
 import ca.mcgill.mcb.pcingola.interval.Marker;
 import ca.mcgill.mcb.pcingola.interval.Markers;
@@ -11,14 +12,68 @@ import ca.mcgill.mcb.pcingola.vcf.VcfEntry;
 
 public class Zzz {
 
+	public static final int MAX_LINES = 2000000;
 	static boolean debug = false;
 	static boolean verbose = true;
 
 	public static void main(String[] args) {
 		Timer.show("Start");
 
-		String fileName = Gpr.HOME + "/snpEff/cosmic.vcf";
+		// String fileName = Gpr.HOME + "/snpEff/db/GRCh37/dbSnp/dbSnp.vcf";
+		String fileName = Gpr.HOME + "/snpEff/cosmic_tabix.vcf.gz";
+		Zzz zzz = new Zzz();
 
+		zzz.testTabix(fileName);
+
+		// zzz.testIndex(fileName);
+		//		zzz.testVcfRead(fileName, false);
+		//		zzz.testVcfRead(fileName, true);
+	}
+
+	void testTabix(String fileName) {
+		Timer timer = new Timer();
+		timer.start();
+
+		try {
+			VcfFileIterator vcf = new VcfFileIterator(fileName);
+
+			int lineNum = 1;
+			for (VcfEntry ve : vcf) {
+				if (verbose && lineNum % 10000 == 0) Timer.showStdErr(lineNum + "\t" + ve.toStr());
+				lineNum++;
+				if (lineNum > MAX_LINES) break;
+			}
+
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+
+		System.err.println("Finished reading " + MAX_LINES + " lines from '" + fileName + "': " + timer);
+	}
+
+	void testVcfRead(String fileName, boolean useSeekable) {
+		Timer timer = new Timer();
+		timer.start();
+
+		try {
+			VcfFileIterator vcf;
+			if (useSeekable) vcf = new VcfFileIterator(new SeekableBufferedReader(fileName));
+			else vcf = new VcfFileIterator(fileName);
+
+			int lineNum = 1;
+			for (VcfEntry ve : vcf) {
+				if (verbose && lineNum % 10000 == 0) Timer.showStdErr(lineNum + "\t" + ve.toStr());
+				lineNum++;
+				if (lineNum > MAX_LINES) break;
+			}
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+
+		System.err.println("Finished reading " + MAX_LINES + " lines from '" + fileName + "': " + timer);
+	}
+
+	void testIndex(String fileName) {
 		IntervalFile vcfIndex = new IntervalFile(fileName);
 		vcfIndex.setVerbose(verbose);
 		vcfIndex.index();
@@ -47,7 +102,6 @@ public class Zzz {
 		}
 
 		vcfIndex.close();
-		Timer.show("Done");
 	}
 
 }

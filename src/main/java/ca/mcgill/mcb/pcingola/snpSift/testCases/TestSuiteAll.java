@@ -1,9 +1,9 @@
 package ca.mcgill.mcb.pcingola.snpSift.testCases;
 
+import org.junit.runner.JUnitCore;
+
 import junit.framework.Test;
 import junit.framework.TestSuite;
-
-import org.junit.runner.JUnitCore;
 
 /**
  * Invoke all test cases
@@ -25,6 +25,7 @@ public class TestSuiteAll {
 		suite.addTestSuite(TestCasesHwe.class);
 		suite.addTestSuite(TestCasesLd.class);
 		suite.addTestSuite(TestCasesCaseControl.class);
+		suite.addTestSuite(TestCasesIntervalFile.class);
 		suite.addTestSuite(TestCasesAnnotate.class);
 		suite.addTestSuite(TestCasesAnnotateMem.class);
 		suite.addTestSuite(TestCasesAnnotateTabix.class);
