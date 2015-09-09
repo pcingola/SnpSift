@@ -1,6 +1,7 @@
 package ca.mcgill.mcb.pcingola.snpSift.annotate;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import ca.mcgill.mcb.pcingola.interval.Marker;
@@ -17,6 +18,9 @@ import ca.mcgill.mcb.pcingola.util.Gpr;
 public class IntervalTreeFileChromo {
 
 	public static final int MIN_LINES = 4; // This number cannot be less then 3 (see comment in code below)
+	public static final int MIN_FILE_SIZE = 4 * 1024; // Minimum file size to index
+
+	public static final int INITIAL_CAPACITY = 1024; // Initial capacity for arrays
 
 	boolean debug;
 	boolean verbose;
@@ -31,12 +35,32 @@ public class IntervalTreeFileChromo {
 	public IntervalTreeFileChromo(IntervalFileChromo intervalFileChromo) {
 		this.intervalFileChromo = intervalFileChromo;
 
-		int len = intervalFileChromo.size();
-		left = new int[len];
-		right = new int[len];
-		mid = new int[len];
-		intersect = new int[len][];
+		left = new int[INITIAL_CAPACITY];
+		right = new int[INITIAL_CAPACITY];
+		mid = new int[INITIAL_CAPACITY];
+		intersect = new int[INITIAL_CAPACITY][];
 		size = 0;
+	}
+
+	int capacity() {
+		if (left == null) return 0;
+		return left.length;
+	}
+
+	void grow() {
+		int oldCapacity = capacity();
+		int newCapacity = oldCapacity + (oldCapacity >> 1);
+		Gpr.debug("Grow:" + oldCapacity + "\t" + newCapacity);
+
+		String before = toStringAll();
+
+		left = Arrays.copyOf(left, newCapacity);
+		right = Arrays.copyOf(right, newCapacity);
+		mid = Arrays.copyOf(mid, newCapacity);
+		intersect = Arrays.copyOf(intersect, newCapacity);
+
+		String after = toStringAll();
+		if (!before.equals(after)) throw new RuntimeException("Before and after do not match!");
 	}
 
 	public void index() {
@@ -58,13 +82,13 @@ public class IntervalTreeFileChromo {
 		//---
 		// Add entry
 		//---
-		int addIdx = size++;
-		mid[addIdx] = midPos;
+		int idx = nextEntry();
 
 		// Too few intervals? Just add them to the intersect array
 		// and finish recursion here.
+		long size = intervalFileChromo.fileSize(startIdx, endIdx);
 		int count = endIdx - startIdx + 1;
-		if (count <= MIN_LINES) {
+		if ((count <= MIN_LINES) || (size <= MIN_FILE_SIZE)) {
 			// When we have 3 or less entries, we cannot partition them in 2 groups
 			// of 2 entries for a balanced recursion. Plus is not efficient to
 			// keep adding nodes if there is so little to divide (a simple linear
@@ -73,17 +97,20 @@ public class IntervalTreeFileChromo {
 			for (int i = startIdx, j = 0; i <= endIdx; i++, j++)
 				inter[j] = i;
 
-			intersect[addIdx] = inter;
-			left[addIdx] = right[addIdx] = -1;
-			return addIdx;
+			set(idx, -1, -1, midPos, inter);
+			return idx;
 		}
 
 		// Recurse
-		intersect[addIdx] = intersect(startIdx, endIdx, midPos);
-		left[addIdx] = index(startIdx, midIdx);
-		right[addIdx] = index(midIdx + 1, endIdx);
+		int intersects[] = intersect(startIdx, endIdx, midPos);
+		int leftIdx = index(startIdx, midIdx);
+		int rightIdx = index(midIdx + 1, endIdx);
+		set(idx, leftIdx, rightIdx, midPos, intersects);
 
-		return addIdx;
+		if ((left[idx] == idx) || (right[idx] == idx)) // Sanity check
+			throw new RuntimeException("Infinite recursion (index: " + idx + "):\n\t" + toString(idx));
+
+		return idx;
 	}
 
 	/**
@@ -114,11 +141,25 @@ public class IntervalTreeFileChromo {
 	}
 
 	/**
+	 * Get next index for entry and make sure there
+	 * is enough capacity to store it
+	 */
+	int nextEntry() {
+		if (size >= capacity()) grow();
+		return size++;
+	}
+
+	/**
 	 * Query all intervals intersecting 'marker'.
 	 * @return A list of indexes including all markers that intersect 'marker'
 	 */
 	public Markers query(Marker marker) {
 		Markers results = new Markers();
+		//		if (debug) {
+		//			Gpr.debug(toStringAll());
+		//			Gpr.toFile(Gpr.HOME + "/snpEff/" + intervalFileChromo.getChromosome() + ".txt", toStringAll());
+		//		}
+
 		query(marker, 0, results);
 		return results;
 	}
@@ -150,6 +191,20 @@ public class IntervalTreeFileChromo {
 		}
 	}
 
+	/**
+	 * Set all parameters in one 'row'
+	 *
+	 * WARNIGN: If we don't do it this way, we get strange errors
+	 * due to array resizing (array appears to be filled with
+	 * zeros after being set)
+	 */
+	void set(int idx, int leftIdx, int rightIdx, int midPos, int intersects[]) {
+		left[idx] = leftIdx;
+		right[idx] = rightIdx;
+		mid[idx] = midPos;
+		intersect[idx] = intersects;
+	}
+
 	public void setDebug(boolean debug) {
 		this.debug = debug;
 	}
@@ -164,17 +219,27 @@ public class IntervalTreeFileChromo {
 
 	@Override
 	public String toString() {
+		return "Chromosome: " + intervalFileChromo.getChromosome() //
+				+ ", size: " + size //
+		//+ ", capacity: " + capacity() //
+		;
+	}
+
+	public String toString(int i) {
+		return i //
+				+ "\tleftIdx: " + left[i] //
+				+ "\trightIdx: " + right[i] //
+				+ "\tmidPos: " + mid[i] //
+				+ "\tintersectIdx (" + (intersect[i] != null ? intersect[i].length : 0) + "): " + Gpr.toString(intersect[i]) //
+				;
+	}
+
+	public String toStringAll() {
 		StringBuilder sb = new StringBuilder();
-		sb.append("Chromosome: " + intervalFileChromo.getChromosome() + ", size: " + size + "\n");
+		sb.append(toString() + "\n");
 
 		for (int i = 0; i < size; i++)
-			sb.append("\t" + i //
-					+ "\tleftIdx: " + left[i] //
-					+ "\trightIdx: " + right[i] //
-					+ "\tmidPos: " + mid[i] //
-					+ "\tintersectIdx[]: " + Gpr.toString(intersect[i]) //
-					+ "\n" //
-			);
+			sb.append("\t" + toString(i) + "\n");
 
 		return sb.toString();
 	}

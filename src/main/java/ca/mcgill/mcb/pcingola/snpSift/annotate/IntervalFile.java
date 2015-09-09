@@ -57,7 +57,6 @@ public class IntervalFile {
 	 * Add an interval parse from 'line'
 	 */
 	public void add(VcfEntry ve, long filePos) {
-		if (debug) Gpr.debug("Adding:\tpos:" + filePos + "\t" + ve);
 		getOrCreate(ve.getChromosomeName()).add(ve.getStart(), ve.getEnd(), filePos);
 	}
 
@@ -90,9 +89,9 @@ public class IntervalFile {
 		// For each 'IntervalFileChromo'...
 		for (String chr : intervalFileByChromo.keySet()) {
 			IntervalFileChromo ifc = get(chr);
-			if (verbose) System.err.println("\t'" + ifc.getChromosome() + "'");
 			IntervalTreeFileChromo itfc = new IntervalTreeFileChromo(ifc);
 			itfc.index();
+			if (verbose) System.err.println("\t" + itfc);
 
 			intervalForest.put(chr, itfc);
 		}
@@ -283,6 +282,11 @@ public class IntervalFile {
 	 * Save index file
 	 */
 	public void saveIndex(String indexFile) {
+		if (Math.random() < 2) {
+			Gpr.debug("NOT SAVING!");
+			return;
+		}
+
 		if (verbose) Timer.showStdErr("Saving index to file '" + indexFile + "'");
 
 		DataOutputStream out = null;

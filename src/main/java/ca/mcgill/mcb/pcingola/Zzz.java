@@ -16,18 +16,19 @@ public class Zzz {
 
 	public static final int MAX_LINES = 2000000;
 	static boolean debug = false;
-	static boolean verbose = false;
+	static boolean verbose = true || debug;
 
 	public static void main(String[] args) {
 		Timer.show("Start");
 
-		// String fileName = Gpr.HOME + "/snpEff/db/GRCh37/dbSnp/dbSnp.vcf";
-		String fileName = Gpr.HOME + "/snpEff/cosmic_M.vcf";
+		String fileName = Gpr.HOME + "/snpEff/cosmic_1.vcf";
+		// 		String fileName = Gpr.HOME + "/snpEff/db/GRCh37/dbSnp/dbSnp.vcf";
 		//		String fileName = Gpr.HOME + "/snpEff/cosmic_tabix.vcf.gz";
+
 		Zzz zzz = new Zzz();
 
-		//zzz.testTabix(fileName);
 		zzz.testIndex(fileName);
+		//		zzz.testTabix(fileName);
 		//		zzz.testVcfRead(fileName, false);
 		//		zzz.testVcfRead(fileName, true);
 	}
@@ -81,12 +82,14 @@ public class Zzz {
 		vcfIndex.setDebug(debug);
 		vcfIndex.index();
 		vcfIndex.open();
-		if (debug) Gpr.debug("Index:\n" + vcfIndex.toStringAll());
+		// if (debug) Gpr.debug("Index:\n" + vcfIndex.toStringAll());
 
 		Timer.show("Checking");
 		VcfFileIterator vcf = new VcfFileIterator(fileName);
+		//		vcfIndex.setDebug(true);
+
 		for (VcfEntry ve : vcf) {
-			if (debug) System.out.println(ve.toStr());
+			if (debug) Gpr.debug(ve.toStr());
 
 			// Query database
 			Markers results = vcfIndex.query(ve);
@@ -98,7 +101,7 @@ public class Zzz {
 				MarkerFile resmf = (MarkerFile) res;
 				VcfEntry veIdx = vcfIndex.read(resmf);
 
-				if (debug) System.out.println("query: " + ve.toStr() + "\tresult_marker: " + res + "\tresult_vcf: " + veIdx.toStr());
+				if (debug) Gpr.debug("query: " + ve.toStr() + "\tresult_marker: " + res + "\tresult_vcf: " + veIdx.toStr());
 
 				// Check that result does intersect query
 				if (!ve.intersects(veIdx)) { throw new RuntimeException("Selected interval does not intersect marker form file!\n\tQuery: " + ve + "\n\tResult:" + veIdx); }
@@ -106,6 +109,7 @@ public class Zzz {
 		}
 
 		vcfIndex.close();
+		Timer.show("Done");
 	}
 
 }

@@ -20,7 +20,7 @@ import ca.mcgill.mcb.pcingola.interval.Marker;
  */
 public class IntervalFileChromo {
 
-	public static final int MIN_CAPACITY = 1024;
+	public static final int INITIAL_CAPACITY = 1024;
 
 	Genome genome;
 	String chromosome;
@@ -37,9 +37,9 @@ public class IntervalFileChromo {
 	public IntervalFileChromo(Genome genome, String chromosome) {
 		this.genome = genome;
 		this.chromosome = chromosome;
-		start = new int[MIN_CAPACITY];
-		end = new int[MIN_CAPACITY];
-		fileIdx = new long[MIN_CAPACITY];
+		start = new int[INITIAL_CAPACITY];
+		end = new int[INITIAL_CAPACITY];
+		fileIdx = new long[INITIAL_CAPACITY];
 		size = 0;
 	}
 
@@ -48,9 +48,7 @@ public class IntervalFileChromo {
 	 */
 	public void add(int start, int end, long fileIdx) {
 		// Do we need to resize
-		if (size >= capacity()) {
-			grow(MIN_CAPACITY);
-		}
+		if (size >= capacity()) grow();
 
 		this.start[size] = start;
 		this.end[size] = end;
@@ -58,9 +56,21 @@ public class IntervalFileChromo {
 		size++;
 	}
 
-	public int capacity() {
+	int capacity() {
 		if (start == null) return 0;
 		return start.length;
+	}
+
+	/**
+	 * File size between startIdx and endIdx inclusive
+	 */
+	public long fileSize(int startIdx, int endIdx) {
+		long startFilePos = (startIdx >= 0 ? startFilePos = getFileIdx(startIdx) : 0);
+
+		if (endIdx >= (size - 1)) endIdx = size - 2;
+		long endFilePos = getFileIdx(endIdx + 1);
+
+		return endFilePos - startFilePos;
 	}
 
 	public String getChromosome() {
@@ -79,7 +89,7 @@ public class IntervalFileChromo {
 		return start[idx];
 	}
 
-	void grow(int minCapacity) {
+	void grow() {
 		// overflow-conscious code
 		int oldCapacity = capacity();
 		int newCapacity = oldCapacity + (oldCapacity >> 1);
