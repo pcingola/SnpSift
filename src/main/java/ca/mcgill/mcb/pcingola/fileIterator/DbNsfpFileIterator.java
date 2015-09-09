@@ -318,7 +318,6 @@ public class DbNsfpFileIterator extends MarkerFileIterator<DbNsfpEntry> {
 					if (entryNum > MAX_LINES) return false; // Too many lines analyzed? We should be done...
 				}
 			}
-
 		} catch (IOException e) {
 			throw new RuntimeException("Error reading file '" + fileName + "'. Line ignored:\n\tLine (" + lineNum + "):\t'" + line + "'", e);
 		}

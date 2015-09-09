@@ -2,6 +2,7 @@ package ca.mcgill.mcb.pcingola.snpSift.annotate;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -45,8 +46,6 @@ public class IntervalFile {
 	Map<String, IntervalFileChromo> intervalFileByChromo;
 	Map<String, IntervalTreeFileChromo> intervalForest;
 	Genome genome;
-	//	RandomAccessFile file;
-	SeekableBufferedReader file;
 	VcfFileIterator vcf;
 
 	public IntervalFile(String fileName) {
@@ -58,6 +57,7 @@ public class IntervalFile {
 	 * Add an interval parse from 'line'
 	 */
 	public void add(VcfEntry ve, long filePos) {
+		if (debug) Gpr.debug("Adding:\tpos:" + filePos + "\t" + ve);
 		getOrCreate(ve.getChromosomeName()).add(ve.getStart(), ve.getEnd(), filePos);
 	}
 
@@ -75,14 +75,8 @@ public class IntervalFile {
 	 * Close file
 	 */
 	public void close() {
-		try {
-			if (file != null) file.close();
-			if (vcf != null) vcf.close();
-		} catch (IOException e) {
-			throw new RuntimeException(e);
-		}
-
-		file = null;
+		if (vcf != null) vcf.close();
+		vcf = null;
 	}
 
 	/**
@@ -146,8 +140,8 @@ public class IntervalFile {
 		// Create index
 		if (verbose) Timer.showStdErr("Creating index");
 		loadIntervals();
-		saveIndex(indexFile);
 		createIntervalForest();
+		saveIndex(indexFile);
 	}
 
 	/**
@@ -190,8 +184,8 @@ public class IntervalFile {
 
 			// Read the whole file
 			boolean title = true;
-			long pos = file.getFilePointer();
-			long fileLen = file.length();
+			long pos = vcf.getFilePointer();
+			long fileLen = (new File(fileName)).length();
 			Timer timer = new Timer();
 			timer.start();
 			vcf.setErrorIfUnsorted(true); // Make sure all lines are sorted
@@ -208,7 +202,7 @@ public class IntervalFile {
 
 					if (title) {
 						System.err.println(String.format("\t\t%8s\t%10s\t%3s\t%10s\t%10s" //
-								, "LineNum" // 
+								, "LineNum" //
 								, "chr:pos" //
 								, "%" //
 								, "Elapsed" //
@@ -218,7 +212,7 @@ public class IntervalFile {
 					}
 
 					System.err.println(String.format("\t\t%8d\t%10s\t%.1f%%\t%10s\t%10s" //
-							, vcf.getLineNum() // 
+							, vcf.getLineNum() //
 							, ve.getChromosomeName() + ":" + (ve.getStart() + 1) //
 							, 100.0 * perc //
 							, Timer.toString(elapsed, false) //
@@ -227,7 +221,7 @@ public class IntervalFile {
 				}
 
 				// Prepare for next iteration
-				pos = file.getFilePointer();
+				pos = vcf.getFilePointer();
 			}
 		} catch (Exception e) {
 			throw new RuntimeException(e);
@@ -242,12 +236,10 @@ public class IntervalFile {
 	 * Open file
 	 */
 	public void open() {
-		file = null;
-
 		try {
 			// Open file as random access
-			file = new SeekableBufferedReader(fileName);
-			vcf = new VcfFileIterator(file); // Prepare file iterator and genome
+			SeekableBufferedReader seekableReader = new SeekableBufferedReader(fileName);
+			vcf = new VcfFileIterator(seekableReader); // Prepare file iterator and genome
 			vcf.readHeader();
 			genome = vcf.getGenome();
 		} catch (FileNotFoundException e) {
@@ -273,10 +265,8 @@ public class IntervalFile {
 	 */
 	public VcfEntry read(long fileIdx) {
 		try {
-			file.seek(fileIdx);
-			String line = file.readLine();
-			VcfEntry ve = new VcfEntry(vcf, line, -1, true);
-			return ve;
+			vcf.seek(fileIdx);
+			return vcf.next();
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}

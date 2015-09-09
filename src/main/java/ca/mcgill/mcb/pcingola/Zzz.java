@@ -9,23 +9,25 @@ import ca.mcgill.mcb.pcingola.snpSift.annotate.MarkerFile;
 import ca.mcgill.mcb.pcingola.util.Gpr;
 import ca.mcgill.mcb.pcingola.util.Timer;
 import ca.mcgill.mcb.pcingola.vcf.VcfEntry;
+import net.sf.samtools.tabix.TabixReader;
+import net.sf.samtools.tabix.TabixReader.TabixIterator;
 
 public class Zzz {
 
 	public static final int MAX_LINES = 2000000;
 	static boolean debug = false;
-	static boolean verbose = true;
+	static boolean verbose = false;
 
 	public static void main(String[] args) {
 		Timer.show("Start");
 
 		// String fileName = Gpr.HOME + "/snpEff/db/GRCh37/dbSnp/dbSnp.vcf";
-		String fileName = Gpr.HOME + "/snpEff/cosmic_tabix.vcf.gz";
+		String fileName = Gpr.HOME + "/snpEff/cosmic_M.vcf";
+		//		String fileName = Gpr.HOME + "/snpEff/cosmic_tabix.vcf.gz";
 		Zzz zzz = new Zzz();
 
-		zzz.testTabix(fileName);
-
-		// zzz.testIndex(fileName);
+		//zzz.testTabix(fileName);
+		zzz.testIndex(fileName);
 		//		zzz.testVcfRead(fileName, false);
 		//		zzz.testVcfRead(fileName, true);
 	}
@@ -35,20 +37,20 @@ public class Zzz {
 		timer.start();
 
 		try {
-			VcfFileIterator vcf = new VcfFileIterator(fileName);
+			TabixReader tabix = new TabixReader(fileName);
 
-			int lineNum = 1;
-			for (VcfEntry ve : vcf) {
-				if (verbose && lineNum % 10000 == 0) Timer.showStdErr(lineNum + "\t" + ve.toStr());
-				lineNum++;
-				if (lineNum > MAX_LINES) break;
-			}
+			TabixReader.debug = true;
+			TabixIterator ti = tabix.query("chr1:5778060-5794968");
+			System.out.println("Iterator:" + ti);
+
+			for (String line : ti)
+				System.out.println(line);
 
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
 
-		System.err.println("Finished reading " + MAX_LINES + " lines from '" + fileName + "': " + timer);
+		System.err.println("Done");
 	}
 
 	void testVcfRead(String fileName, boolean useSeekable) {
@@ -76,8 +78,10 @@ public class Zzz {
 	void testIndex(String fileName) {
 		IntervalFile vcfIndex = new IntervalFile(fileName);
 		vcfIndex.setVerbose(verbose);
+		vcfIndex.setDebug(debug);
 		vcfIndex.index();
 		vcfIndex.open();
+		if (debug) Gpr.debug("Index:\n" + vcfIndex.toStringAll());
 
 		Timer.show("Checking");
 		VcfFileIterator vcf = new VcfFileIterator(fileName);
@@ -91,13 +95,13 @@ public class Zzz {
 			if (results.size() <= 0) throw new RuntimeException("No results found for entry:\n\t" + ve);
 
 			for (Marker res : results) {
-
 				MarkerFile resmf = (MarkerFile) res;
 				VcfEntry veIdx = vcfIndex.read(resmf);
-				if (debug) System.out.println("\t" + res + "\t" + veIdx);
+
+				if (debug) System.out.println("query: " + ve.toStr() + "\tresult_marker: " + res + "\tresult_vcf: " + veIdx.toStr());
 
 				// Check that result does intersect query
-				if (!ve.intersects(veIdx)) throw new RuntimeException("Selected interval does not intersect marker form file!");
+				if (!ve.intersects(veIdx)) { throw new RuntimeException("Selected interval does not intersect marker form file!\n\tQuery: " + ve + "\n\tResult:" + veIdx); }
 			}
 		}
 

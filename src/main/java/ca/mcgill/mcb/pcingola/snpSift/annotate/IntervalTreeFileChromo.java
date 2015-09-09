@@ -16,6 +16,8 @@ import ca.mcgill.mcb.pcingola.util.Gpr;
  */
 public class IntervalTreeFileChromo {
 
+	public static final int MIN_LINES = 4; // This number cannot be less then 3 (see comment in code below)
+
 	boolean debug;
 	boolean verbose;
 
@@ -62,7 +64,7 @@ public class IntervalTreeFileChromo {
 		// Too few intervals? Just add them to the intersect array
 		// and finish recursion here.
 		int count = endIdx - startIdx + 1;
-		if (count <= 3) {
+		if (count <= MIN_LINES) {
 			// When we have 3 or less entries, we cannot partition them in 2 groups
 			// of 2 entries for a balanced recursion. Plus is not efficient to
 			// keep adding nodes if there is so little to divide (a simple linear
