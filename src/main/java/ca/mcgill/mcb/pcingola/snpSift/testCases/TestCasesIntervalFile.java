@@ -8,7 +8,6 @@ import ca.mcgill.mcb.pcingola.fileIterator.VcfFileIterator;
 import ca.mcgill.mcb.pcingola.interval.Marker;
 import ca.mcgill.mcb.pcingola.interval.Markers;
 import ca.mcgill.mcb.pcingola.snpSift.annotate.VcfIndex;
-import ca.mcgill.mcb.pcingola.snpSift.annotate.MarkerFile;
 import ca.mcgill.mcb.pcingola.util.Gpr;
 import ca.mcgill.mcb.pcingola.vcf.VcfEntry;
 import junit.framework.TestCase;
@@ -54,8 +53,7 @@ public class TestCasesIntervalFile extends TestCase {
 
 			// Check each result
 			for (Marker res : results) {
-				MarkerFile resmf = (MarkerFile) res;
-				VcfEntry veIdx = vcfIndex.read(resmf);
+				VcfEntry veIdx = (VcfEntry) res;
 				if (verbose) System.out.println("\t" + res + "\t" + veIdx);
 
 				// Check that result does intersect query
@@ -110,8 +108,7 @@ public class TestCasesIntervalFile extends TestCase {
 
 			// Check each result
 			for (Marker res : results) {
-				MarkerFile resmf = (MarkerFile) res;
-				VcfEntry veIdx = vcfIndex.read(resmf);
+				VcfEntry veIdx = (VcfEntry) res;
 				if (verbose) System.out.println("\t" + res + "\t" + veIdx);
 
 				// Check that result does intersect query
