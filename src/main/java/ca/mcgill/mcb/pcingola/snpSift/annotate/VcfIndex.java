@@ -96,14 +96,6 @@ public class VcfIndex {
 		if (verbose) Timer.showStdErr("Creating interval forest: Done");
 	}
 
-	public VcfIndexDataChromo getVcfIndexChromo(String chromosome) {
-		return vcfIndexByChromo.get(Chromosome.simpleName(chromosome));
-	}
-
-	public VcfIndexTree getTree(String chromosome) {
-		return forest.get(Chromosome.simpleName(chromosome));
-	}
-
 	public Genome getGenome() {
 		return genome;
 	}
@@ -122,6 +114,14 @@ public class VcfIndex {
 		}
 
 		return ifc;
+	}
+
+	public VcfIndexTree getTree(String chromosome) {
+		return forest.get(Chromosome.simpleName(chromosome));
+	}
+
+	public VcfIndexDataChromo getVcfIndexChromo(String chromosome) {
+		return vcfIndexByChromo.get(Chromosome.simpleName(chromosome));
 	}
 
 	/**
