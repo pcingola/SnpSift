@@ -40,7 +40,7 @@ public class VcfIndex {
 	boolean verbose;
 	boolean debug;
 	String fileName;
-	Map<String, VcfIndexChromo> vcfIndexByChromo;
+	Map<String, VcfIndexDataChromo> vcfIndexByChromo;
 	Map<String, VcfIndexTree> forest; // A hash of trees
 	Genome genome;
 	VcfFileIterator vcf;
@@ -85,7 +85,7 @@ public class VcfIndex {
 
 		// For each 'IntervalFileChromo'...
 		for (String chr : chromosomes()) {
-			VcfIndexChromo vic = get(chr);
+			VcfIndexDataChromo vic = getVcfIndexChromo(chr);
 			VcfIndexTree vcfTree = new VcfIndexTree(vcf, vic);
 			vcfTree.index();
 			if (verbose) System.err.println("\t" + vcfTree);
@@ -96,8 +96,12 @@ public class VcfIndex {
 		if (verbose) Timer.showStdErr("Creating interval forest: Done");
 	}
 
-	public VcfIndexChromo get(String chromosome) {
+	public VcfIndexDataChromo getVcfIndexChromo(String chromosome) {
 		return vcfIndexByChromo.get(Chromosome.simpleName(chromosome));
+	}
+
+	public VcfIndexTree getTree(String chromosome) {
+		return forest.get(Chromosome.simpleName(chromosome));
 	}
 
 	public Genome getGenome() {
@@ -108,12 +112,12 @@ public class VcfIndex {
 	 * Get IntervalFileChromo by chromosome name.
 	 * Create a new one if it doesn't exists
 	 */
-	public VcfIndexChromo getOrCreate(String chromosome) {
+	public VcfIndexDataChromo getOrCreate(String chromosome) {
 		chromosome = Chromosome.simpleName(chromosome);
-		VcfIndexChromo ifc = vcfIndexByChromo.get(chromosome);
+		VcfIndexDataChromo ifc = vcfIndexByChromo.get(chromosome);
 
 		if (ifc == null) {
-			ifc = new VcfIndexChromo(genome, chromosome);
+			ifc = new VcfIndexDataChromo(genome, chromosome);
 			vcfIndexByChromo.put(chromosome, ifc);
 		}
 
@@ -129,7 +133,6 @@ public class VcfIndex {
 		if (verbose) Timer.showStdErr("Checking index file '" + indexFile + "'");
 		if (Gpr.exists(indexFile)) {
 			loadIndex(indexFile);
-			createIntervalForest();
 			return;
 		}
 
@@ -137,7 +140,7 @@ public class VcfIndex {
 		if (verbose) Timer.showStdErr("Creating index");
 		loadIntervals();
 		createIntervalForest();
-		saveIndex(indexFile);
+		save(indexFile);
 	}
 
 	/**
@@ -147,15 +150,22 @@ public class VcfIndex {
 		if (verbose) Timer.showStdErr("Loading index file '" + indexFile + "'");
 
 		DataInputStream in = null;
+		forest = new HashMap<>();
+
 		try {
 			in = new DataInputStream(new GZIPInputStream(new FileInputStream(indexFile)));
 			if (genome == null) genome = new Genome("genome");
 
 			// Read data for each chromosome
-			VcfIndexChromo ifc = new VcfIndexChromo(genome);
-			while (ifc.load(in)) {
-				vcfIndexByChromo.put(ifc.getChromosome(), ifc);
-				ifc = new VcfIndexChromo(genome);
+			VcfIndexTree vcfTree = new VcfIndexTree();
+			vcfTree.setVerbose(verbose);
+			vcfTree.setDebug(debug);
+			while (vcfTree.load(in)) {
+				forest.put(vcfTree.getChromosome(), vcfTree);
+
+				vcfTree = new VcfIndexTree();
+				vcfTree.setVerbose(verbose);
+				vcfTree.setDebug(debug);
 			}
 
 		} catch (Exception e) {
@@ -218,7 +228,7 @@ public class VcfIndex {
 
 				// Prepare for next iteration
 				pos = vcf.getFilePointer();
-				get(ve.getChromosomeName()).setFilePosEnd(pos);
+				getVcfIndexChromo(ve.getChromosomeName()).setFilePosEnd(pos);
 			}
 		} catch (Exception e) {
 			throw new RuntimeException(e);
@@ -280,12 +290,7 @@ public class VcfIndex {
 	/**
 	 * Save index file
 	 */
-	public void saveIndex(String indexFile) {
-		if (Math.random() < 2) {
-			Gpr.debug("NOT SAVING!");
-			return;
-		}
-
+	public void save(String indexFile) {
 		if (verbose) Timer.showStdErr("Saving index to file '" + indexFile + "'");
 
 		DataOutputStream out = null;
@@ -294,7 +299,7 @@ public class VcfIndex {
 
 			// Save each chromosome index
 			for (String chr : chromosomes())
-				get(chr).save(out);
+				getTree(chr).save(out);
 
 		} catch (Exception e) {
 			throw new RuntimeException(e);
@@ -334,7 +339,7 @@ public class VcfIndex {
 		sb.append("File '" + fileName + "' :\n");
 
 		for (String chr : chromosomes()) {
-			VcfIndexChromo ifc = get(chr);
+			VcfIndexDataChromo ifc = getVcfIndexChromo(chr);
 			sb.append("\tChoromsome:" + chr + ", size: " + ifc.size() + ", capacity: " + ifc.capacity() + "\n");
 		}
 
@@ -348,7 +353,7 @@ public class VcfIndex {
 		StringBuilder sb = new StringBuilder();
 
 		for (String chr : chromosomes())
-			sb.append(get(chr) + "\n");
+			sb.append(getVcfIndexChromo(chr) + "\n");
 
 		return sb.toString();
 	}

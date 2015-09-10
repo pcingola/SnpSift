@@ -20,10 +20,10 @@ public class Zzz {
 	public static void main(String[] args) {
 		Timer.show("Start");
 
-		String fileName = Gpr.HOME + "/snpEff/cosmic_1.vcf";
-		//		String fileName = Gpr.HOME + "/snpEff/cosmic.vcf";
-		//String fileName = Gpr.HOME + "/snpEff/db/GRCh37/dbSnp/dbSnp.vcf";
-		//		String fileName = Gpr.HOME + "/snpEff/cosmic_tabix.vcf.gz";
+		// String fileName = Gpr.HOME + "/snpEff/cosmic_1.vcf";
+		// String fileName = Gpr.HOME + "/snpEff/cosmic.vcf";
+		String fileName = Gpr.HOME + "/snpEff/db/GRCh37/dbSnp/dbSnp.vcf";
+		// String fileName = Gpr.HOME + "/snpEff/cosmic_tabix.vcf.gz";
 
 		Zzz zzz = new Zzz();
 
@@ -77,16 +77,22 @@ public class Zzz {
 	}
 
 	void testIndex(String fileName) {
+		//---
+		// Index
+		//---
 		VcfIndex vcfIndex = new VcfIndex(fileName);
 		vcfIndex.setVerbose(verbose);
 		vcfIndex.setDebug(debug);
 		vcfIndex.index();
 		vcfIndex.open();
-		// if (debug) Gpr.debug("Index:\n" + vcfIndex.toStringAll());
+		if (debug) Gpr.debug("Index:\n" + vcfIndex.toStringAll());
 
 		Timer.show("Checking");
 		VcfFileIterator vcf = new VcfFileIterator(fileName);
 
+		//---
+		// Test search
+		//---
 		int countOk = 0;
 		for (VcfEntry ve : vcf) {
 			if (debug) Gpr.debug(ve.toStr());

@@ -1,5 +1,8 @@
 package ca.mcgill.mcb.pcingola.snpSift.annotate;
 
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.EOFException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -9,6 +12,7 @@ import ca.mcgill.mcb.pcingola.fileIterator.VcfFileIterator;
 import ca.mcgill.mcb.pcingola.interval.Marker;
 import ca.mcgill.mcb.pcingola.interval.Markers;
 import ca.mcgill.mcb.pcingola.util.Gpr;
+import ca.mcgill.mcb.pcingola.util.Timer;
 import ca.mcgill.mcb.pcingola.vcf.VcfEntry;
 
 /**
@@ -29,8 +33,9 @@ public class VcfIndexTree {
 	boolean debug;
 	boolean verbose;
 
+	String chromosome;
 	VcfFileIterator vcf;
-	VcfIndexChromo vcfIndexChromo;
+	VcfIndexDataChromo vcfIndexChromo;
 	int left[]; // Left subtree (index within this IntervalTreeFileChromo)
 	int right[]; // Right subtree (index within this IntervalTreeFileChromo)
 	int mid[]; // Middle position (genomic coordinate)
@@ -38,12 +43,13 @@ public class VcfIndexTree {
 	long intersectEnd[][]; // Intervals (file position end) intersecting 'mid-point'
 	int size; // Arrays size (index of first unused element in the arrays)
 
-	public VcfIndexTree(VcfFileIterator vcf) {
-		this(vcf, null);
+	public VcfIndexTree() {
+		this(null, null);
 	}
 
-	public VcfIndexTree(VcfFileIterator vcf, VcfIndexChromo intervalFileChromo) {
-		vcfIndexChromo = intervalFileChromo;
+	public VcfIndexTree(VcfFileIterator vcf, VcfIndexDataChromo vcfIndexChromo) {
+		this.vcfIndexChromo = vcfIndexChromo;
+		chromosome = (vcfIndexChromo != null ? vcfIndexChromo.getChromosome() : null);
 
 		left = new int[INITIAL_CAPACITY];
 		right = new int[INITIAL_CAPACITY];
@@ -56,6 +62,10 @@ public class VcfIndexTree {
 	int capacity() {
 		if (left == null) return 0;
 		return left.length;
+	}
+
+	public String getChromosome() {
+		return chromosome;
 	}
 
 	void grow() {
@@ -110,8 +120,8 @@ public class VcfIndexTree {
 			return idx;
 		}
 
-		// If we mode the 'mid' point by one base, the probability of intersecting 
-		// an interval is significantly reduced (most entries are SNPs). This reduces 
+		// If we mode the 'mid' point by one base, the probability of intersecting
+		// an interval is significantly reduced (most entries are SNPs). This reduces
 		// the index size, the number of 'file.seek()' operations and speeds up the index.
 		int newMidIdx;
 		for (newMidIdx = midIdx; (midPos == vcfIndexChromo.getStart(newMidIdx)) && (newMidIdx > startIdx); newMidIdx--);
@@ -176,6 +186,56 @@ public class VcfIndexTree {
 	}
 
 	/**
+	 * Read data from input stream
+	 * @return true on success
+	 */
+	public boolean load(DataInputStream in) {
+		try {
+			chromosome = in.readUTF();
+			size = in.readInt();
+			if (verbose) Timer.showStdErr("\tReading index for chromosome '" + chromosome + "' (index size: " + size + " )");
+
+			// Sanity cgheck
+			if (size < 0) return false;
+
+			// Allocate arrays
+			left = new int[size];
+			right = new int[size];
+			mid = new int[size];
+
+			intersectStart = new long[size][];
+			intersectEnd = new long[size][];
+
+			// Read array data
+			for (int i = 0; i < size; i++) {
+				left[i] = in.readInt();
+				right[i] = in.readInt();
+				mid[i] = in.readInt();
+
+				int len = in.readInt();
+				if (len > 0) {
+					// Allocate
+					intersectStart[i] = new long[len];
+					intersectEnd[i] = new long[len];
+
+					// Read values
+					for (int j = 0; j < len; j++) {
+						intersectStart[i][j] = in.readLong();
+						intersectEnd[i][j] = in.readLong();
+					}
+
+				}
+			}
+		} catch (EOFException e) {
+			return false;
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
+
+		return true;
+	}
+
+	/**
 	 * Get next index for entry and make sure there
 	 * is enough capacity to store it
 	 */
@@ -225,6 +285,8 @@ public class VcfIndexTree {
 	public void queryIntersects(Marker marker, int idx, Markers results) {
 		if (debug) Gpr.debug("intersects( " + marker.toStr() + ", " + idx + " )");
 
+		if (intersectStart[idx] == null) return;
+
 		int len = intersectStart[idx].length;
 		for (int i = 0; i < len; i++) {
 			if (debug) Gpr.debug("\tintersect[" + idx + "][" + i + "]:\t[" + intersectStart[idx][i] + " , " + intersectEnd[idx][i] + " ]");
@@ -245,6 +307,33 @@ public class VcfIndexTree {
 			} catch (IOException e) {
 				throw new RuntimeException(e);
 			}
+		}
+	}
+
+	/**
+	 * Save to output stream
+	 */
+	public void save(DataOutputStream out) {
+		try {
+			out.writeUTF(chromosome);
+			out.writeInt(size);
+
+			// Dump array data
+			for (int i = 0; i < size; i++) {
+				out.writeInt(left[i]);
+				out.writeInt(right[i]);
+				out.writeInt(mid[i]);
+
+				// Intersect data
+				int len = intersectStart[i].length;
+				out.writeInt(len);
+				for (int j = 0; j < len; j++) {
+					out.writeLong(intersectStart[i][j]);
+					out.writeLong(intersectEnd[i][j]);
+				}
+			}
+		} catch (IOException e) {
+			throw new RuntimeException(e);
 		}
 	}
 
@@ -307,7 +396,7 @@ public class VcfIndexTree {
 
 	@Override
 	public String toString() {
-		return "Chromosome: " + vcfIndexChromo.getChromosome() //
+		return "Chromosome: " + chromosome //
 				+ ", size: " + size //
 				+ ", capacity: " + capacity() //
 				;

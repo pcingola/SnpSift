@@ -1,9 +1,5 @@
 package ca.mcgill.mcb.pcingola.snpSift.annotate;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.EOFException;
-import java.io.IOException;
 import java.util.Arrays;
 
 import ca.mcgill.mcb.pcingola.interval.Chromosome;
@@ -16,7 +12,7 @@ import ca.mcgill.mcb.pcingola.interval.Marker;
  *
  * @author pcingola
  */
-public class VcfIndexChromo {
+public class VcfIndexDataChromo {
 
 	public static final int INITIAL_CAPACITY = 1024;
 
@@ -28,12 +24,12 @@ public class VcfIndexChromo {
 	long filePosEnd; // Last position within a file
 	int size; // Arrays size
 
-	public VcfIndexChromo(Genome genome) {
+	public VcfIndexDataChromo(Genome genome) {
 		this.genome = genome;
 		size = 0;
 	}
 
-	public VcfIndexChromo(Genome genome, String chromosome) {
+	public VcfIndexDataChromo(Genome genome, String chromosome) {
 		this.genome = genome;
 		this.chromosome = chromosome;
 		start = new int[INITIAL_CAPACITY];
@@ -121,61 +117,11 @@ public class VcfIndexChromo {
 	}
 
 	/**
-	 * Read data from input stream
-	 * @return true on success
-	 */
-	public boolean load(DataInputStream in) {
-		try {
-			size = in.readInt();
-			if (size < 0) return false;
-
-			chromosome = in.readUTF();
-
-			// Allocate arrays
-			start = new int[size];
-			end = new int[size];
-			filePosStart = new long[size];
-
-			// Read array data
-			for (int i = 0; i < size; i++) {
-				start[i] = in.readInt();
-				end[i] = in.readInt();
-				filePosStart[i] = in.readLong();
-			}
-		} catch (EOFException e) {
-			return false;
-		} catch (IOException e) {
-			throw new RuntimeException(e);
-		}
-
-		return true;
-	}
-
-	/**
 	 * Create a marker form data at position 'idx'
 	 */
 	public Marker marker(int idx) {
 		Chromosome chr = genome.getOrCreateChromosome(chromosome);
 		return new MarkerFile(chr, start[idx], end[idx], filePosStart[idx]);
-	}
-
-	/**
-	 * Save to output stream
-	 */
-	public void save(DataOutputStream out) {
-		try {
-			out.writeInt(size);
-			out.writeUTF(chromosome);
-
-			// Dump array data
-			for (int i = 0; i < size; i++) {
-				out.writeInt(start[i]);
-				out.writeInt(end[i]);
-				out.writeLong(filePosStart[i]);
-			}
-		} catch (IOException e) {
-			throw new RuntimeException(e);
-		}
 	}
 
 	public void setFilePosEnd(long filePosEnd) {
