@@ -4,8 +4,7 @@ import ca.mcgill.mcb.pcingola.fileIterator.SeekableBufferedReader;
 import ca.mcgill.mcb.pcingola.fileIterator.VcfFileIterator;
 import ca.mcgill.mcb.pcingola.interval.Marker;
 import ca.mcgill.mcb.pcingola.interval.Markers;
-import ca.mcgill.mcb.pcingola.snpSift.annotate.IntervalFile;
-import ca.mcgill.mcb.pcingola.snpSift.annotate.MarkerFile;
+import ca.mcgill.mcb.pcingola.snpSift.annotate.VcfIndex;
 import ca.mcgill.mcb.pcingola.util.Gpr;
 import ca.mcgill.mcb.pcingola.util.Timer;
 import ca.mcgill.mcb.pcingola.vcf.VcfEntry;
@@ -22,7 +21,8 @@ public class Zzz {
 		Timer.show("Start");
 
 		String fileName = Gpr.HOME + "/snpEff/cosmic_1.vcf";
-		// 		String fileName = Gpr.HOME + "/snpEff/db/GRCh37/dbSnp/dbSnp.vcf";
+		//		String fileName = Gpr.HOME + "/snpEff/cosmic.vcf";
+		//String fileName = Gpr.HOME + "/snpEff/db/GRCh37/dbSnp/dbSnp.vcf";
 		//		String fileName = Gpr.HOME + "/snpEff/cosmic_tabix.vcf.gz";
 
 		Zzz zzz = new Zzz();
@@ -77,7 +77,7 @@ public class Zzz {
 	}
 
 	void testIndex(String fileName) {
-		IntervalFile vcfIndex = new IntervalFile(fileName);
+		VcfIndex vcfIndex = new VcfIndex(fileName);
 		vcfIndex.setVerbose(verbose);
 		vcfIndex.setDebug(debug);
 		vcfIndex.index();
@@ -86,30 +86,32 @@ public class Zzz {
 
 		Timer.show("Checking");
 		VcfFileIterator vcf = new VcfFileIterator(fileName);
-		//		vcfIndex.setDebug(true);
 
+		int countOk = 0;
 		for (VcfEntry ve : vcf) {
 			if (debug) Gpr.debug(ve.toStr());
 
 			// Query database
+			if (debug) Gpr.debug("\n\nQuery: " + ve.toStr());
 			Markers results = vcfIndex.query(ve);
 
 			// We should find at least one result
 			if (results.size() <= 0) throw new RuntimeException("No results found for entry:\n\t" + ve);
 
 			for (Marker res : results) {
-				MarkerFile resmf = (MarkerFile) res;
-				VcfEntry veIdx = vcfIndex.read(resmf);
+				VcfEntry veRes = (VcfEntry) res;
 
-				if (debug) Gpr.debug("query: " + ve.toStr() + "\tresult_marker: " + res + "\tresult_vcf: " + veIdx.toStr());
+				if (debug) Gpr.debug("query: " + ve.toStr() + "\tresult_marker: " + res + "\tresult_vcf: " + veRes.toStr());
 
 				// Check that result does intersect query
-				if (!ve.intersects(veIdx)) { throw new RuntimeException("Selected interval does not intersect marker form file!\n\tQuery: " + ve + "\n\tResult:" + veIdx); }
+				if (!ve.intersects(veRes)) { throw new RuntimeException("Selected interval does not intersect marker form file!\n\tQuery: " + ve + "\n\tResult:" + veRes); }
 			}
+
+			countOk++;
 		}
 
 		vcfIndex.close();
-		Timer.show("Done");
+		Timer.show("Done: " + countOk + " tests OK");
 	}
 
 }

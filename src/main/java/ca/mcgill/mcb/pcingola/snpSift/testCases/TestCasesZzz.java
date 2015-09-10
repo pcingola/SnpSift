@@ -7,7 +7,7 @@ import org.junit.Assert;
 import ca.mcgill.mcb.pcingola.fileIterator.VcfFileIterator;
 import ca.mcgill.mcb.pcingola.interval.Marker;
 import ca.mcgill.mcb.pcingola.interval.Markers;
-import ca.mcgill.mcb.pcingola.snpSift.annotate.IntervalFile;
+import ca.mcgill.mcb.pcingola.snpSift.annotate.VcfIndex;
 import ca.mcgill.mcb.pcingola.snpSift.annotate.MarkerFile;
 import ca.mcgill.mcb.pcingola.util.Gpr;
 import ca.mcgill.mcb.pcingola.vcf.VcfEntry;
@@ -31,11 +31,11 @@ public class TestCasesZzz extends TestCase {
 		String dbFileName = "./test/db_test_index_01.vcf";
 
 		// Make sure index file is deleted
-		String indexFileName = dbFileName + "." + IntervalFile.INDEX_EXT;
+		String indexFileName = dbFileName + "." + VcfIndex.INDEX_EXT;
 		(new File(indexFileName)).delete();
 
 		// Index VCF file
-		IntervalFile vcfIndex = new IntervalFile(dbFileName);
+		VcfIndex vcfIndex = new VcfIndex(dbFileName);
 		vcfIndex.setVerbose(verbose);
 		vcfIndex.index();
 		vcfIndex.open();
@@ -79,11 +79,11 @@ public class TestCasesZzz extends TestCase {
 		String dbFileName = "./test/db_test_index_02.vcf";
 
 		// Index VCF file
-		String indexFileName = dbFileName + "." + IntervalFile.INDEX_EXT;
+		String indexFileName = dbFileName + "." + VcfIndex.INDEX_EXT;
 		(new File(indexFileName)).delete();
 
 		// Create index file
-		IntervalFile vcfIndex = new IntervalFile(dbFileName);
+		VcfIndex vcfIndex = new VcfIndex(dbFileName);
 		vcfIndex.setVerbose(verbose);
 		vcfIndex.index();
 
@@ -91,7 +91,7 @@ public class TestCasesZzz extends TestCase {
 		Assert.assertTrue("Index file '" + indexFileName + "' does not exist", Gpr.exists(indexFileName));
 
 		// Restart so we force to read from index file
-		vcfIndex = new IntervalFile(dbFileName);
+		vcfIndex = new VcfIndex(dbFileName);
 		vcfIndex.setVerbose(verbose);
 		vcfIndex.index();
 		vcfIndex.open();

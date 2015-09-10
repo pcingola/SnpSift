@@ -11,14 +11,12 @@ import ca.mcgill.mcb.pcingola.interval.Genome;
 import ca.mcgill.mcb.pcingola.interval.Marker;
 
 /**
- * Represents a set of intervals stored in an (uncompressed) file
- * All intervals belong to the same chromosome
- *
- * E.g.: VCF, GTF, GFF
+ * Represents a set of VCF entries stored in an (uncompressed) file
+ * All entries belong to the same chromosome
  *
  * @author pcingola
  */
-public class IntervalFileChromo {
+public class VcfIndexChromo {
 
 	public static final int INITIAL_CAPACITY = 1024;
 
@@ -26,20 +24,21 @@ public class IntervalFileChromo {
 	String chromosome;
 	int start[]; // Intervals start position
 	int end[]; // Intervals end position
-	long fileIdx[]; // Position within a file
+	long filePosStart[]; // Position within a file
+	long filePosEnd; // Last position within a file
 	int size; // Arrays size
 
-	public IntervalFileChromo(Genome genome) {
+	public VcfIndexChromo(Genome genome) {
 		this.genome = genome;
 		size = 0;
 	}
 
-	public IntervalFileChromo(Genome genome, String chromosome) {
+	public VcfIndexChromo(Genome genome, String chromosome) {
 		this.genome = genome;
 		this.chromosome = chromosome;
 		start = new int[INITIAL_CAPACITY];
 		end = new int[INITIAL_CAPACITY];
-		fileIdx = new long[INITIAL_CAPACITY];
+		filePosStart = new long[INITIAL_CAPACITY];
 		size = 0;
 	}
 
@@ -52,7 +51,7 @@ public class IntervalFileChromo {
 
 		this.start[size] = start;
 		this.end[size] = end;
-		this.fileIdx[size] = fileIdx;
+		filePosStart[size] = fileIdx;
 		size++;
 	}
 
@@ -65,10 +64,10 @@ public class IntervalFileChromo {
 	 * File size between startIdx and endIdx inclusive
 	 */
 	public long fileSize(int startIdx, int endIdx) {
-		long startFilePos = (startIdx >= 0 ? startFilePos = getFileIdx(startIdx) : 0);
+		long startFilePos = (startIdx >= 0 ? startFilePos = getFilePosStart(startIdx) : 0);
 
 		if (endIdx >= (size - 1)) endIdx = size - 2;
-		long endFilePos = getFileIdx(endIdx + 1);
+		long endFilePos = getFilePosStart(endIdx + 1);
 
 		return endFilePos - startFilePos;
 	}
@@ -81,8 +80,13 @@ public class IntervalFileChromo {
 		return end[idx];
 	}
 
-	public long getFileIdx(int idx) {
-		return fileIdx[idx];
+	public long getFilePosEnd(int idx) {
+		if ((idx + 1) >= size) return filePosEnd;
+		return filePosStart[idx + 1];
+	}
+
+	public long getFilePosStart(int idx) {
+		return filePosStart[idx];
 	}
 
 	public int getStart(int idx) {
@@ -96,7 +100,7 @@ public class IntervalFileChromo {
 
 		start = Arrays.copyOf(start, newCapacity);
 		end = Arrays.copyOf(end, newCapacity);
-		fileIdx = Arrays.copyOf(fileIdx, newCapacity);
+		filePosStart = Arrays.copyOf(filePosStart, newCapacity);
 	}
 
 	/**
@@ -130,13 +134,13 @@ public class IntervalFileChromo {
 			// Allocate arrays
 			start = new int[size];
 			end = new int[size];
-			fileIdx = new long[size];
+			filePosStart = new long[size];
 
 			// Read array data
 			for (int i = 0; i < size; i++) {
 				start[i] = in.readInt();
 				end[i] = in.readInt();
-				fileIdx[i] = in.readLong();
+				filePosStart[i] = in.readLong();
 			}
 		} catch (EOFException e) {
 			return false;
@@ -152,7 +156,7 @@ public class IntervalFileChromo {
 	 */
 	public Marker marker(int idx) {
 		Chromosome chr = genome.getOrCreateChromosome(chromosome);
-		return new MarkerFile(chr, start[idx], end[idx], fileIdx[idx]);
+		return new MarkerFile(chr, start[idx], end[idx], filePosStart[idx]);
 	}
 
 	/**
@@ -167,11 +171,15 @@ public class IntervalFileChromo {
 			for (int i = 0; i < size; i++) {
 				out.writeInt(start[i]);
 				out.writeInt(end[i]);
-				out.writeLong(fileIdx[i]);
+				out.writeLong(filePosStart[i]);
 			}
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
+	}
+
+	public void setFilePosEnd(long filePosEnd) {
+		this.filePosEnd = filePosEnd;
 	}
 
 	public int size() {
@@ -184,7 +192,7 @@ public class IntervalFileChromo {
 		sb.append("Chromosome: " + chromosome + ", size: " + size + ", capacity: " + capacity() + "\n");
 
 		for (int i = 0; i < size; i++)
-			sb.append("\t" + i + "\t[ " + start[i] + ", " + end[i] + " ]\t" + fileIdx[i] + "\n");
+			sb.append("\t" + i + "\t[ " + start[i] + ", " + end[i] + " ]\t" + filePosStart[i] + "\n");
 
 		return sb.toString();
 	}

@@ -26,13 +26,10 @@ import ca.mcgill.mcb.pcingola.util.Timer;
 import ca.mcgill.mcb.pcingola.vcf.VcfEntry;
 
 /**
- * Represents a set of intervals stored in an (uncompressed) file
- *
- * E.g.: VCF, GTF, GFF
- *
+ * An index for a VCF file
  * @author pcingola
  */
-public class IntervalFile {
+public class VcfIndex {
 
 	public static int INDEX_FORMAT_VERSION = 1;
 	public static int SHOW_EVERY = 1000000;
@@ -43,14 +40,14 @@ public class IntervalFile {
 	boolean verbose;
 	boolean debug;
 	String fileName;
-	Map<String, IntervalFileChromo> intervalFileByChromo;
-	Map<String, IntervalTreeFileChromo> intervalForest;
+	Map<String, VcfIndexChromo> vcfIndexByChromo;
+	Map<String, VcfIndexTree> forest; // A hash of trees
 	Genome genome;
 	VcfFileIterator vcf;
 
-	public IntervalFile(String fileName) {
+	public VcfIndex(String fileName) {
 		this.fileName = fileName;
-		intervalFileByChromo = new HashMap<>();
+		vcfIndexByChromo = new HashMap<>();
 	}
 
 	/**
@@ -65,7 +62,7 @@ public class IntervalFile {
 	 */
 	List<String> chromosomes() {
 		ArrayList<String> chrs = new ArrayList<>();
-		chrs.addAll(intervalFileByChromo.keySet());
+		chrs.addAll(vcfIndexByChromo.keySet());
 		Collections.sort(chrs);
 		return chrs;
 	}
@@ -84,23 +81,23 @@ public class IntervalFile {
 	void createIntervalForest() {
 		if (verbose) Timer.showStdErr("Creating interval forest:");
 
-		intervalForest = new HashMap<>();
+		forest = new HashMap<>();
 
 		// For each 'IntervalFileChromo'...
-		for (String chr : intervalFileByChromo.keySet()) {
-			IntervalFileChromo ifc = get(chr);
-			IntervalTreeFileChromo itfc = new IntervalTreeFileChromo(ifc);
-			itfc.index();
-			if (verbose) System.err.println("\t" + itfc);
+		for (String chr : chromosomes()) {
+			VcfIndexChromo vic = get(chr);
+			VcfIndexTree vcfTree = new VcfIndexTree(vcf, vic);
+			vcfTree.index();
+			if (verbose) System.err.println("\t" + vcfTree);
 
-			intervalForest.put(chr, itfc);
+			forest.put(chr, vcfTree);
 		}
 
 		if (verbose) Timer.showStdErr("Creating interval forest: Done");
 	}
 
-	public IntervalFileChromo get(String chromosome) {
-		return intervalFileByChromo.get(Chromosome.simpleName(chromosome));
+	public VcfIndexChromo get(String chromosome) {
+		return vcfIndexByChromo.get(Chromosome.simpleName(chromosome));
 	}
 
 	public Genome getGenome() {
@@ -111,13 +108,13 @@ public class IntervalFile {
 	 * Get IntervalFileChromo by chromosome name.
 	 * Create a new one if it doesn't exists
 	 */
-	public IntervalFileChromo getOrCreate(String chromosome) {
+	public VcfIndexChromo getOrCreate(String chromosome) {
 		chromosome = Chromosome.simpleName(chromosome);
-		IntervalFileChromo ifc = intervalFileByChromo.get(chromosome);
+		VcfIndexChromo ifc = vcfIndexByChromo.get(chromosome);
 
 		if (ifc == null) {
-			ifc = new IntervalFileChromo(genome, chromosome);
-			intervalFileByChromo.put(chromosome, ifc);
+			ifc = new VcfIndexChromo(genome, chromosome);
+			vcfIndexByChromo.put(chromosome, ifc);
 		}
 
 		return ifc;
@@ -155,10 +152,10 @@ public class IntervalFile {
 			if (genome == null) genome = new Genome("genome");
 
 			// Read data for each chromosome
-			IntervalFileChromo ifc = new IntervalFileChromo(genome);
+			VcfIndexChromo ifc = new VcfIndexChromo(genome);
 			while (ifc.load(in)) {
-				intervalFileByChromo.put(ifc.getChromosome(), ifc);
-				ifc = new IntervalFileChromo(genome);
+				vcfIndexByChromo.put(ifc.getChromosome(), ifc);
+				ifc = new VcfIndexChromo(genome);
 			}
 
 		} catch (Exception e) {
@@ -221,6 +218,7 @@ public class IntervalFile {
 
 				// Prepare for next iteration
 				pos = vcf.getFilePointer();
+				get(ve.getChromosomeName()).setFilePosEnd(pos);
 			}
 		} catch (Exception e) {
 			throw new RuntimeException(e);
@@ -254,8 +252,9 @@ public class IntervalFile {
 	 */
 	public Markers query(Marker marker) {
 		String chr = marker.getChromosomeName();
-		IntervalTreeFileChromo tree = intervalForest.get(chr);
+		VcfIndexTree tree = forest.get(chr);
 		if (tree == null) return new Markers();
+		tree.setVcf(vcf);
 		return tree.query(marker);
 	}
 
@@ -313,8 +312,8 @@ public class IntervalFile {
 	public void setDebug(boolean debug) {
 		this.debug = debug;
 
-		if (intervalForest != null) {
-			for (IntervalTreeFileChromo it : intervalForest.values())
+		if (forest != null) {
+			for (VcfIndexTree it : forest.values())
 				it.setDebug(debug);
 		}
 	}
@@ -322,8 +321,8 @@ public class IntervalFile {
 	public void setVerbose(boolean verbose) {
 		this.verbose = verbose;
 
-		if (intervalForest != null) {
-			for (IntervalTreeFileChromo it : intervalForest.values())
+		if (forest != null) {
+			for (VcfIndexTree it : forest.values())
 				it.setVerbose(verbose);
 		}
 	}
@@ -335,7 +334,7 @@ public class IntervalFile {
 		sb.append("File '" + fileName + "' :\n");
 
 		for (String chr : chromosomes()) {
-			IntervalFileChromo ifc = get(chr);
+			VcfIndexChromo ifc = get(chr);
 			sb.append("\tChoromsome:" + chr + ", size: " + ifc.size() + ", capacity: " + ifc.capacity() + "\n");
 		}
 
