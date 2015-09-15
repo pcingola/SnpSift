@@ -509,6 +509,7 @@ public class SnpSift implements VcfAnnotator {
 				+ "\n\tfilter        : Filter using arbitrary expressions" //
 				+ "\n\tgeneSets      : Annotate using MSigDb gene sets (MSigDb includes: GO, KEGG, Reactome, BioCarta, etc.)" //
 				+ "\n\tgt            : Add Genotype to INFO fields and remove genotype fields when possible." //
+				+ "\n\tgtfilter      : Filter genotype using arbitrary expressions." //
 				+ "\n\tgwasCat       : Annotate using GWAS catalog" //
 				+ "\n\thwe           : Calculate Hardy-Weimberg parameters and perform a godness of fit test." //
 				+ "\n\tintersect     : Intersect intervals (genomic regions)." //

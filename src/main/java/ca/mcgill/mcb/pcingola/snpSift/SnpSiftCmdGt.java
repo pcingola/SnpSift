@@ -91,7 +91,7 @@ public class SnpSiftCmdGt extends SnpSift {
 
 		showVersion();
 
-		System.err.println("Usage: java -jar " + SnpSift.class.getSimpleName() + ".jar gt [options] 'expression' [file.vcf] > file.gt.vcf");
+		System.err.println("Usage: java -jar " + SnpSift.class.getSimpleName() + ".jar gt [options] [file.vcf] > file.gt.vcf");
 		System.err.println("Options: ");
 		System.err.println("\t-u   : Uncompress (restore genotype fields).");
 		System.err.println("\tDefault 'file.vcf' is STDIN.");

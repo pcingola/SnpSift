@@ -317,7 +317,7 @@ public class SnpSiftCmdGtFilter extends SnpSift {
 		System.err.println("Usage: java -jar " + SnpSift.class.getSimpleName() + "" + ".jar filter [options] 'expression' [input.vcf]");
 		System.err.println("Options:");
 		System.err.println("\t-e  | --exprFile <file>    : Read expression from a file");
-		System.err.println("\t-f|--file <input.vcf>      : VCF input file. Default: STDIN");
+		System.err.println("\t-f  | --file <input.vcf>   : VCF input file. Default: STDIN");
 		System.err.println("\t-gn | --field <name>       : Field name to replace if filter is true. Default: '" + gtFieldName + "'");
 		System.err.println("\t-gv | --value <value>      : Field value to replace if filter is true. Default: '" + gtFieldValue + "'");
 		System.err.println("\t-n  | --inverse            : Inverse. Show lines that do not match filter expression");
