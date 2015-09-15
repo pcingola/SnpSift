@@ -249,6 +249,8 @@ public class DbNsfpFileIterator extends MarkerFileIterator<DbNsfpEntry> {
 	 * Guess data types from file
 	 */
 	protected boolean guessDataTypes() {
+		if (verbose) Timer.showStdErr("Guessing data types");
+
 		boolean header = true;
 		fieldNames = null;
 		types = null;
@@ -348,12 +350,18 @@ public class DbNsfpFileIterator extends MarkerFileIterator<DbNsfpEntry> {
 		if (verbose) Timer.showStdErr("Loading data types from file '" + cacheFileName + "'");
 
 		// File doesn't exist, cannot load
-		if (!Gpr.canRead(cacheFileName)) return false;
+		if (!Gpr.canRead(cacheFileName)) {
+			if (verbose) Timer.showStdErr("Data types cache file '" + cacheFileName + "' not found");
+			return false;
+		}
 
 		// Is cache older than database file? Then we need to update the cache
 		File db = new File(fileName);
 		File cache = new File(cacheFileName);
-		if (db.lastModified() > cache.lastModified()) return false;
+		if (db.lastModified() > cache.lastModified()) {
+			if (verbose) Timer.showStdErr("Data types cache file '" + cacheFileName + "' needs to be updated");
+			return false;
+		}
 
 		// Read file
 		String lines[] = Gpr.readFile(cacheFileName).split("\n");
