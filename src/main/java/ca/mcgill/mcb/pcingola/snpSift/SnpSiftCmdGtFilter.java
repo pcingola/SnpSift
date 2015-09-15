@@ -196,7 +196,7 @@ public class SnpSiftCmdGtFilter extends SnpSift {
 	public void init() {
 		verbose = false;
 		inverse = false;
-		vcfInputFile = "-";
+		vcfInputFile = null;
 		filterId = SnpSift.class.getSimpleName();
 		sets = new ArrayList<HashSet<String>>();
 		formatVersion = null; // VcfEffect.FormatVersion.FORMAT_SNPEFF_3;
@@ -216,30 +216,66 @@ public class SnpSiftCmdGtFilter extends SnpSift {
 			String arg = args[i];
 
 			// Argument starts with '-'?
-			if (arg.startsWith("-")) {
-				if (arg.equals("-h") || arg.equalsIgnoreCase("-help")) usage(null);
-				else if (arg.equals("-f") || arg.equalsIgnoreCase("--file")) vcfInputFile = args[++i];
-				else if (arg.equals("-s") || arg.equalsIgnoreCase("--set")) addSet(args[++i]);
-				else if (arg.equalsIgnoreCase("--errMissing")) exceptionIfNotFound = true;
-				else if (arg.equals("-n") || arg.equalsIgnoreCase("--inverse")) inverse = true;
-				else if (arg.equals("-gn") || arg.equalsIgnoreCase("--field")) gtFieldName = args[++i];
-				else if (arg.equals("-gv") || arg.equalsIgnoreCase("--value")) gtFieldValue = args[++i];
-				else if (arg.equalsIgnoreCase("--format")) {
+			if (isOpt(arg)) {
+				switch (arg.toLowerCase()) {
+				case "-h":
+				case "-help":
+					usage(null);
+					break;
+
+				case "-f":
+				case "--file":
+					vcfInputFile = args[++i];
+					break;
+
+				case "-s":
+				case "--set":
+					addSet(args[++i]);
+					break;
+
+				case "--errmissing":
+					exceptionIfNotFound = true;
+					break;
+
+				case "-n":
+				case "--inverse":
+					inverse = true;
+					break;
+
+				case "-gn":
+				case "--field":
+					gtFieldName = args[++i];
+					break;
+
+				case "-gv":
+				case "--value":
+					gtFieldValue = args[++i];
+					break;
+
+				case "--format":
 					String formatVer = args[++i];
 					if (formatVer.equals("2")) formatVersion = EffFormatVersion.FORMAT_EFF_2;
 					else if (formatVer.equals("3")) formatVersion = EffFormatVersion.FORMAT_EFF_3;
 					else usage("Unknown format version '" + formatVer + "'");
-				} else if (arg.equals("-e") || arg.equalsIgnoreCase("--exprfile")) {
+					break;
+
+				case "-e":
+				case "--exprfile":
 					String exprFile = args[++i];
 					if (verbose) System.err.println("Reading expression from file '" + exprFile + "'");
 					expression = Gpr.readFile(exprFile);
-				} else usage("Unknown option '" + arg + "'");
+					break;
+
+				default:
+					usage("Unknown option '" + arg + "'");
+				}
 			} else if (expression == null) expression = arg;
 			else if (vcfInputFile == null) vcfInputFile = arg;
 			else usage("Unknown parameter '" + arg + "'");
 		}
 
 		if (expression == null) usage("Missing filter expression!");
+		if (vcfInputFile == null) vcfInputFile = "-";
 	}
 
 	/**
