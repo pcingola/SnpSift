@@ -1,0 +1,50 @@
+##fileformat=VCFv4.1
+##source=pseq
+##INFO=<ID=AC,Number=-1,Type=Integer,Description="Allele count for each alternate allele">
+##INFO=<ID=AF,Number=-1,Type=Float,Description="Frequency for each alternate allele (estimated from primary data, not called genotypes)">
+##INFO=<ID=AN,Number=1,Type=Integer,Description="Total number of alleles in called genotypes">
+##INFO=<ID=DB,Number=1,Type=Integer,Description="dbSNP membership">
+##INFO=<ID=DP,Number=1,Type=Integer,Description="Combined depth across samples">
+##INFO=<ID=END,Number=1,Type=Integer,Description="End position of the variant">
+##INFO=<ID=MQ,Number=1,Type=Float,Description="RMS mapping quality">
+##INFO=<ID=MQ0,Number=1,Type=Integer,Description="Number of MQ == 0 reads covering this record">
+##INFO=<ID=BaseQRankSum,Number=1,Type=Float,Description="Z-score from Wilcoxon rank sum test of Alt Vs. Ref base qualities">
+##INFO=<ID=DS,Number=0,Type=Flag,Description="Were any of the samples downsampled?">
+##INFO=<ID=Dels,Number=1,Type=Float,Description="Fraction of Reads Containing Spanning Deletions">
+##INFO=<ID=FS,Number=1,Type=Float,Description="Phred-scaled p-value using Fisher's exact test to detect strand bias">
+##INFO=<ID=HaplotypeScore,Number=1,Type=Float,Description="Consistency of the site with at most two segregating haplotypes">
+##INFO=<ID=InbreedingCoeff,Number=1,Type=Float,Description="Inbreeding coefficient as estimated from the genotype likelihoods per-sample when compared against the Hardy-Weinberg expectation">
+##INFO=<ID=MLEAC,Number=-1,Type=Integer,Description="Maximum likelihood expectation (MLE) for the allele counts (not necessarily the same as the AC), for each ALT allele, in the same order as listed">
+##INFO=<ID=MLEAF,Number=-1,Type=Float,Description="Maximum likelihood expectation (MLE) for the allele frequency (not necessarily the same as the AF), for each ALT allele, in the same order as listed">
+##INFO=<ID=MQRankSum,Number=1,Type=Float,Description="Z-score From Wilcoxon rank sum test of Alt vs. Ref read mapping qualities">
+##INFO=<ID=QD,Number=1,Type=Float,Description="Variant Confidence/Quality by Depth">
+##INFO=<ID=RPA,Number=-1,Type=Integer,Description="Number of times tandem repeat unit is repeated, for each allele (including reference)">
+##INFO=<ID=RU,Number=1,Type=String,Description="Tandem repeat unit (bases)">
+##INFO=<ID=ReadPosRankSum,Number=1,Type=Float,Description="Z-score from Wilcoxon rank sum test of Alt vs. Ref read position bias">
+##INFO=<ID=STR,Number=0,Type=Flag,Description="Variant is a short tandem repeat">
+##INFO=<ID=VQSLOD,Number=1,Type=Float,Description="Log odds ratio of being a true variant versus being false under the trained gaussian mixture model">
+##INFO=<ID=culprit,Number=1,Type=String,Description="The annotation which was the worst performing in the Gaussian mixture model, likely the reason why the variant was filtered out">
+##INFO=<ID=ANC,Number=1,Type=String,Description="ancestral state from ensemble">
+##INFO=<ID=REFisANC,Number=1,Type=String,Description="whether the reference allele is the ancestral">
+##INFO=<ID=EFF,Number=-1,Type=String,Description="Predicted effects for this variant.Format: 'Effect ( Effect_Impact | Functional_Class | Codon_Change | Amino_Acid_change| Amino_Acid_length | Gene_Name | Transcript_BioType | Gene_Coding | Transcript_ID | Exon  | GenotypeNum [ | ERRORS | WARNINGS ] )' ">
+##FORMAT=<ID=DP,Number=1,Type=Integer,Description="Read depth">
+##FORMAT=<ID=PL,Number=-1,Type=Integer,Description="phred-scaled genotype likelihoods; for AA,AB,BB where A=ref, B=alt">
+##FORMAT=<ID=GQ,Number=1,Type=Integer,Description="phred-scaled genotype quality, -10log_10p(genotype call is wrong)">
+##FORMAT=<ID=AD,Number=-1,Type=Integer,Description="Allelic depths for the ref and alt alleles in the order listed">
+##FILTER=<ID=PASS,Description="Passed variant FILTERs">
+##FILTER=<ID=LowQual,Description="Low quality">
+##FILTER=<ID=VQSRTrancheSNP99.00to99.90,Description="Truth sensitivity tranche level for SNP model at VQS Lod: -1.7803 <= x < 2.3186">
+##FILTER=<ID=VQSRTrancheSNP99.90to100.00+,Description="Truth sensitivity tranche level for SNP model at VQS Lod < -13304.4066">
+##FILTER=<ID=VQSRTrancheSNP99.90to100.00,Description="Truth sensitivity tranche level for SNP model at VQS Lod: -13304.4066 <= x < -1.7803">
+##SnpEffVersion="3.3h (build 2013-08-20), by Pablo Cingolani"
+##SnpEffCmd="SnpEff  -lof GRCh37.68 /home/data/temp/evan/SA_exomes_callableANC.RefAnc.SNPEff_EvansIndivs.vcf "
+##INFO=<ID=EFF,Number=.,Type=String,Description="Predicted effects for this variant.Format: 'Effect ( Effect_Impact | Functional_Class | Codon_Change | Amino_Acid_change| Amino_Acid_length | Gene_Name | Transcript_BioType | Gene_Coding | Transcript_ID | Exon  | GenotypeNum [ | ERRORS | WARNINGS ] )' ">
+##INFO=<ID=LOF,Number=.,Type=String,Description="Predicted loss of function effects for this variant. Format: 'Gene_Name | Gene_ID | Number_of_transcripts_in_gene | Percent_of_transcripts_affected' ">
+##INFO=<ID=NMD,Number=.,Type=String,Description="Predicted nonsense mediated decay effects for this variant. Format: 'Gene_Name | Gene_ID | Number_of_transcripts_in_gene | Percent_of_transcripts_affected' ">
+#CHROM	POS	ID	REF	ALT	QUAL	FILTER	INFO	FORMAT	SA1025	SA006	SA008	SA011	SA012	SA035	SA051	SA052	SA054	SA1000	SA1001	SA1002	SA1006	SA1010	SA1011
+chr1	1219382	.	C	G	.	PASS	AC=1	GT:AD:DP:GQ:PL	0/0/0/0:4,0:4:12:0,12,142	0/0/0/0:2,0:2:6:0,6,61	./././.:.:.:.:.	0/0/0/0:2,0:2:6:0,6,79	0/0/0/0:4,0:4:12:0,12,138	0/0/0/0:2,0:2:6:0,6,71	./././.:.:.:.:.	0/0/0/0:7,0:7:21:0,21,275	0/0/0/0:3,0:3:9:0,9,110	0/0/0/0:1,0:1:3:0,3,37	0/0/0/0:3,1:4:6:0,6,83	0/0/0/0:4,0:4:9:0,9,113	./././.:.:.:.:.	./././.:.:.:.:.	0/0/0/0:1,0:1:3:0,3,33
+chr1	1558792	.	T	C	.	PASS	AC=1	GT:AD:DP:GQ:PL	1/1/0/0:0,7:7:12:157,12,0	0/0/0/0:7,0:7:18:0,18,166	1/1/0/0:0,4:4:12:142,12,0	0/1/0/0:14,11:24:99:277,0,369	0/1/0/0:12,17:28:99:427,0,258	0/0/0/0:16,0:16:42:0,42,450	1/1/0/0:0,38:38:96:1067,96,0	0/0/0/0:20,0:20:51:0,51,599	0/1/0/0:9,14:22:99:278,0,123	1/1/0/0:0,5:5:12:136,12,0	0/0/0/0:3,1:4:6:0,6,82	1/1/0/0:0,4:4:9:95,9,0	1/1/0/0:0,4:4:12:139,12,0	1/1/0/0:0,2:2:3:30,3,0	./././.:.:.:.:.
+chr1	5935162	.	A	T	.	PASS	AC=1	GT:AD:DP:GQ:PL	1/1/0/0:0,10:10:21:243,21,0	1/1/0/0:0,9:10:27:280,27,0	0/1/0/0:2,4:6:53:126,0,53	0/1/0/0:13,14:26:99:401,0,369	1/1/0/0:0,35:35:99:1219,102,0	1/1/0/0:0,43:43:99:1400,126,0	1/1/0/0:0,82:82:99:2816,244,0	1/1/0/0:0,34:34:99:1215,102,0	0/1/0/0:25,28:51:99:694,0,731	1/1/0/0:0,7:8:21:216,21,0	1/1/0/0:0,10:10:27:312,27,0	1/1/0/0:0,7:7:15:185,15,0	1/1/0/0:0,4:4:12:137,12,0	1/1/0/0:0,7:7:15:171,15,0	1/1/0/0:0,5:5:15:178,15,0
+chr1	5965750	.	G	A,C	.	PASS	AC=2	GT:AD:DP:GQ:PL	0/2/0/0:15,0,10:25:99:342,373,751,0,379,348	0/0/0/0:21,0,0:21:42:0,42,418,42,418,418	0/0/0/0:33,0,0:33:78:0,78,989,78,989,989	0/0/0/0:48,0,1:48:87:0,87,1093,87,1093,1093	0/0/0/0:50,1,0:50:93:0,93,1173,93,1173,1173	0/0/0/0:26,0,0:26:60:0,60,655,60,655,655	0/2/0/0:24,0,30:53:99:692,761,1507,0,745,676	0/2/0/0:28,0,30:56:99:600,666,1400,0,734,677	0/0/0/0:53,0,1:54:99:0,108,1318,108,1318,1318	0/2/0/0:9,0,7:16:99:173,194,435,0,241,223	0/0/0/0:19,0,0:19:42:0,42,522,42,522,522	0/0/0/0:21,0,1:21:54:0,54,599,54,599,599	0/0/0/0:15,0,0:15:36:0,36,404,36,404,404	0/0/0/0:12,0,1:14:27:0,27,318,27,318,318	0/0/0/0:13,0,0:13:21:0,21,242,21,242,242
+chr1	6522724	.	C	T	.	PASS	AC=2	GT:AD:DP:GQ:PL	0/0/0/0:56,0:56:99:0,138,1868	0/0/0/0:26,0:26:78:0,78,770	0/0/0/0:54,0:54:99:0,141,1818	0/0/0/0:84,0:84:99:0,238,3087	0/0/0/0:92,0:92:99:0,250,3262	0/0/0/0:52,0:52:99:0,132,1586	0/0/0/0:111,0:111:99:0,292,3612	0/0/0/0:102,0:102:99:0,241,3181	0/0/0/0:81,0:81:99:0,223,2842	0/0/0/0:55,0:55:99:0,135,1640	0/0/0/0:61,0:61:99:0,150,1849	0/0/0/0:58,0:58:99:0,138,1683	0/0/0/0:32,0:32:81:0,81,987	0/0/0/0:38,0:38:90:0,90,1134	0/0/0/0:31,0:31:66:0,66,809
+chr1	7806143	.	A	T	.	PASS	AC=1	GT:AD:DP:GQ:PL	0/0/0/0:79,1:77:99:0,187,2420	0/0/0/0:4,0:4:12:0,12,125	0/0/0/0:128,0:128:99:0,334,4150	0/0/0/0:23,0:23:66:0,66,811	0/0/0/0:34,0:34:99:0,99,1239	0/0/0/0:4,0:4:12:0,12,137	0/0/0/0:15,0:15:39:0,39,467	0/0/0/0:20,0:20:60:0,60,736	0/0/0/0:29,0:29:84:0,84,1030	0/0/0/0:47,0:47:99:0,126,1502	0/0/0/0:79,0:79:99:0,196,2333	0/0/0/0:91,0:91:99:0,229,2767	0/0/0/0:83,0:83:99:0,205,2510	0/0/0/0:133,0:133:99:0,301,3764	0/0/0/0:66,0:65:99:0,159,1950
