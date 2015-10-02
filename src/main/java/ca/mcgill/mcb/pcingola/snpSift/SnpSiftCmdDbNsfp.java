@@ -50,7 +50,7 @@ public class SnpSiftCmdDbNsfp extends SnpSift {
 			+ ",MutationTaster_pred" // MutationTaser predictions
 			+ ",GERP++_NR" // GERP
 			+ ",GERP++_RS" //
-			+ ",phastCons100way_vertebrate," // Conservation
+			+ ",phastCons100way_vertebrate" // Conservation
 			+ ",1000Gp1_AF,1000Gp1_AFR_AF,1000Gp1_EUR_AF,1000Gp1_AMR_AF,1000Gp1_ASN_AF" // Allele frequencies 1000 Genomes project
 			+ ",ESP6500_AA_AF,ESP6500_EA_AF" // Allele frequencies Exome sequencing project
 	// DbNSFP version 3 fields (some fields have different names than in version 2)
