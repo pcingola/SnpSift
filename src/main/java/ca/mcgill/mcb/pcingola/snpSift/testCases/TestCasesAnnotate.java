@@ -680,4 +680,14 @@ public class TestCasesAnnotate extends TestCase {
 		Assert.assertTrue("Missing CAF annotation", infoStr.indexOf("CAF=0.251,0.749") >= 0);
 	}
 
+	/**
+	 * Problems when tabix database file has 'chr' in chromosome names and VCF file does not
+	 */
+	public void test_40() {
+		Gpr.debug("Test");
+		String dbFileName = "./test/db_test_40.vcf";
+		String fileName = "./test/annotate_40.vcf";
+		annotateTest(dbFileName, fileName);
+	}
+
 }

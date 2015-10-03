@@ -22,7 +22,7 @@ public class TestCasesZzz extends TestCase {
 	protected String[] defaultExtraArgs;
 
 	public TestCasesZzz() {
-		String[] memExtraArgs = { "-sorted" };
+		String[] memExtraArgs = { "-tabix" };
 		defaultExtraArgs = memExtraArgs;
 	}
 
@@ -114,21 +114,13 @@ public class TestCasesZzz extends TestCase {
 	}
 
 	/**
-	 * Annotate issues with discovered info fields (when annotating ALL info fields)
+	 * Problems when tabix database file has 'chr' in chromosome names and VCF file does not
 	 */
-	public void test_39() {
+	public void test_40() {
 		Gpr.debug("Test");
-		String dbFileName = "./test/db_test_39.vcf";
-		String fileName = "./test/annotate_39.vcf";
-		String extraArgs[] = {};
-		List<VcfEntry> results = annotate(dbFileName, fileName, extraArgs);
-
-		VcfEntry ve = results.get(0);
-		if (verbose) System.out.println(ve);
-		String infoStr = ve.getInfoStr();
-
-		// Check that trailing CAF annotation is added
-		Assert.assertTrue("Missing CAF annotation", infoStr.indexOf("CAF=0.251,0.749") >= 0);
+		String dbFileName = "./test/db_test_40.vcf";
+		String fileName = "./test/annotate_40.vcf";
+		annotateTest(dbFileName, fileName);
 	}
 
 	//	/**
