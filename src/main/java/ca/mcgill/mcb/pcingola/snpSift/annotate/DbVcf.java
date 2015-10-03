@@ -138,6 +138,7 @@ public abstract class DbVcf {
 		dbCurrentId.clear();
 		dbCurrentInfo.clear();
 		dbVcfEntryAdded.clear();
+		infoFields.clear();
 	}
 
 	/**
@@ -165,7 +166,6 @@ public abstract class DbVcf {
 			String val = null;
 
 			// Check if fields are Number='A' or Number='R' (this also caches results for future reference)
-
 			boolean perAlleleRef = isVcfInfoPerAlleleRef(fieldName, vcfDb);
 
 			if (onlyRef) {
@@ -195,7 +195,7 @@ public abstract class DbVcf {
 		if (!useInfoFieldAll) return; // Not using INFO fields
 
 		// Make sure all fields are added
-		infoFields = new HashSet<String>();
+		if (infoFields == null) infoFields = new HashSet<String>();
 		for (String info : vcfEntry.getInfoKeys()) {
 			if (!info.isEmpty()) infoFields.add(info);
 		}
@@ -372,14 +372,19 @@ public abstract class DbVcf {
 		this.useInfoField = useInfoField;
 		useInfoFieldAll = false;
 
-		if (infoFields == null) {
-			this.infoFields = null;
+		if (useInfoField) {
+			if (infoFields == null) {
+				this.infoFields = null;
 
-			// We use INFO but do not specify any particular field => Use ALL available INFO fields
-			if (useInfoField) useInfoFieldAll = true;
+				// We use INFO but do not specify any particular field => Use ALL available INFO fields
+				if (useInfoField) useInfoFieldAll = true;
+			} else {
+				this.infoFields = new HashSet<String>();
+				this.infoFields.addAll(infoFields);
+			}
 		} else {
-			this.infoFields = new HashSet<String>();
-			this.infoFields.addAll(infoFields);
+			// Do not use info fields
+			this.infoFields = null;
 		}
 	}
 

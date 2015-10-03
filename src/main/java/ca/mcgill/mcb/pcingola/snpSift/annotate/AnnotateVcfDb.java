@@ -177,6 +177,17 @@ public abstract class AnnotateVcfDb {
 		dbVcf.setVerbose(verbose);
 	}
 
+	@Override
+	public String toString() {
+		return "Annotate VCF db:\n" //
+				+ "\n\tannotateEmpty        :" + annotateEmpty //
+				+ "\n\texistsInfoField      :" + existsInfoField //
+				+ "\n\tprependInfoFieldName :" + prependInfoFieldName //
+				+ "\n\tuseRefAlt            :" + useRefAlt //
+				+ "\n\tdbVcf:\n" + Gpr.prependEachLine("\t\t", dbVcf) //
+				;
+	}
+
 	/**
 	 * IDs from database not present in VCF
 	 */
@@ -212,5 +223,4 @@ public abstract class AnnotateVcfDb {
 
 		if (count < MAX_ERRORS) System.err.println("WARNING: " + warn);
 	}
-
 }

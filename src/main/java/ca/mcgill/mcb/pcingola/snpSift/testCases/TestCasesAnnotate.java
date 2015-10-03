@@ -651,7 +651,7 @@ public class TestCasesAnnotate extends TestCase {
 	}
 
 	/**
-	 * Input VCf triggers a seek to a position after chromosome sections 
+	 * Input VCf triggers a seek to a position after chromosome sections
 	 * ends in database.
 	 * Previously a bug it forced an infinite loop
 	 */
@@ -660,6 +660,24 @@ public class TestCasesAnnotate extends TestCase {
 		String dbFileName = "./test/db_test_38.vcf";
 		String fileName = "./test/annotate_38.vcf";
 		annotateTest(dbFileName, fileName);
+	}
+
+	/**
+	 * Annotate issues with discovered info fields (when annotating ALL info fields)
+	 */
+	public void test_39() {
+		Gpr.debug("Test");
+		String dbFileName = "./test/db_test_39.vcf";
+		String fileName = "./test/annotate_39.vcf";
+		String extraArgs[] = {};
+		List<VcfEntry> results = annotate(dbFileName, fileName, extraArgs);
+
+		VcfEntry ve = results.get(0);
+		if (verbose) System.out.println(ve);
+		String infoStr = ve.getInfoStr();
+
+		// Check that CAF annotation is added
+		Assert.assertTrue("Missing CAF annotation", infoStr.indexOf("CAF=0.251,0.749") >= 0);
 	}
 
 }
