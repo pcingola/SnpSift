@@ -18,9 +18,9 @@ public abstract class DbVcfIndex extends DbVcf {
 	}
 
 	/**
-	 * Seek to a new position. Make sure we advance at least one entry
+	 * Seek to a new position.
 	 */
-	protected abstract boolean dbSeek(String chr, int pos);
+	protected abstract boolean dbSeekEntry(VcfEntry vcfEntry);
 
 	/**
 	 * Seek to a new position. Make sure we advance at least one entry
@@ -37,7 +37,7 @@ public abstract class DbVcfIndex extends DbVcf {
 		}
 
 		// Seek
-		if (!dbSeek(vcfEntry.getChromosomeName(), vcfEntry.getStart())) return false;
+		if (!dbSeekEntry(vcfEntry)) return false;
 
 		// Make sure we actually advance at least one entry
 		do {
