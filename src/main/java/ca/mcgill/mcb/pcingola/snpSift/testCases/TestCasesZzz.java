@@ -22,7 +22,7 @@ public class TestCasesZzz extends TestCase {
 	protected String[] defaultExtraArgs;
 
 	public TestCasesZzz() {
-		String[] memExtraArgs = { "-tabix" };
+		String[] memExtraArgs = { "-sorted" };
 		defaultExtraArgs = memExtraArgs;
 	}
 
@@ -114,12 +114,12 @@ public class TestCasesZzz extends TestCase {
 	}
 
 	/**
-	 * Problems when tabix database file has 'chr' in chromosome names and VCF file does not
+	 * THIS TEST DOES NOT WORK!?!?!?
 	 */
-	public void test_40() {
+	public void test_41() {
 		Gpr.debug("Test");
-		String dbFileName = "./test/db_test_40.vcf";
-		String fileName = "./test/annotate_40.vcf";
+		String dbFileName = "./test/db_test_41.vcf";
+		String fileName = "./test/annotate_41.vcf";
 		annotateTest(dbFileName, fileName);
 	}
 
