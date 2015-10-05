@@ -29,6 +29,7 @@ public class TestSuiteAll {
 		suite.addTestSuite(TestCasesAnnotate.class);
 		suite.addTestSuite(TestCasesAnnotateMem.class);
 		suite.addTestSuite(TestCasesAnnotateTabix.class);
+		suite.addTestSuite(TestCasesIndex.class);
 		suite.addTestSuite(TestCasesVarType.class);
 		suite.addTestSuite(TestCasesGwasCatalog.class);
 		suite.addTestSuite(TestCasesDbNsfp.class);

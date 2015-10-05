@@ -690,4 +690,37 @@ public class TestCasesAnnotate extends TestCase {
 		annotateTest(dbFileName, fileName);
 	}
 
+	/**
+	 * THIS TEST DOES NOT WORK!?!?!?
+	 */
+	public void test_41() {
+		Gpr.debug("Test");
+		String dbFileName = "./test/db_test_41.vcf";
+		String fileName = "./test/annotate_41.vcf";
+		annotateTest(dbFileName, fileName);
+	}
+
+	/**
+	 * Test multiple CAF annotations
+	 */
+	public void test_42() {
+		Gpr.debug("Test");
+		String dbFileName = "./test/db_test_42.vcf";
+		String fileName = "./test/annotate_42.vcf";
+		String extraArgs[] = {};
+		List<VcfEntry> results = annotate(dbFileName, fileName, extraArgs);
+
+		// Get first entry
+		VcfEntry ve = results.get(0);
+		if (verbose) System.out.println(ve);
+		String infoStr = ve.getInfoStr();
+
+		// Check that CAF annotation is added
+		Assert.assertTrue("Missing CAF annotation", infoStr.indexOf("CAF=") >= 0);
+
+		// Expected output
+		String expectedCaf = "0.4908,0.5066,0.002596,.,0.4908,0.5066,0.002596,0.4908,0.5066";
+		Assert.assertEquals("Incorrect CAF annotation", expectedCaf, ve.getInfo("CAF"));
+	}
+
 }

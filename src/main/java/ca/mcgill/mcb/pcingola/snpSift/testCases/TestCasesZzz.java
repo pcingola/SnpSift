@@ -114,117 +114,26 @@ public class TestCasesZzz extends TestCase {
 	}
 
 	/**
-	 * THIS TEST DOES NOT WORK!?!?!?
+	 * Test multiple CAF annotations
 	 */
-	public void test_41() {
+	public void test_42() {
 		Gpr.debug("Test");
-		String dbFileName = "./test/db_test_41.vcf";
-		String fileName = "./test/annotate_41.vcf";
-		annotateTest(dbFileName, fileName);
-	}
+		String dbFileName = "./test/db_test_42.vcf";
+		String fileName = "./test/annotate_42.vcf";
+		String extraArgs[] = {};
+		List<VcfEntry> results = annotate(dbFileName, fileName, extraArgs);
 
-	//	/**
-	//	 * Index a VCF file and query all entries
-	//	 */
-	//	public void test_01() {
-	//		Gpr.debug("Test");
-	//		String dbFileName = "./test/db_test_index_01.vcf";
-	//
-	//		// Make sure index file is deleted
-	//		String indexFileName = dbFileName + "." + VcfIndex.INDEX_EXT;
-	//		(new File(indexFileName)).delete();
-	//
-	//		// Index VCF file
-	//		VcfIndex vcfIndex = new VcfIndex(dbFileName);
-	//		vcfIndex.setVerbose(verbose);
-	//		vcfIndex.index();
-	//		vcfIndex.open();
-	//
-	//		// Check that all entries can be found & retrieved
-	//		if (verbose) Gpr.debug("Checking");
-	//		VcfFileIterator vcf = new VcfFileIterator(dbFileName);
-	//		for (VcfEntry ve : vcf) {
-	//			if (verbose) System.out.println(ve.toStr());
-	//
-	//			// Query database
-	//			Markers results = vcfIndex.query(ve);
-	//
-	//			// We should find at least one result
-	//			Assert.assertTrue("No results found for entry:\n\t" + ve, results.size() > 0);
-	//
-	//			// Check each result
-	//			for (Marker res : results) {
-	//				MarkerFile resmf = (MarkerFile) res;
-	//				VcfEntry veIdx = vcfIndex.read(resmf);
-	//				if (verbose) System.out.println("\t" + res + "\t" + veIdx);
-	//
-	//				// Check that result does intersect query
-	//				Assert.assertTrue("Selected interval does not intersect marker form file!" //
-	//						+ "\n\tVcfEntry: " + ve //
-	//						+ "\n\tResult: " + res //
-	//						+ "\n\tVcfEntry from result:" + veIdx//
-	//						, ve.intersects(veIdx) //
-	//				);
-	//			}
-	//		}
-	//
-	//		vcfIndex.close();
-	//	}
-	//
-	//	/**
-	//	 * Index a VCF file and query all entries
-	//	 */
-	//	public void test_02() {
-	//		Gpr.debug("Test");
-	//		String dbFileName = "./test/db_test_index_02.vcf";
-	//
-	//		// Index VCF file
-	//		String indexFileName = dbFileName + "." + VcfIndex.INDEX_EXT;
-	//		(new File(indexFileName)).delete();
-	//
-	//		// Create index file
-	//		VcfIndex vcfIndex = new VcfIndex(dbFileName);
-	//		vcfIndex.setVerbose(verbose);
-	//		vcfIndex.index();
-	//
-	//		// Make sure index file was created
-	//		Assert.assertTrue("Index file '" + indexFileName + "' does not exist", Gpr.exists(indexFileName));
-	//
-	//		// Restart so we force to read from index file
-	//		vcfIndex = new VcfIndex(dbFileName);
-	//		vcfIndex.setVerbose(verbose);
-	//		vcfIndex.index();
-	//		vcfIndex.open();
-	//
-	//		// Check that all entries can be found & retrieved
-	//		if (verbose) Gpr.debug("Checking");
-	//		VcfFileIterator vcf = new VcfFileIterator(dbFileName);
-	//		for (VcfEntry ve : vcf) {
-	//			if (verbose) System.out.println(ve.toStr());
-	//
-	//			// Query database
-	//			Markers results = vcfIndex.query(ve);
-	//
-	//			// We should find at least one result
-	//			Assert.assertTrue("No results found for entry:\n\t" + ve, results.size() > 0);
-	//
-	//			// Check each result
-	//			for (Marker res : results) {
-	//				MarkerFile resmf = (MarkerFile) res;
-	//				VcfEntry veIdx = vcfIndex.read(resmf);
-	//				if (verbose) System.out.println("\t" + res + "\t" + veIdx);
-	//
-	//				// Check that result does intersect query
-	//				Assert.assertTrue("Selected interval does not intersect marker form file!" //
-	//						+ "\n\tVcfEntry: " + ve //
-	//						+ "\n\tResult: " + res //
-	//						+ "\n\tVcfEntry from result:" + veIdx//
-	//						, ve.intersects(veIdx) //
-	//				);
-	//			}
-	//		}
-	//
-	//		vcfIndex.close();
-	//	}
+		// Get first entry
+		VcfEntry ve = results.get(0);
+		if (verbose) System.out.println(ve);
+		String infoStr = ve.getInfoStr();
+
+		// Check that CAF annotation is added
+		Assert.assertTrue("Missing CAF annotation", infoStr.indexOf("CAF=") >= 0);
+
+		// Expected output
+		String expectedCaf = "0.4908,0.5066,0.002596,.,0.4908,0.5066,0.002596,0.4908,0.5066";
+		Assert.assertEquals("Incorrect CAF annotation", expectedCaf, ve.getInfo("CAF"));
+	}
 
 }
