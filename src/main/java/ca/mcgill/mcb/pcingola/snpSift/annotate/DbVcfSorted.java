@@ -1,13 +1,9 @@
 package ca.mcgill.mcb.pcingola.snpSift.annotate;
 
-import java.io.IOException;
 import java.util.List;
 
-import ca.mcgill.mcb.pcingola.fileIterator.SeekableBufferedReader;
-import ca.mcgill.mcb.pcingola.fileIterator.VcfFileIterator;
-import ca.mcgill.mcb.pcingola.interval.Variant;
+import ca.mcgill.mcb.pcingola.interval.Marker;
 import ca.mcgill.mcb.pcingola.util.Gpr;
-import ca.mcgill.mcb.pcingola.vcf.FileIndexChrPos;
 import ca.mcgill.mcb.pcingola.vcf.VcfEntry;
 
 /**
@@ -22,20 +18,10 @@ import ca.mcgill.mcb.pcingola.vcf.VcfEntry;
  *
  * @author pcingola
  */
-public class DbVcfSorted extends DbVcfIndex {
-
-	public static final int MIN_SEEK = 1000;
-
-	protected FileIndexChrPos indexDb;
+public class DbVcfSorted extends DbVcf {
 
 	public DbVcfSorted(String dbFileName) {
 		super(dbFileName);
-	}
-
-	@Override
-	public void close() {
-		super.close();
-		indexDb.close();
 	}
 
 	/**
@@ -44,40 +30,13 @@ public class DbVcfSorted extends DbVcfIndex {
 	protected void createIndex() {
 		if (verbose) System.err.println("Index database file:" + dbFileName);
 
-		indexDb = new FileIndexChrPos(dbFileName);
-		indexDb.setVerbose(verbose);
-		indexDb.setDebug(debug);
-		indexDb.open();
-		indexDb.index();
-
-		if (debug) System.err.println("Index:\n" + indexDb);
-	}
-
-	@Override
-	protected boolean dbSeek(String chr, int pos) {
-		long filePosChr = indexDb.getStart(chr);
-		if (filePosChr < 0) return false; // The database file does not have this chromosome
-
-		try {
-			long filePos = indexDb.find(chr, pos, true);
-			if (filePos < 0) {
-				// The database file does not have this position
-				vcfDbFile.seek(filePosChr); // Jump to chromosome
-				return false;
-			}
-
-			// Jump to position
-			vcfDbFile.seek(filePos);
-
-			return true;
-		} catch (IOException e) {
-			throw new RuntimeException(e);
-		}
-	}
-
-	@Override
-	public List<VcfEntry> find(Variant variant) {
-		throw new RuntimeException("Unimplemented");
+		//			indexDb = new FileIndexChrPos(dbFileName);
+		//			indexDb.setVerbose(verbose);
+		//			indexDb.setDebug(debug);
+		//			indexDb.open();
+		//			indexDb.index();
+		//
+		//		if (debug) System.err.println("Index:\n" + indexDb);
 	}
 
 	/**
@@ -87,23 +46,23 @@ public class DbVcfSorted extends DbVcfIndex {
 	public void open() {
 		if (debug) Gpr.debug("Open database file:" + dbFileName);
 
-		// Open database index
-		createIndex();
-
-		// Re-open VCF db file
-		try {
-			vcfDbFile = new VcfFileIterator(new SeekableBufferedReader(dbFileName));
-			vcfDbFile.setDebug(false); // Don't check errors, since we are doing random access (the file will appear is if it was not sorted)
-			nextVcfDb = vcfDbFile.next(); // Read first VCf entry from DB file (this also forces to read headers)
-			addNextVcfDb();
-		} catch (IOException e) {
-			throw new RuntimeException(e);
-		}
+		//		// Open database index
+		//		createIndex();
+		//
+		//		// Re-open VCF db file
+		//		try {
+		//			vcfDbFile = new VcfFileIterator(new SeekableBufferedReader(dbFileName));
+		//			vcfDbFile.setDebug(false); // Don't check errors, since we are doing random access (the file will appear is if it was not sorted)
+		//			nextVcfDb = vcfDbFile.next(); // Read first VCf entry from DB file (this also forces to read headers)
+		//			addNextVcfDb();
+		//		} catch (IOException e) {
+		//			throw new RuntimeException(e);
+		//		}
 	}
 
 	@Override
-	protected boolean shouldSeek(VcfEntry vcfEntry) {
-		return ((vcfEntry.getEnd() - nextVcfDb.getStart()) > MIN_SEEK);
+	public List<VcfEntry> query(Marker marker) {
+		throw new RuntimeException("Unimplemented");
 	}
 
 }

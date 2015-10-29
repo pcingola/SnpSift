@@ -2,9 +2,7 @@ package ca.mcgill.mcb.pcingola.snpSift.annotate;
 
 import java.util.List;
 
-import ca.mcgill.mcb.pcingola.fileIterator.VcfFileIterator;
-import ca.mcgill.mcb.pcingola.interval.Variant;
-import ca.mcgill.mcb.pcingola.util.Gpr;
+import ca.mcgill.mcb.pcingola.interval.Marker;
 import ca.mcgill.mcb.pcingola.vcf.VcfEntry;
 
 /**
@@ -12,22 +10,10 @@ import ca.mcgill.mcb.pcingola.vcf.VcfEntry;
  *
  * @author pcingola
  */
-public class DbVcfTabix extends DbVcfIndex {
-
-	public static final int MIN_SEEK = 100;
+public class DbVcfTabix extends DbVcf {
 
 	public DbVcfTabix(String dbFileName) {
 		super(dbFileName);
-	}
-
-	@Override
-	protected boolean dbSeek(String chr, int pos) {
-		return vcfDbFile.seek(chr, pos);
-	}
-
-	@Override
-	public List<VcfEntry> find(Variant variant) {
-		throw new RuntimeException("Unimplemented");
 	}
 
 	/**
@@ -35,19 +21,12 @@ public class DbVcfTabix extends DbVcfIndex {
 	 */
 	@Override
 	public void open() {
-		if (debug) Gpr.debug("Open database file:" + dbFileName);
-
-		// Open database
-		vcfDbFile = new VcfFileIterator(dbFileName);
-		vcfDbFile.setDebug(debug);
-		if (!vcfDbFile.isTabix()) throw new RuntimeException("Could not open VCF file as TABIX-indexed: '" + dbFileName + "'");
-		nextVcfDb = vcfDbFile.next(); // Read first VCf entry from DB file (this also forces to read headers)
-		addNextVcfDb();
+		throw new RuntimeException("Unimplemented");
 	}
 
 	@Override
-	protected boolean shouldSeek(VcfEntry vcfEntry) {
-		return ((vcfEntry.getEnd() - nextVcfDb.getStart()) > MIN_SEEK);
+	public List<VcfEntry> query(Marker marker) {
+		throw new RuntimeException("Unimplemented");
 	}
 
 }

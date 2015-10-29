@@ -6,6 +6,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -14,6 +15,7 @@ import ca.mcgill.mcb.pcingola.fileIterator.VcfFileIterator;
 import ca.mcgill.mcb.pcingola.interval.Variant;
 import ca.mcgill.mcb.pcingola.util.Gpr;
 import ca.mcgill.mcb.pcingola.vcf.VcfEntry;
+import ca.mcgill.mcb.pcingola.vcf.VcfHeaderInfo;
 
 /**
  * Annotate using a VCF "database"
@@ -26,14 +28,20 @@ public abstract class AnnotateVcfDb {
 	public static final int MAX_ERRORS = 10; // Report an error no more than X times
 
 	protected boolean verbose, debug;
-	protected boolean useRefAlt = true;
-	protected boolean annotateEmpty;
+	protected boolean annotateEmpty; // Use empty fields to annotate
+	protected boolean useId = true; // Annotate ID fields
+	protected boolean useInfoFields = true; // Use info fields
+	protected boolean useAllInfoFields = true; // Annotate all info fields
+	protected boolean useRefAlt = true; // Match REF and ALT fields
 	protected String chrPrev = "";
 	protected String existsInfoField = null;
 	protected String prependInfoFieldName;
 	protected DbVcf dbVcf;
 	protected VcfFileIterator vcfDbFile;
 	protected HashMap<String, Integer> errCount;
+	protected Set<String> infoFields; // Use only these INFO fields
+	protected Map<String, Boolean> vcfInfoPerAllele = new HashMap<String, Boolean>(); // Is a VCF INFO field annotated 'per allele' basis?
+	protected Map<String, Boolean> vcfInfoPerAlleleRef = new HashMap<String, Boolean>(); // Is a VCF INFO field annotated 'per allele' basis AND requires reference to be annotated (i.e. VCF header has Number=R)?
 
 	public AnnotateVcfDb() {
 	}
@@ -42,8 +50,6 @@ public abstract class AnnotateVcfDb {
 	 * Annotate a VCF entry
 	 */
 	public boolean annotate(VcfEntry vcfEntry) throws IOException {
-		dbVcf.find(vcfEntry); // Read database up to this point
-
 		// Add information to vcfEntry
 		boolean annotated = false;
 
@@ -54,9 +60,19 @@ public abstract class AnnotateVcfDb {
 		// Annotate all info fields
 		List<Variant> vars = vcfEntry.variants();
 		for (Variant var : vars) {
-			dbVcf.findDbId(var, idSet);
-			dbVcf.findDbInfo(var, infos);
-			if (existsInfoField != null && (!exists)) exists |= dbVcf.findDbExists(var);
+
+			Collection<VcfEntry> results = query(var);
+
+			// Check if each results matches the variant, add ID, INFO and exists information accordingly
+			for (VcfEntry dbVcfEntry : results) {
+				if (useInfoFields) discoverInfoFields(dbVcfEntry);
+
+				if (match(var, dbVcfEntry)) {
+					if (useId) findDbId(var, idSet, dbVcfEntry);
+					if (useInfoFields) findDbInfo(var, infos, dbVcfEntry);
+					if (existsInfoField != null) exists |= findDbExists(var, dbVcfEntry);
+				}
+			}
 		}
 
 		// Annotate input vcfEntry
@@ -64,7 +80,6 @@ public abstract class AnnotateVcfDb {
 		annotated |= annotateInfo(vcfEntry, infos);
 		if (exists) annotateExists(vcfEntry);
 
-		if (debug) Gpr.debug("Database size: " + dbVcf.size());
 		return annotated;
 	}
 
@@ -126,6 +141,164 @@ public abstract class AnnotateVcfDb {
 		dbVcf.close();
 	}
 
+	/**
+	 * If 'ALL' info fields are being used, we can try to discover
+	 * new fields that have not already been added to the annotation
+	 * list (e.g. implicit fields not mentioned in the VCF header)
+	 */
+	protected void discoverInfoFields(VcfEntry vcfEntry) {
+		if (!useAllInfoFields) return; // Not using INFO fields
+
+		// Make sure all fields are added
+		if (infoFields == null) infoFields = new HashSet<String>();
+		for (String info : vcfEntry.getInfoKeys()) {
+			if (!info.isEmpty()) infoFields.add(info);
+		}
+	}
+
+	public List<VcfEntry> find(Variant var) {
+		return null;
+	}
+
+	/**
+	 * Find matching entries in the database
+	 */
+	public List<VcfEntry> find(VcfEntry vcfEntry) {
+		List<Variant> vars = vcfEntry.variants();
+		List<VcfEntry> ves = new LinkedList<>();
+
+		for (Variant var : vars)
+			ves.addAll(find(var));
+
+		return ves;
+	}
+
+	/**
+	 * Should we annotate using 'exists' field?
+	 */
+	protected boolean findDbExists(Variant var, VcfEntry dbVcfEntry) {
+		return false;
+		//		if (dbCurrentId.isEmpty()) return false;
+		//
+		//		String key = key(var);
+		//		return dbCurrentId.containsKey(key);
+	}
+
+	/**
+	 * Find an ID for this variant and add them to idSet
+	 */
+	protected void findDbId(Variant var, Set<String> idSet, VcfEntry dbVcfEntry) {
+		//		if (!useId || dbCurrentId.isEmpty()) return;
+		//		String key = key(var);
+		//		String idField = dbCurrentId.get(key);
+		//
+		//		if (idField != null) {
+		//			for (String id : idField.split(";"))
+		//				idSet.add(id);
+		//		}
+	}
+
+	/**
+	 * Find INFO fields for this VCF entry
+	 */
+	protected void findDbInfo(Variant var, Map<String, String> info, VcfEntry dbVcfEntry) {
+		//		if (!useInfoField || dbCurrentInfo.isEmpty()) return;
+		//
+		//		//---
+		//		// Prepare INFO field to add
+		//		//---
+		//		String key = key(var);
+		//		Map<String, String> info = dbCurrentInfo.get(key);
+		//
+		//		for (String infoFieldName : infoFields) {
+		//			// Do we need to take care of the 'REF' allele?
+		//			if (isVcfInfoPerAlleleRef(infoFieldName)) {
+		//				// Did we already did it in the previous 'variant' iteration?
+		//				if (!info.containsKey(infoFieldName)) {
+		//					String keyRef = keyRef(var);
+		//					Map<String, String> infoRef = dbCurrentInfo.get(keyRef);
+		//					String val = (infoRef == null ? "." : infoRef.get(infoFieldName));
+		//					info.put(infoFieldName, val);
+		//				}
+		//			}
+		//
+		//			// Get info field annotations
+		//
+		//			// Not a 'per allele' INFO field? Then we are done (no need to annotate other alleles)
+		//			if (isVcfInfoPerAllele(infoFieldName)) {
+		//				// Add each INFO for each 'ALT'
+		//				String newValue = (info == null ? null : info.get(infoFieldName));
+		//				String oldValue = info.get(infoFieldName);
+		//				String val = (oldValue == null ? "" : oldValue + ",") + (newValue == null ? "." : newValue);
+		//				info.put(infoFieldName, val);
+		//			} else {
+		//				// Add only one INFO
+		//				if (!info.containsKey(infoFieldName)) {
+		//					String newValue = (info == null ? null : info.get(infoFieldName));
+		//					if (newValue != null) info.put(infoFieldName, newValue);
+		//				} else {
+		//					// This INFO field has only one entry (not 'per allele') and
+		//					// we have already added the value in the previous 'variant'
+		//					// iteration, so we can skip it this time
+		//				}
+		//			}
+		//		}
+	}
+
+	/**
+	 * Is 'fieldName' a per-allele annotation
+	 */
+	boolean isVcfInfoPerAllele(String fieldName) {
+		return isVcfInfoPerAllele(fieldName, null);
+	}
+
+	/**
+	 * Is 'fieldName' a per-allele annotation
+	 */
+	boolean isVcfInfoPerAllele(String fieldName, VcfEntry vcfDb) {
+		// Look up information and cache it
+		if (vcfInfoPerAllele.get(fieldName) == null) {
+			if (vcfDb == null) return false; // No VCF information? I cannot look it up...nothing to do
+
+			VcfHeaderInfo vcfInfo = vcfDb.getVcfInfo(fieldName);
+			boolean isPerAllele = vcfInfo != null && (vcfInfo.isNumberOnePerAllele() || vcfInfo.isNumberAllAlleles());
+			vcfInfoPerAllele.put(fieldName, isPerAllele);
+		}
+
+		return vcfInfoPerAllele.get(fieldName);
+	}
+
+	/**
+	 * Is this a "per-allele + REF" INFO field?
+	 */
+	boolean isVcfInfoPerAlleleRef(String fieldName) {
+		return isVcfInfoPerAlleleRef(fieldName, null);
+	}
+
+	/**
+	 * Is this a "per-allele + REF" INFO field?
+	 */
+	boolean isVcfInfoPerAlleleRef(String fieldName, VcfEntry vcfDb) {
+		// Look up information and cache it
+		if (vcfInfoPerAlleleRef.get(fieldName) == null) {
+			if (vcfDb == null) return false; // No VCF information? I cannot look it up...nothing to do
+
+			VcfHeaderInfo vcfInfo = vcfDb.getVcfInfo(fieldName);
+			boolean isPerAlleleRef = (vcfInfo != null && vcfInfo.isNumberAllAlleles());
+			vcfInfoPerAlleleRef.put(fieldName, isPerAlleleRef);
+		}
+
+		return vcfInfoPerAlleleRef.get(fieldName);
+	}
+
+	/**
+	 * Does database entry 'dbVcfEntry' match 'variant'?
+	 */
+	boolean match(Variant inputVariant, VcfEntry dbVcfEntry) {
+		// TODO: We should match according to 'useRefAlt' and other database annotation options
+		return false;
+	}
+
 	public void open() {
 		dbVcf.open();
 	}
@@ -143,6 +316,10 @@ public abstract class AnnotateVcfDb {
 
 	}
 
+	Collection<VcfEntry> query(Variant variant) {
+		return null;
+	}
+
 	public void setAnnotateEmpty(boolean annotateEmpty) {
 		this.annotateEmpty = annotateEmpty;
 	}
@@ -157,7 +334,23 @@ public abstract class AnnotateVcfDb {
 	}
 
 	public void setInfoFields(boolean useInfoFields, Collection<String> infoFields) {
-		dbVcf.setInfoFields(useInfoFields, infoFields);
+		this.useInfoFields = useInfoFields;
+		useAllInfoFields = false;
+
+		if (useInfoFields) {
+			if (infoFields == null) {
+				this.infoFields = null;
+
+				// We use INFO but do not specify any particular field => Use ALL available INFO fields
+				if (useInfoFields) useAllInfoFields = true;
+			} else {
+				this.infoFields = new HashSet<String>();
+				this.infoFields.addAll(infoFields);
+			}
+		} else {
+			// Do not use info fields
+			this.infoFields = null;
+		}
 	}
 
 	public void setPrependInfoFieldName(String prependInfoFieldName) {
@@ -165,11 +358,13 @@ public abstract class AnnotateVcfDb {
 	}
 
 	public void setUseId(boolean useId) {
-		dbVcf.setUseId(useId);
+		//		dbVcf.setUseId(useId);
+		throw new RuntimeException("UNIMPLEMENTED!!!");
 	}
 
 	public void setUseRefAlt(boolean useRefAlt) {
-		dbVcf.setUseRefAlt(useRefAlt);
+		//		dbVcf.setUseRefAlt(useRefAlt);
+		throw new RuntimeException("UNIMPLEMENTED!!!");
 	}
 
 	public void setVerbose(boolean verbose) {
