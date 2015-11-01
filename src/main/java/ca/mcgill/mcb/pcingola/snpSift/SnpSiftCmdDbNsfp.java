@@ -9,8 +9,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import ca.mcgill.mcb.pcingola.fileIterator.DbNsfp;
 import ca.mcgill.mcb.pcingola.fileIterator.DbNsfpEntry;
-import ca.mcgill.mcb.pcingola.fileIterator.DbNsfpFileIterator;
 import ca.mcgill.mcb.pcingola.fileIterator.VcfFileIterator;
 import ca.mcgill.mcb.pcingola.snpEffect.Config;
 import ca.mcgill.mcb.pcingola.util.Gpr;
@@ -79,7 +79,7 @@ public class SnpSiftCmdDbNsfp extends SnpSift {
 	protected String vcfFileName;
 	protected int count = 0;
 	protected int countAnnotated = 0;
-	protected DbNsfpFileIterator dbNsfpFile;
+	protected DbNsfp dbNsfp;
 	protected VcfFileIterator vcfFile;
 	protected DbNsfpEntry currentDbEntry;
 	protected String fieldsNamesToAdd;
@@ -251,7 +251,7 @@ public class SnpSiftCmdDbNsfp extends SnpSift {
 
 	@Override
 	public boolean annotateFinish() {
-		dbNsfpFile.close();
+		dbNsfp.close();
 		return true;
 	}
 
@@ -271,34 +271,34 @@ public class SnpSiftCmdDbNsfp extends SnpSift {
 			dbFileName = config.getString(configKey);
 		}
 
-		// Check and open dbNsfp
-		dbNsfpFile = new DbNsfpFileIterator(dbFileName);
-		dbNsfpFile.setDebug(debug);
-		dbNsfpFile.setVerbose(verbose);
-		dbNsfpFile.setCollapseRepeatedValues(collapseRepeatedValues);
-		if (tabixCheck && !dbNsfpFile.isTabix()) fatalError("Tabix index not found for database '" + dbFileName + "'.\n\t\tSnpSift dbNSFP only works with tabix indexed databases, please create or download index.");
-
-		// Guess database fields types
-		if (verbose) Timer.showStdErr("Guessing data types");
-
-		if (!dbNsfpFile.dataTypes()) {
-			// Show missing types
-			if (verbose) {
-				String fnames[] = dbNsfpFile.getFieldNamesSorted();
-				VcfInfoType[] types = dbNsfpFile.getTypes();
-				Timer.showStdErr("Some data types are missing (using 'string')");
-				for (int i = 0; i < fnames.length; i++)
-					if (types[i] == null) System.err.println("\tColumn " + (i + 1) + "\t" + fnames[i]);
-			}
-
-			// Force missing types as strings
-			dbNsfpFile.forceMissingTypesAsString();
-		}
-
-		if (verbose) Timer.showStdErr("Done");
-
-		// Initialize fields to annotate
-		annotateInitFields();
+		//		// Check and open dbNsfp
+		//		dbNsfp = new DbNsfp(dbFileName);
+		//		dbNsfp.setDebug(debug);
+		//		dbNsfp.setVerbose(verbose);
+		//		dbNsfp.setCollapseRepeatedValues(collapseRepeatedValues);
+		//		if (tabixCheck && !dbNsfp.isTabix()) fatalError("Tabix index not found for database '" + dbFileName + "'.\n\t\tSnpSift dbNSFP only works with tabix indexed databases, please create or download index.");
+		//
+		//		// Guess database fields types
+		//		if (verbose) Timer.showStdErr("Guessing data types");
+		//
+		//		if (!dbNsfp.dataTypes()) {
+		//			// Show missing types
+		//			if (verbose) {
+		//				String fnames[] = dbNsfp.getFieldNamesSorted();
+		//				VcfInfoType[] types = dbNsfp.getTypes();
+		//				Timer.showStdErr("Some data types are missing (using 'string')");
+		//				for (int i = 0; i < fnames.length; i++)
+		//					if (types[i] == null) System.err.println("\tColumn " + (i + 1) + "\t" + fnames[i]);
+		//			}
+		//
+		//			// Force missing types as strings
+		//			dbNsfp.forceMissingTypesAsString();
+		//		}
+		//
+		//		if (verbose) Timer.showStdErr("Done");
+		//
+		//		// Initialize fields to annotate
+		//		annotateInitFields();
 
 		return true;
 	}
@@ -310,8 +310,8 @@ public class SnpSiftCmdDbNsfp extends SnpSift {
 		//---
 		// Fields to use
 		//---
-		VcfInfoType types[] = dbNsfpFile.getTypes();
-		String fieldNames[] = dbNsfpFile.getFieldNamesSorted();
+		VcfInfoType types[] = dbNsfp.getTypes();
+		String fieldNames[] = dbNsfp.getFieldNamesSorted();
 		if (verbose) Timer.showStdErr("Database fields:");
 		for (int i = 0; i < fieldNames.length; i++) {
 			String type = (types[i] != null ? types[i].toString() : "String");
@@ -377,85 +377,87 @@ public class SnpSiftCmdDbNsfp extends SnpSift {
 	 * Check that all fields to add are available
 	 */
 	public void checkFieldsToAdd() throws IOException {
-		// Check that all fields have a descriptor (used in VCF header)
-		if (verbose) {
-			for (String filedName : dbNsfpFile.getFieldNames())
-				if (fieldsDescription.get(filedName) == null) System.err.println("WARNING: Field (column) '" + filedName + "' does not have an approriate field descriptor.");
-		}
-
-		// Check that all "field to add" are in the database
-		for (String fieldKey : fieldsToAdd.keySet())
-			if (!dbNsfpFile.hasField(fieldKey)) fatalError("dbNsfp does not have field '" + fieldKey + "' (file '" + dbFileName + "')");
+		//		// Check that all fields have a descriptor (used in VCF header)
+		//		if (verbose) {
+		//			for (String filedName : dbNsfp.getFieldNames())
+		//				if (fieldsDescription.get(filedName) == null) System.err.println("WARNING: Field (column) '" + filedName + "' does not have an approriate field descriptor.");
+		//		}
+		//
+		//		// Check that all "field to add" are in the database
+		//		for (String fieldKey : fieldsToAdd.keySet())
+		//			if (!dbNsfp.hasField(fieldKey)) fatalError("dbNsfp does not have field '" + fieldKey + "' (file '" + dbFileName + "')");
 	}
 
 	/**
 	 * Find a matching db entry for a vcf entry
 	 */
 	public DbNsfpEntry findDbEntry(VcfEntry vcfEntry) {
-		//---
-		// Find db entry
-		//---
-		if (debug) System.err.println("Looking for " + vcfEntry.getChromosomeName() + ":" + vcfEntry.getStart() + ". Current DB: " + (currentDbEntry == null ? "null" : currentDbEntry.getChromosomeName() + ":" + currentDbEntry.getStart()));
-		while (true) {
+		return null;
 
-			if (currentDbEntry == null) {
-				// Null entry, try getting next entry
-				currentDbEntry = dbNsfpFile.next(); // Read next DB entry
-
-				// Still null? May be we run out of DB entries for this chromosome
-				if (currentDbEntry == null) {
-					// Is vcfEntry still in 'latestChromo'? Then we have no DbEntry, return null
-					if (latestChromo.equals(vcfEntry.getChromosomeName())) return null; // End of 'latestChromo' section in database?
-
-					// VCfEntry is in another chromosome? Jump to 'new' chromosome
-					if (debug) Gpr.debug("New chromosome '" + latestChromo + "' != '" + vcfEntry.getChromosomeName() + "': We should jump");
-					dbNsfpFile.seek(vcfEntry.getChromosomeName(), vcfEntry.getStart());
-					currentDbEntry = dbNsfpFile.next();
-
-					// Still null? well it looks like we don't have any dbEntry for this chromosome
-					if (currentDbEntry == null) {
-						latestChromo = vcfEntry.getChromosomeName(); // Make sure we don't try jumping again
-						return null;
-					}
-				}
-			}
-
-			if (debug) Gpr.debug("Current Db Entry:" + currentDbEntry.getChromosomeName() + ":" + currentDbEntry.getStart() + "\tLooking for: " + vcfEntry.getChromosomeName() + ":" + vcfEntry.getStart());
-
-			// Find entry
-			if (currentDbEntry.getChromosomeName().equals(vcfEntry.getChromosomeName())) {
-				// Same chromosome
-
-				// Same position? => Found
-				if (vcfEntry.getStart() == currentDbEntry.getStart()) {
-					// Found db entry! Break loop and proceed with annotations
-					if (debug) Gpr.debug("Found Db Entry:" + currentDbEntry.getChromosomeName() + ":" + currentDbEntry.getStart());
-					return currentDbEntry;
-				} else if (vcfEntry.getStart() < currentDbEntry.getStart()) {
-					// Same chromosome, but positioned after => No db entry found
-					if (debug) Gpr.debug("No db entry found:\t" + vcfEntry.getChromosomeName() + ":" + vcfEntry.getStart());
-					return null;
-				} else if ((vcfEntry.getStart() - currentDbEntry.getStart()) > MIN_JUMP) {
-					// Is it far enough? Don't iterate, jump
-					if (debug) Gpr.debug("Position jump:\t" + currentDbEntry.getChromosomeName() + ":" + currentDbEntry.getStart() + "\t->\t" + vcfEntry.getChromosomeName() + ":" + vcfEntry.getStart());
-					dbNsfpFile.seek(vcfEntry.getChromosomeName(), vcfEntry.getStart());
-					currentDbEntry = dbNsfpFile.next();
-				} else {
-					// Just read next entry to get closer
-					currentDbEntry = dbNsfpFile.next();
-				}
-			} else if (!currentDbEntry.getChromosomeName().equals(vcfEntry.getChromosomeName())) {
-				// Different chromosome? => Jump to chromosome
-				if (debug) Gpr.debug("Chromosome jump:\t" + currentDbEntry.getChromosomeName() + ":" + currentDbEntry.getStart() + "\t->\t" + vcfEntry.getChromosomeName() + ":" + vcfEntry.getStart());
-
-				// Jump to new position. If chromosome not found, return null
-				if (!dbNsfpFile.seek(vcfEntry.getChromosomeName(), vcfEntry.getStart())) return null;
-
-				currentDbEntry = dbNsfpFile.next();
-			}
-
-			if (currentDbEntry != null) latestChromo = currentDbEntry.getChromosomeName();
-		}
+		//		//---
+		//		// Find db entry
+		//		//---
+		//		if (debug) System.err.println("Looking for " + vcfEntry.getChromosomeName() + ":" + vcfEntry.getStart() + ". Current DB: " + (currentDbEntry == null ? "null" : currentDbEntry.getChromosomeName() + ":" + currentDbEntry.getStart()));
+		//		while (true) {
+		//
+		//			if (currentDbEntry == null) {
+		//				// Null entry, try getting next entry
+		//				currentDbEntry = dbNsfp.next(); // Read next DB entry
+		//
+		//				// Still null? May be we run out of DB entries for this chromosome
+		//				if (currentDbEntry == null) {
+		//					// Is vcfEntry still in 'latestChromo'? Then we have no DbEntry, return null
+		//					if (latestChromo.equals(vcfEntry.getChromosomeName())) return null; // End of 'latestChromo' section in database?
+		//
+		//					// VCfEntry is in another chromosome? Jump to 'new' chromosome
+		//					if (debug) Gpr.debug("New chromosome '" + latestChromo + "' != '" + vcfEntry.getChromosomeName() + "': We should jump");
+		//					dbNsfp.seek(vcfEntry.getChromosomeName(), vcfEntry.getStart());
+		//					currentDbEntry = dbNsfp.next();
+		//
+		//					// Still null? well it looks like we don't have any dbEntry for this chromosome
+		//					if (currentDbEntry == null) {
+		//						latestChromo = vcfEntry.getChromosomeName(); // Make sure we don't try jumping again
+		//						return null;
+		//					}
+		//				}
+		//			}
+		//
+		//			if (debug) Gpr.debug("Current Db Entry:" + currentDbEntry.getChromosomeName() + ":" + currentDbEntry.getStart() + "\tLooking for: " + vcfEntry.getChromosomeName() + ":" + vcfEntry.getStart());
+		//
+		//			// Find entry
+		//			if (currentDbEntry.getChromosomeName().equals(vcfEntry.getChromosomeName())) {
+		//				// Same chromosome
+		//
+		//				// Same position? => Found
+		//				if (vcfEntry.getStart() == currentDbEntry.getStart()) {
+		//					// Found db entry! Break loop and proceed with annotations
+		//					if (debug) Gpr.debug("Found Db Entry:" + currentDbEntry.getChromosomeName() + ":" + currentDbEntry.getStart());
+		//					return currentDbEntry;
+		//				} else if (vcfEntry.getStart() < currentDbEntry.getStart()) {
+		//					// Same chromosome, but positioned after => No db entry found
+		//					if (debug) Gpr.debug("No db entry found:\t" + vcfEntry.getChromosomeName() + ":" + vcfEntry.getStart());
+		//					return null;
+		//				} else if ((vcfEntry.getStart() - currentDbEntry.getStart()) > MIN_JUMP) {
+		//					// Is it far enough? Don't iterate, jump
+		//					if (debug) Gpr.debug("Position jump:\t" + currentDbEntry.getChromosomeName() + ":" + currentDbEntry.getStart() + "\t->\t" + vcfEntry.getChromosomeName() + ":" + vcfEntry.getStart());
+		//					dbNsfp.seek(vcfEntry.getChromosomeName(), vcfEntry.getStart());
+		//					currentDbEntry = dbNsfp.next();
+		//				} else {
+		//					// Just read next entry to get closer
+		//					currentDbEntry = dbNsfp.next();
+		//				}
+		//			} else if (!currentDbEntry.getChromosomeName().equals(vcfEntry.getChromosomeName())) {
+		//				// Different chromosome? => Jump to chromosome
+		//				if (debug) Gpr.debug("Chromosome jump:\t" + currentDbEntry.getChromosomeName() + ":" + currentDbEntry.getStart() + "\t->\t" + vcfEntry.getChromosomeName() + ":" + vcfEntry.getStart());
+		//
+		//				// Jump to new position. If chromosome not found, return null
+		//				if (!dbNsfp.seek(vcfEntry.getChromosomeName(), vcfEntry.getStart())) return null;
+		//
+		//				currentDbEntry = dbNsfp.next();
+		//			}
+		//
+		//			if (currentDbEntry != null) latestChromo = currentDbEntry.getChromosomeName();
+		//		}
 	}
 
 	public Map<String, String> getFieldsType() {

@@ -1,6 +1,6 @@
 package ca.mcgill.mcb.pcingola.snpSift.annotate;
 
-import java.util.List;
+import java.util.Collection;
 
 import ca.mcgill.mcb.pcingola.fileIterator.VcfFileIterator;
 import ca.mcgill.mcb.pcingola.interval.Marker;
@@ -24,7 +24,7 @@ import ca.mcgill.mcb.pcingola.vcf.VcfEntry;
  *
  * @author pcingola
  */
-public abstract class DbVcf {
+public abstract class DbVcf implements DbMarker<VcfEntry> {
 
 	protected boolean debug = false;
 	protected boolean verbose = false;
@@ -43,9 +43,7 @@ public abstract class DbVcf {
 		this.dbFileName = dbFileName;
 	}
 
-	/**
-	 * Finish up annotation process
-	 */
+	@Override
 	public void close() {
 		if (vcfDbFile != null) {
 			vcfDbFile.close(); // We have to close vcfDbFile because it was opened using a BufferedReader (this sets autoClose to 'false')
@@ -53,20 +51,21 @@ public abstract class DbVcf {
 		}
 	}
 
-	/**
-	 * Open database annotation file
-	 */
+	@Override
 	public abstract void open();
 
 	/**
 	 * Find matching entries in the database
 	 */
-	public abstract List<VcfEntry> query(Marker marker);
+	@Override
+	public abstract Collection<VcfEntry> query(Marker marker);
 
+	@Override
 	public void setDebug(boolean debug) {
 		this.debug = debug;
 	}
 
+	@Override
 	public void setVerbose(boolean verbose) {
 		this.verbose = verbose;
 	}
