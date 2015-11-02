@@ -60,17 +60,19 @@ public abstract class AnnotateVcfDb {
 		// Annotate all info fields
 		List<Variant> vars = vcfEntry.variants();
 		for (Variant var : vars) {
-
+			// Query database
 			Collection<VcfEntry> results = query(var);
 
-			// Check if each results matches the variant, add ID, INFO and exists information accordingly
-			for (VcfEntry dbVcfEntry : results) {
-				if (useInfoFields) discoverInfoFields(dbVcfEntry);
+			if (results != null) {
+				// Check if each results matches the variant, add ID, INFO and exists information accordingly
+				for (VcfEntry dbVcfEntry : results) {
+					if (useInfoFields) discoverInfoFields(dbVcfEntry);
 
-				if (match(var, dbVcfEntry)) {
-					if (useId) findDbId(var, idSet, dbVcfEntry);
-					if (useInfoFields) findDbInfo(var, infos, dbVcfEntry);
-					if (existsInfoField != null) exists |= findDbExists(var, dbVcfEntry);
+					if (match(var, dbVcfEntry)) {
+						if (useId) findDbId(var, idSet, dbVcfEntry);
+						if (useInfoFields) findDbInfo(var, infos, dbVcfEntry);
+						if (existsInfoField != null) exists |= findDbExists(var, dbVcfEntry);
+					}
 				}
 			}
 		}
@@ -188,14 +190,8 @@ public abstract class AnnotateVcfDb {
 	 * Find an ID for this variant and add them to idSet
 	 */
 	protected void findDbId(Variant var, Set<String> idSet, VcfEntry dbVcfEntry) {
-		//		if (!useId || dbCurrentId.isEmpty()) return;
-		//		String key = key(var);
-		//		String idField = dbCurrentId.get(key);
-		//
-		//		if (idField != null) {
-		//			for (String id : idField.split(";"))
-		//				idSet.add(id);
-		//		}
+		for (String id : dbVcfEntry.getId().split(";"))
+			idSet.add(id);
 	}
 
 	/**
@@ -295,7 +291,25 @@ public abstract class AnnotateVcfDb {
 	 * Does database entry 'dbVcfEntry' match 'variant'?
 	 */
 	boolean match(Variant inputVariant, VcfEntry dbVcfEntry) {
-		// TODO: We should match according to 'useRefAlt' and other database annotation options
+		// Try to match each variant
+		for (Variant var : dbVcfEntry.variants()) {
+			// Do coordinates match?
+			if (inputVariant.getChromosomeName().equals(var.getChromosomeName()) //
+					&& inputVariant.getStart() == var.getStart() //
+					&& inputVariant.getEnd() == var.getEnd() //
+			) {
+				if (useRefAlt) {
+					// COmpare Ref & Alt
+					if (inputVariant.getReference().equalsIgnoreCase(var.getReference()) //
+							&& inputVariant.getAlt().equalsIgnoreCase(var.getAlt()) //
+					) return true;
+				} else {
+					// No need to use Ref & Alt, it's a match
+					return true;
+				}
+			}
+		}
+
 		return false;
 	}
 
@@ -317,7 +331,7 @@ public abstract class AnnotateVcfDb {
 	}
 
 	Collection<VcfEntry> query(Variant variant) {
-		return null;
+		return dbVcf.query(variant);
 	}
 
 	public void setAnnotateEmpty(boolean annotateEmpty) {
@@ -358,13 +372,11 @@ public abstract class AnnotateVcfDb {
 	}
 
 	public void setUseId(boolean useId) {
-		//		dbVcf.setUseId(useId);
-		throw new RuntimeException("UNIMPLEMENTED!!!");
+		this.useId = useId;
 	}
 
 	public void setUseRefAlt(boolean useRefAlt) {
-		//		dbVcf.setUseRefAlt(useRefAlt);
-		throw new RuntimeException("UNIMPLEMENTED!!!");
+		this.useRefAlt = useRefAlt;
 	}
 
 	public void setVerbose(boolean verbose) {

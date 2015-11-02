@@ -27,7 +27,6 @@ public class VcfIndexTree {
 	public static final int MAX_DIFF_COLLAPSE = 2; // We only allow 2 characters difference to collapse entries ('\r\n')
 	public static final int MIN_LINES = 4; // This number cannot be less then 3 (see comment in code below)
 	public static final int MIN_FILE_SIZE = 4 * 1024; // Minimum file size to index
-
 	public static final int INITIAL_CAPACITY = 1024; // Initial capacity for arrays
 
 	boolean debug;
@@ -223,7 +222,6 @@ public class VcfIndexTree {
 						intersectStart[i][j] = in.readLong();
 						intersectEnd[i][j] = in.readLong();
 					}
-
 				}
 			}
 		} catch (EOFException e) {
@@ -258,7 +256,7 @@ public class VcfIndexTree {
 	 * Query index to find all VCF entries intersecting 'marker', starting from node 'idx'
 	 * Store VCF entries in 'results'
 	 */
-	public void query(Marker marker, int idx, Markers results) {
+	protected void query(Marker marker, int idx, Markers results) {
 		if (debug) Gpr.debug("query( " + marker.toStr() + ", " + idx + " )\t" + toString(idx));
 
 		// Negative index? Nothing to do
@@ -282,7 +280,7 @@ public class VcfIndexTree {
 	/**
 	 * Query VCF entries intersecting 'marker' at node 'idx'
 	 */
-	public void queryIntersects(Marker marker, int idx, Markers results) {
+	protected void queryIntersects(Marker marker, int idx, Markers results) {
 		if (debug) Gpr.debug("intersects( " + marker.toStr() + ", " + idx + " )");
 
 		if (intersectStart[idx] == null) return;

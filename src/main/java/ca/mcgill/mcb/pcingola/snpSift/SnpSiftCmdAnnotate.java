@@ -6,6 +6,7 @@ import java.util.List;
 
 import ca.mcgill.mcb.pcingola.fileIterator.VcfFileIterator;
 import ca.mcgill.mcb.pcingola.snpSift.annotate.AnnotateVcfDb;
+import ca.mcgill.mcb.pcingola.snpSift.annotate.AnnotateVcfDbMem;
 import ca.mcgill.mcb.pcingola.snpSift.annotate.AnnotateVcfDbSorted;
 import ca.mcgill.mcb.pcingola.snpSift.annotate.AnnotateVcfDbTabix;
 import ca.mcgill.mcb.pcingola.util.Gpr;
@@ -26,7 +27,7 @@ import ca.mcgill.mcb.pcingola.vcf.VcfInfoType;
 public class SnpSiftCmdAnnotate extends SnpSift {
 
 	enum AnnotationMethod {
-		SORTED_VCF, TABIX,
+		SORTED_VCF, MEMORY, TABIX,
 	}
 
 	public static final int SHOW = 10000;
@@ -78,7 +79,7 @@ public class SnpSiftCmdAnnotate extends SnpSift {
 
 				// Check if file is sorted
 				if (vcfEntry.getChromosomeName().equals(chr) && vcfEntry.getStart() < pos) {
-					fatalError("Your VCF file should be sorted!" //
+					System.err.println("WARNING: VCF input file is not sorted!" //
 							+ "\n\tPrevious entry " + chr + ":" + pos//
 							+ "\n\tCurrent entry  " + vcfEntry.getChromosomeName() + ":" + (vcfEntry.getStart() + 1)//
 					);
@@ -162,9 +163,9 @@ public class SnpSiftCmdAnnotate extends SnpSift {
 		// Create annotateDb object
 		switch (method) {
 
-		//		case MEMORY:
-		//			annotateDb = new AnnotateVcfDbMem(dbFileName);
-		//			break;
+		case MEMORY:
+			annotateDb = new AnnotateVcfDbMem(dbFileName);
+			break;
 
 		case SORTED_VCF:
 			annotateDb = new AnnotateVcfDbSorted(dbFileName);
@@ -324,7 +325,8 @@ public class SnpSiftCmdAnnotate extends SnpSift {
 				} else if (arg.equalsIgnoreCase("-clinVar")) {
 					dbType = "clinvar";
 					method = AnnotationMethod.TABIX;
-				} else if (arg.equalsIgnoreCase("-sorted")) method = AnnotationMethod.SORTED_VCF;
+				} else if (arg.equalsIgnoreCase("-mem")) method = AnnotationMethod.MEMORY; // This should only be used for test cases (not in productions environments)
+				else if (arg.equalsIgnoreCase("-sorted")) method = AnnotationMethod.SORTED_VCF;
 				else if (arg.equalsIgnoreCase("-tabix")) method = AnnotationMethod.TABIX;
 				else usage("Unknown command line option '" + arg + "'");
 			} else {
@@ -335,7 +337,9 @@ public class SnpSiftCmdAnnotate extends SnpSift {
 		}
 
 		// Sanity check
-		if (dbType == null && dbFileName == null) usage("Missing database option or file: [-dbSnp | -clinVar | database.vcf ]");
+		if (dbType == null && dbFileName == null)
+
+		usage("Missing database option or file: [-dbSnp | -clinVar | database.vcf ]");
 	}
 
 	/**

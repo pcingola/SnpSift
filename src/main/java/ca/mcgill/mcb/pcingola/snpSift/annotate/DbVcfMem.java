@@ -1,9 +1,14 @@
 package ca.mcgill.mcb.pcingola.snpSift.annotate;
 
+import java.util.LinkedList;
 import java.util.List;
 
+import ca.mcgill.mcb.pcingola.fileIterator.VcfFileIterator;
 import ca.mcgill.mcb.pcingola.interval.Marker;
-import ca.mcgill.mcb.pcingola.vcf.FileIndexChrPos;
+import ca.mcgill.mcb.pcingola.interval.Markers;
+import ca.mcgill.mcb.pcingola.interval.tree.IntervalTreeArray;
+import ca.mcgill.mcb.pcingola.interval.tree.Itree;
+import ca.mcgill.mcb.pcingola.util.Timer;
 import ca.mcgill.mcb.pcingola.vcf.VcfEntry;
 
 /**
@@ -21,7 +26,7 @@ public class DbVcfMem extends DbVcf {
 	public static final int SHOW = 10000;
 	public static final int SHOW_LINES = 100 * SHOW;
 
-	protected FileIndexChrPos indexDb;
+	Itree itree;
 
 	public DbVcfMem(String dbFileName) {
 		super(dbFileName);
@@ -31,38 +36,33 @@ public class DbVcfMem extends DbVcf {
 	 * Load the whole VCF 'database' file into memory
 	 */
 	void loadDatabase() {
-		//		checkRepeat = false; // We don't need this checking
-		//
-		//		if (verbose) Timer.showStdErr("Loading database: '" + dbFileName + "'");
-		//		VcfFileIterator dbFile = new VcfFileIterator(dbFileName);
-		//		dbFile.setDebug(debug);
-		//
-		//		int count = 1;
-		//		for (VcfEntry vcfDbEntry : dbFile) {
-		//			add(vcfDbEntry);
-		//
-		//			count++;
-		//			if (verbose) {
-		//				if (count % SHOW_LINES == 0) System.err.print("\n" + count + "\t.");
-		//				else if (count % SHOW == 0) System.err.print('.');
-		//			}
-		//		}
-		//
-		//		// Show time
-		//		if (verbose) {
-		//			System.err.println("");
-		//			Timer.showStdErr("Done. Database size: " + size());
-		//		}
-	}
+		if (verbose) Timer.showStdErr("Loading database: '" + dbFileName + "'");
+		VcfFileIterator dbFile = new VcfFileIterator(dbFileName);
+		dbFile.setDebug(debug);
 
-	//	/**
-	//	 * Read all DB entries up to 'vcf'
-	//	 */
-	//	@Override
-	//	public List<VcfEntry> find(VcfEntry ve) {
-	//		// Nothing to do, the whole database is already loaded into memory
-	//		return null;
-	//	}
+		int count = 0;
+		itree = new IntervalTreeArray();
+		for (VcfEntry vcfDbEntry : dbFile) {
+			itree.add(vcfDbEntry);
+
+			count++;
+			if (verbose) {
+				if (count % SHOW_LINES == 0) System.err.print("\n" + count + "\t.");
+				else if (count % SHOW == 0) System.err.print('.');
+			}
+		}
+
+		// Show time
+		if (verbose) {
+			System.err.println("");
+			Timer.showStdErr("Done. Added: " + itree.size());
+		}
+
+		// Build interval tree
+		if (verbose) Timer.showStdErr("Building interval tree");
+		itree.build();
+		if (verbose) Timer.showStdErr("Done");
+	}
 
 	/**
 	 * Open database annotation file
@@ -74,8 +74,13 @@ public class DbVcfMem extends DbVcf {
 
 	@Override
 	public List<VcfEntry> query(Marker marker) {
-		// Nothing to do, the whole database is already loaded into memory
-		return null;
+		Markers results = itree.query(marker);
+
+		List<VcfEntry> list = new LinkedList<VcfEntry>();
+		for (Marker m : results)
+			list.add((VcfEntry) m);
+
+		return list;
 	}
 
 }

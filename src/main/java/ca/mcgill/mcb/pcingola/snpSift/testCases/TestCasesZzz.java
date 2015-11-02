@@ -17,13 +17,14 @@ import junit.framework.TestCase;
 public class TestCasesZzz extends TestCase {
 
 	public static boolean debug = false;
-	public static boolean verbose = false || debug;
 
+	public static boolean verbose = false || debug;
 	protected String[] defaultExtraArgs;
 
 	public TestCasesZzz() {
-		String[] memExtraArgs = { "-sorted" };
+		String[] memExtraArgs = { "-mem" };
 		defaultExtraArgs = memExtraArgs;
+
 	}
 
 	/**
@@ -113,27 +114,11 @@ public class TestCasesZzz extends TestCase {
 		return argsList.toArray(new String[0]);
 	}
 
-	/**
-	 * Test multiple CAF annotations
-	 */
-	public void test_42() {
+	public void test_101() {
 		Gpr.debug("Test");
-		String dbFileName = "./test/db_test_42.vcf";
-		String fileName = "./test/annotate_42.vcf";
-		String extraArgs[] = {};
-		List<VcfEntry> results = annotate(dbFileName, fileName, extraArgs);
-
-		// Get first entry
-		VcfEntry ve = results.get(0);
-		if (verbose) System.out.println(ve);
-		String infoStr = ve.getInfoStr();
-
-		// Check that CAF annotation is added
-		Assert.assertTrue("Missing CAF annotation", infoStr.indexOf("CAF=") >= 0);
-
-		// Expected output
-		String expectedCaf = "0.4908,0.5066,0.002596,.,0.4908,0.5066,0.002596,0.4908,0.5066";
-		Assert.assertEquals("Incorrect CAF annotation", expectedCaf, ve.getInfo("CAF"));
+		String dbFileName = "./test/db_test_1.vcf";
+		String fileName = "./test/annotate_1.vcf";
+		annotateTest(dbFileName, fileName);
 	}
 
 }
