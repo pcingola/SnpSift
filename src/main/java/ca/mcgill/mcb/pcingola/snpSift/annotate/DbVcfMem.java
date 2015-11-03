@@ -13,9 +13,9 @@ import ca.mcgill.mcb.pcingola.vcf.VcfEntry;
 
 /**
  * Loads a VCF file into memory.
- * 
- * 
- * WARNING: This is used only for testing and debugging purposes and should 
+ *
+ *
+ * WARNING: This is used only for testing and debugging purposes and should
  * never be used in production!
  *
  *
@@ -50,6 +50,9 @@ public class DbVcfMem extends DbVcf {
 				if (count % SHOW_LINES == 0) System.err.print("\n" + count + "\t.");
 				else if (count % SHOW == 0) System.err.print('.');
 			}
+
+			// Update header
+			if (vcfHeader == null) vcfHeader = dbFile.getVcfHeader();
 		}
 
 		// Show time

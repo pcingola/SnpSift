@@ -58,10 +58,11 @@ public abstract class AnnotateVcfDb {
 		boolean exists = false;
 
 		// Annotate all info fields
-		List<Variant> vars = vcfEntry.variants();
-		for (Variant var : vars) {
+		for (Variant var : vcfEntry.variants()) {
 			// Query database
 			Collection<VcfEntry> results = query(var);
+
+			boolean matched = false;
 
 			if (results != null) {
 				// Check if each results matches the variant, add ID, INFO and exists information accordingly
@@ -69,12 +70,16 @@ public abstract class AnnotateVcfDb {
 					if (useInfoFields) discoverInfoFields(dbVcfEntry);
 
 					if (match(var, dbVcfEntry)) {
+						matched = true;
 						if (useId) findDbId(var, idSet, dbVcfEntry);
 						if (useInfoFields) findDbInfo(var, infos, dbVcfEntry);
 						if (existsInfoField != null) exists |= findDbExists(var, dbVcfEntry);
 					}
 				}
 			}
+
+			// No match, we still need to annotate INFO fields
+			if (useInfoFields && !matched) findDbInfo(var, infos, null);
 		}
 
 		// Annotate input vcfEntry
@@ -198,65 +203,48 @@ public abstract class AnnotateVcfDb {
 	 * Find INFO fields for this VCF entry
 	 */
 	protected void findDbInfo(Variant var, Map<String, String> info, VcfEntry dbVcfEntry) {
-		//		if (!useInfoField || dbCurrentInfo.isEmpty()) return;
-		//
-		//		//---
-		//		// Prepare INFO field to add
-		//		//---
-		//		String key = key(var);
-		//		Map<String, String> info = dbCurrentInfo.get(key);
-		//
-		//		for (String infoFieldName : infoFields) {
-		//			// Do we need to take care of the 'REF' allele?
-		//			if (isVcfInfoPerAlleleRef(infoFieldName)) {
-		//				// Did we already did it in the previous 'variant' iteration?
-		//				if (!info.containsKey(infoFieldName)) {
-		//					String keyRef = keyRef(var);
-		//					Map<String, String> infoRef = dbCurrentInfo.get(keyRef);
-		//					String val = (infoRef == null ? "." : infoRef.get(infoFieldName));
-		//					info.put(infoFieldName, val);
-		//				}
-		//			}
-		//
-		//			// Get info field annotations
-		//
-		//			// Not a 'per allele' INFO field? Then we are done (no need to annotate other alleles)
-		//			if (isVcfInfoPerAllele(infoFieldName)) {
-		//				// Add each INFO for each 'ALT'
-		//				String newValue = (info == null ? null : info.get(infoFieldName));
-		//				String oldValue = info.get(infoFieldName);
-		//				String val = (oldValue == null ? "" : oldValue + ",") + (newValue == null ? "." : newValue);
-		//				info.put(infoFieldName, val);
-		//			} else {
-		//				// Add only one INFO
-		//				if (!info.containsKey(infoFieldName)) {
-		//					String newValue = (info == null ? null : info.get(infoFieldName));
-		//					if (newValue != null) info.put(infoFieldName, newValue);
-		//				} else {
-		//					// This INFO field has only one entry (not 'per allele') and
-		//					// we have already added the value in the previous 'variant'
-		//					// iteration, so we can skip it this time
-		//				}
-		//			}
-		//		}
+		Gpr.debug("VAR:" + var);
+		for (String infoFieldName : infoFields) {
+			// Do we need to take care of the 'REF' allele?
+			if (isVcfInfoPerAlleleRef(infoFieldName)) {
+				// Did we already did it in the previous iteration?
+				if (!info.containsKey(infoFieldName)) {
+					String val = dbVcfEntry != null ? dbVcfEntry.getInfo(infoFieldName, dbVcfEntry.getRef()) : null;
+					if (val != null) info.put(infoFieldName, val);
+				}
+			}
+
+			// Get info field annotations
+
+			// Not a 'per allele' INFO field? Then we are done (no need to annotate other alleles)
+			if (isVcfInfoPerAllele(infoFieldName)) {
+				// Append INFO values for each 'ALT'
+				String newValue = dbVcfEntry != null ? dbVcfEntry.getInfo(infoFieldName, var.getAlt()) : null;
+				String oldValue = info.get(infoFieldName);
+				String val = (oldValue == null ? "" : oldValue + ",") + (newValue == null ? "." : newValue);
+				Gpr.debug("\tvalue: " + val);
+				info.put(infoFieldName, val);
+			} else {
+				// Add only one INFO
+				if (!info.containsKey(infoFieldName)) {
+					String newValue = dbVcfEntry != null ? dbVcfEntry.getInfo(infoFieldName) : null; // Get full INFO field
+					if (newValue != null) info.put(infoFieldName, newValue);
+				} else {
+					// This INFO field has only one entry (not 'per allele') and
+					// we have already added the value in the previous 'variant'
+					// iteration, so we can skip it this time
+				}
+			}
+		}
 	}
 
 	/**
 	 * Is 'fieldName' a per-allele annotation
 	 */
 	boolean isVcfInfoPerAllele(String fieldName) {
-		return isVcfInfoPerAllele(fieldName, null);
-	}
-
-	/**
-	 * Is 'fieldName' a per-allele annotation
-	 */
-	boolean isVcfInfoPerAllele(String fieldName, VcfEntry vcfDb) {
 		// Look up information and cache it
 		if (vcfInfoPerAllele.get(fieldName) == null) {
-			if (vcfDb == null) return false; // No VCF information? I cannot look it up...nothing to do
-
-			VcfHeaderInfo vcfInfo = vcfDb.getVcfInfo(fieldName);
+			VcfHeaderInfo vcfInfo = dbVcf.getVcfHeader().getVcfInfo(fieldName);
 			boolean isPerAllele = vcfInfo != null && (vcfInfo.isNumberOnePerAllele() || vcfInfo.isNumberAllAlleles());
 			vcfInfoPerAllele.put(fieldName, isPerAllele);
 		}
@@ -268,18 +256,9 @@ public abstract class AnnotateVcfDb {
 	 * Is this a "per-allele + REF" INFO field?
 	 */
 	boolean isVcfInfoPerAlleleRef(String fieldName) {
-		return isVcfInfoPerAlleleRef(fieldName, null);
-	}
-
-	/**
-	 * Is this a "per-allele + REF" INFO field?
-	 */
-	boolean isVcfInfoPerAlleleRef(String fieldName, VcfEntry vcfDb) {
 		// Look up information and cache it
 		if (vcfInfoPerAlleleRef.get(fieldName) == null) {
-			if (vcfDb == null) return false; // No VCF information? I cannot look it up...nothing to do
-
-			VcfHeaderInfo vcfInfo = vcfDb.getVcfInfo(fieldName);
+			VcfHeaderInfo vcfInfo = dbVcf.getVcfHeader().getVcfInfo(fieldName);
 			boolean isPerAlleleRef = (vcfInfo != null && vcfInfo.isNumberAllAlleles());
 			vcfInfoPerAlleleRef.put(fieldName, isPerAlleleRef);
 		}
@@ -293,12 +272,17 @@ public abstract class AnnotateVcfDb {
 	boolean match(Variant inputVariant, VcfEntry dbVcfEntry) {
 		// Try to match each variant
 		for (Variant var : dbVcfEntry.variants()) {
+			Gpr.debug(inputVariant + "\t\t" + dbVcfEntry);
 			// Do coordinates match?
 			if (inputVariant.getChromosomeName().equals(var.getChromosomeName()) //
 					&& inputVariant.getStart() == var.getStart() //
 					&& inputVariant.getEnd() == var.getEnd() //
 			) {
 				if (useRefAlt) {
+					Gpr.debug("MATCH: " //
+							+ "\n\tREF :\t" + inputVariant.getReference() + " = " + var.getReference() //
+							+ "\n\tALT: \t" + inputVariant.getAlt() + " = " + var.getAlt() //
+					);
 					// COmpare Ref & Alt
 					if (inputVariant.getReference().equalsIgnoreCase(var.getReference()) //
 							&& inputVariant.getAlt().equalsIgnoreCase(var.getAlt()) //
@@ -315,6 +299,13 @@ public abstract class AnnotateVcfDb {
 
 	public void open() {
 		dbVcf.open();
+
+		// Discover some INFO fields
+		if (useAllInfoFields) {
+			infoFields = new HashSet<String>();
+			for (VcfHeaderInfo vcfInfo : dbVcf.getVcfHeader().getVcfInfo())
+				infoFields.add(vcfInfo.getId());
+		}
 	}
 
 	/**

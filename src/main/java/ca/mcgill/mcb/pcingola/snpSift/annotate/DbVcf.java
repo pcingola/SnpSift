@@ -5,6 +5,7 @@ import java.util.Collection;
 import ca.mcgill.mcb.pcingola.fileIterator.VcfFileIterator;
 import ca.mcgill.mcb.pcingola.interval.Marker;
 import ca.mcgill.mcb.pcingola.vcf.VcfEntry;
+import ca.mcgill.mcb.pcingola.vcf.VcfHeader;
 
 /**
  * Use a VCF file as a database for annotations
@@ -30,6 +31,7 @@ public abstract class DbVcf implements DbMarker<VcfEntry> {
 	protected boolean verbose = false;
 	protected String dbFileName;
 	protected VcfFileIterator vcfDbFile; // VCF File
+	protected VcfHeader vcfHeader;
 	//	protected VcfEntry latestVcfDb = null; // Latest entry added
 	//	protected VcfEntry nextVcfDb = null; // Next DB entry to add
 	//	protected Map<String, Map<String, String>> dbCurrentInfo = new HashMap<String, Map<String, String>>();
@@ -49,6 +51,10 @@ public abstract class DbVcf implements DbMarker<VcfEntry> {
 			vcfDbFile.close(); // We have to close vcfDbFile because it was opened using a BufferedReader (this sets autoClose to 'false')
 			vcfDbFile = null;
 		}
+	}
+
+	public VcfHeader getVcfHeader() {
+		return vcfHeader;
 	}
 
 	@Override
