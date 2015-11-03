@@ -9,7 +9,6 @@ import ca.mcgill.mcb.pcingola.snpSift.SnpSiftCmdAnnotate;
 import ca.mcgill.mcb.pcingola.util.Gpr;
 import ca.mcgill.mcb.pcingola.vcf.VcfEntry;
 import junit.framework.TestCase;
-import scala.actors.threadpool.Arrays;
 
 /**
  * Try test cases in this class before adding them to long test cases
@@ -23,7 +22,7 @@ public class TestCasesZzz extends TestCase {
 	protected String[] defaultExtraArgs;
 
 	public TestCasesZzz() {
-		String[] memExtraArgs = { "-mem" };
+		String[] memExtraArgs = { "-sorted" };
 		defaultExtraArgs = memExtraArgs;
 
 	}
@@ -116,31 +115,11 @@ public class TestCasesZzz extends TestCase {
 		return argsList.toArray(new String[0]);
 	}
 
-	/**
-	 * Test multiple CAF annotations
-	 */
-	public void test_42() {
+	public void test_01() {
 		Gpr.debug("Test");
-		String dbFileName = "./test/db_test_42.vcf";
-		String fileName = "./test/annotate_42.vcf";
-		String extraArgs[] = {};
-		List<VcfEntry> results = annotate(dbFileName, fileName, extraArgs);
-
-		// Get first entry
-		VcfEntry ve = results.get(0);
-		if (verbose) System.out.println(ve);
-		String infoStr = ve.getInfoStr();
-
-		// Check that CAF annotation is added
-		Assert.assertTrue("Missing CAF annotation", infoStr.indexOf("CAF=") >= 0);
-
-		// Compare against expected output
-		// Note: We don't care about annotation order in this case
-		String expectedCaf[] = "0.4908,0.5066,0.002596,.,0.4908,0.5066,0.002596,0.4908,0.5066".split(",");
-		String caf[] = ve.getInfo("CAF").split(",");
-		Arrays.sort(expectedCaf);
-		Arrays.sort(caf);
-		Assert.assertArrayEquals("Number of CAF annotations differ", expectedCaf, caf);
+		String dbFileName = "./test/db_test_1.vcf";
+		String fileName = "./test/annotate_1.vcf";
+		annotateTest(dbFileName, fileName);
 	}
 
 }
