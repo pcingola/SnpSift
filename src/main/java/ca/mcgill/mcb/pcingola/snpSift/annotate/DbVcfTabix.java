@@ -3,7 +3,7 @@ package ca.mcgill.mcb.pcingola.snpSift.annotate;
 import java.util.List;
 
 import ca.mcgill.mcb.pcingola.interval.Marker;
-import ca.mcgill.mcb.pcingola.vcf.VcfEntry;
+import ca.mcgill.mcb.pcingola.vcf.VariantVcfEntry;
 
 /**
  * Use a bgzip-compressed, tabix indexed VCF file as a database for annotations
@@ -25,7 +25,7 @@ public class DbVcfTabix extends DbVcf {
 	}
 
 	@Override
-	public List<VcfEntry> query(Marker marker) {
+	public List<VariantVcfEntry> query(Marker marker) {
 		throw new RuntimeException("Unimplemented");
 	}
 

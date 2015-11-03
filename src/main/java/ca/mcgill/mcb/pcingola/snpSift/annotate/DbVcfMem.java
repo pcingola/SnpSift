@@ -9,6 +9,7 @@ import ca.mcgill.mcb.pcingola.interval.Markers;
 import ca.mcgill.mcb.pcingola.interval.tree.IntervalTreeArray;
 import ca.mcgill.mcb.pcingola.interval.tree.Itree;
 import ca.mcgill.mcb.pcingola.util.Timer;
+import ca.mcgill.mcb.pcingola.vcf.VariantVcfEntry;
 import ca.mcgill.mcb.pcingola.vcf.VcfEntry;
 
 /**
@@ -26,7 +27,7 @@ public class DbVcfMem extends DbVcf {
 	public static final int SHOW = 10000;
 	public static final int SHOW_LINES = 100 * SHOW;
 
-	Itree itree;
+	Itree itree; // Use an interval tree as 'database'.
 
 	public DbVcfMem(String dbFileName) {
 		super(dbFileName);
@@ -43,16 +44,20 @@ public class DbVcfMem extends DbVcf {
 		int count = 0;
 		itree = new IntervalTreeArray();
 		for (VcfEntry vcfDbEntry : dbFile) {
-			itree.add(vcfDbEntry);
-
-			count++;
-			if (verbose) {
-				if (count % SHOW_LINES == 0) System.err.print("\n" + count + "\t.");
-				else if (count % SHOW == 0) System.err.print('.');
-			}
-
 			// Update header
 			if (vcfHeader == null) vcfHeader = dbFile.getVcfHeader();
+
+			// Make sure all variants from the VcfEntry are added to
+			// the interval tree (e.g. multi-allelic VcfEntries)
+			for (VariantVcfEntry varVe : VariantVcfEntry.factory(vcfDbEntry)) {
+				itree.add(varVe);
+
+				count++;
+				if (verbose) {
+					if (count % SHOW_LINES == 0) System.err.print("\n" + count + "\t.");
+					else if (count % SHOW == 0) System.err.print('.');
+				}
+			}
 		}
 
 		// Show time
@@ -76,12 +81,12 @@ public class DbVcfMem extends DbVcf {
 	}
 
 	@Override
-	public List<VcfEntry> query(Marker marker) {
+	public List<VariantVcfEntry> query(Marker marker) {
 		Markers results = itree.query(marker);
 
-		List<VcfEntry> list = new LinkedList<VcfEntry>();
+		List<VariantVcfEntry> list = new LinkedList<VariantVcfEntry>();
 		for (Marker m : results)
-			list.add((VcfEntry) m);
+			list.add((VariantVcfEntry) m);
 
 		return list;
 	}

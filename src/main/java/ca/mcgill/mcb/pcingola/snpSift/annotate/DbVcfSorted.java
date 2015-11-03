@@ -4,7 +4,7 @@ import java.util.List;
 
 import ca.mcgill.mcb.pcingola.interval.Marker;
 import ca.mcgill.mcb.pcingola.util.Gpr;
-import ca.mcgill.mcb.pcingola.vcf.VcfEntry;
+import ca.mcgill.mcb.pcingola.vcf.VariantVcfEntry;
 
 /**
  * Use an uncompressed sorted VCF file as a database for annotations
@@ -61,7 +61,7 @@ public class DbVcfSorted extends DbVcf {
 	}
 
 	@Override
-	public List<VcfEntry> query(Marker marker) {
+	public List<VariantVcfEntry> query(Marker marker) {
 		throw new RuntimeException("Unimplemented");
 	}
 

@@ -3,11 +3,13 @@ package ca.mcgill.mcb.pcingola.snpSift.testCases;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.junit.Assert;
+
 import ca.mcgill.mcb.pcingola.snpSift.SnpSiftCmdAnnotate;
 import ca.mcgill.mcb.pcingola.util.Gpr;
 import ca.mcgill.mcb.pcingola.vcf.VcfEntry;
-import junit.framework.Assert;
 import junit.framework.TestCase;
+import scala.actors.threadpool.Arrays;
 
 /**
  * Try test cases in this class before adding them to long test cases
@@ -16,7 +18,7 @@ import junit.framework.TestCase;
  */
 public class TestCasesZzz extends TestCase {
 
-	public static boolean debug = false;
+	public static boolean debug = true;
 	public static boolean verbose = true || debug;
 	protected String[] defaultExtraArgs;
 
@@ -87,6 +89,7 @@ public class TestCasesZzz extends TestCase {
 			String expectedIds = vcf.getInfo("EXP_IDS");
 			if (expectedIds != null) {
 				expectedIds = expectedIds.replace('|', ';');
+				expectedIds = expectedIds.replace(',', ';');
 				if (expectedIds.equals(".")) expectedIds = "";
 
 				// Compare
@@ -113,16 +116,31 @@ public class TestCasesZzz extends TestCase {
 		return argsList.toArray(new String[0]);
 	}
 
-	public void test_18() {
+	/**
+	 * Test multiple CAF annotations
+	 */
+	public void test_42() {
 		Gpr.debug("Test");
-		String dbFileName = "./test/test_annotate_18_db.vcf";
-		String fileName = "./test/test_annotate_18.vcf";
+		String dbFileName = "./test/db_test_42.vcf";
+		String fileName = "./test/annotate_42.vcf";
+		String extraArgs[] = {};
+		List<VcfEntry> results = annotate(dbFileName, fileName, extraArgs);
 
-		List<VcfEntry> results = annotate(dbFileName, fileName, null);
+		// Get first entry
 		VcfEntry ve = results.get(0);
-		String ukac = ve.getInfo("UK10KWES_AC");
-		if (verbose) System.out.println("Annotated value: " + ukac);
-		Assert.assertEquals(".,49,44,.,.,.,.,.,.,.,.", ukac);
+		if (verbose) System.out.println(ve);
+		String infoStr = ve.getInfoStr();
+
+		// Check that CAF annotation is added
+		Assert.assertTrue("Missing CAF annotation", infoStr.indexOf("CAF=") >= 0);
+
+		// Compare against expected output
+		// Note: We don't care about annotation order in this case
+		String expectedCaf[] = "0.4908,0.5066,0.002596,.,0.4908,0.5066,0.002596,0.4908,0.5066".split(",");
+		String caf[] = ve.getInfo("CAF").split(",");
+		Arrays.sort(expectedCaf);
+		Arrays.sort(caf);
+		Assert.assertArrayEquals("Number of CAF annotations differ", expectedCaf, caf);
 	}
 
 }

@@ -4,7 +4,7 @@ import java.util.Collection;
 
 import ca.mcgill.mcb.pcingola.fileIterator.VcfFileIterator;
 import ca.mcgill.mcb.pcingola.interval.Marker;
-import ca.mcgill.mcb.pcingola.vcf.VcfEntry;
+import ca.mcgill.mcb.pcingola.vcf.VariantVcfEntry;
 import ca.mcgill.mcb.pcingola.vcf.VcfHeader;
 
 /**
@@ -14,6 +14,11 @@ import ca.mcgill.mcb.pcingola.vcf.VcfHeader;
  * When a query is made, the index is used to quickly get the file positions
  * where matching VCF entries are. File is read, entries are parsed and returned
  * as query() result.
+ *
+ * WARNING: VcfEntry may hold multiple variants (e.g. multi-allelic VcfEntries). So 
+ *          we index by variant and return all matching vcfEntries for 
+ *          a given variant. This is why we use 'VariantVcfEntry' as opposed 
+ *          to 'VcfEntry'
  *
  * TODO: If another query matches the same region of the file, then we could use
  * some sort of caching to speed up the process.
@@ -25,7 +30,7 @@ import ca.mcgill.mcb.pcingola.vcf.VcfHeader;
  *
  * @author pcingola
  */
-public abstract class DbVcf implements DbMarker<VcfEntry> {
+public abstract class DbVcf implements DbMarker<VariantVcfEntry> {
 
 	protected boolean debug = false;
 	protected boolean verbose = false;
@@ -64,7 +69,7 @@ public abstract class DbVcf implements DbMarker<VcfEntry> {
 	 * Find matching entries in the database
 	 */
 	@Override
-	public abstract Collection<VcfEntry> query(Marker marker);
+	public abstract Collection<VariantVcfEntry> query(Marker marker);
 
 	@Override
 	public void setDebug(boolean debug) {
