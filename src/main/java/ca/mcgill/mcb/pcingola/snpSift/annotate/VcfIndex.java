@@ -376,6 +376,9 @@ public class VcfIndex {
 		for (String chr : chromosomes())
 			sb.append(getVcfIndexChromo(chr) + "\n");
 
+		for (String chr : chromosomes())
+			sb.append(getTree(chr).toStringAll() + "\n");
+
 		return sb.toString();
 	}
 

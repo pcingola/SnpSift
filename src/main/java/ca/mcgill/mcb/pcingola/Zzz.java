@@ -20,17 +20,13 @@ public class Zzz {
 	public static void main(String[] args) {
 		Timer.show("Start");
 
-		// String fileName = Gpr.HOME + "/snpEff/cosmic_1.vcf";
-		// String fileName = Gpr.HOME + "/snpEff/cosmic.vcf";
-		String fileName = Gpr.HOME + "/snpEff/db/GRCh37/dbSnp/dbSnp.vcf";
-		// String fileName = Gpr.HOME + "/snpEff/cosmic_tabix.vcf.gz";
+		String fileName = Gpr.HOME + "/snpEff/z.vcf";
+		//String fileName = Gpr.HOME + "/snpEff/db/GRCh37/dbSnp/dbSnp.vcf";
 
 		Zzz zzz = new Zzz();
 
 		zzz.testIndex(fileName);
 		//		zzz.testTabix(fileName);
-		//		zzz.testVcfRead(fileName, false);
-		//		zzz.testVcfRead(fileName, true);
 	}
 
 	void testIndex(String fileName) {
@@ -74,8 +70,10 @@ public class Zzz {
 			if (countOk % 100000 == 0) Timer.showStdErr("\t" + countOk + "\t" + ve.toStr());
 		}
 
-		vcfIndex.close();
 		Timer.show("Done: " + countOk + " tests OK");
+
+		Gpr.debug("Index (and caching):\n" + vcfIndex.toStringAll());
+		vcfIndex.close();
 	}
 
 	void testTabix(String fileName) {

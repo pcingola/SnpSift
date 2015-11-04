@@ -14,10 +14,12 @@ import ca.mcgill.mcb.pcingola.interval.Genome;
 import ca.mcgill.mcb.pcingola.interval.Interval;
 import ca.mcgill.mcb.pcingola.interval.Marker;
 import ca.mcgill.mcb.pcingola.interval.Markers;
+import ca.mcgill.mcb.pcingola.interval.Variant;
 import ca.mcgill.mcb.pcingola.interval.tree.Itree;
 import ca.mcgill.mcb.pcingola.util.Gpr;
 import ca.mcgill.mcb.pcingola.util.Timer;
 import ca.mcgill.mcb.pcingola.vcf.VcfEntry;
+import gnu.trove.list.array.TIntArrayList;
 
 /**
  * Interval tree structure for an 'VcfIndexChromo'
@@ -27,6 +29,8 @@ import ca.mcgill.mcb.pcingola.vcf.VcfEntry;
  * @author pcingola
  */
 public class VcfIndexTree implements Itree {
+
+	private static final VcfEntry EMPTY_VCFENTRY_ARRAY[] = new VcfEntry[0];
 
 	public static final int MAX_DIFF_COLLAPSE = 2; // We only allow 2 characters difference to collapse entries ('\r\n')
 	public static final int MIN_LINES = 4; // This number cannot be less then 3 (see comment in code below)
@@ -43,14 +47,16 @@ public class VcfIndexTree implements Itree {
 	int left[]; // Left subtree (index within this IntervalTreeFileChromo)
 	int right[]; // Right subtree (index within this IntervalTreeFileChromo)
 	int mid[]; // Middle position (genomic coordinate)
-	long intersectStart[][]; // Intervals (file position start) intersecting 'mid-point'
-	long intersectEnd[][]; // Intervals (file position end) intersecting 'mid-point'
+	long intersectFilePosStart[][]; // Intervals (file position start) intersecting 'mid-point'
+	long intersectFilePosEnd[][]; // Intervals (file position end) intersecting 'mid-point'
 	int size; // Arrays size (index of first unused element in the arrays)
+	List<VcfEntry> intersect[]; // Cache entries for non-leaf nodes
 
 	public VcfIndexTree() {
 		this(null, null);
 	}
 
+	@SuppressWarnings("unchecked")
 	public VcfIndexTree(VcfFileIterator vcf, VcfIndexDataChromo vcfIndexChromo) {
 		this.vcfIndexChromo = vcfIndexChromo;
 		chromosome = (vcfIndexChromo != null ? vcfIndexChromo.getChromosome() : null);
@@ -58,8 +64,9 @@ public class VcfIndexTree implements Itree {
 		left = new int[INITIAL_CAPACITY];
 		right = new int[INITIAL_CAPACITY];
 		mid = new int[INITIAL_CAPACITY];
-		intersectStart = new long[INITIAL_CAPACITY][];
-		intersectEnd = new long[INITIAL_CAPACITY][];
+		intersectFilePosStart = new long[INITIAL_CAPACITY][];
+		intersectFilePosEnd = new long[INITIAL_CAPACITY][];
+		intersect = new List[INITIAL_CAPACITY];
 		size = 0;
 	}
 
@@ -75,79 +82,53 @@ public class VcfIndexTree implements Itree {
 
 	@Override
 	public void build() {
-		// Add all indexes
-		int[] idxs = new int[vcfIndexChromo.size()];
-		for (int i = 0; i < idxs.length; i++)
-			idxs[i] = i;
+		TIntArrayList idxs = new TIntArrayList(vcfIndexChromo.size());
+		for (int i = 0; i < vcfIndexChromo.size(); i++)
+			idxs.add(i);
 
 		build(idxs);
 		inSync = true;
 	}
 
 	/**
-	 * Index intervals from 'start' to 'end' (index to intervalFileChromo)
+	 * Index entries in VcfIndexDataChromo
 	 * @return Index of added item (-1 if no item was added)
 	 */
-	int build(int startIdx, int endIdx) {
-		if (debug) Gpr.debug("index( " + startIdx + ", " + endIdx + " )");
-		if (startIdx >= endIdx) return -1;
+	int build(TIntArrayList idxs) {
+		if (idxs.isEmpty()) return -1;
 
 		// Find middle position
-		int midIdx = (startIdx + endIdx) / 2;
-		int midPos = vcfIndexChromo.getStart(midIdx);
-
-		//---
-		// Add entry
-		//---
-		int idx = nextEntry();
-
-		// Too few intervals? Just add them to the intersect array
-		// and finish recursion here.
-		long size = vcfIndexChromo.fileSize(startIdx, endIdx);
-		int count = endIdx - startIdx + 1;
-		if ((count <= MIN_LINES) || (size <= MIN_FILE_SIZE)) {
-			// When we have 3 or less entries, we cannot partition them in 2 groups
-			// of 2 entries for a balanced recursion. Plus is not efficient to
-			// keep adding nodes if there is so little to divide (a simple linear
-			// search can do as well)
-			long interStart[] = new long[count];
-			long interEnd[] = new long[count];
-			for (int i = startIdx, j = 0; i <= endIdx; i++, j++) {
-				interStart[j] = vcfIndexChromo.getFilePosStart(i);
-				interEnd[j] = vcfIndexChromo.getFilePosEnd(i);
-			}
-
-			set(idx, -1, -1, midPos, interStart, interEnd);
-			return idx;
-		}
-
-		// If we mode the 'mid' point by one base, the probability of intersecting
+		// Note:If we mode the 'mid' point by one base, the probability of intersecting
 		// an interval is significantly reduced (most entries are SNPs). This reduces
 		// the index size, the number of 'file.seek()' operations and speeds up the index.
-		int newMidIdx;
-		for (newMidIdx = midIdx; (midPos == vcfIndexChromo.getStart(newMidIdx)) && (newMidIdx > startIdx); newMidIdx--);
-		midPos--;
-		midIdx = newMidIdx;
+		int center = mean(idxs);
+		int firstStart = vcfIndexChromo.getStart(idxs.get(0));
+		if (center > firstStart) center--;
 
-		// Calculate intersecting entries
-		int inter[] = intersectIndexes(startIdx, endIdx, midPos);
-		long interStart[] = new long[inter.length];
-		long interEnd[] = new long[inter.length];
-		for (int i = 0; i < inter.length; i++) {
-			int j = inter[i];
-			interStart[i] = vcfIndexChromo.getFilePosStart(j);
-			interEnd[i] = vcfIndexChromo.getFilePosEnd(j);
+		// Index of entry to be added
+		int idx = nextEntry();
+
+		// TODO: Too few intervals? Just add them to the intersect
+
+		// Split indexes into left, right and intersecting
+		TIntArrayList left = new TIntArrayList();
+		TIntArrayList right = new TIntArrayList();
+		TIntArrayList intersecting = new TIntArrayList();
+
+		for (int i = 0; i < idxs.size(); i++) {
+			int j = idxs.get(i);
+
+			if (vcfIndexChromo.getEnd(j) < center) left.add(j);
+			else if (vcfIndexChromo.getStart(j) > center) right.add(j);
+			else intersecting.add(j);
 		}
 
-		//---
 		// Recurse
-		//---
-		int leftIdx = build(startIdx, midIdx);
-		int rightIdx = build(midIdx + 1, endIdx);
-		set(idx, leftIdx, rightIdx, midPos, interStart, interEnd);
+		int leftIdx = build(left);
+		int rightIdx = build(right);
 
-		if ((left[idx] == idx) || (right[idx] == idx)) // Sanity check
-			throw new RuntimeException("Infinite recursion (index: " + idx + "):\n\t" + toString(idx));
+		// Create this entry
+		set(idx, leftIdx, rightIdx, center, intersecting);
 
 		return idx;
 	}
@@ -173,8 +154,9 @@ public class VcfIndexTree implements Itree {
 		left = Arrays.copyOf(left, newCapacity);
 		right = Arrays.copyOf(right, newCapacity);
 		mid = Arrays.copyOf(mid, newCapacity);
-		intersectStart = Arrays.copyOf(intersectStart, newCapacity);
-		intersectEnd = Arrays.copyOf(intersectEnd, newCapacity);
+		intersectFilePosStart = Arrays.copyOf(intersectFilePosStart, newCapacity);
+		intersectFilePosEnd = Arrays.copyOf(intersectFilePosEnd, newCapacity);
+		intersect = Arrays.copyOf(intersect, newCapacity);
 	}
 
 	/**
@@ -231,6 +213,7 @@ public class VcfIndexTree implements Itree {
 	 * Read data from input stream
 	 * @return true on success
 	 */
+	@SuppressWarnings("unchecked")
 	public boolean load(DataInputStream in) {
 		try {
 			chromosome = in.readUTF();
@@ -245,8 +228,9 @@ public class VcfIndexTree implements Itree {
 			right = new int[size];
 			mid = new int[size];
 
-			intersectStart = new long[size][];
-			intersectEnd = new long[size][];
+			intersectFilePosStart = new long[size][];
+			intersectFilePosEnd = new long[size][];
+			intersect = new List[size];
 
 			// Read array data
 			for (int i = 0; i < size; i++) {
@@ -257,14 +241,16 @@ public class VcfIndexTree implements Itree {
 				int len = in.readInt();
 				if (len > 0) {
 					// Allocate
-					intersectStart[i] = new long[len];
-					intersectEnd[i] = new long[len];
+					intersectFilePosStart[i] = new long[len];
+					intersectFilePosEnd[i] = new long[len];
 
 					// Read values
 					for (int j = 0; j < len; j++) {
-						intersectStart[i][j] = in.readLong();
-						intersectEnd[i][j] = in.readLong();
+						intersectFilePosStart[i][j] = in.readLong();
+						intersectFilePosEnd[i][j] = in.readLong();
 					}
+				} else {
+					intersectFilePosStart[i] = intersectFilePosEnd[i] = null;
 				}
 			}
 		} catch (EOFException e) {
@@ -279,6 +265,24 @@ public class VcfIndexTree implements Itree {
 	@Override
 	public void load(String fileName, Genome genome) {
 		throw new RuntimeException("Unimplemented! This IntervalTree is loaded as part of a whole index");
+	}
+
+	/**
+	 * Mean coordinates from entries indexed by 'idxs'
+	 */
+	int mean(TIntArrayList idxs) {
+		if (idxs.isEmpty()) return 0;
+
+		TIntArrayList coordinates = new TIntArrayList(2 * idxs.size());
+		for (int i = 0; i < idxs.size(); i++) {
+			int idx = idxs.get(i);
+
+			coordinates.add(vcfIndexChromo.getStart(idx));
+			coordinates.add(vcfIndexChromo.getEnd(idx));
+		}
+		coordinates.sort();
+
+		return coordinates.get(coordinates.size() / 2);
 	}
 
 	/**
@@ -306,8 +310,6 @@ public class VcfIndexTree implements Itree {
 	 * Store VCF entries in 'results'
 	 */
 	protected void query(Interval marker, int idx, Markers results) {
-		if (debug) Gpr.debug("query( " + marker + ", " + idx + " )\t" + toString(idx));
-
 		// Negative index? Nothing to do
 		if (idx < 0) return;
 
@@ -316,7 +318,6 @@ public class VcfIndexTree implements Itree {
 
 		// Recurse left or right
 		int midPos = mid[idx];
-		if (debug) Gpr.debug("midPos:" + midPos);
 		if ((marker.getEnd() < midPos) && (left[idx] >= 0)) {
 			query(marker, left[idx], results);
 		}
@@ -330,26 +331,47 @@ public class VcfIndexTree implements Itree {
 	 * Query VCF entries intersecting 'marker' at node 'idx'
 	 */
 	protected void queryIntersects(Interval marker, int idx, Markers results) {
+		if (intersectFilePosStart[idx] == null) return;
 		if (debug) Gpr.debug("intersects( " + marker + ", " + idx + " )");
 
-		if (intersectStart[idx] == null) return;
-
-		int len = intersectStart[idx].length;
+		int len = intersectFilePosStart[idx].length;
 		for (int i = 0; i < len; i++) {
-			if (debug) Gpr.debug("\tintersect[" + idx + "][" + i + "]:\t[" + intersectStart[idx][i] + " , " + intersectEnd[idx][i] + " ]");
-			long startPos = intersectStart[idx][i];
-			long endPos = intersectEnd[idx][i];
+			if (debug) Gpr.debug("\tintersect[" + idx + "][" + i + "]:\t[" + intersectFilePosStart[idx][i] + " , " + intersectFilePosEnd[idx][i] + " ]");
+			long startPos = intersectFilePosStart[idx][i];
+			long endPos = intersectFilePosEnd[idx][i];
 
 			try {
-				vcf.seek(startPos);
+				List<VcfEntry> vcfEntries = intersect[idx];
 
-				for (VcfEntry ve : vcf) {
-					if (ve.intersects(marker)) {
-						results.add(ve);
-						if (debug) Gpr.debug("\tVcfEntry [" + vcf.getFilePointer() + "]: " + ve);
+				// No cache? Read from file
+				if (vcfEntries == null) {
+					vcf.seek(startPos);
+
+					// Read entries from file
+					vcfEntries = new ArrayList<VcfEntry>();
+					for (VcfEntry ve : vcf) {
+						vcfEntries.add(ve);
+						if (vcf.getFilePointer() >= endPos) break; // Finished reading?
 					}
+				}
 
-					if (vcf.getFilePointer() > endPos) break;
+				// Find matching entries
+				for (VcfEntry ve : vcfEntries) {
+					// If any variant within the vcfEntry intersects the query
+					// marker, we store this VCF entry as a result
+					for (Variant var : ve.variants()) {
+						if (var.intersects(marker)) {
+							if (debug) Gpr.debug("\tVcfEntry [" + vcf.getFilePointer() + "]: " + ve);
+							results.add(ve);
+							break; // Store this entry only once
+						}
+					}
+				}
+
+				// Should we cache?
+				if (intersect[idx] == null && !isLeaf(idx)) {
+					intersect[idx] = vcfEntries;
+					Gpr.debug("Caching: " + vcfEntries.size());
 				}
 			} catch (IOException e) {
 				throw new RuntimeException(e);
@@ -372,11 +394,12 @@ public class VcfIndexTree implements Itree {
 				out.writeInt(mid[i]);
 
 				// Intersect data
-				int len = intersectStart[i].length;
+
+				int len = intersectFilePosStart[i] != null ? intersectFilePosStart[i].length : 0;
 				out.writeInt(len);
 				for (int j = 0; j < len; j++) {
-					out.writeLong(intersectStart[i][j]);
-					out.writeLong(intersectEnd[i][j]);
+					out.writeLong(intersectFilePosStart[i][j]);
+					out.writeLong(intersectFilePosEnd[i][j]);
 				}
 			}
 		} catch (IOException e) {
@@ -391,38 +414,26 @@ public class VcfIndexTree implements Itree {
 	 * due to array resizing (array appears to be filled with
 	 * zeros after being set)
 	 */
-	void set(int idx, int leftIdx, int rightIdx, int midPos, long intStart[], long intEnd[]) {
-		// Try to collapse intervals
-		int len = intStart.length;
-		if (len > 1) {
-			int j = 0;
-			for (int i = 1; i < len; i++) {
-				long diff = intStart[i] - intEnd[j];
-
-				// Collapse these intervals (make 'end' position cover interval 'i' as well)
-				if (diff <= MAX_DIFF_COLLAPSE) intEnd[j] = intEnd[i];
-				else j++;
-			}
-
-			// Any collapsed? Pack them in a new array
-			if (j < (len - 1)) {
-				long iStart[] = new long[j + 1];
-				long iEnd[] = new long[j + 1];
-				for (int i = 0; i <= j; i++) {
-					iStart[i] = intStart[i];
-					iEnd[i] = intEnd[i];
-				}
-				intStart = iStart;
-				intEnd = iEnd;
-			}
-		}
+	void set(int idx, int leftIdx, int rightIdx, int midPos, TIntArrayList intersecting) {
 
 		// Assign values
 		left[idx] = leftIdx;
 		right[idx] = rightIdx;
 		mid[idx] = midPos;
-		intersectStart[idx] = intStart;
-		intersectEnd[idx] = intEnd;
+
+		// Assign intersecting values
+		// TODO:  Try to collapse intersecting intervals
+		if (intersecting.isEmpty()) {
+			intersectFilePosStart[idx] = intersectFilePosEnd[idx] = null;
+		} else {
+			intersectFilePosStart[idx] = new long[intersecting.size()];
+			intersectFilePosEnd[idx] = new long[intersecting.size()];
+			for (int i = 0; i < intersecting.size(); i++) {
+				int j = intersecting.get(i);
+				intersectFilePosStart[idx][i] = vcfIndexChromo.getFilePosStart(j);
+				intersectFilePosEnd[idx][i] = vcfIndexChromo.getFilePosEnd(j);
+			}
+		}
 	}
 
 	public void setDebug(boolean debug) {
@@ -465,12 +476,13 @@ public class VcfIndexTree implements Itree {
 				+ "\tmidPos: " + mid[idx] //
 		);
 
-		if (intersectStart[idx] != null) {
-			sb.append("\tintersect: (" + intersectStart[idx].length + "): ");
-			for (int i = 0; i < intersectStart[idx].length; i++)
-				sb.append("\t[" + intersectStart[idx][i] + ", " + intersectEnd[idx][i] + "] size " + (intersectEnd[idx][i] - intersectStart[idx][i] + 1));
+		if (intersectFilePosStart[idx] != null) {
+			sb.append("\tintersect: (" + intersectFilePosStart[idx].length + "): ");
+			for (int i = 0; i < intersectFilePosStart[idx].length; i++)
+				sb.append("\t[" + intersectFilePosStart[idx][i] + ", " + intersectFilePosEnd[idx][i] + "] size " + (intersectFilePosEnd[idx][i] - intersectFilePosStart[idx][i] + 1));
 		}
 
+		if (intersect[idx] != null) sb.append("\tCache: " + intersect[idx].size());
 		return sb.toString();
 	}
 
