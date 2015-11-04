@@ -13,7 +13,7 @@ import ca.mcgill.mcb.pcingola.vcf.VcfEntry;
 import junit.framework.TestCase;
 
 /**
- * Try test cases in this class before adding them to long test cases
+ * Test cases related to indexing files
  *
  * @author pcingola
  */

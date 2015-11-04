@@ -6,11 +6,15 @@ import java.io.EOFException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
 
 import ca.mcgill.mcb.pcingola.fileIterator.VcfFileIterator;
+import ca.mcgill.mcb.pcingola.interval.Genome;
+import ca.mcgill.mcb.pcingola.interval.Interval;
 import ca.mcgill.mcb.pcingola.interval.Marker;
 import ca.mcgill.mcb.pcingola.interval.Markers;
+import ca.mcgill.mcb.pcingola.interval.tree.Itree;
 import ca.mcgill.mcb.pcingola.util.Gpr;
 import ca.mcgill.mcb.pcingola.util.Timer;
 import ca.mcgill.mcb.pcingola.vcf.VcfEntry;
@@ -22,7 +26,7 @@ import ca.mcgill.mcb.pcingola.vcf.VcfEntry;
  *
  * @author pcingola
  */
-public class VcfIndexTree {
+public class VcfIndexTree implements Itree {
 
 	public static final int MAX_DIFF_COLLAPSE = 2; // We only allow 2 characters difference to collapse entries ('\r\n')
 	public static final int MIN_LINES = 4; // This number cannot be less then 3 (see comment in code below)
@@ -31,6 +35,7 @@ public class VcfIndexTree {
 
 	boolean debug;
 	boolean verbose;
+	boolean inSync;
 
 	String chromosome;
 	VcfFileIterator vcf;
@@ -58,35 +63,32 @@ public class VcfIndexTree {
 		size = 0;
 	}
 
-	int capacity() {
-		if (left == null) return 0;
-		return left.length;
+	@Override
+	public void add(Marker interval) {
+		throw new RuntimeException("Unimplemented! This IntervalTree is backed by a VcfIndexDataChromo class instead of a set of markers");
 	}
 
-	public String getChromosome() {
-		return chromosome;
+	@Override
+	public void add(Markers markers) {
+		throw new RuntimeException("Unimplemented! This IntervalTree is backed by a VcfIndexDataChromo class instead of a set of markers");
 	}
 
-	void grow() {
-		int oldCapacity = capacity();
-		int newCapacity = oldCapacity + (oldCapacity >> 1);
+	@Override
+	public void build() {
+		// Add all indexes
+		int[] idxs = new int[vcfIndexChromo.size()];
+		for (int i = 0; i < idxs.length; i++)
+			idxs[i] = i;
 
-		left = Arrays.copyOf(left, newCapacity);
-		right = Arrays.copyOf(right, newCapacity);
-		mid = Arrays.copyOf(mid, newCapacity);
-		intersectStart = Arrays.copyOf(intersectStart, newCapacity);
-		intersectEnd = Arrays.copyOf(intersectEnd, newCapacity);
-	}
-
-	public void index() {
-		index(0, vcfIndexChromo.size() - 1);
+		build(idxs);
+		inSync = true;
 	}
 
 	/**
 	 * Index intervals from 'start' to 'end' (index to intervalFileChromo)
 	 * @return Index of added item (-1 if no item was added)
 	 */
-	int index(int startIdx, int endIdx) {
+	int build(int startIdx, int endIdx) {
 		if (debug) Gpr.debug("index( " + startIdx + ", " + endIdx + " )");
 		if (startIdx >= endIdx) return -1;
 
@@ -140,14 +142,39 @@ public class VcfIndexTree {
 		//---
 		// Recurse
 		//---
-		int leftIdx = index(startIdx, midIdx);
-		int rightIdx = index(midIdx + 1, endIdx);
+		int leftIdx = build(startIdx, midIdx);
+		int rightIdx = build(midIdx + 1, endIdx);
 		set(idx, leftIdx, rightIdx, midPos, interStart, interEnd);
 
 		if ((left[idx] == idx) || (right[idx] == idx)) // Sanity check
 			throw new RuntimeException("Infinite recursion (index: " + idx + "):\n\t" + toString(idx));
 
 		return idx;
+	}
+
+	int capacity() {
+		if (left == null) return 0;
+		return left.length;
+	}
+
+	public String getChromosome() {
+		return chromosome;
+	}
+
+	@Override
+	public Markers getIntervals() {
+		throw new RuntimeException("Unimplemented! This IntervalTree is backed by a VcfIndexDataChromo class instead of a set of markers");
+	}
+
+	void grow() {
+		int oldCapacity = capacity();
+		int newCapacity = oldCapacity + (oldCapacity >> 1);
+
+		left = Arrays.copyOf(left, newCapacity);
+		right = Arrays.copyOf(right, newCapacity);
+		mid = Arrays.copyOf(mid, newCapacity);
+		intersectStart = Arrays.copyOf(intersectStart, newCapacity);
+		intersectEnd = Arrays.copyOf(intersectEnd, newCapacity);
 	}
 
 	/**
@@ -177,11 +204,27 @@ public class VcfIndexTree {
 		return ints;
 	}
 
+	@Override
+	public boolean isEmpty() {
+		return vcfIndexChromo.size() <= 0;
+	}
+
+	@Override
+	public boolean isInSync() {
+		return inSync;
+	}
+
 	/**
 	 * Is node 'idx' a leaf node?
 	 */
 	boolean isLeaf(int idx) {
 		return (left[idx] == -1) && (right[idx] == -1);
+	}
+
+	@Override
+	public Iterator<Marker> iterator() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 	/**
@@ -233,6 +276,11 @@ public class VcfIndexTree {
 		return true;
 	}
 
+	@Override
+	public void load(String fileName, Genome genome) {
+		throw new RuntimeException("Unimplemented! This IntervalTree is loaded as part of a whole index");
+	}
+
 	/**
 	 * Get next index for entry and make sure there
 	 * is enough capacity to store it
@@ -246,7 +294,8 @@ public class VcfIndexTree {
 	 * Query index to find all VCF entries intersecting 'marker'
 	 * Store VCF entries in 'results'
 	 */
-	public Markers query(Marker marker) {
+	@Override
+	public Markers query(Interval marker) {
 		Markers results = new Markers();
 		query(marker, 0, results);
 		return results;
@@ -256,8 +305,8 @@ public class VcfIndexTree {
 	 * Query index to find all VCF entries intersecting 'marker', starting from node 'idx'
 	 * Store VCF entries in 'results'
 	 */
-	protected void query(Marker marker, int idx, Markers results) {
-		if (debug) Gpr.debug("query( " + marker.toStr() + ", " + idx + " )\t" + toString(idx));
+	protected void query(Interval marker, int idx, Markers results) {
+		if (debug) Gpr.debug("query( " + marker + ", " + idx + " )\t" + toString(idx));
 
 		// Negative index? Nothing to do
 		if (idx < 0) return;
@@ -280,8 +329,8 @@ public class VcfIndexTree {
 	/**
 	 * Query VCF entries intersecting 'marker' at node 'idx'
 	 */
-	protected void queryIntersects(Marker marker, int idx, Markers results) {
-		if (debug) Gpr.debug("intersects( " + marker.toStr() + ", " + idx + " )");
+	protected void queryIntersects(Interval marker, int idx, Markers results) {
+		if (debug) Gpr.debug("intersects( " + marker + ", " + idx + " )");
 
 		if (intersectStart[idx] == null) return;
 
@@ -388,8 +437,14 @@ public class VcfIndexTree {
 		this.verbose = verbose;
 	}
 
+	@Override
 	public int size() {
 		return size;
+	}
+
+	@Override
+	public Markers stab(int point) {
+		throw new RuntimeException("Unimplemented! ");
 	}
 
 	@Override

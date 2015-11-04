@@ -10,8 +10,10 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
@@ -21,12 +23,14 @@ import ca.mcgill.mcb.pcingola.interval.Chromosome;
 import ca.mcgill.mcb.pcingola.interval.Genome;
 import ca.mcgill.mcb.pcingola.interval.Marker;
 import ca.mcgill.mcb.pcingola.interval.Markers;
+import ca.mcgill.mcb.pcingola.interval.Variant;
 import ca.mcgill.mcb.pcingola.util.Gpr;
 import ca.mcgill.mcb.pcingola.util.Timer;
 import ca.mcgill.mcb.pcingola.vcf.VcfEntry;
 
 /**
  * An index for a VCF file
+ *
  * @author pcingola
  */
 public class VcfIndex {
@@ -35,7 +39,6 @@ public class VcfIndex {
 	public static int SHOW_EVERY = 1000000;
 
 	public static final String INDEX_EXT = "sidx";
-	public static final int POS_OFFSET = 1; // VCF files are one-based
 
 	boolean verbose;
 	boolean debug;
@@ -54,7 +57,25 @@ public class VcfIndex {
 	 * Add an interval parse from 'line'
 	 */
 	public void add(VcfEntry ve, long filePos) {
-		getOrCreate(ve.getChromosomeName()).add(ve.getStart(), ve.getEnd(), filePos);
+		VcfIndexDataChromo vidc = getOrCreate(ve.getChromosomeName());
+
+		List<Variant> vars = ve.variants();
+
+		if (vars.size() == 1) {
+			// This is the most common case
+			Variant var = vars.get(0);
+			vidc.add(var.getStart(), var.getEnd(), filePos); // Only add if not already added
+			return;
+		}
+
+		// Several variants: Add only add distinct intervals
+		Set<String> added = new HashSet<>();
+		for (Variant var : vars) {
+			String key = var.getStart() + "\t" + var.getEnd();
+			if (added.add(key)) {
+				vidc.add(var.getStart(), var.getEnd(), filePos); // Only add if not already added
+			}
+		}
 	}
 
 	/**
@@ -87,7 +108,7 @@ public class VcfIndex {
 		for (String chr : chromosomes()) {
 			VcfIndexDataChromo vic = getVcfIndexChromo(chr);
 			VcfIndexTree vcfTree = new VcfIndexTree(vcf, vic);
-			vcfTree.index();
+			vcfTree.build();
 			if (verbose) System.err.println("\t" + vcfTree);
 
 			forest.put(chr, vcfTree);
@@ -186,7 +207,7 @@ public class VcfIndex {
 		if (verbose) Timer.showStdErr("Loading intervals from file '" + fileName + "'");
 
 		try {
-			open(); // Open file as random access
+			open(); // Open VCF file
 
 			// Read the whole file
 			boolean title = true;

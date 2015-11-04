@@ -77,8 +77,12 @@ public class VcfIndexDataChromo {
 	}
 
 	public long getFilePosEnd(int idx) {
-		if ((idx + 1) >= size) return filePosEnd;
-		return filePosStart[idx + 1];
+		long start = filePosStart[idx];
+		while (true) {
+			idx++;
+			if (idx >= size) return filePosEnd;
+			if (filePosStart[idx] > start) return filePosStart[idx];
+		}
 	}
 
 	public long getFilePosStart(int idx) {
