@@ -4,6 +4,7 @@ import ca.mcgill.mcb.pcingola.fileIterator.SeekableBufferedReader;
 import ca.mcgill.mcb.pcingola.fileIterator.VcfFileIterator;
 import ca.mcgill.mcb.pcingola.interval.Marker;
 import ca.mcgill.mcb.pcingola.interval.Markers;
+import ca.mcgill.mcb.pcingola.interval.Variant;
 import ca.mcgill.mcb.pcingola.snpSift.annotate.VcfIndex;
 import ca.mcgill.mcb.pcingola.util.Gpr;
 import ca.mcgill.mcb.pcingola.util.Timer;
@@ -15,18 +16,18 @@ public class Zzz {
 
 	public static final int MAX_LINES = 2000000;
 	static boolean debug = false;
-	static boolean verbose = true || debug;
+	static boolean verbose = false || debug;
 
 	public static void main(String[] args) {
 		Timer.show("Start");
 
-		String fileName = Gpr.HOME + "/snpEff/z.vcf";
+		//String fileName = Gpr.HOME + "/snpEff/z.vcf";
+		String fileName = Gpr.HOME + "/snpEff/zz.vcf";
 		//String fileName = Gpr.HOME + "/snpEff/db/GRCh37/dbSnp/dbSnp.vcf";
 
 		Zzz zzz = new Zzz();
 
 		zzz.testIndex(fileName);
-		//		zzz.testTabix(fileName);
 	}
 
 	void testIndex(String fileName) {
@@ -48,31 +49,39 @@ public class Zzz {
 		//---
 		int countOk = 0;
 		for (VcfEntry ve : vcf) {
-			if (debug) Gpr.debug(ve.toStr());
-
 			// Query database
-			if (debug) Gpr.debug("\n\nQuery: " + ve.toStr());
-			Markers results = vcfIndex.query(ve);
+			if (verbose) Gpr.debug("\n\nQuery: " + ve.toStr());
+			for (Variant varQuery : ve.variants()) {
+				Markers results = vcfIndex.query(varQuery);
 
-			// We should find at least one result
-			if (results.size() <= 0) throw new RuntimeException("No results found for entry:\n\t" + ve);
+				// We should find at least one result
+				if (results.size() <= 0) throw new RuntimeException("No results found for entry:\n\t" + ve);
 
-			for (Marker res : results) {
-				VcfEntry veRes = (VcfEntry) res;
+				for (Marker res : results) {
+					VcfEntry veRes = (VcfEntry) res;
 
-				if (debug) Gpr.debug("query: " + ve.toStr() + "\tresult_marker: " + res + "\tresult_vcf: " + veRes.toStr());
+					if (verbose) Gpr.debug("query: " + ve.toStr() + "\tvariant query: " + varQuery + "\tresult_marker: " + res + "\tresult_vcf: " + veRes.toStr());
 
-				// Check that result does intersect query
-				if (!ve.intersects(veRes)) { throw new RuntimeException("Selected interval does not intersect marker form file!\n\tQuery: " + ve + "\n\tResult:" + veRes); }
+					// Check that result does intersect query
+					boolean ok = false;
+					for (Variant varRes : veRes.variants()) {
+						if (varRes.intersects(varQuery)) {
+							ok = true;
+							break;
+						}
+					}
+
+					if (!ok) throw new RuntimeException("Selected interval does not intersect marker form file!\n\tQuery: " + ve + "\n\tResult:" + veRes);
+					countOk++;
+					if (countOk % 100000 == 0) Timer.showStdErr("\t" + countOk + "\t" + ve.toStr());
+				}
+
 			}
-
-			countOk++;
-			if (countOk % 100000 == 0) Timer.showStdErr("\t" + countOk + "\t" + ve.toStr());
 		}
 
 		Timer.show("Done: " + countOk + " tests OK");
 
-		Gpr.debug("Index (and caching):\n" + vcfIndex.toStringAll());
+		if (verbose) Gpr.debug("Index (and caching):\n" + vcfIndex.toStringAll());
 		vcfIndex.close();
 	}
 
