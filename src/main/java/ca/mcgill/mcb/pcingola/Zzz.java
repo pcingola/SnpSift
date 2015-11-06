@@ -16,7 +16,7 @@ public class Zzz {
 
 	public static final int MAX_LINES = 2000000;
 	static boolean debug = false;
-	static boolean verbose = false || debug;
+	static boolean verbose = true || debug;
 
 	public static void main(String[] args) {
 		Timer.show("Start");
@@ -50,7 +50,7 @@ public class Zzz {
 		int countOk = 0;
 		for (VcfEntry ve : vcf) {
 			// Query database
-			if (verbose) Gpr.debug("\n\nQuery: " + ve.toStr());
+			if (debug) Gpr.debug("\n\nQuery: " + ve.toStr());
 			for (Variant varQuery : ve.variants()) {
 				Markers results = vcfIndex.query(varQuery);
 
@@ -60,7 +60,7 @@ public class Zzz {
 				for (Marker res : results) {
 					VcfEntry veRes = (VcfEntry) res;
 
-					if (verbose) Gpr.debug("query: " + ve.toStr() + "\tvariant query: " + varQuery + "\tresult_marker: " + res + "\tresult_vcf: " + veRes.toStr());
+					if (debug) Gpr.debug("query: " + ve.toStr() + "\tvariant query: " + varQuery + "\tresult_marker: " + res + "\tresult_vcf: " + veRes.toStr());
 
 					// Check that result does intersect query
 					boolean ok = false;
@@ -73,7 +73,7 @@ public class Zzz {
 
 					if (!ok) throw new RuntimeException("Selected interval does not intersect marker form file!\n\tQuery: " + ve + "\n\tResult:" + veRes);
 					countOk++;
-					if (countOk % 100000 == 0) Timer.showStdErr("\t" + countOk + "\t" + ve.toStr());
+					if (countOk % 1000000 == 0) Timer.showStdErr("\t" + countOk + "\t" + ve.toStr());
 				}
 
 			}
@@ -81,7 +81,7 @@ public class Zzz {
 
 		Timer.show("Done: " + countOk + " tests OK");
 
-		if (verbose) Gpr.debug("Index (and caching):\n" + vcfIndex.toStringAll());
+		if (debug) Gpr.debug("Index (and caching):\n" + vcfIndex.toStringAll());
 		vcfIndex.close();
 	}
 

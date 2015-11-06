@@ -158,7 +158,6 @@ public class VcfIndex {
 		}
 
 		// Create index
-		if (verbose) Timer.showStdErr("Creating index");
 		loadIntervals();
 		createIntervalForest();
 		save(indexFile);
@@ -204,7 +203,7 @@ public class VcfIndex {
 	 * Parse input VCF file and load intervals
 	 */
 	void loadIntervals() {
-		if (verbose) Timer.showStdErr("Loading intervals from file '" + fileName + "'");
+		if (verbose) Timer.showStdErr("Create index: Reading variants from file '" + fileName + "'");
 
 		try {
 			open(); // Open VCF file
