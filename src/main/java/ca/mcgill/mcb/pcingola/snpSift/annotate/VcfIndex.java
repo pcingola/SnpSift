@@ -83,7 +83,8 @@ public class VcfIndex {
 	 */
 	List<String> chromosomes() {
 		ArrayList<String> chrs = new ArrayList<>();
-		chrs.addAll(vcfIndexByChromo.keySet());
+		if (vcfIndexByChromo != null) chrs.addAll(vcfIndexByChromo.keySet());
+		else chrs.addAll(forest.keySet());
 		Collections.sort(chrs);
 		return chrs;
 	}
@@ -146,13 +147,26 @@ public class VcfIndex {
 	}
 
 	/**
+	 * Is the index file valid?
+	 * (i.e. exists and has been created after the input file)
+	 */
+	boolean hasValidIndex(String fileName, String indexFile) {
+		if (Gpr.exists(indexFile)) {
+			File fileIdx = new File(indexFile);
+			File file = new File(fileName);
+			return fileIdx.lastModified() > file.lastModified();
+		}
+		return false;
+	}
+
+	/**
 	 * Load or create index
 	 */
 	public void index() {
 		// Load a pre-existing index file?
 		String indexFile = fileName + "." + INDEX_EXT;
 		if (verbose) Timer.showStdErr("Checking index file '" + indexFile + "'");
-		if (Gpr.exists(indexFile)) {
+		if (hasValidIndex(fileName, indexFile)) {
 			loadIndex(indexFile);
 			return;
 		}
@@ -160,6 +174,7 @@ public class VcfIndex {
 		// Create index
 		loadIntervals();
 		createIntervalForest();
+		vcfIndexByChromo = null; // Clear data objects, won't be used any more
 		save(indexFile);
 	}
 
