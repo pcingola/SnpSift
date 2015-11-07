@@ -114,28 +114,15 @@ public class TestCasesZzz extends TestCase {
 		return argsList.toArray(new String[0]);
 	}
 
-	//	public void test_18() {
-	//		Gpr.debug("Test");
-	//		String dbFileName = "./test/test_annotate_18_db.vcf";
-	//		String fileName = "./test/z.vcf";
-	//
-	//		List<VcfEntry> results = annotate(dbFileName, fileName, null);
-	//		VcfEntry ve = results.get(0);
-	//		String ukac = ve.getInfo("UK10KWES_AC");
-	//		if (verbose) System.out.println("Annotated value: '" + ukac + "'");
-	//		Assert.assertEquals("49", ukac);
-	//	}
-
-	public void test_18_ori() {
+	/**
+	 * Issue when database has REF several variants which have to
+	 * be converted into minimal representation
+	 */
+	public void test_31_annotate_minimal_representation_db() {
 		Gpr.debug("Test");
-		String dbFileName = "./test/test_annotate_18_db.vcf";
-		String fileName = "./test/test_annotate_18.vcf";
-
-		List<VcfEntry> results = annotate(dbFileName, fileName, null);
-		VcfEntry ve = results.get(0);
-		String ukac = ve.getInfo("UK10KWES_AC");
-		if (verbose) System.out.println("Annotated value: " + ukac);
-		Assert.assertEquals(".,49,44,.,.,.,.,.,.,.,.", ukac);
+		String dbFileName = "./test/db_test_31.vcf";
+		String fileName = "./test/annotate_31.vcf";
+		annotateTest(dbFileName, fileName);
 	}
 
 }
