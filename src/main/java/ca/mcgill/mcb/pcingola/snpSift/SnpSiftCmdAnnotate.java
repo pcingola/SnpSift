@@ -147,7 +147,7 @@ public class SnpSiftCmdAnnotate extends SnpSift {
 		this.vcfFile = vcfFile;
 
 		// Find or download database
-		dbFileName = databaseFindOrDownload();
+		dbFileName = databaseFind();
 
 		// Guess annotation method if none is provided
 		method = guessAnnotationMethod();

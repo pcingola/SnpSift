@@ -213,7 +213,7 @@ public class SnpSiftCmdGwasCatalog extends SnpSift {
 		if (config == null) loadConfig();
 
 		// Find or download database
-		dbFileName = databaseFindOrDownload();
+		dbFileName = databaseFind();
 
 		if (verbose) Timer.showStdErr("Annotating\n" //
 				+ "\tInput file    : '" + (vcfInputFile != null ? vcfInputFile : "STDIN") + "'\n" //
