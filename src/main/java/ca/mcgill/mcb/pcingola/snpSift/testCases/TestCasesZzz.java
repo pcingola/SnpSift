@@ -22,9 +22,8 @@ public class TestCasesZzz extends TestCase {
 	protected String[] defaultExtraArgs;
 
 	public TestCasesZzz() {
-		String[] memExtraArgs = { "-sorted" };
+		String[] memExtraArgs = { "-tabix" };
 		defaultExtraArgs = memExtraArgs;
-
 	}
 
 	/**
@@ -126,18 +125,5 @@ public class TestCasesZzz extends TestCase {
 		if (verbose) System.out.println("Annotated value: " + ukac);
 		Assert.assertEquals(".,49,44,.,.,.,.,.,.,.,.", ukac);
 	}
-
-	//	/**
-	//	 * Annotate info fields
-	//	 */
-	//	public void test_20() {
-	//		Gpr.debug("Test");
-	//		String dbFileName = "./test/db_test_20.vcf";
-	//		String fileName = "./test/annotate_20.vcf";
-	//		List<VcfEntry> results = annotate(dbFileName, fileName, null);
-	//
-	//		// Check
-	//		Assert.assertEquals("44,49", results.get(0).getInfo("ANNOTATE_ONCE"));
-	//	}
 
 }
