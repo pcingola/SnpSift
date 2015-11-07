@@ -18,7 +18,7 @@ import junit.framework.TestCase;
 public class TestCasesZzz extends TestCase {
 
 	public static boolean debug = true;
-	public static boolean verbose = true || debug;
+	public static boolean verbose = false || debug;
 	protected String[] defaultExtraArgs;
 
 	public TestCasesZzz() {
@@ -115,11 +115,29 @@ public class TestCasesZzz extends TestCase {
 		return argsList.toArray(new String[0]);
 	}
 
-	public void test_01() {
+	public void test_18() {
 		Gpr.debug("Test");
-		String dbFileName = "./test/db_test_1.vcf";
-		String fileName = "./test/annotate_1.vcf";
-		annotateTest(dbFileName, fileName);
+		String dbFileName = "./test/test_annotate_18_db.vcf";
+		String fileName = "./test/test_annotate_18.vcf";
+
+		List<VcfEntry> results = annotate(dbFileName, fileName, null);
+		VcfEntry ve = results.get(0);
+		String ukac = ve.getInfo("UK10KWES_AC");
+		if (verbose) System.out.println("Annotated value: " + ukac);
+		Assert.assertEquals(".,49,44,.,.,.,.,.,.,.,.", ukac);
 	}
+
+	//	/**
+	//	 * Annotate info fields
+	//	 */
+	//	public void test_20() {
+	//		Gpr.debug("Test");
+	//		String dbFileName = "./test/db_test_20.vcf";
+	//		String fileName = "./test/annotate_20.vcf";
+	//		List<VcfEntry> results = annotate(dbFileName, fileName, null);
+	//
+	//		// Check
+	//		Assert.assertEquals("44,49", results.get(0).getInfo("ANNOTATE_ONCE"));
+	//	}
 
 }

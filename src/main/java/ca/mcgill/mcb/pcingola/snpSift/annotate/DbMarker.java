@@ -14,7 +14,7 @@ import ca.mcgill.mcb.pcingola.interval.Marker;
  *
  * @author pcingola
  */
-public interface DbMarker<T extends Marker> {
+public interface DbMarker<Q extends Marker, R extends Marker> {
 
 	/**
 	 * Close database, free resources
@@ -29,7 +29,7 @@ public interface DbMarker<T extends Marker> {
 	/**
 	 * Find matching entries in the database
 	 */
-	public abstract Collection<T> query(Marker marker);
+	public abstract Collection<R> query(Q queryMarker);
 
 	public void setDebug(boolean debug);
 

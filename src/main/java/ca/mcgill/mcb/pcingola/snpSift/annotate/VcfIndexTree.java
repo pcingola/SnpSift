@@ -465,7 +465,7 @@ public class VcfIndexTree implements Itree {
 			// marker, we store this VCF entry as a result
 			for (Variant var : ve.variants()) {
 				if (var.intersects(queryMarker)) {
-					if (debug) Gpr.debug("\tAdding matchin result: " + ve);
+					if (debug) Gpr.debug("\tAdding matching result: " + ve);
 					results.add(ve);
 					break; // Store this entry only once
 				}

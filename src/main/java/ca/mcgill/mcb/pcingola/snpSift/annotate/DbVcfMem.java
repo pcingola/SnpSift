@@ -6,6 +6,7 @@ import java.util.List;
 import ca.mcgill.mcb.pcingola.fileIterator.VcfFileIterator;
 import ca.mcgill.mcb.pcingola.interval.Marker;
 import ca.mcgill.mcb.pcingola.interval.Markers;
+import ca.mcgill.mcb.pcingola.interval.Variant;
 import ca.mcgill.mcb.pcingola.interval.tree.IntervalTreeArray;
 import ca.mcgill.mcb.pcingola.interval.tree.Itree;
 import ca.mcgill.mcb.pcingola.util.Timer;
@@ -31,6 +32,11 @@ public class DbVcfMem extends DbVcf {
 
 	public DbVcfMem(String dbFileName) {
 		super(dbFileName);
+	}
+
+	@Override
+	public void close() {
+		// Nothing to do
 	}
 
 	/**
@@ -81,8 +87,8 @@ public class DbVcfMem extends DbVcf {
 	}
 
 	@Override
-	public List<VariantVcfEntry> query(Marker marker) {
-		Markers results = itree.query(marker);
+	public List<VariantVcfEntry> query(Variant variant) {
+		Markers results = itree.query(variant);
 
 		List<VariantVcfEntry> list = new LinkedList<VariantVcfEntry>();
 		for (Marker m : results)

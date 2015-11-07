@@ -18,7 +18,7 @@ import gnu.trove.map.hash.TObjectIntHashMap;
  *
  * @author lletourn
  */
-public class DbNsfp implements DbMarker<DbNsfpEntry> {
+public class DbNsfp implements DbMarker<Marker, DbNsfpEntry> {
 
 	@SuppressWarnings("unchecked")
 	static private class StringTokenizer {

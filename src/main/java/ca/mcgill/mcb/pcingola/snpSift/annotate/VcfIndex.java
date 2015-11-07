@@ -50,7 +50,6 @@ public class VcfIndex {
 
 	public VcfIndex(String fileName) {
 		this.fileName = fileName;
-		vcfIndexByChromo = new HashMap<>();
 	}
 
 	/**
@@ -90,11 +89,13 @@ public class VcfIndex {
 	}
 
 	/**
-	 * Close file
+	 * Close file and free memory
 	 */
 	public void close() {
 		if (vcf != null) vcf.close();
 		vcf = null;
+		vcfIndexByChromo = null;
+		forest = null;
 	}
 
 	/**
@@ -142,6 +143,10 @@ public class VcfIndex {
 		return forest.get(Chromosome.simpleName(chromosome));
 	}
 
+	public VcfFileIterator getVcf() {
+		return vcf;
+	}
+
 	public VcfIndexDataChromo getVcfIndexChromo(String chromosome) {
 		return vcfIndexByChromo.get(Chromosome.simpleName(chromosome));
 	}
@@ -168,6 +173,7 @@ public class VcfIndex {
 		if (verbose) Timer.showStdErr("Checking index file '" + indexFile + "'");
 		if (hasValidIndex(fileName, indexFile)) {
 			loadIndex(indexFile);
+			setVcfTree(vcf);
 			return;
 		}
 
@@ -176,6 +182,7 @@ public class VcfIndex {
 		createIntervalForest();
 		vcfIndexByChromo = null; // Clear data objects, won't be used any more
 		save(indexFile);
+		setVcfTree(vcf);
 	}
 
 	/**
@@ -198,6 +205,7 @@ public class VcfIndex {
 			while (vcfTree.load(in)) {
 				forest.put(vcfTree.getChromosome(), vcfTree);
 
+				// Prepare for next iteration
 				vcfTree = new VcfIndexTree();
 				vcfTree.setVerbose(verbose);
 				vcfTree.setDebug(debug);
@@ -222,6 +230,7 @@ public class VcfIndex {
 
 		try {
 			open(); // Open VCF file
+			vcfIndexByChromo = new HashMap<>();
 
 			// Read the whole file
 			boolean title = true;
@@ -265,10 +274,12 @@ public class VcfIndex {
 				pos = vcf.getFilePointer();
 				getVcfIndexChromo(ve.getChromosomeName()).setFilePosEnd(pos);
 			}
+
+			// After index is create, the file is queried. We'll be
+			// jumping to random positions, so we must disable this check
+			vcf.setErrorIfUnsorted(false);
 		} catch (Exception e) {
 			throw new RuntimeException(e);
-		} finally {
-			close();
 		}
 
 		if (verbose) Timer.showStdErr("Loading intervals: Done\n" + this);
@@ -299,7 +310,6 @@ public class VcfIndex {
 		String chr = marker.getChromosomeName();
 		VcfIndexTree tree = forest.get(chr);
 		if (tree == null) return new Markers();
-		tree.setVcf(vcf);
 		return tree.query(marker);
 	}
 
@@ -356,6 +366,14 @@ public class VcfIndex {
 			for (VcfIndexTree it : forest.values())
 				it.setDebug(debug);
 		}
+	}
+
+	/**
+	 * Set VCF in tree structures
+	 */
+	void setVcfTree(VcfFileIterator vcf) {
+		for (String chr : chromosomes())
+			getTree(chr).setVcf(vcf);
 	}
 
 	public void setVerbose(boolean verbose) {

@@ -426,9 +426,16 @@ public abstract class AnnotateVcfDb {
 		// Filter results to match 'variant'
 		List<VariantVcfEntry> list = new LinkedList<>();
 		for (VariantVcfEntry dbEntry : results) {
-			if (match(variant, dbEntry)) list.add(dbEntry);
+			if (match(variant, dbEntry)) {
+				if (debug) Gpr.debug("dbEntry matches query\tvariant: " + variant + "\tdbEntry: " + dbEntry);
+				list.add(dbEntry);
+			} else {
+				if (debug) Gpr.debug("dbEntry does NOT match query\tvariant: " + variant + "\tdbEntry: " + dbEntry);
+			}
+
 		}
 
+		if (debug) Gpr.debug("Match query results: " + list.size());
 		return list;
 	}
 

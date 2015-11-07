@@ -2,8 +2,8 @@ package ca.mcgill.mcb.pcingola.snpSift.annotate;
 
 import java.util.Collection;
 
-import ca.mcgill.mcb.pcingola.fileIterator.VcfFileIterator;
-import ca.mcgill.mcb.pcingola.interval.Marker;
+import ca.mcgill.mcb.pcingola.interval.Variant;
+import ca.mcgill.mcb.pcingola.interval.Variant;
 import ca.mcgill.mcb.pcingola.vcf.VariantVcfEntry;
 import ca.mcgill.mcb.pcingola.vcf.VcfHeader;
 
@@ -30,12 +30,11 @@ import ca.mcgill.mcb.pcingola.vcf.VcfHeader;
  *
  * @author pcingola
  */
-public abstract class DbVcf implements DbMarker<VariantVcfEntry> {
+public abstract class DbVcf implements DbMarker<Variant, VariantVcfEntry> {
 
 	protected boolean debug = false;
 	protected boolean verbose = false;
 	protected String dbFileName;
-	protected VcfFileIterator vcfDbFile; // VCF File
 	protected VcfHeader vcfHeader;
 
 	public DbVcf(String dbFileName) {
@@ -43,12 +42,7 @@ public abstract class DbVcf implements DbMarker<VariantVcfEntry> {
 	}
 
 	@Override
-	public void close() {
-		if (vcfDbFile != null) {
-			vcfDbFile.close(); // We have to close vcfDbFile because it was opened using a BufferedReader (this sets autoClose to 'false')
-			vcfDbFile = null;
-		}
-	}
+	public abstract void close();
 
 	public VcfHeader getVcfHeader() {
 		return vcfHeader;
@@ -61,7 +55,7 @@ public abstract class DbVcf implements DbMarker<VariantVcfEntry> {
 	 * Find matching entries in the database
 	 */
 	@Override
-	public abstract Collection<VariantVcfEntry> query(Marker marker);
+	public abstract Collection<VariantVcfEntry> query(Variant variant);
 
 	@Override
 	public void setDebug(boolean debug) {
