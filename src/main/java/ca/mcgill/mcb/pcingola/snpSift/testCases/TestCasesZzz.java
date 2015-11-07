@@ -2,10 +2,11 @@ package ca.mcgill.mcb.pcingola.snpSift.testCases;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import org.junit.Assert;
 
-import ca.mcgill.mcb.pcingola.snpSift.SnpSiftCmdAnnotate;
+import ca.mcgill.mcb.pcingola.snpSift.SnpSiftCmdDbNsfp;
 import ca.mcgill.mcb.pcingola.util.Gpr;
 import ca.mcgill.mcb.pcingola.vcf.VcfEntry;
 import junit.framework.TestCase;
@@ -19,81 +20,50 @@ public class TestCasesZzz extends TestCase {
 
 	public static boolean debug = true;
 	public static boolean verbose = false || debug;
+
 	protected String[] defaultExtraArgs;
 
 	public TestCasesZzz() {
-		String[] memExtraArgs = { "-tabix" };
-		defaultExtraArgs = memExtraArgs;
 	}
 
-	/**
-	 * Annotate
-	 */
 	public List<VcfEntry> annotate(String dbFileName, String fileName, String[] extraArgs) {
 		if (verbose) System.out.println("Annotate: " + dbFileName + "\t" + fileName);
 
 		// Create command line
 		String args[] = argsList(dbFileName, fileName, extraArgs);
+		SnpSiftCmdDbNsfp cmd = new SnpSiftCmdDbNsfp(args);
+		cmd.setDbFileName(dbFileName);
+		cmd.setVerbose(verbose);
+		cmd.setSuppressOutput(!verbose);
+		cmd.setDebug(debug);
+		cmd.setTabixCheck(false);
 
-		// Iterate over VCF entries
-		SnpSiftCmdAnnotate snpSiftAnnotate = new SnpSiftCmdAnnotate(args);
-		snpSiftAnnotate.setDebug(debug);
-		snpSiftAnnotate.setVerbose(verbose);
-		snpSiftAnnotate.setSuppressOutput(!verbose);
-		List<VcfEntry> results = snpSiftAnnotate.run(true);
+		List<VcfEntry> results = cmd.run(true);
 
-		// Check
 		Assert.assertTrue(results != null);
 		Assert.assertTrue(results.size() > 0);
+
 		return results;
 	}
 
-	/**
-	 * Annotate and return STDOUT as a string
-	 */
-	public String annotateOut(String dbFileName, String fileName, String[] extraArgs) {
+	public Map<String, String> annotateGetFiledTypes(String dbFileName, String fileName, String[] extraArgs) {
 		if (verbose) System.out.println("Annotate: " + dbFileName + "\t" + fileName);
 
 		// Create command line
 		String args[] = argsList(dbFileName, fileName, extraArgs);
+		SnpSiftCmdDbNsfp cmd = new SnpSiftCmdDbNsfp(args);
+		cmd.setDbFileName(dbFileName);
+		cmd.setVerbose(verbose);
+		cmd.setSuppressOutput(!verbose);
+		cmd.setDebug(debug);
+		cmd.setTabixCheck(false);
 
-		// Iterate over VCF entries
-		SnpSiftCmdAnnotate snpSift = new SnpSiftCmdAnnotate(args);
-		snpSift.setDebug(debug);
-		snpSift.setVerbose(verbose);
-		snpSift.setSaveOutput(true);
-		snpSift.run();
+		List<VcfEntry> results = cmd.run(true);
 
-		// Check
-		return snpSift.getOutput();
-	}
+		Assert.assertTrue(results != null);
+		Assert.assertTrue(results.size() > 0);
 
-	public void annotateTest(String dbFileName, String fileName) {
-		annotateTest(dbFileName, fileName, null);
-	}
-
-	/**
-	 * Annotate a file and check that the new annotation matches the expected one
-	 */
-	public void annotateTest(String dbFileName, String fileName, String[] extraArgs) {
-		List<VcfEntry> results = annotate(dbFileName, fileName, extraArgs);
-
-		// Check each entry
-		for (VcfEntry vcf : results) {
-			// We expect the same annotation twice
-			String idstr = vcf.getId();
-
-			// Get expected IDs
-			String expectedIds = vcf.getInfo("EXP_IDS");
-			if (expectedIds != null) {
-				expectedIds = expectedIds.replace('|', ';');
-				expectedIds = expectedIds.replace(',', ';');
-				if (expectedIds.equals(".")) expectedIds = "";
-
-				// Compare
-				Assert.assertEquals(expectedIds, idstr);
-			} else fail("EXP_IDS (expected ids) INFO field missing in " + fileName + ", entry:\n" + vcf);
-		}
+		return cmd.getFieldsType();
 	}
 
 	protected String[] argsList(String dbFileName, String fileName, String[] extraArgs) {
@@ -109,20 +79,29 @@ public class TestCasesZzz extends TestCase {
 				argsList.add(arg);
 		}
 
-		argsList.add(dbFileName);
 		argsList.add(fileName);
 		return argsList.toArray(new String[0]);
 	}
 
-	/**
-	 * Issue when database has REF several variants which have to
-	 * be converted into minimal representation
-	 */
-	public void test_31_annotate_minimal_representation_db() {
+	public void test_01() {
 		Gpr.debug("Test");
-		String dbFileName = "./test/db_test_31.vcf";
-		String fileName = "./test/annotate_31.vcf";
-		annotateTest(dbFileName, fileName);
+		String vcfFileName = "test/test_dbNSFP_chr1_69134.vcf";
+		String dbFileName = "test/dbNSFP2.0b3.chr1_69134.txt";
+		String args[] = { "-collapse", "-f", "GERP++_RS,GERP++_NR,ESP6500_AA_AF,29way_logOdds,Polyphen2_HVAR_pred,SIFT_score,Uniprot_acc,Ensembl_transcriptid" };
+
+		List<VcfEntry> results = annotate(dbFileName, vcfFileName, args);
+		VcfEntry vcfEntry = results.get(0);
+
+		// Check all values
+		Assert.assertEquals("2.31", vcfEntry.getInfo(SnpSiftCmdDbNsfp.VCF_INFO_PREFIX + "GERP++_RS"));
+		Assert.assertEquals("2.31", vcfEntry.getInfo(SnpSiftCmdDbNsfp.VCF_INFO_PREFIX + "GERP++_NR"));
+		Assert.assertEquals("0.004785", vcfEntry.getInfo(SnpSiftCmdDbNsfp.VCF_INFO_PREFIX + "ESP6500_AA_AF"));
+		Assert.assertEquals("8.5094", vcfEntry.getInfo(SnpSiftCmdDbNsfp.VCF_INFO_PREFIX + "29way_logOdds"));
+		Assert.assertEquals("B", vcfEntry.getInfo(SnpSiftCmdDbNsfp.VCF_INFO_PREFIX + "Polyphen2_HVAR_pred"));
+		Assert.assertEquals("0.090000", vcfEntry.getInfo(SnpSiftCmdDbNsfp.VCF_INFO_PREFIX + "SIFT_score"));
+		Assert.assertEquals("Q8NH21", vcfEntry.getInfo(SnpSiftCmdDbNsfp.VCF_INFO_PREFIX + "Uniprot_acc"));
+		Assert.assertEquals("ENST00000534990,ENST00000335137", vcfEntry.getInfo(SnpSiftCmdDbNsfp.VCF_INFO_PREFIX + "Ensembl_transcriptid"));
+
 	}
 
 }
