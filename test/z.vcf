@@ -1,10 +1,3 @@
-##INFO=<ID=clinvar_db,Number=.,Type=String,Description="Selected INFO fields from Clinvar release 2014-09-02. Format: REF|ALT|CLNACC|CLNDBN|CLNSIG|CLNSRC|VC">
-#CHROM	POS	ID	REF	ALT	QUAL	FILTER	INFO	
-7	117199640	.	TATC	T	.	PASS	clinvar_db=TATC|T|RCV000007525.6|Cystic_fibrosis|5|CFTR2|DIV
-7	117199641	.	A	G	.	PASS	clinvar_db=A|G|RCV000046329.2|Cystic_fibrosis,Cystic_fibrosis|1|ClinVar|SNV
-7	117199642	.	T	C	.	PASS	clinvar_db=T|C|RCV000046330.2|Cystic_fibrosis,Cystic_fibrosis|1|ClinVar|SNV
-7	117199642	.	T	G	.	PASS	clinvar_db=T|G|RCV000046330.2|Cystic_fibrosis,Cystic_fibrosis|1|ClinVar|SNV
-7	117199643	.	C	A	.	PASS	clinvar_db=C|A|RCV000046332.2|Cystic_fibrosis|1|ClinVar|SNV
-7	117199644	.	ATCT	A	.	PASS	clinvar_db=ATCT|A|RCV000007523.6|Cystic_fibrosis,Bronchiectasis_with_or_without_elevated_sweat_chloride_1\x2c_modifier_of,not_provided,Hereditary_pancreatitis|5|CFTR2|DIV
-7	117199644	.	A	G	.	PASS	clinvar_db=A|G|RCV000007523.6|Cystic_fibrosis,Bronchiectasis_with_or_without_elevated_sweat_chloride_1\x2c_modifier_of,not_provided,Hereditary_pancreatitis|5|CFTR2|DIV
-7	117199648	.	T	G	.	PASS	clinvar_db=T|G|RCV000046335.2|Cystic_fibrosis,Cystic_fibrosis,not_specified|1|ClinVar|SNV
+##fileformat=VCFv4.1
+#CHROM	POS	ID	REF	ALT	QUAL	FILTER	INFO
+3	148890105	.	TCA	TCACACA	.	.	.

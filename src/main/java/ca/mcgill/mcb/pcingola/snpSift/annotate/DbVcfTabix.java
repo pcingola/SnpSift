@@ -78,6 +78,8 @@ public class DbVcfTabix extends DbVcf {
 		// Any results?
 		if (ti != null) {
 			for (String line : ti) {
+				line = Gpr.removeBackslashR(line);
+				Gpr.debug("LINE: " + line);
 				VcfEntry ve = vcf.parseVcfLine(line);
 				results.addAll(VariantVcfEntry.factory(ve));
 			}
