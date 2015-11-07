@@ -1,5 +1,6 @@
 package ca.mcgill.mcb.pcingola.snpSift.testCases;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -24,6 +25,7 @@ public class TestCasesAnnotate extends TestCase {
 	public static boolean verbose = false || debug;
 
 	protected String[] defaultExtraArgs;
+	protected boolean deleteIndexFile;
 
 	public TestCasesAnnotate() {
 		String[] memExtraArgs = { "-sorted" };
@@ -35,6 +37,8 @@ public class TestCasesAnnotate extends TestCase {
 	 */
 	public List<VcfEntry> annotate(String dbFileName, String fileName, String[] extraArgs) {
 		if (verbose) System.out.println("Annotate: " + dbFileName + "\t" + fileName);
+
+		if (deleteIndexFile) deleteIndexFile(dbFileName);
 
 		// Create command line
 		String args[] = argsList(dbFileName, fileName, extraArgs);
@@ -57,6 +61,8 @@ public class TestCasesAnnotate extends TestCase {
 	 */
 	public String annotateOut(String dbFileName, String fileName, String[] extraArgs) {
 		if (verbose) System.out.println("Annotate: " + dbFileName + "\t" + fileName);
+
+		if (deleteIndexFile) deleteIndexFile(dbFileName);
 
 		// Create command line
 		String args[] = argsList(dbFileName, fileName, extraArgs);
@@ -117,6 +123,14 @@ public class TestCasesAnnotate extends TestCase {
 		argsList.add(dbFileName);
 		argsList.add(fileName);
 		return argsList.toArray(new String[0]);
+	}
+
+	void deleteIndexFile(String dbFileName) {
+		String indexFile = dbFileName + ".sidx";
+		File f = new File(indexFile);
+		if (f.delete()) {
+			if (verbose) Gpr.debug("Index file '" + indexFile + "' deleted before annotation test");
+		}
 	}
 
 	public void test_01() {
