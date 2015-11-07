@@ -18,7 +18,6 @@ import org.junit.runners.Suite.SuiteClasses;
 		TestCasesHwe.class, //
 		TestCasesLd.class, //
 		TestCasesCaseControl.class, //
-		TestCasesIntervalFile.class, //
 		TestCasesAnnotateCreateIndex.class, // Execute these test cases first to delete and create index files
 		TestCasesAnnotateUseIndex.class, // These test cases use the indexes created in 'TestCasesAnnotateCreateIndex'
 		TestCasesAnnotateMem.class, //
