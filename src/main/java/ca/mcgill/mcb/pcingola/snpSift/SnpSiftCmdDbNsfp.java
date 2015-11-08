@@ -2,6 +2,7 @@ package ca.mcgill.mcb.pcingola.snpSift;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -9,9 +10,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import ca.mcgill.mcb.pcingola.fileIterator.DbNsfp;
 import ca.mcgill.mcb.pcingola.fileIterator.DbNsfpEntry;
-import ca.mcgill.mcb.pcingola.fileIterator.DbNsfpFileIterator;
 import ca.mcgill.mcb.pcingola.fileIterator.VcfFileIterator;
+import ca.mcgill.mcb.pcingola.interval.Variant;
 import ca.mcgill.mcb.pcingola.snpEffect.Config;
 import ca.mcgill.mcb.pcingola.util.Gpr;
 import ca.mcgill.mcb.pcingola.util.Timer;
@@ -79,7 +81,7 @@ public class SnpSiftCmdDbNsfp extends SnpSift {
 	protected String vcfFileName;
 	protected int count = 0;
 	protected int countAnnotated = 0;
-	protected DbNsfpFileIterator dbNsfpFile;
+	protected DbNsfp dbNsfp;
 	protected VcfFileIterator vcfFile;
 	protected DbNsfpEntry currentDbEntry;
 	protected String fieldsNamesToAdd;
@@ -192,44 +194,30 @@ public class SnpSiftCmdDbNsfp extends SnpSift {
 	/**
 	 * Annotate a VCF entry
 	 */
-	@Override
-	public boolean annotate(VcfEntry vcf) {
+	public boolean annotate(Variant variant, Map<String, String> info) {
 		// Find in database
-		DbNsfpEntry dbEntry = findDbEntry(vcf);
-		if (dbEntry == null) return false;
+		Collection<DbNsfpEntry> dbEntries = dbNsfp.query(variant);
+		if (dbEntries == null || dbEntries.isEmpty()) return false;
 
 		// Add all INFO fields that refer to this allele
 		boolean annotated = false;
-		StringBuilder info = new StringBuilder();
 		for (String fieldKey : fieldsToAdd.keySet()) {
-			info.setLength(0);
+			// Are there any values to annotate?
+			String infoValue = getVcfInfo(dbEntries, fieldKey);
 
-			// Find annotations for each ALT in our VcfEntry
-			for (String alt : vcf.getAlts()) {
-				// Are there any values to annotate?
-				String val = dbEntry.getCsv(alt, fieldKey);
-
-				// Missing or empty?
-				if (annotateEmpty) {
-					if (val == null) val = ".";
-				} else if (isDbNsfpValueEmpty(val)) {
-					val = null;
-				}
-
-				// Add value to "info"
-				if (val != null) {
-					if (info.length() > 0) info.append(',');
-					info.append(val);
-				}
+			// Missing or empty?
+			if (annotateEmpty) {
+				if (infoValue.isEmpty()) infoValue = ".";
+			} else if (isDbNsfpValueEmpty(infoValue)) {
+				infoValue = null;
 			}
 
 			// Add annotations
-			if (annotateEmpty || info.length() > 0) {
-				String infoStr = info.toString();
-				if (infoStr.isEmpty()) infoStr = ".";
-				infoStr = infoStr.replace(';', ',').replace('\t', '_').replace(' ', '_'); // Make sure all characters are valid for VCF field
+			if (infoValue != null) {
+				String oldInfo = info.get(fieldKey);
+				if (oldInfo == null) oldInfo = "";
 
-				vcf.addInfo(VCF_INFO_PREFIX + fieldKey, infoStr);
+				info.put(fieldKey, oldInfo + (oldInfo.isEmpty() ? "" : ",") + infoValue);
 				annotated = true;
 			}
 		}
@@ -237,10 +225,10 @@ public class SnpSiftCmdDbNsfp extends SnpSift {
 		// Show progress
 		if (annotated) {
 			countAnnotated++;
-			if (debug) Gpr.debug("Annotated: " + vcf.getChromosomeName() + ":" + vcf.getStart());
+			if (debug) Gpr.debug("Annotated: " + variant.toStr());
 			else if (verbose) {
 				if (countAnnotated % SHOW_ANNOTATED == 0) {
-					if (countAnnotated % (100 * SHOW_ANNOTATED) == 0) System.err.print(".\n" + countAnnotated + "\t" + vcf.getChromosomeName() + ":" + vcf.getStart() + "\t");
+					if (countAnnotated % (100 * SHOW_ANNOTATED) == 0) System.err.print(".\n" + countAnnotated + "\t" + variant.getChromosomeName() + ":" + variant.getStart() + "\t");
 					else System.err.print('.');
 				}
 			}
@@ -250,8 +238,33 @@ public class SnpSiftCmdDbNsfp extends SnpSift {
 	}
 
 	@Override
+	public boolean annotate(VcfEntry vcfEntry) {
+		boolean annotated = false;
+		Map<String, String> info = new HashMap<>();
+
+		// Find annotations for each variant in this VcfEntry
+		for (Variant var : vcfEntry.variants())
+			annotated |= annotate(var, info);
+
+		// Add annotations to VcfEntry
+		if (annotated) {
+			// Sort keys and add them to VcfEntry
+			ArrayList<String> keys = new ArrayList<>();
+			keys.addAll(info.keySet());
+			Collections.sort(keys);
+
+			// Add INFO fields
+			for (String key : keys)
+				vcfEntry.addInfo(VCF_INFO_PREFIX + key, info.get(key));
+
+		}
+
+		return annotated;
+	}
+
+	@Override
 	public boolean annotateFinish() {
-		dbNsfpFile.close();
+		if (dbNsfp != null) dbNsfp.close();
 		return true;
 	}
 
@@ -272,30 +285,10 @@ public class SnpSiftCmdDbNsfp extends SnpSift {
 		}
 
 		// Check and open dbNsfp
-		dbNsfpFile = new DbNsfpFileIterator(dbFileName);
-		dbNsfpFile.setDebug(debug);
-		dbNsfpFile.setVerbose(verbose);
-		dbNsfpFile.setCollapseRepeatedValues(collapseRepeatedValues);
-		if (tabixCheck && !dbNsfpFile.isTabix()) fatalError("Tabix index not found for database '" + dbFileName + "'.\n\t\tSnpSift dbNSFP only works with tabix indexed databases, please create or download index.");
-
-		// Guess database fields types
-		if (verbose) Timer.showStdErr("Guessing data types");
-
-		if (!dbNsfpFile.dataTypes()) {
-			// Show missing types
-			if (verbose) {
-				String fnames[] = dbNsfpFile.getFieldNamesSorted();
-				VcfInfoType[] types = dbNsfpFile.getTypes();
-				Timer.showStdErr("Some data types are missing (using 'string')");
-				for (int i = 0; i < fnames.length; i++)
-					if (types[i] == null) System.err.println("\tColumn " + (i + 1) + "\t" + fnames[i]);
-			}
-
-			// Force missing types as strings
-			dbNsfpFile.forceMissingTypesAsString();
-		}
-
-		if (verbose) Timer.showStdErr("Done");
+		dbNsfp = new DbNsfp(dbFileName);
+		dbNsfp.setDebug(debug);
+		dbNsfp.setVerbose(verbose);
+		dbNsfp.open();
 
 		// Initialize fields to annotate
 		annotateInitFields();
@@ -310,8 +303,8 @@ public class SnpSiftCmdDbNsfp extends SnpSift {
 		//---
 		// Fields to use
 		//---
-		VcfInfoType types[] = dbNsfpFile.getTypes();
-		String fieldNames[] = dbNsfpFile.getFieldNamesSorted();
+		VcfInfoType types[] = dbNsfp.getTypes();
+		String fieldNames[] = dbNsfp.getFieldNamesSorted();
 		if (verbose) Timer.showStdErr("Database fields:");
 		for (int i = 0; i < fieldNames.length; i++) {
 			String type = (types[i] != null ? types[i].toString() : "String");
@@ -379,88 +372,53 @@ public class SnpSiftCmdDbNsfp extends SnpSift {
 	public void checkFieldsToAdd() throws IOException {
 		// Check that all fields have a descriptor (used in VCF header)
 		if (verbose) {
-			for (String filedName : dbNsfpFile.getFieldNames())
+			for (String filedName : dbNsfp.getFieldNames())
 				if (fieldsDescription.get(filedName) == null) System.err.println("WARNING: Field (column) '" + filedName + "' does not have an approriate field descriptor.");
 		}
 
 		// Check that all "field to add" are in the database
 		for (String fieldKey : fieldsToAdd.keySet())
-			if (!dbNsfpFile.hasField(fieldKey)) fatalError("dbNsfp does not have field '" + fieldKey + "' (file '" + dbFileName + "')");
+			if (!dbNsfp.hasField(fieldKey)) fatalError("dbNsfp does not have field '" + fieldKey + "' (file '" + dbFileName + "')");
 	}
 
-	/**
-	 * Find a matching db entry for a vcf entry
-	 */
-	public DbNsfpEntry findDbEntry(VcfEntry vcfEntry) {
-		//---
-		// Find db entry
-		//---
-		if (debug) System.err.println("Looking for " + vcfEntry.getChromosomeName() + ":" + vcfEntry.getStart() + ". Current DB: " + (currentDbEntry == null ? "null" : currentDbEntry.getChromosomeName() + ":" + currentDbEntry.getStart()));
-		while (true) {
+	String collapseRepeated(String csvalues) {
+		String values[] = csvalues.split(",");
+		if (values.length <= 1) return csvalues;
 
-			if (currentDbEntry == null) {
-				// Null entry, try getting next entry
-				currentDbEntry = dbNsfpFile.next(); // Read next DB entry
-
-				// Still null? May be we run out of DB entries for this chromosome
-				if (currentDbEntry == null) {
-					// Is vcfEntry still in 'latestChromo'? Then we have no DbEntry, return null
-					if (latestChromo.equals(vcfEntry.getChromosomeName())) return null; // End of 'latestChromo' section in database?
-
-					// VCfEntry is in another chromosome? Jump to 'new' chromosome
-					if (debug) Gpr.debug("New chromosome '" + latestChromo + "' != '" + vcfEntry.getChromosomeName() + "': We should jump");
-					dbNsfpFile.seek(vcfEntry.getChromosomeName(), vcfEntry.getStart());
-					currentDbEntry = dbNsfpFile.next();
-
-					// Still null? well it looks like we don't have any dbEntry for this chromosome
-					if (currentDbEntry == null) {
-						latestChromo = vcfEntry.getChromosomeName(); // Make sure we don't try jumping again
-						return null;
-					}
-				}
+		// Only append values once
+		StringBuilder sb = new StringBuilder();
+		HashSet<String> valuesAdded = new HashSet<String>();
+		for (String val : values)
+			if (valuesAdded.add(val)) {
+				if (sb.length() > 0) sb.append(',');
+				sb.append(val);
 			}
 
-			if (debug) Gpr.debug("Current Db Entry:" + currentDbEntry.getChromosomeName() + ":" + currentDbEntry.getStart() + "\tLooking for: " + vcfEntry.getChromosomeName() + ":" + vcfEntry.getStart());
-
-			// Find entry
-			if (currentDbEntry.getChromosomeName().equals(vcfEntry.getChromosomeName())) {
-				// Same chromosome
-
-				// Same position? => Found
-				if (vcfEntry.getStart() == currentDbEntry.getStart()) {
-					// Found db entry! Break loop and proceed with annotations
-					if (debug) Gpr.debug("Found Db Entry:" + currentDbEntry.getChromosomeName() + ":" + currentDbEntry.getStart());
-					return currentDbEntry;
-				} else if (vcfEntry.getStart() < currentDbEntry.getStart()) {
-					// Same chromosome, but positioned after => No db entry found
-					if (debug) Gpr.debug("No db entry found:\t" + vcfEntry.getChromosomeName() + ":" + vcfEntry.getStart());
-					return null;
-				} else if ((vcfEntry.getStart() - currentDbEntry.getStart()) > MIN_JUMP) {
-					// Is it far enough? Don't iterate, jump
-					if (debug) Gpr.debug("Position jump:\t" + currentDbEntry.getChromosomeName() + ":" + currentDbEntry.getStart() + "\t->\t" + vcfEntry.getChromosomeName() + ":" + vcfEntry.getStart());
-					dbNsfpFile.seek(vcfEntry.getChromosomeName(), vcfEntry.getStart());
-					currentDbEntry = dbNsfpFile.next();
-				} else {
-					// Just read next entry to get closer
-					currentDbEntry = dbNsfpFile.next();
-				}
-			} else if (!currentDbEntry.getChromosomeName().equals(vcfEntry.getChromosomeName())) {
-				// Different chromosome? => Jump to chromosome
-				if (debug) Gpr.debug("Chromosome jump:\t" + currentDbEntry.getChromosomeName() + ":" + currentDbEntry.getStart() + "\t->\t" + vcfEntry.getChromosomeName() + ":" + vcfEntry.getStart());
-
-				// Jump to new position. If chromosome not found, return null
-				if (!dbNsfpFile.seek(vcfEntry.getChromosomeName(), vcfEntry.getStart())) return null;
-
-				currentDbEntry = dbNsfpFile.next();
-			}
-
-			if (currentDbEntry != null) latestChromo = currentDbEntry.getChromosomeName();
-		}
+		return sb.toString();
 	}
 
 	public Map<String, String> getFieldsType() {
 		return fieldsType;
 
+	}
+
+	/**
+	 * Get a comma separated list of values
+	 */
+	String getVcfInfo(Collection<DbNsfpEntry> dbEntries, String fieldKey) {
+		StringBuilder sb = new StringBuilder();
+		for (DbNsfpEntry de : dbEntries) {
+			String csv = de.getVcfInfo(fieldKey);
+
+			if (annotateEmpty && csv == null) csv = ".";
+
+			if (csv != null) {
+				if (sb.length() > 0) sb.append(',');
+				sb.append(csv);
+			}
+		}
+
+		return collapseRepeatedValues ? collapseRepeated(sb.toString()) : sb.toString();
 	}
 
 	/**
@@ -532,7 +490,7 @@ public class SnpSiftCmdDbNsfp extends SnpSift {
 		if (config == null) loadConfig();
 
 		// Find or download database
-		dbFileName = databaseFindOrDownload();
+		dbFileName = databaseFind();
 
 		if (verbose) Timer.showStdErr("Annotating\n" //
 				+ "\tInput file    : '" + vcfFileName + "'\n" //

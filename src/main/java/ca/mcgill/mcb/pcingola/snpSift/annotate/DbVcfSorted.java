@@ -1,20 +1,20 @@
 package ca.mcgill.mcb.pcingola.snpSift.annotate;
 
-import java.io.IOException;
+import java.util.LinkedList;
 import java.util.List;
 
-import ca.mcgill.mcb.pcingola.fileIterator.SeekableBufferedReader;
-import ca.mcgill.mcb.pcingola.fileIterator.VcfFileIterator;
+import ca.mcgill.mcb.pcingola.interval.Marker;
+import ca.mcgill.mcb.pcingola.interval.Markers;
 import ca.mcgill.mcb.pcingola.interval.Variant;
 import ca.mcgill.mcb.pcingola.util.Gpr;
-import ca.mcgill.mcb.pcingola.vcf.FileIndexChrPos;
+import ca.mcgill.mcb.pcingola.vcf.VariantVcfEntry;
 import ca.mcgill.mcb.pcingola.vcf.VcfEntry;
 
 /**
  * Use an uncompressed sorted VCF file as a database for annotations
  *
- * Note: Assumes that the VCF database file is sorted.
- *       Each VCF entry should be sorted according to position.
+ * Note: Assumes that the VCF database file is sorted and uncompressed.
+ *       Each VCF entry should be sorted according to position (as the VCF norm specifies).
  *       Chromosome order does not matter (e.g. all entries for chr10 can be before entries for chr2).
  *       But entries for the same chromosome should be together.
  *
@@ -22,11 +22,9 @@ import ca.mcgill.mcb.pcingola.vcf.VcfEntry;
  *
  * @author pcingola
  */
-public class DbVcfSorted extends DbVcfIndex {
+public class DbVcfSorted extends DbVcf {
 
-	public static final int MIN_SEEK = 1000;
-
-	protected FileIndexChrPos indexDb;
+	VcfIndex vcfIndex;
 
 	public DbVcfSorted(String dbFileName) {
 		super(dbFileName);
@@ -34,50 +32,10 @@ public class DbVcfSorted extends DbVcfIndex {
 
 	@Override
 	public void close() {
-		super.close();
-		indexDb.close();
-	}
-
-	/**
-	 * Index a VCF file
-	 */
-	protected void createIndex() {
-		if (verbose) System.err.println("Index database file:" + dbFileName);
-
-		indexDb = new FileIndexChrPos(dbFileName);
-		indexDb.setVerbose(verbose);
-		indexDb.setDebug(debug);
-		indexDb.open();
-		indexDb.index();
-
-		if (debug) System.err.println("Index:\n" + indexDb);
-	}
-
-	@Override
-	protected boolean dbSeek(String chr, int pos) {
-		long filePosChr = indexDb.getStart(chr);
-		if (filePosChr < 0) return false; // The database file does not have this chromosome
-
-		try {
-			long filePos = indexDb.find(chr, pos, true);
-			if (filePos < 0) {
-				// The database file does not have this position
-				vcfDbFile.seek(filePosChr); // Jump to chromosome
-				return false;
-			}
-
-			// Jump to position
-			vcfDbFile.seek(filePos);
-
-			return true;
-		} catch (IOException e) {
-			throw new RuntimeException(e);
+		if (vcfIndex != null) {
+			vcfIndex.close(); // We have to close vcfDbFile because it was opened using a BufferedReader (this sets autoClose to 'false')
+			vcfIndex = null;
 		}
-	}
-
-	@Override
-	public List<VcfEntry> find(Variant variant) {
-		throw new RuntimeException("Unimplemented");
 	}
 
 	/**
@@ -87,23 +45,25 @@ public class DbVcfSorted extends DbVcfIndex {
 	public void open() {
 		if (debug) Gpr.debug("Open database file:" + dbFileName);
 
-		// Open database index
-		createIndex();
-
-		// Re-open VCF db file
-		try {
-			vcfDbFile = new VcfFileIterator(new SeekableBufferedReader(dbFileName));
-			vcfDbFile.setDebug(false); // Don't check errors, since we are doing random access (the file will appear is if it was not sorted)
-			nextVcfDb = vcfDbFile.next(); // Read first VCf entry from DB file (this also forces to read headers)
-			addNextVcfDb();
-		} catch (IOException e) {
-			throw new RuntimeException(e);
-		}
+		vcfIndex = new VcfIndex(dbFileName);
+		vcfIndex.setVerbose(verbose);
+		vcfIndex.setDebug(debug);
+		vcfIndex.open();
+		vcfHeader = vcfIndex.getVcf().getVcfHeader();
+		vcfIndex.index();
 	}
 
 	@Override
-	protected boolean shouldSeek(VcfEntry vcfEntry) {
-		return ((vcfEntry.getEnd() - nextVcfDb.getStart()) > MIN_SEEK);
+	public List<VariantVcfEntry> query(Variant variant) {
+		Markers results = vcfIndex.query(variant);
+
+		List<VariantVcfEntry> list = new LinkedList<VariantVcfEntry>();
+		for (Marker m : results) {
+			VcfEntry ve = (VcfEntry) m;
+			list.addAll(VariantVcfEntry.factory(ve));
+		}
+
+		return list;
 	}
 
 }

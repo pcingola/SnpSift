@@ -1,15 +1,18 @@
 package ca.mcgill.mcb.pcingola.snpSift.testCases;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import org.junit.Assert;
+
 import ca.mcgill.mcb.pcingola.snpSift.SnpSiftCmdAnnotate;
 import ca.mcgill.mcb.pcingola.util.Gpr;
 import ca.mcgill.mcb.pcingola.vcf.VcfEntry;
-import junit.framework.Assert;
 import junit.framework.TestCase;
+import scala.actors.threadpool.Arrays;
 
 /**
  * Annotate test case
@@ -22,6 +25,7 @@ public class TestCasesAnnotate extends TestCase {
 	public static boolean verbose = false || debug;
 
 	protected String[] defaultExtraArgs;
+	protected boolean deleteIndexFile;
 
 	public TestCasesAnnotate() {
 		String[] memExtraArgs = { "-sorted" };
@@ -33,6 +37,8 @@ public class TestCasesAnnotate extends TestCase {
 	 */
 	public List<VcfEntry> annotate(String dbFileName, String fileName, String[] extraArgs) {
 		if (verbose) System.out.println("Annotate: " + dbFileName + "\t" + fileName);
+
+		if (deleteIndexFile) deleteIndexFile(dbFileName);
 
 		// Create command line
 		String args[] = argsList(dbFileName, fileName, extraArgs);
@@ -55,6 +61,8 @@ public class TestCasesAnnotate extends TestCase {
 	 */
 	public String annotateOut(String dbFileName, String fileName, String[] extraArgs) {
 		if (verbose) System.out.println("Annotate: " + dbFileName + "\t" + fileName);
+
+		if (deleteIndexFile) deleteIndexFile(dbFileName);
 
 		// Create command line
 		String args[] = argsList(dbFileName, fileName, extraArgs);
@@ -89,6 +97,8 @@ public class TestCasesAnnotate extends TestCase {
 			String expectedIds = vcf.getInfo("EXP_IDS");
 			if (expectedIds != null) {
 				expectedIds = expectedIds.replace('|', ';');
+				expectedIds = expectedIds.replace(',', ';');
+
 				if (expectedIds.equals(".")) expectedIds = "";
 
 				// Compare
@@ -113,6 +123,14 @@ public class TestCasesAnnotate extends TestCase {
 		argsList.add(dbFileName);
 		argsList.add(fileName);
 		return argsList.toArray(new String[0]);
+	}
+
+	void deleteIndexFile(String dbFileName) {
+		String indexFile = dbFileName + ".sidx";
+		File f = new File(indexFile);
+		if (f.delete()) {
+			if (verbose) Gpr.debug("Index file '" + indexFile + "' deleted before annotation test");
+		}
 	}
 
 	public void test_01() {
@@ -164,7 +182,18 @@ public class TestCasesAnnotate extends TestCase {
 		List<VcfEntry> results = annotate(dbFileName, fileName, null);
 
 		// Check
-		Assert.assertEquals("PREVIOUS=annotation;TEST=yes;ABE=0.678;ABZ=47.762;AF=0.002;AN=488;AOI=-410.122;AOZ=-399.575;IOD=0.000;OBS=4,1,1636,2011,3,1,6780,9441;RSPOS=16346045", results.get(0).getInfoStr());
+		Assert.assertEquals("PREVIOUS=annotation;TEST=yes" //
+				+ ";ABE=0.678" //
+				+ ";ABZ=47.762" //
+				+ ";AF=0.002" //
+				+ ";AN=488" //
+				+ ";AOI=-410.122" //
+				+ ";AOZ=-399.575" //
+				+ ";IOD=0.000" //
+				+ ";OBS=4,1,1636,2011,3,1,6780,9441" //
+				+ ";RSPOS=16346045" //
+				, results.get(0).getInfoStr() //
+		);
 	}
 
 	/**
@@ -688,6 +717,40 @@ public class TestCasesAnnotate extends TestCase {
 		String dbFileName = "./test/db_test_40.vcf";
 		String fileName = "./test/annotate_40.vcf";
 		annotateTest(dbFileName, fileName);
+	}
+
+	public void test_41() {
+		Gpr.debug("Test");
+		String dbFileName = "./test/db_test_41.vcf";
+		String fileName = "./test/annotate_41.vcf";
+		annotateTest(dbFileName, fileName);
+	}
+
+	/**
+	 * Test multiple CAF annotations
+	 */
+	public void test_42() {
+		Gpr.debug("Test");
+		String dbFileName = "./test/db_test_42.vcf";
+		String fileName = "./test/annotate_42.vcf";
+		String extraArgs[] = {};
+		List<VcfEntry> results = annotate(dbFileName, fileName, extraArgs);
+
+		// Get first entry
+		VcfEntry ve = results.get(0);
+		if (verbose) System.out.println(ve);
+		String infoStr = ve.getInfoStr();
+
+		// Check that CAF annotation is added
+		Assert.assertTrue("Missing CAF annotation", infoStr.indexOf("CAF=") >= 0);
+
+		// Compare against expected output
+		// Note: We don't care about annotation order in this case
+		String expectedCaf[] = "0.4908,0.5066,0.002596,.,0.4908,0.5066,0.002596,0.4908,0.5066".split(",");
+		String caf[] = ve.getInfo("CAF").split(",");
+		Arrays.sort(expectedCaf);
+		Arrays.sort(caf);
+		Assert.assertArrayEquals("Number of CAF annotations differ", expectedCaf, caf);
 	}
 
 }

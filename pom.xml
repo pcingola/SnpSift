@@ -5,7 +5,7 @@
   <artifactId>snpSift</artifactId>
   <packaging>jar</packaging>
   <name>Snp Sift</name>
-  <description>SnpSift is a collection of tools to manipulate VCF (variant call format) files.</description>
+  <description>SnpSift is a collection of tools for variant filtering and annotation.</description>
   <url>http://snpeff.sourceforge.net/</url>
   <licenses>
     <license>
@@ -33,7 +33,7 @@
     <dependency>
       <groupId>ca.mcgill.mcb.pcingola</groupId>
       <artifactId>snpEff</artifactId>
-      <version>4.1</version>
+      <version>4.2</version>
     </dependency>
     
     <dependency>
@@ -146,5 +146,5 @@
       </plugin>
     </plugins>
   </build>
-  <version>4.1</version>
+  <version>4.2</version>
 </project>

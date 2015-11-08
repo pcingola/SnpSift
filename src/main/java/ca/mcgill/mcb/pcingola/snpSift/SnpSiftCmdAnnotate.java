@@ -79,7 +79,7 @@ public class SnpSiftCmdAnnotate extends SnpSift {
 
 				// Check if file is sorted
 				if (vcfEntry.getChromosomeName().equals(chr) && vcfEntry.getStart() < pos) {
-					fatalError("Your VCF file should be sorted!" //
+					System.err.println("WARNING: VCF input file is not sorted!" //
 							+ "\n\tPrevious entry " + chr + ":" + pos//
 							+ "\n\tCurrent entry  " + vcfEntry.getChromosomeName() + ":" + (vcfEntry.getStart() + 1)//
 					);
@@ -147,7 +147,7 @@ public class SnpSiftCmdAnnotate extends SnpSift {
 		this.vcfFile = vcfFile;
 
 		// Find or download database
-		dbFileName = databaseFindOrDownload();
+		dbFileName = databaseFind();
 
 		// Guess annotation method if none is provided
 		method = guessAnnotationMethod();
@@ -208,11 +208,9 @@ public class SnpSiftCmdAnnotate extends SnpSift {
 	AnnotationMethod guessAnnotationMethod() {
 		if (method != null) return method;
 
-		if (dbFileName.endsWith(".gz")) {
-			if (Gpr.exists(dbFileName + ".tbi")) return AnnotationMethod.TABIX;
-			else return AnnotationMethod.MEMORY;
-		} else if (Gpr.exists(dbFileName + ".gz") && Gpr.exists(dbFileName + ".gz.tbi")) return AnnotationMethod.TABIX;
-
+		if (dbFileName.endsWith(".gz") //
+				&& (Gpr.exists(dbFileName + ".tbi") || Gpr.exists(dbFileName + ".gz.tbi")))
+			return AnnotationMethod.TABIX;
 		return AnnotationMethod.SORTED_VCF;
 	}
 
@@ -327,7 +325,7 @@ public class SnpSiftCmdAnnotate extends SnpSift {
 				} else if (arg.equalsIgnoreCase("-clinVar")) {
 					dbType = "clinvar";
 					method = AnnotationMethod.TABIX;
-				} else if (arg.equalsIgnoreCase("-mem")) method = AnnotationMethod.MEMORY;
+				} else if (arg.equalsIgnoreCase("-mem")) method = AnnotationMethod.MEMORY; // This should only be used for test cases (not in productions environments)
 				else if (arg.equalsIgnoreCase("-sorted")) method = AnnotationMethod.SORTED_VCF;
 				else if (arg.equalsIgnoreCase("-tabix")) method = AnnotationMethod.TABIX;
 				else usage("Unknown command line option '" + arg + "'");
@@ -339,7 +337,9 @@ public class SnpSiftCmdAnnotate extends SnpSift {
 		}
 
 		// Sanity check
-		if (dbType == null && dbFileName == null) usage("Missing database option or file: [-dbSnp | -clinVar | database.vcf ]");
+		if (dbType == null && dbFileName == null)
+
+		usage("Missing database option or file: [-dbSnp | -clinVar | database.vcf ]");
 	}
 
 	/**
@@ -388,7 +388,6 @@ public class SnpSiftCmdAnnotate extends SnpSift {
 		System.err.println("\t-exists <tag>        : Annotate whether the variant exists or not in the database (using 'tag' as an INFO field FLAG).");
 		System.err.println("\t-id                  : Only annotate ID field (do not add INFO field). Default: " + useId);
 		System.err.println("\t-info <list>         : Annotate using a list of info fields (list is a comma separated list of fields). Default: ALL.");
-		System.err.println("\t-mem                 : VCF database is loaded in memory. Default: " + (method == AnnotationMethod.MEMORY));
 		System.err.println("\t-name str            : Prepend 'str' to all annotated INFO fields. Default: ''.");
 		System.err.println("\t-noAlt               : Do not use REF and ALT fields when comparing database.vcf entries to file.vcf entries. Default: " + !useRefAlt);
 		System.err.println("\t-noId                : Do not annotate ID field. Default: " + !useId);

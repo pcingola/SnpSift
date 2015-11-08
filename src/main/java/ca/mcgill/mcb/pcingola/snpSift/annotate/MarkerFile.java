@@ -3,7 +3,7 @@ package ca.mcgill.mcb.pcingola.snpSift.annotate;
 import ca.mcgill.mcb.pcingola.interval.Marker;
 
 /**
- * Represents a marker in a file (located at 'flieIdx' bytes since the beginning of the file)
+ * Represents a marker in a file (located at 'fileIdx' bytes since the beginning of the file)
  *
  * @author pcingola
  */

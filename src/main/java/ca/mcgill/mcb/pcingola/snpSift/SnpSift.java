@@ -156,9 +156,8 @@ public class SnpSift implements VcfAnnotator {
 
 	/**
 	 * Find database file name.
-	 * If local file does not exists, try to download
 	 */
-	protected String databaseFindOrDownload() {
+	protected String databaseFind() {
 		if (dbType == null && dbFileName == null) throw new RuntimeException("Neither database type nor database file name set: This should never happen!");
 
 		// Database file name
@@ -167,11 +166,6 @@ public class SnpSift implements VcfAnnotator {
 
 			// Still empty: Something is wrong!
 			if (dbFileName == null || dbFileName.isEmpty()) fatalError("Database file name is empty. Missing '" + Config.KEY_DATABASE_LOCAL + "." + dbType + "' entry in SnpEff's config file?");
-
-			if (!Gpr.exists(dbFileName)) {
-				Timer.showStdErr("Database file '" + dbFileName + "' not found.");
-				if (!databaseDownload()) fatalError("Could not download database.");
-			}
 		}
 
 		return dbFileName;

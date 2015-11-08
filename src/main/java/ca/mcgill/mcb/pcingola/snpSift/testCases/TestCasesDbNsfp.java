@@ -1,20 +1,22 @@
 package ca.mcgill.mcb.pcingola.snpSift.testCases;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import junit.framework.TestCase;
-
 import org.junit.Assert;
 
+import ca.mcgill.mcb.pcingola.fileIterator.DbNsfp;
 import ca.mcgill.mcb.pcingola.snpSift.SnpSiftCmdDbNsfp;
 import ca.mcgill.mcb.pcingola.util.Gpr;
 import ca.mcgill.mcb.pcingola.vcf.VcfEntry;
+import junit.framework.TestCase;
 
 /**
- * Test GWAS catalog classes
- *
+ * Test cases for dbNSFP database annotations
+ * Note: This class tries to use 'data type cache' files 
+ * 
  * @author pcingola
  */
 public class TestCasesDbNsfp extends TestCase {
@@ -23,9 +25,16 @@ public class TestCasesDbNsfp extends TestCase {
 	public static boolean debug = false;
 
 	protected String[] defaultExtraArgs = null;
+	protected boolean removeDataTypesCache;
+
+	public TestCasesDbNsfp() {
+		removeDataTypesCache = false;
+	}
 
 	public List<VcfEntry> annotate(String dbFileName, String fileName, String[] extraArgs) {
 		if (verbose) System.out.println("Annotate: " + dbFileName + "\t" + fileName);
+
+		removeDataTypesCache(dbFileName);
 
 		// Create command line
 		String args[] = argsList(dbFileName, fileName, extraArgs);
@@ -46,6 +55,8 @@ public class TestCasesDbNsfp extends TestCase {
 
 	public Map<String, String> annotateGetFiledTypes(String dbFileName, String fileName, String[] extraArgs) {
 		if (verbose) System.out.println("Annotate: " + dbFileName + "\t" + fileName);
+
+		removeDataTypesCache(dbFileName);
 
 		// Create command line
 		String args[] = argsList(dbFileName, fileName, extraArgs);
@@ -81,10 +92,20 @@ public class TestCasesDbNsfp extends TestCase {
 		return argsList.toArray(new String[0]);
 	}
 
+	void removeDataTypesCache(String dbFileName) {
+		if (removeDataTypesCache) {
+			String dtcFileName = dbFileName + DbNsfp.DATA_TYPES_CACHE_EXT;
+			File dtc = new File(dtcFileName);
+			if (dtc.delete()) {
+				if (verbose) Gpr.debug("Removing data types cache file: " + dtcFileName);
+			}
+		}
+	}
+
 	public void test_01() {
 		Gpr.debug("Test");
 		String vcfFileName = "test/test_dbNSFP_chr1_69134.vcf";
-		String dbFileName = "test/dbNSFP2.0b3.chr1_69134.txt";
+		String dbFileName = "test/dbNSFP2.0b3.chr1_69134.txt.gz";
 		String args[] = { "-collapse", "-f", "GERP++_RS,GERP++_NR,ESP6500_AA_AF,29way_logOdds,Polyphen2_HVAR_pred,SIFT_score,Uniprot_acc,Ensembl_transcriptid" };
 
 		List<VcfEntry> results = annotate(dbFileName, vcfFileName, args);
@@ -108,7 +129,7 @@ public class TestCasesDbNsfp extends TestCase {
 	public void test_02() {
 		Gpr.debug("Test");
 		String vcfFileName = "test/test_dbnsfp_multiple.vcf";
-		String dbFileName = "test/test_dbnsfp_multiple_lines.txt";
+		String dbFileName = "test/test_dbnsfp_multiple_lines.txt.gz";
 		String fields = "genename,Ensembl_geneid,Ensembl_transcriptid,aaref,aaalt";
 		String args[] = { "-collapse", "-f", fields };
 
@@ -129,7 +150,7 @@ public class TestCasesDbNsfp extends TestCase {
 	public void test_03() {
 		Gpr.debug("Test");
 		String vcfFileName = "test/test_dbnsfp_multiple_noCollapse.vcf";
-		String dbFileName = "test/test_dbnsfp_multiple_noCollapse.txt";
+		String dbFileName = "test/test_dbnsfp_multiple_noCollapse.txt.gz";
 		String fields = "aaalt,Ensembl_transcriptid,Polyphen2_HDIV_score,Polyphen2_HVAR_pred";
 		String args[] = { "-nocollapse", "-f", fields };
 

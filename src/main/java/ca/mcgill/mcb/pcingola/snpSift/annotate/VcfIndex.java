@@ -10,8 +10,10 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
@@ -21,12 +23,14 @@ import ca.mcgill.mcb.pcingola.interval.Chromosome;
 import ca.mcgill.mcb.pcingola.interval.Genome;
 import ca.mcgill.mcb.pcingola.interval.Marker;
 import ca.mcgill.mcb.pcingola.interval.Markers;
+import ca.mcgill.mcb.pcingola.interval.Variant;
 import ca.mcgill.mcb.pcingola.util.Gpr;
 import ca.mcgill.mcb.pcingola.util.Timer;
 import ca.mcgill.mcb.pcingola.vcf.VcfEntry;
 
 /**
  * An index for a VCF file
+ *
  * @author pcingola
  */
 public class VcfIndex {
@@ -35,7 +39,6 @@ public class VcfIndex {
 	public static int SHOW_EVERY = 1000000;
 
 	public static final String INDEX_EXT = "sidx";
-	public static final int POS_OFFSET = 1; // VCF files are one-based
 
 	boolean verbose;
 	boolean debug;
@@ -47,14 +50,31 @@ public class VcfIndex {
 
 	public VcfIndex(String fileName) {
 		this.fileName = fileName;
-		vcfIndexByChromo = new HashMap<>();
 	}
 
 	/**
 	 * Add an interval parse from 'line'
 	 */
 	public void add(VcfEntry ve, long filePos) {
-		getOrCreate(ve.getChromosomeName()).add(ve.getStart(), ve.getEnd(), filePos);
+		VcfIndexDataChromo vidc = getOrCreate(ve.getChromosomeName());
+
+		List<Variant> vars = ve.variants();
+
+		if (vars.size() == 1) {
+			// This is the most common case
+			Variant var = vars.get(0);
+			vidc.add(var.getStart(), var.getEnd(), filePos); // Only add if not already added
+			return;
+		}
+
+		// Several variants: Add only add distinct intervals
+		Set<String> added = new HashSet<>();
+		for (Variant var : vars) {
+			String key = var.getStart() + "\t" + var.getEnd();
+			if (added.add(key)) {
+				vidc.add(var.getStart(), var.getEnd(), filePos); // Only add if not already added
+			}
+		}
 	}
 
 	/**
@@ -62,17 +82,20 @@ public class VcfIndex {
 	 */
 	List<String> chromosomes() {
 		ArrayList<String> chrs = new ArrayList<>();
-		chrs.addAll(vcfIndexByChromo.keySet());
+		if (vcfIndexByChromo != null) chrs.addAll(vcfIndexByChromo.keySet());
+		else chrs.addAll(forest.keySet());
 		Collections.sort(chrs);
 		return chrs;
 	}
 
 	/**
-	 * Close file
+	 * Close file and free memory
 	 */
 	public void close() {
 		if (vcf != null) vcf.close();
 		vcf = null;
+		vcfIndexByChromo = null;
+		forest = null;
 	}
 
 	/**
@@ -87,7 +110,7 @@ public class VcfIndex {
 		for (String chr : chromosomes()) {
 			VcfIndexDataChromo vic = getVcfIndexChromo(chr);
 			VcfIndexTree vcfTree = new VcfIndexTree(vcf, vic);
-			vcfTree.index();
+			vcfTree.build();
 			if (verbose) System.err.println("\t" + vcfTree);
 
 			forest.put(chr, vcfTree);
@@ -120,8 +143,25 @@ public class VcfIndex {
 		return forest.get(Chromosome.simpleName(chromosome));
 	}
 
+	public VcfFileIterator getVcf() {
+		return vcf;
+	}
+
 	public VcfIndexDataChromo getVcfIndexChromo(String chromosome) {
 		return vcfIndexByChromo.get(Chromosome.simpleName(chromosome));
+	}
+
+	/**
+	 * Is the index file valid?
+	 * (i.e. exists and has been created after the input file)
+	 */
+	boolean hasValidIndex(String fileName, String indexFile) {
+		if (Gpr.exists(indexFile)) {
+			File fileIdx = new File(indexFile);
+			File file = new File(fileName);
+			return fileIdx.lastModified() > file.lastModified();
+		}
+		return false;
 	}
 
 	/**
@@ -131,16 +171,18 @@ public class VcfIndex {
 		// Load a pre-existing index file?
 		String indexFile = fileName + "." + INDEX_EXT;
 		if (verbose) Timer.showStdErr("Checking index file '" + indexFile + "'");
-		if (Gpr.exists(indexFile)) {
+		if (hasValidIndex(fileName, indexFile)) {
 			loadIndex(indexFile);
+			setVcfTree(vcf);
 			return;
 		}
 
 		// Create index
-		if (verbose) Timer.showStdErr("Creating index");
 		loadIntervals();
 		createIntervalForest();
+		vcfIndexByChromo = null; // Clear data objects, won't be used any more
 		save(indexFile);
+		setVcfTree(vcf);
 	}
 
 	/**
@@ -163,6 +205,7 @@ public class VcfIndex {
 			while (vcfTree.load(in)) {
 				forest.put(vcfTree.getChromosome(), vcfTree);
 
+				// Prepare for next iteration
 				vcfTree = new VcfIndexTree();
 				vcfTree.setVerbose(verbose);
 				vcfTree.setDebug(debug);
@@ -183,10 +226,11 @@ public class VcfIndex {
 	 * Parse input VCF file and load intervals
 	 */
 	void loadIntervals() {
-		if (verbose) Timer.showStdErr("Loading intervals from file '" + fileName + "'");
+		if (verbose) Timer.showStdErr("Create index: Reading variants from file '" + fileName + "'");
 
 		try {
-			open(); // Open file as random access
+			open(); // Open VCF file
+			vcfIndexByChromo = new HashMap<>();
 
 			// Read the whole file
 			boolean title = true;
@@ -230,10 +274,12 @@ public class VcfIndex {
 				pos = vcf.getFilePointer();
 				getVcfIndexChromo(ve.getChromosomeName()).setFilePosEnd(pos);
 			}
+
+			// After index is create, the file is queried. We'll be
+			// jumping to random positions, so we must disable this check
+			vcf.setErrorIfUnsorted(false);
 		} catch (Exception e) {
 			throw new RuntimeException(e);
-		} finally {
-			close();
 		}
 
 		if (verbose) Timer.showStdErr("Loading intervals: Done\n" + this);
@@ -264,7 +310,6 @@ public class VcfIndex {
 		String chr = marker.getChromosomeName();
 		VcfIndexTree tree = forest.get(chr);
 		if (tree == null) return new Markers();
-		tree.setVcf(vcf);
 		return tree.query(marker);
 	}
 
@@ -323,6 +368,14 @@ public class VcfIndex {
 		}
 	}
 
+	/**
+	 * Set VCF in tree structures
+	 */
+	void setVcfTree(VcfFileIterator vcf) {
+		for (String chr : chromosomes())
+			getTree(chr).setVcf(vcf);
+	}
+
 	public void setVerbose(boolean verbose) {
 		this.verbose = verbose;
 
@@ -354,6 +407,9 @@ public class VcfIndex {
 
 		for (String chr : chromosomes())
 			sb.append(getVcfIndexChromo(chr) + "\n");
+
+		for (String chr : chromosomes())
+			sb.append(getTree(chr).toStringAll() + "\n");
 
 		return sb.toString();
 	}

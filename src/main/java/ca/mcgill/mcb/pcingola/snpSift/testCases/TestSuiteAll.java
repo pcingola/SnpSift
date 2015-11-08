@@ -1,46 +1,40 @@
 package ca.mcgill.mcb.pcingola.snpSift.testCases;
 
-import org.junit.runner.JUnitCore;
-
-import junit.framework.Test;
-import junit.framework.TestSuite;
+import org.junit.runner.RunWith;
+import org.junit.runners.Suite;
+import org.junit.runners.Suite.SuiteClasses;
 
 /**
  * Invoke all test cases
  *
  * @author pcingola
  */
+
+@RunWith(Suite.class)
+@SuiteClasses({ //
+		TestCasesFilter.class, //
+		TestCasesFilterALL.class, //
+		TestCasesFilterGt.class, //
+		TestCasesHwe.class, //
+		TestCasesLd.class, //
+		TestCasesCaseControl.class, //
+		TestCasesAnnotateCreateIndex.class, // Execute these test cases first to delete and create index files
+		TestCasesAnnotateUseIndex.class, // These test cases use the indexes created in 'TestCasesAnnotateCreateIndex'
+		TestCasesAnnotateMem.class, //
+		TestCasesAnnotateTabix.class, //
+		TestCasesIndex.class, //
+		TestCasesVarType.class, //
+		TestCasesGwasCatalog.class, //
+		TestCasesDbNsfpDeleteCache.class, // Test that delete 'data type cache' files 
+		TestCasesDbNsfp.class, // Test that use 'data type cache' files build in previous test
+		TestCasesIntervals.class, //
+		TestCasesExtractFields.class, //
+		TestCasesSplit.class, //
+		TestCasesPrivate.class, //
+		TestCasesGt.class, //
+		TestCasesGeneSets.class, //
+		TestCasesConcordance.class, //
+		TestCasesFilterChrPos.class, //
+})
 public class TestSuiteAll {
-
-	public static void main(String args[]) {
-		JUnitCore.main("ca.mcgill.mcb.pcingola.snpSift.testCases.TestSuiteAll");
-	}
-
-	public static Test suite() {
-		TestSuite suite = new TestSuite();
-
-		suite.addTestSuite(TestCasesFilter.class);
-		suite.addTestSuite(TestCasesFilterALL.class);
-		suite.addTestSuite(TestCasesFilterGt.class);
-		suite.addTestSuite(TestCasesHwe.class);
-		suite.addTestSuite(TestCasesLd.class);
-		suite.addTestSuite(TestCasesCaseControl.class);
-		suite.addTestSuite(TestCasesIntervalFile.class);
-		suite.addTestSuite(TestCasesAnnotate.class);
-		suite.addTestSuite(TestCasesAnnotateMem.class);
-		suite.addTestSuite(TestCasesAnnotateTabix.class);
-		suite.addTestSuite(TestCasesVarType.class);
-		suite.addTestSuite(TestCasesGwasCatalog.class);
-		suite.addTestSuite(TestCasesDbNsfp.class);
-		suite.addTestSuite(TestCasesIntervals.class);
-		suite.addTestSuite(TestCasesExtractFields.class);
-		suite.addTestSuite(TestCasesSplit.class);
-		suite.addTestSuite(TestCasesPrivate.class);
-		suite.addTestSuite(TestCasesGt.class);
-		suite.addTestSuite(TestCasesGeneSets.class);
-		suite.addTestSuite(TestCasesConcordance.class);
-		suite.addTestSuite(TestCasesFilterChrPos.class);
-
-		return suite;
-	}
 }

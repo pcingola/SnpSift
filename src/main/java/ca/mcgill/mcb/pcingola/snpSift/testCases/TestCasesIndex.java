@@ -2,22 +2,22 @@ package ca.mcgill.mcb.pcingola.snpSift.testCases;
 
 import java.io.File;
 
-import org.junit.Assert;
-
 import ca.mcgill.mcb.pcingola.fileIterator.VcfFileIterator;
 import ca.mcgill.mcb.pcingola.interval.Marker;
 import ca.mcgill.mcb.pcingola.interval.Markers;
+import ca.mcgill.mcb.pcingola.interval.Variant;
 import ca.mcgill.mcb.pcingola.snpSift.annotate.VcfIndex;
 import ca.mcgill.mcb.pcingola.util.Gpr;
 import ca.mcgill.mcb.pcingola.vcf.VcfEntry;
+import junit.framework.Assert;
 import junit.framework.TestCase;
 
 /**
- * Try test cases in this class before adding them to long test cases
+ * Annotate test case
  *
  * @author pcingola
  */
-public class TestCasesIntervalFile extends TestCase {
+public class TestCasesIndex extends TestCase {
 
 	public static boolean debug = false;
 	public static boolean verbose = false || debug;
@@ -36,8 +36,8 @@ public class TestCasesIntervalFile extends TestCase {
 		// Index VCF file
 		VcfIndex vcfIndex = new VcfIndex(dbFileName);
 		vcfIndex.setVerbose(verbose);
-		vcfIndex.index();
 		vcfIndex.open();
+		vcfIndex.index();
 
 		// Check that all entries can be found & retrieved
 		if (verbose) Gpr.debug("Checking");
@@ -46,27 +46,31 @@ public class TestCasesIntervalFile extends TestCase {
 			if (verbose) System.out.println(ve.toStr());
 
 			// Query database
-			Markers results = vcfIndex.query(ve);
+			for (Variant var : ve.variants()) {
+				Markers results = vcfIndex.query(var);
 
-			// We should find at least one result
-			Assert.assertTrue("No results found for entry:\n\t" + ve, results.size() > 0);
+				// We should find at least one result
+				Assert.assertTrue("No results found for entry:\n\t" + ve, results.size() > 0);
 
-			// Check each result
-			for (Marker res : results) {
-				VcfEntry veIdx = (VcfEntry) res;
-				if (verbose) System.out.println("\t" + res + "\t" + veIdx);
+				// Check each result
+				for (Marker res : results) {
+					VcfEntry veIdx = (VcfEntry) res;
+					if (verbose) System.out.println("\t" + res + "\t" + veIdx);
 
-				// Check that result does intersect query
-				Assert.assertTrue("Selected interval does not intersect marker form file!" //
-						+ "\n\tVcfEntry: " + ve //
-						+ "\n\tResult: " + res //
-						+ "\n\tVcfEntry from result:" + veIdx//
-						, ve.intersects(veIdx) //
-				);
+					// Check that result does intersect query
+					Assert.assertTrue("Selected interval does not intersect marker form file!" //
+							+ "\n\tVcfEntry            : " + ve //
+							+ "\n\tVariant             : " + var //
+							+ "\n\tResult              : " + res //
+							+ "\n\tVcfEntry from result:" + veIdx//
+							, ve.intersects(veIdx) //
+					);
+				}
 			}
 		}
 
 		vcfIndex.close();
+
 	}
 
 	/**
@@ -91,8 +95,8 @@ public class TestCasesIntervalFile extends TestCase {
 		// Restart so we force to read from index file
 		vcfIndex = new VcfIndex(dbFileName);
 		vcfIndex.setVerbose(verbose);
-		vcfIndex.index();
 		vcfIndex.open();
+		vcfIndex.index();
 
 		// Check that all entries can be found & retrieved
 		if (verbose) Gpr.debug("Checking");
@@ -101,23 +105,26 @@ public class TestCasesIntervalFile extends TestCase {
 			if (verbose) System.out.println(ve.toStr());
 
 			// Query database
-			Markers results = vcfIndex.query(ve);
+			for (Variant var : ve.variants()) {
+				Markers results = vcfIndex.query(var);
 
-			// We should find at least one result
-			Assert.assertTrue("No results found for entry:\n\t" + ve, results.size() > 0);
+				// We should find at least one result
+				Assert.assertTrue("No results found for entry:\n\t" + ve, results.size() > 0);
 
-			// Check each result
-			for (Marker res : results) {
-				VcfEntry veIdx = (VcfEntry) res;
-				if (verbose) System.out.println("\t" + res + "\t" + veIdx);
+				// Check each result
+				for (Marker res : results) {
+					VcfEntry veIdx = (VcfEntry) res;
+					if (verbose) System.out.println("\t" + res + "\t" + veIdx);
 
-				// Check that result does intersect query
-				Assert.assertTrue("Selected interval does not intersect marker form file!" //
-						+ "\n\tVcfEntry: " + ve //
-						+ "\n\tResult: " + res //
-						+ "\n\tVcfEntry from result:" + veIdx//
-						, ve.intersects(veIdx) //
-				);
+					// Check that result does intersect query
+					Assert.assertTrue("Selected interval does not intersect marker form file!" //
+							+ "\n\tVcfEntry            : " + ve //
+							+ "\n\tVariant             : " + var //
+							+ "\n\tResult              : " + res //
+							+ "\n\tVcfEntry from result:" + veIdx//
+							, ve.intersects(veIdx) //
+					);
+				}
 			}
 		}
 
