@@ -25,7 +25,8 @@ import org.junit.runners.Suite.SuiteClasses;
 		TestCasesIndex.class, //
 		TestCasesVarType.class, //
 		TestCasesGwasCatalog.class, //
-		TestCasesDbNsfp.class, //
+		TestCasesDbNsfpDeleteCache.class, // Test that delete 'data type cache' files 
+		TestCasesDbNsfp.class, // Test that use 'data type cache' files build in previous test
 		TestCasesIntervals.class, //
 		TestCasesExtractFields.class, //
 		TestCasesSplit.class, //

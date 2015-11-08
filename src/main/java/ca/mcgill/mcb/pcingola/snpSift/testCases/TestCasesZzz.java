@@ -1,11 +1,13 @@
 package ca.mcgill.mcb.pcingola.snpSift.testCases;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 import org.junit.Assert;
 
+import ca.mcgill.mcb.pcingola.fileIterator.DbNsfp;
 import ca.mcgill.mcb.pcingola.snpSift.SnpSiftCmdDbNsfp;
 import ca.mcgill.mcb.pcingola.util.Gpr;
 import ca.mcgill.mcb.pcingola.vcf.VcfEntry;
@@ -21,13 +23,17 @@ public class TestCasesZzz extends TestCase {
 	public static boolean debug = true;
 	public static boolean verbose = false || debug;
 
+	protected boolean removeDataTypesCache;
 	protected String[] defaultExtraArgs;
 
 	public TestCasesZzz() {
+		removeDataTypesCache = false;
 	}
 
 	public List<VcfEntry> annotate(String dbFileName, String fileName, String[] extraArgs) {
 		if (verbose) System.out.println("Annotate: " + dbFileName + "\t" + fileName);
+
+		removeDataTypesCache(dbFileName);
 
 		// Create command line
 		String args[] = argsList(dbFileName, fileName, extraArgs);
@@ -48,6 +54,8 @@ public class TestCasesZzz extends TestCase {
 
 	public Map<String, String> annotateGetFiledTypes(String dbFileName, String fileName, String[] extraArgs) {
 		if (verbose) System.out.println("Annotate: " + dbFileName + "\t" + fileName);
+
+		removeDataTypesCache(dbFileName);
 
 		// Create command line
 		String args[] = argsList(dbFileName, fileName, extraArgs);
@@ -83,25 +91,35 @@ public class TestCasesZzz extends TestCase {
 		return argsList.toArray(new String[0]);
 	}
 
-	public void test_01() {
+	void removeDataTypesCache(String dbFileName) {
+		if (removeDataTypesCache) {
+			String dtcFileName = dbFileName + DbNsfp.DATA_TYPES_CACHE_EXT;
+			File dtc = new File(dtcFileName);
+			if (dtc.delete()) {
+				if (verbose) Gpr.debug("Removing data types cache file: " + dtcFileName);
+			}
+		}
+	}
+
+	/**
+	 * Test dbnsfp having multiple lines per variant
+	 */
+	public void test_02() {
 		Gpr.debug("Test");
-		String vcfFileName = "test/test_dbNSFP_chr1_69134.vcf";
-		String dbFileName = "test/dbNSFP2.0b3.chr1_69134.txt";
-		String args[] = { "-collapse", "-f", "GERP++_RS,GERP++_NR,ESP6500_AA_AF,29way_logOdds,Polyphen2_HVAR_pred,SIFT_score,Uniprot_acc,Ensembl_transcriptid" };
+		String vcfFileName = "test/test_dbnsfp_multiple.vcf";
+		String dbFileName = "test/test_dbnsfp_multiple_lines.txt.gz";
+		String fields = "genename,Ensembl_geneid,Ensembl_transcriptid,aaref,aaalt";
+		String args[] = { "-collapse", "-f", fields };
 
 		List<VcfEntry> results = annotate(dbFileName, vcfFileName, args);
 		VcfEntry vcfEntry = results.get(0);
 
 		// Check all values
-		Assert.assertEquals("2.31", vcfEntry.getInfo(SnpSiftCmdDbNsfp.VCF_INFO_PREFIX + "GERP++_RS"));
-		Assert.assertEquals("2.31", vcfEntry.getInfo(SnpSiftCmdDbNsfp.VCF_INFO_PREFIX + "GERP++_NR"));
-		Assert.assertEquals("0.004785", vcfEntry.getInfo(SnpSiftCmdDbNsfp.VCF_INFO_PREFIX + "ESP6500_AA_AF"));
-		Assert.assertEquals("8.5094", vcfEntry.getInfo(SnpSiftCmdDbNsfp.VCF_INFO_PREFIX + "29way_logOdds"));
-		Assert.assertEquals("B", vcfEntry.getInfo(SnpSiftCmdDbNsfp.VCF_INFO_PREFIX + "Polyphen2_HVAR_pred"));
-		Assert.assertEquals("0.090000", vcfEntry.getInfo(SnpSiftCmdDbNsfp.VCF_INFO_PREFIX + "SIFT_score"));
-		Assert.assertEquals("Q8NH21", vcfEntry.getInfo(SnpSiftCmdDbNsfp.VCF_INFO_PREFIX + "Uniprot_acc"));
-		Assert.assertEquals("ENST00000534990,ENST00000335137", vcfEntry.getInfo(SnpSiftCmdDbNsfp.VCF_INFO_PREFIX + "Ensembl_transcriptid"));
-
+		Assert.assertEquals("ENST00000368485,ENST00000515190", vcfEntry.getInfo(SnpSiftCmdDbNsfp.VCF_INFO_PREFIX + "Ensembl_transcriptid"));
+		Assert.assertEquals("IL6R", vcfEntry.getInfo(SnpSiftCmdDbNsfp.VCF_INFO_PREFIX + "genename"));
+		Assert.assertEquals("ENSG00000160712", vcfEntry.getInfo(SnpSiftCmdDbNsfp.VCF_INFO_PREFIX + "Ensembl_geneid"));
+		Assert.assertEquals("A,L", vcfEntry.getInfo(SnpSiftCmdDbNsfp.VCF_INFO_PREFIX + "aaalt"));
+		Assert.assertEquals("D,I", vcfEntry.getInfo(SnpSiftCmdDbNsfp.VCF_INFO_PREFIX + "aaref"));
 	}
 
 }

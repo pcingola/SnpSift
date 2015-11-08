@@ -1,11 +1,11 @@
 package ca.mcgill.mcb.pcingola.fileIterator;
 
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
 
-import ca.mcgill.mcb.pcingola.collections.AutoHashMap;
-import ca.mcgill.mcb.pcingola.interval.Marker;
+import ca.mcgill.mcb.pcingola.interval.Variant;
+import ca.mcgill.mcb.pcingola.util.Gpr;
+import ca.mcgill.mcb.pcingola.vcf.VcfEntry;
 
 /**
  * DbNSFP database entry:
@@ -13,83 +13,63 @@ import ca.mcgill.mcb.pcingola.interval.Marker;
  *
  * @author lletourn
  */
-public class DbNsfpEntry extends Marker {
+public class DbNsfpEntry extends Variant {
 	private static final long serialVersionUID = -3275792763917755927L;
 
-	AutoHashMap<String, HashMap<String, String>> values = new AutoHashMap<String, HashMap<String, String>>(new HashMap<String, String>());
-	boolean collapseRepeatedValues = true;
+	DbNsfp dbNsfp;
+	Map<String, String> values;
 
-	public DbNsfpEntry() {
-		super();
+	public static String[] splitValuesField(String value) {
+		if (value.indexOf(DbNsfp.SUBFIELD_SEPARATOR_2) >= 0) return value.split(DbNsfp.SUBFIELD_SEPARATOR_2);
+		return value.split(DbNsfp.SUBFIELD_SEPARATOR);
 	}
 
-	public DbNsfpEntry(Marker parent, int start) {
-		super(parent, start, start, false, "");
+	public DbNsfpEntry(DbNsfp dbNsfp, String line) {
+		super();
+		this.dbNsfp = dbNsfp;
+		parse(line);
 	}
 
 	/**
 	 * Add a value
 	 */
-	public void add(String alt, String columnName, String valuesToAdd) {
-		// Get map by alt
-		HashMap<String, String> altVals = values.getOrCreate(alt);
-
+	public void add(String columnName, String valuesToAdd) {
 		// Represent empty values as '.'
 		if (valuesToAdd.isEmpty()) valuesToAdd = ".";
-		else valuesToAdd = valuesToAdd.replace(';', '\t'); // Split values
-
-		if (!altVals.containsKey(columnName)) {
-			// No previous values => Simply insert new value
-			altVals.put(columnName, valuesToAdd);
-			return;
+		else {
+			// Use '\t' as separator
+			if (valuesToAdd.indexOf(DbNsfp.SUBFIELD_SEPARATOR_CHAR) >= 0) valuesToAdd = valuesToAdd.replace(DbNsfp.SUBFIELD_SEPARATOR_CHAR, '\t'); // Split values
+			else if (valuesToAdd.indexOf(DbNsfp.SUBFIELD_SEPARATOR_CHAR_2) >= 0) valuesToAdd = valuesToAdd.replace(DbNsfp.SUBFIELD_SEPARATOR_CHAR_2, '\t'); // Split values
 		}
 
-		// Remove repeated values?
-		if (collapseRepeatedValues) {
-			// Create a set of current values
-			HashSet<String> currVals = new HashSet<String>();
-			for (String cv : altVals.get(columnName).split("\t"))
-				currVals.add(cv);
-
-			// Add unique values
-			for (String nv : valuesToAdd.split("\t"))
-				if (!currVals.contains(nv)) {
-					altVals.put(columnName, altVals.get(columnName) + "\t" + nv);
-					currVals.add(nv);
-				}
-
-			return;
-		}
-
-		// Just add new value
-		String newValue = altVals.get(columnName) + "\t" + valuesToAdd;
-		altVals.put(columnName, newValue);
-
+		// Add value
+		values.put(columnName, valuesToAdd);
 	}
 
 	@Override
 	public DbNsfpEntry cloneShallow() {
 		DbNsfpEntry clone = (DbNsfpEntry) super.cloneShallow();
-		clone.collapseRepeatedValues = collapseRepeatedValues;
 		return clone;
 	}
 
 	/**
-	 * Get tab-separated list of values (null if not found)
+	 * Get data in a VCF INFO field compatible format
 	 */
-	public String get(String alt, String key) {
-		HashMap<String, String> altVals = values.get(alt);
-		if (altVals == null) return null;
-		return altVals.get(key);
-	}
-
-	/**
-	 * Get comma separated list of values (null if not found)
-	 */
-	public String getCsv(String alt, String key) {
-		String val = get(alt, key);
+	public String getVcfInfo(String key) {
+		String val = values.get(key);
 		if (val == null) return null;
-		return val.replace('\t', ','); // Make this comma separated (VCF compatible)
+
+		if (val.indexOf('\t') < 0) return VcfEntry.vcfInfoSafe(val);
+
+		// Split and re-join using commas
+		String vals[] = val.split("\t");
+		StringBuilder sb = new StringBuilder();
+		for (int i = 0; i < vals.length; i++) {
+			if (i > 0) sb.append(",");
+			sb.append(VcfEntry.vcfInfoSafe(vals[i]));
+		}
+
+		return sb.toString();
 	}
 
 	/**
@@ -99,28 +79,48 @@ public class DbNsfpEntry extends Marker {
 		return values.containsKey(allele);
 	}
 
-	public void setCollapseRepeatedValues(boolean collapseRepeatedValues) {
-		this.collapseRepeatedValues = collapseRepeatedValues;
+	/**
+	 * Parse dbSNFP values (could be from multiple lines)
+	 */
+	protected void parse(String line) {
+		// Initialize DbNsfpEntry
+		String[] vals = line.split(DbNsfp.COLUMN_SEPARATOR, -1);
+
+		String chromosome = vals[dbNsfp.getChromosomeIdx()];
+		parent = dbNsfp.getChromosome(chromosome);
+
+		start = parsePosition(vals[dbNsfp.getStartIdx()]);
+		end = start;
+
+		// Add all entries
+		variantType = VariantType.SNP;
+		ref = vals[dbNsfp.getRefIdx()];
+		alt = vals[dbNsfp.getAltIdx()];
+		genotype = alt;
+
+		// Add 'key=value' pairs
+		values = new HashMap<>();
+		for (int i = 0; i < dbNsfp.getFieldCount(); i++)
+			add(dbNsfp.getFieldName(i), vals[i]);
+	}
+
+	/**
+	 * Parse a string as a 'position'.
+	 */
+	public int parsePosition(String posStr) {
+		return Gpr.parseIntSafe(posStr) - 1;
 	}
 
 	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
 
-		sb.append(getChromosomeName() + "\t");
-		sb.append(getStart() + "\t");
-		for (String alt : values.keySet())
-			sb.append(alt + ",");
-		sb.deleteCharAt(sb.length() - 1);
+		sb.append(toStr() + "\t");
 		sb.append('\n');
 
-		for (String key : values.keySet()) {
-			Map<String, String> map = values.get(key);
-			sb.append("\tALT '" + key + "':\n");
-			for (String mk : map.keySet()) {
-				sb.append("\t\t" + mk + ": '" + map.get(mk) + "'\n");
-			}
-		}
+		for (String key : values.keySet())
+			sb.append("\t" + key + ": '" + values.get(key) + "'\n");
+
 		return sb.toString();
 	}
 }
