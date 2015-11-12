@@ -398,9 +398,8 @@ public class SnpSiftCmdAnnotate extends SnpSift {
 		usageGenericAndDb();
 
 		System.err.println("Note: According the the VCF's database format provided, SnpSift annotate uses different strategies");
-		System.err.println("\t  i) plain VCF       : SnpSift indexes the VCF file (creating an index in memory).");
+		System.err.println("\t  i) plain VCF       : SnpSift indexes the VCF file (creating an index file *.sidx).");
 		System.err.println("\t ii) bgzip+tabix     : SnpSift uses tabix's index.");
-		System.err.println("\tiii) gzip            : SnpSift loads the whole VCF file in memory (very inneficient).");
 
 		System.exit(1);
 	}
