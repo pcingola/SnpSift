@@ -1178,8 +1178,8 @@ public class TestCasesFilter extends TestCase {
 		Assert.assertNotNull(list);
 		Assert.assertTrue(list.size() > 0);
 		for (VcfEntry vcfEntry : list) {
-			if (verbose) System.out.println(vcfEntry.getFilterPass() + "\t" + vcfEntry);
-			if (vcfEntry.getFilterPass().equals("PASS")) Assert.assertTrue(vcfEntry.getQuality() >= minQ);
+			if (verbose) System.out.println(vcfEntry.getFilter() + "\t" + vcfEntry);
+			if (vcfEntry.getFilter().equals("PASS")) Assert.assertTrue(vcfEntry.getQuality() >= minQ);
 			else Assert.assertTrue(vcfEntry.getQuality() < minQ);
 		}
 	}
@@ -1203,8 +1203,8 @@ public class TestCasesFilter extends TestCase {
 		Assert.assertNotNull(list);
 		Assert.assertTrue(list.size() > 0);
 		for (VcfEntry vcfEntry : list) {
-			if (verbose) System.out.println(vcfEntry.getFilterPass() + "\t" + vcfEntry);
-			if (vcfEntry.getFilterPass().equals("ADD")) Assert.assertTrue(vcfEntry.getQuality() >= minQ);
+			if (verbose) System.out.println(vcfEntry.getFilter() + "\t" + vcfEntry);
+			if (vcfEntry.getFilter().equals("ADD")) Assert.assertTrue(vcfEntry.getQuality() >= minQ);
 			else Assert.assertTrue(vcfEntry.getQuality() < minQ);
 		}
 	}
@@ -1227,8 +1227,8 @@ public class TestCasesFilter extends TestCase {
 		Assert.assertNotNull(list);
 		Assert.assertTrue(list.size() > 0);
 		for (VcfEntry vcfEntry : list) {
-			if (verbose) System.out.println(vcfEntry.getFilterPass() + "\t" + vcfEntry);
-			if (vcfEntry.getFilterPass().equals("SVM")) Assert.assertTrue(!vcfEntry.getRef().equals("A"));
+			if (verbose) System.out.println(vcfEntry.getFilter() + "\t" + vcfEntry);
+			if (vcfEntry.getFilter().equals("SVM")) Assert.assertTrue(!vcfEntry.getRef().equals("A"));
 		}
 	}
 
@@ -1252,7 +1252,7 @@ public class TestCasesFilter extends TestCase {
 
 		// Check result (hould be only one entry)
 		VcfEntry vcfEntry = list.get(0);
-		if (verbose) System.out.println(vcfEntry.getFilterPass() + "\t" + vcfEntry);
+		if (verbose) System.out.println(vcfEntry.getFilter() + "\t" + vcfEntry);
 		Assert.assertEquals(219134272, vcfEntry.getStart());
 	}
 
@@ -1277,10 +1277,10 @@ public class TestCasesFilter extends TestCase {
 
 		// Check result (hould be only one entry)
 		VcfEntry vcfEntry = list.get(0);
-		if (verbose) System.out.println(vcfEntry.getFilterPass() + "\t" + vcfEntry);
+		if (verbose) System.out.println(vcfEntry.getFilter() + "\t" + vcfEntry);
 
-		if (vcfEntry.getStart() == 219134261) Assert.assertEquals("OTHER", vcfEntry.getFilterPass());
-		if (vcfEntry.getStart() == 219134272) Assert.assertEquals("DP_OK;OTHER", vcfEntry.getFilterPass());
+		if (vcfEntry.getStart() == 219134261) Assert.assertEquals("OTHER", vcfEntry.getFilter());
+		if (vcfEntry.getStart() == 219134272) Assert.assertEquals("DP_OK;OTHER", vcfEntry.getFilter());
 	}
 
 	/**

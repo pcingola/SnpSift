@@ -69,7 +69,7 @@ public class SnpSiftCmdGtFilter extends SnpSift {
 	 */
 	void addVcfFilter(VcfEntry vcfEntry, String filterStr) {
 		// Get current value
-		String filter = vcfEntry.getFilterPass();
+		String filter = vcfEntry.getFilter();
 		if (filter.equals(".")) filter = ""; // Empty?
 		// Append new value
 		filter += (!filter.isEmpty() ? ";" : "") + filterStr; // Add this filter to the not-passed list
@@ -81,7 +81,7 @@ public class SnpSiftCmdGtFilter extends SnpSift {
 	 */
 	void delVcfFilter(VcfEntry vcfEntry, String filterStr) {
 		// Get current value
-		String filter = vcfEntry.getFilterPass();
+		String filter = vcfEntry.getFilter();
 		StringBuilder sbFilter = new StringBuilder();
 
 		// Split by semicolon and filter out the undesired values

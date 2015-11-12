@@ -178,7 +178,7 @@ public class Field extends Expression {
 		if (name.equals("ID")) return vcfEntry.getId();
 		if (name.equals("REF")) return vcfEntry.getRef();
 		if (name.equals("ALT")) return vcfEntry.getAltsStr();
-		if (name.equals("FILTER")) return vcfEntry.getFilterPass();
+		if (name.equals("FILTER")) return vcfEntry.getFilter();
 		if (name.equals("FORMAT")) return vcfEntry.getFormat();
 		if (name.equals("POS")) return "" + (vcfEntry.getStart() + 1);
 		if (name.equals("QUAL")) return "" + vcfEntry.getQuality();
