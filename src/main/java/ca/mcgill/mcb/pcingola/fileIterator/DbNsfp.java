@@ -417,7 +417,6 @@ public class DbNsfp implements DbMarker<Variant, DbNsfpEntry> {
 
 	@Override
 	public Collection<DbNsfpEntry> query(Variant variant) {
-		Gpr.debug("Query: " + variant);
 		// Query and parse results
 		TabixIterator ti = tabixReader.query(variant);
 
