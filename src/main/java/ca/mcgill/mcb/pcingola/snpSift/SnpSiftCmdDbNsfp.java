@@ -196,6 +196,8 @@ public class SnpSiftCmdDbNsfp extends SnpSift {
 	 * Annotate a VCF entry
 	 */
 	public boolean annotate(Variant variant, Map<String, String> info) {
+		if (verbose) Gpr.showMark(++countVariants, SHOW_EVERY);
+
 		// Find in database
 		Collection<DbNsfpEntry> dbEntries = dbNsfp.query(variant);
 		if (dbEntries == null || dbEntries.isEmpty()) return false;
@@ -229,10 +231,7 @@ public class SnpSiftCmdDbNsfp extends SnpSift {
 			if (debug) Gpr.debug("Annotated: " + variant.toStr());
 		}
 
-		if (verbose) Gpr.showMark(++countVariants, SHOW_EVERY);
-
 		return annotated;
-
 	}
 
 	@Override
