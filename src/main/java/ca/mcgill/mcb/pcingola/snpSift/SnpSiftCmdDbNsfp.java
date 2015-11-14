@@ -81,6 +81,7 @@ public class SnpSiftCmdDbNsfp extends SnpSift {
 	protected String vcfFileName;
 	protected int count = 0;
 	protected int countAnnotated = 0;
+	protected int countVariants = 0;
 	protected DbNsfp dbNsfp;
 	protected VcfFileIterator vcfFile;
 	protected DbNsfpEntry currentDbEntry;
@@ -226,15 +227,12 @@ public class SnpSiftCmdDbNsfp extends SnpSift {
 		if (annotated) {
 			countAnnotated++;
 			if (debug) Gpr.debug("Annotated: " + variant.toStr());
-			else if (verbose) {
-				if (countAnnotated % SHOW_ANNOTATED == 0) {
-					if (countAnnotated % (100 * SHOW_ANNOTATED) == 0) System.err.print(".\n" + countAnnotated + "\t" + variant.getChromosomeName() + ":" + variant.getStart() + "\t");
-					else System.err.print('.');
-				}
-			}
 		}
 
+		if (verbose) Gpr.showMark(countVariants++, SHOW_ANNOTATED);
+
 		return annotated;
+
 	}
 
 	@Override
