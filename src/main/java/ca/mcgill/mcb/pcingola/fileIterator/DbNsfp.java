@@ -425,12 +425,16 @@ public class DbNsfp implements DbMarker<Variant, DbNsfpEntry> {
 
 		// Any results?
 		List<DbNsfpEntry> results = new LinkedList<>();
+		int numLines = 0;
 		for (String line : ti) {
 			line = Gpr.removeBackslashR(line);
 			if (debug) Gpr.debug("Query: Parse line " + line);
 			DbNsfpEntry de = new DbNsfpEntry(this, line);
 			if (match(variant, de)) results.add(de);
+			numLines++;
 		}
+
+		Gpr.debug("Parsed lines: " + numLines);
 
 		return results;
 	}
