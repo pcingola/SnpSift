@@ -91,8 +91,8 @@ public class Zzz {
 
 		try {
 			TabixReader tabix = new TabixReader(fileName);
+			tabix.setDebug(true);
 
-			TabixReader.debug = true;
 			TabixIterator ti = tabix.query("chr1:5778060-5794968");
 			System.out.println("Iterator:" + ti);
 
