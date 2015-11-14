@@ -68,7 +68,7 @@ public class SnpSiftCmdDbNsfp extends SnpSift {
 			;
 	public static final int MIN_JUMP = 100;
 
-	public static final int SHOW_ANNOTATED = 1;
+	public static final int SHOW_EVERY = 1;
 	public final String CONFIG_DBNSFP_DB_FILE = "database.local.dbnsfp";
 
 	protected Map<String, String> fieldsToAdd;
@@ -229,7 +229,7 @@ public class SnpSiftCmdDbNsfp extends SnpSift {
 			if (debug) Gpr.debug("Annotated: " + variant.toStr());
 		}
 
-		if (verbose) Gpr.showMark(countVariants++, SHOW_ANNOTATED);
+		if (verbose) Gpr.showMark(++countVariants, SHOW_EVERY);
 
 		return annotated;
 
