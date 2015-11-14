@@ -32,7 +32,7 @@
   	
     <dependency>
       <groupId>ca.mcgill.mcb.pcingola</groupId>
-      <artifactId>snpEff</artifactId>
+      <artifactId>SnpEff</artifactId>
       <version>4.2</version>
     </dependency>
     
