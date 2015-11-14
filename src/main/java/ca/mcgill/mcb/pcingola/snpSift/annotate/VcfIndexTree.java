@@ -34,7 +34,7 @@ public class VcfIndexTree implements Itree {
 
 	public static final int MAX_DIFF_COLLAPSE = 2; // We only allow 2 characters difference to collapse entries ('\r\n')
 	public static final int COLLAPSE_MAX_NUM_ENTRIES = 4; // This number cannot be less then 3 (see comment in code below)
-	public static final int COLLAPSE_MAX_BLOCK_SIZE = 4 * 1024; // Minimum file size to index
+	public static final int COLLAPSE_MAX_BLOCK_SIZE = 64 * 1024; // Minimum file size to index
 	public static final int INITIAL_CAPACITY = 1024; // Initial capacity for arrays
 
 	boolean debug;
