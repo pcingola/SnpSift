@@ -39,7 +39,7 @@
     <dependency>
       <groupId>org.antlr</groupId>
       <artifactId>antlr</artifactId>
-      <version>4.4</version>
+      <version>4.5.1</version>
     </dependency>
     <dependency>
       <groupId>net.sf.trove4j</groupId>

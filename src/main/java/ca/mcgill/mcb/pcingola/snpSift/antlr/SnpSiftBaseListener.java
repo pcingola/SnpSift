@@ -1,8 +1,7 @@
-// Generated from SnpSift.g by ANTLR 4.4
+// Generated from SnpSift.g by ANTLR 4.5.1
 package ca.mcgill.mcb.pcingola.snpSift.antlr;
 
 import org.antlr.v4.runtime.ParserRuleContext;
-import org.antlr.v4.runtime.misc.NotNull;
 import org.antlr.v4.runtime.tree.ErrorNode;
 import org.antlr.v4.runtime.tree.TerminalNode;
 
@@ -17,252 +16,252 @@ public class SnpSiftBaseListener implements SnpSiftListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterExpressionSet(@NotNull SnpSiftParser.ExpressionSetContext ctx) { }
+	@Override public void enterCompilationUnit(SnpSiftParser.CompilationUnitContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitExpressionSet(@NotNull SnpSiftParser.ExpressionSetContext ctx) { }
+	@Override public void exitCompilationUnit(SnpSiftParser.CompilationUnitContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterLiteralString(@NotNull SnpSiftParser.LiteralStringContext ctx) { }
+	@Override public void enterExpressionSet(SnpSiftParser.ExpressionSetContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitLiteralString(@NotNull SnpSiftParser.LiteralStringContext ctx) { }
+	@Override public void exitExpressionSet(SnpSiftParser.ExpressionSetContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterExpressionUnary(@NotNull SnpSiftParser.ExpressionUnaryContext ctx) { }
+	@Override public void enterLiteralString(SnpSiftParser.LiteralStringContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitExpressionUnary(@NotNull SnpSiftParser.ExpressionUnaryContext ctx) { }
+	@Override public void exitLiteralString(SnpSiftParser.LiteralStringContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterExpressionComp(@NotNull SnpSiftParser.ExpressionCompContext ctx) { }
+	@Override public void enterExpressionUnary(SnpSiftParser.ExpressionUnaryContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitExpressionComp(@NotNull SnpSiftParser.ExpressionCompContext ctx) { }
+	@Override public void exitExpressionUnary(SnpSiftParser.ExpressionUnaryContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterLiteralBool(@NotNull SnpSiftParser.LiteralBoolContext ctx) { }
+	@Override public void enterExpressionComp(SnpSiftParser.ExpressionCompContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitLiteralBool(@NotNull SnpSiftParser.LiteralBoolContext ctx) { }
+	@Override public void exitExpressionComp(SnpSiftParser.ExpressionCompContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterVarReferenceList(@NotNull SnpSiftParser.VarReferenceListContext ctx) { }
+	@Override public void enterLiteralBool(SnpSiftParser.LiteralBoolContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitVarReferenceList(@NotNull SnpSiftParser.VarReferenceListContext ctx) { }
+	@Override public void exitLiteralBool(SnpSiftParser.LiteralBoolContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterLiteralFloat(@NotNull SnpSiftParser.LiteralFloatContext ctx) { }
+	@Override public void enterVarReferenceList(SnpSiftParser.VarReferenceListContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitLiteralFloat(@NotNull SnpSiftParser.LiteralFloatContext ctx) { }
+	@Override public void exitVarReferenceList(SnpSiftParser.VarReferenceListContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterLiteralIndex(@NotNull SnpSiftParser.LiteralIndexContext ctx) { }
+	@Override public void enterLiteralFloat(SnpSiftParser.LiteralFloatContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitLiteralIndex(@NotNull SnpSiftParser.LiteralIndexContext ctx) { }
+	@Override public void exitLiteralFloat(SnpSiftParser.LiteralFloatContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterVarReference(@NotNull SnpSiftParser.VarReferenceContext ctx) { }
+	@Override public void enterLiteralIndex(SnpSiftParser.LiteralIndexContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitVarReference(@NotNull SnpSiftParser.VarReferenceContext ctx) { }
+	@Override public void exitLiteralIndex(SnpSiftParser.LiteralIndexContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterVarReferenceListSub(@NotNull SnpSiftParser.VarReferenceListSubContext ctx) { }
+	@Override public void enterVarReference(SnpSiftParser.VarReferenceContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitVarReferenceListSub(@NotNull SnpSiftParser.VarReferenceListSubContext ctx) { }
+	@Override public void exitVarReference(SnpSiftParser.VarReferenceContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterExpressionTimes(@NotNull SnpSiftParser.ExpressionTimesContext ctx) { }
+	@Override public void enterVarReferenceListSub(SnpSiftParser.VarReferenceListSubContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitExpressionTimes(@NotNull SnpSiftParser.ExpressionTimesContext ctx) { }
+	@Override public void exitVarReferenceListSub(SnpSiftParser.VarReferenceListSubContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterExpressionExists(@NotNull SnpSiftParser.ExpressionExistsContext ctx) { }
+	@Override public void enterExpressionTimes(SnpSiftParser.ExpressionTimesContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitExpressionExists(@NotNull SnpSiftParser.ExpressionExistsContext ctx) { }
+	@Override public void exitExpressionTimes(SnpSiftParser.ExpressionTimesContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterCompilationUnit(@NotNull SnpSiftParser.CompilationUnitContext ctx) { }
+	@Override public void enterExpressionExists(SnpSiftParser.ExpressionExistsContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitCompilationUnit(@NotNull SnpSiftParser.CompilationUnitContext ctx) { }
+	@Override public void exitExpressionExists(SnpSiftParser.ExpressionExistsContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterExpressionPlus(@NotNull SnpSiftParser.ExpressionPlusContext ctx) { }
+	@Override public void enterExpressionPlus(SnpSiftParser.ExpressionPlusContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitExpressionPlus(@NotNull SnpSiftParser.ExpressionPlusContext ctx) { }
+	@Override public void exitExpressionPlus(SnpSiftParser.ExpressionPlusContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterExpressionLogic(@NotNull SnpSiftParser.ExpressionLogicContext ctx) { }
+	@Override public void enterExpressionLogic(SnpSiftParser.ExpressionLogicContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitExpressionLogic(@NotNull SnpSiftParser.ExpressionLogicContext ctx) { }
+	@Override public void exitExpressionLogic(SnpSiftParser.ExpressionLogicContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterFunctionCall(@NotNull SnpSiftParser.FunctionCallContext ctx) { }
+	@Override public void enterFunctionCall(SnpSiftParser.FunctionCallContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitFunctionCall(@NotNull SnpSiftParser.FunctionCallContext ctx) { }
+	@Override public void exitFunctionCall(SnpSiftParser.FunctionCallContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterExpressionParen(@NotNull SnpSiftParser.ExpressionParenContext ctx) { }
+	@Override public void enterExpressionParen(SnpSiftParser.ExpressionParenContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitExpressionParen(@NotNull SnpSiftParser.ExpressionParenContext ctx) { }
+	@Override public void exitExpressionParen(SnpSiftParser.ExpressionParenContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterExpressionCond(@NotNull SnpSiftParser.ExpressionCondContext ctx) { }
+	@Override public void enterExpressionCond(SnpSiftParser.ExpressionCondContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitExpressionCond(@NotNull SnpSiftParser.ExpressionCondContext ctx) { }
+	@Override public void exitExpressionCond(SnpSiftParser.ExpressionCondContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterLiteralInt(@NotNull SnpSiftParser.LiteralIntContext ctx) { }
+	@Override public void enterLiteralInt(SnpSiftParser.LiteralIntContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitLiteralInt(@NotNull SnpSiftParser.LiteralIntContext ctx) { }
+	@Override public void exitLiteralInt(SnpSiftParser.LiteralIntContext ctx) { }
 
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterEveryRule(@NotNull ParserRuleContext ctx) { }
+	@Override public void enterEveryRule(ParserRuleContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitEveryRule(@NotNull ParserRuleContext ctx) { }
+	@Override public void exitEveryRule(ParserRuleContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void visitTerminal(@NotNull TerminalNode node) { }
+	@Override public void visitTerminal(TerminalNode node) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void visitErrorNode(@NotNull ErrorNode node) { }
+	@Override public void visitErrorNode(ErrorNode node) { }
 }

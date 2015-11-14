@@ -1,6 +1,5 @@
-// Generated from SnpSift.g by ANTLR 4.4
+// Generated from SnpSift.g by ANTLR 4.5.1
 package ca.mcgill.mcb.pcingola.snpSift.antlr;
-import org.antlr.v4.runtime.misc.NotNull;
 import org.antlr.v4.runtime.tree.AbstractParseTreeVisitor;
 
 /**
@@ -18,131 +17,131 @@ public class SnpSiftBaseVisitor<T> extends AbstractParseTreeVisitor<T> implement
 	 * <p>The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
-	@Override public T visitExpressionSet(@NotNull SnpSiftParser.ExpressionSetContext ctx) { return visitChildren(ctx); }
+	@Override public T visitCompilationUnit(SnpSiftParser.CompilationUnitContext ctx) { return visitChildren(ctx); }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
-	@Override public T visitLiteralString(@NotNull SnpSiftParser.LiteralStringContext ctx) { return visitChildren(ctx); }
+	@Override public T visitExpressionSet(SnpSiftParser.ExpressionSetContext ctx) { return visitChildren(ctx); }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
-	@Override public T visitExpressionUnary(@NotNull SnpSiftParser.ExpressionUnaryContext ctx) { return visitChildren(ctx); }
+	@Override public T visitLiteralString(SnpSiftParser.LiteralStringContext ctx) { return visitChildren(ctx); }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
-	@Override public T visitExpressionComp(@NotNull SnpSiftParser.ExpressionCompContext ctx) { return visitChildren(ctx); }
+	@Override public T visitExpressionUnary(SnpSiftParser.ExpressionUnaryContext ctx) { return visitChildren(ctx); }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
-	@Override public T visitLiteralBool(@NotNull SnpSiftParser.LiteralBoolContext ctx) { return visitChildren(ctx); }
+	@Override public T visitExpressionComp(SnpSiftParser.ExpressionCompContext ctx) { return visitChildren(ctx); }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
-	@Override public T visitVarReferenceList(@NotNull SnpSiftParser.VarReferenceListContext ctx) { return visitChildren(ctx); }
+	@Override public T visitLiteralBool(SnpSiftParser.LiteralBoolContext ctx) { return visitChildren(ctx); }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
-	@Override public T visitLiteralFloat(@NotNull SnpSiftParser.LiteralFloatContext ctx) { return visitChildren(ctx); }
+	@Override public T visitVarReferenceList(SnpSiftParser.VarReferenceListContext ctx) { return visitChildren(ctx); }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
-	@Override public T visitLiteralIndex(@NotNull SnpSiftParser.LiteralIndexContext ctx) { return visitChildren(ctx); }
+	@Override public T visitLiteralFloat(SnpSiftParser.LiteralFloatContext ctx) { return visitChildren(ctx); }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
-	@Override public T visitVarReference(@NotNull SnpSiftParser.VarReferenceContext ctx) { return visitChildren(ctx); }
+	@Override public T visitLiteralIndex(SnpSiftParser.LiteralIndexContext ctx) { return visitChildren(ctx); }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
-	@Override public T visitVarReferenceListSub(@NotNull SnpSiftParser.VarReferenceListSubContext ctx) { return visitChildren(ctx); }
+	@Override public T visitVarReference(SnpSiftParser.VarReferenceContext ctx) { return visitChildren(ctx); }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
-	@Override public T visitExpressionTimes(@NotNull SnpSiftParser.ExpressionTimesContext ctx) { return visitChildren(ctx); }
+	@Override public T visitVarReferenceListSub(SnpSiftParser.VarReferenceListSubContext ctx) { return visitChildren(ctx); }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
-	@Override public T visitExpressionExists(@NotNull SnpSiftParser.ExpressionExistsContext ctx) { return visitChildren(ctx); }
+	@Override public T visitExpressionTimes(SnpSiftParser.ExpressionTimesContext ctx) { return visitChildren(ctx); }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
-	@Override public T visitCompilationUnit(@NotNull SnpSiftParser.CompilationUnitContext ctx) { return visitChildren(ctx); }
+	@Override public T visitExpressionExists(SnpSiftParser.ExpressionExistsContext ctx) { return visitChildren(ctx); }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
-	@Override public T visitExpressionPlus(@NotNull SnpSiftParser.ExpressionPlusContext ctx) { return visitChildren(ctx); }
+	@Override public T visitExpressionPlus(SnpSiftParser.ExpressionPlusContext ctx) { return visitChildren(ctx); }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
-	@Override public T visitExpressionLogic(@NotNull SnpSiftParser.ExpressionLogicContext ctx) { return visitChildren(ctx); }
+	@Override public T visitExpressionLogic(SnpSiftParser.ExpressionLogicContext ctx) { return visitChildren(ctx); }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
-	@Override public T visitFunctionCall(@NotNull SnpSiftParser.FunctionCallContext ctx) { return visitChildren(ctx); }
+	@Override public T visitFunctionCall(SnpSiftParser.FunctionCallContext ctx) { return visitChildren(ctx); }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
-	@Override public T visitExpressionParen(@NotNull SnpSiftParser.ExpressionParenContext ctx) { return visitChildren(ctx); }
+	@Override public T visitExpressionParen(SnpSiftParser.ExpressionParenContext ctx) { return visitChildren(ctx); }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
-	@Override public T visitExpressionCond(@NotNull SnpSiftParser.ExpressionCondContext ctx) { return visitChildren(ctx); }
+	@Override public T visitExpressionCond(SnpSiftParser.ExpressionCondContext ctx) { return visitChildren(ctx); }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
-	@Override public T visitLiteralInt(@NotNull SnpSiftParser.LiteralIntContext ctx) { return visitChildren(ctx); }
+	@Override public T visitLiteralInt(SnpSiftParser.LiteralIntContext ctx) { return visitChildren(ctx); }
 }

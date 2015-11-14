@@ -1,4 +1,4 @@
-// Generated from SnpSift.g by ANTLR 4.4
+// Generated from SnpSift.g by ANTLR 4.5.1
 package ca.mcgill.mcb.pcingola.snpSift.antlr;
 import org.antlr.v4.runtime.atn.*;
 import org.antlr.v4.runtime.dfa.DFA;
@@ -11,38 +11,73 @@ import java.util.ArrayList;
 
 @SuppressWarnings({"all", "warnings", "unchecked", "unused", "cast"})
 public class SnpSiftParser extends Parser {
-	static { RuntimeMetaData.checkVersion("4.4", RuntimeMetaData.VERSION); }
+	static { RuntimeMetaData.checkVersion("4.5.1", RuntimeMetaData.VERSION); }
 
 	protected static final DFA[] _decisionToDFA;
 	protected static final PredictionContextCache _sharedContextCache =
 		new PredictionContextCache();
 	public static final int
-		T__34=1, T__33=2, T__32=3, T__31=4, T__30=5, T__29=6, T__28=7, T__27=8, 
-		T__26=9, T__25=10, T__24=11, T__23=12, T__22=13, T__21=14, T__20=15, T__19=16, 
-		T__18=17, T__17=18, T__16=19, T__15=20, T__14=21, T__13=22, T__12=23, 
-		T__11=24, T__10=25, T__9=26, T__8=27, T__7=28, T__6=29, T__5=30, T__4=31, 
-		T__3=32, T__2=33, T__1=34, T__0=35, WS=36, COMMENT_SL=37, COMMENT_HASH=38, 
+		T__0=1, T__1=2, T__2=3, T__3=4, T__4=5, T__5=6, T__6=7, T__7=8, T__8=9, 
+		T__9=10, T__10=11, T__11=12, T__12=13, T__13=14, T__14=15, T__15=16, T__16=17, 
+		T__17=18, T__18=19, T__19=20, T__20=21, T__21=22, T__22=23, T__23=24, 
+		T__24=25, T__25=26, T__26=27, T__27=28, T__28=29, T__29=30, T__30=31, 
+		T__31=32, T__32=33, T__33=34, T__34=35, WS=36, COMMENT_SL=37, COMMENT_HASH=38, 
 		BOOL_LITERAL=39, INT_LITERAL=40, FLOAT_LITERAL=41, STRING_LITERAL=42, 
 		ID=43;
-	public static final String[] tokenNames = {
-		"<INVALID>", "'/'", "'!='", "'||'", "'&&'", "'='", "'^'", "'?'", "'<='", 
-		"'ALL'", "'&'", "'('", "'*'", "'exists'", "'has'", "','", "'na'", "'].'", 
-		"':'", "'>='", "'['", "'|'", "'<'", "'=='", "'!~'", "']'", "'>'", "'!'", 
-		"'=~'", "'%'", "'in'", "'ANY'", "')'", "'+'", "'-'", "'SET'", "WS", "COMMENT_SL", 
-		"COMMENT_HASH", "BOOL_LITERAL", "INT_LITERAL", "FLOAT_LITERAL", "STRING_LITERAL", 
-		"ID"
-	};
 	public static final int
 		RULE_compilationUnit = 0, RULE_expression = 1;
 	public static final String[] ruleNames = {
 		"compilationUnit", "expression"
 	};
 
-	@Override
-	public String getGrammarFileName() { return "SnpSift.g"; }
+	private static final String[] _LITERAL_NAMES = {
+		null, "'ANY'", "'*'", "'ALL'", "'?'", "'('", "','", "')'", "'['", "']'", 
+		"'].'", "'/'", "'%'", "'+'", "'-'", "'='", "'=='", "'!='", "'<'", "'<='", 
+		"'>'", "'>='", "'=~'", "'!~'", "'has'", "'!'", "'&'", "'&&'", "'|'", "'||'", 
+		"'^'", "'exists'", "'na'", "'in'", "'SET'", "':'"
+	};
+	private static final String[] _SYMBOLIC_NAMES = {
+		null, null, null, null, null, null, null, null, null, null, null, null, 
+		null, null, null, null, null, null, null, null, null, null, null, null, 
+		null, null, null, null, null, null, null, null, null, null, null, null, 
+		"WS", "COMMENT_SL", "COMMENT_HASH", "BOOL_LITERAL", "INT_LITERAL", "FLOAT_LITERAL", 
+		"STRING_LITERAL", "ID"
+	};
+	public static final Vocabulary VOCABULARY = new VocabularyImpl(_LITERAL_NAMES, _SYMBOLIC_NAMES);
+
+	/**
+	 * @deprecated Use {@link #VOCABULARY} instead.
+	 */
+	@Deprecated
+	public static final String[] tokenNames;
+	static {
+		tokenNames = new String[_SYMBOLIC_NAMES.length];
+		for (int i = 0; i < tokenNames.length; i++) {
+			tokenNames[i] = VOCABULARY.getLiteralName(i);
+			if (tokenNames[i] == null) {
+				tokenNames[i] = VOCABULARY.getSymbolicName(i);
+			}
+
+			if (tokenNames[i] == null) {
+				tokenNames[i] = "<INVALID>";
+			}
+		}
+	}
 
 	@Override
-	public String[] getTokenNames() { return tokenNames; }
+	@Deprecated
+	public String[] getTokenNames() {
+		return tokenNames;
+	}
+
+	@Override
+
+	public Vocabulary getVocabulary() {
+		return VOCABULARY;
+	}
+
+	@Override
+	public String getGrammarFileName() { return "SnpSift.g"; }
 
 	@Override
 	public String[] getRuleNames() { return ruleNames; }
@@ -58,10 +93,10 @@ public class SnpSiftParser extends Parser {
 		_interp = new ParserATNSimulator(this,_ATN,_decisionToDFA,_sharedContextCache);
 	}
 	public static class CompilationUnitContext extends ParserRuleContext {
-		public TerminalNode EOF() { return getToken(SnpSiftParser.EOF, 0); }
 		public ExpressionContext expression() {
 			return getRuleContext(ExpressionContext.class,0);
 		}
+		public TerminalNode EOF() { return getToken(SnpSiftParser.EOF, 0); }
 		public CompilationUnitContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -87,8 +122,10 @@ public class SnpSiftParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(4); expression(0);
-			setState(5); match(EOF);
+			setState(4);
+			expression(0);
+			setState(5);
+			match(EOF);
 			}
 		}
 		catch (RecognitionException re) {
@@ -114,11 +151,11 @@ public class SnpSiftParser extends Parser {
 		}
 	}
 	public static class ExpressionSetContext extends ExpressionContext {
-		public ExpressionContext expression(int i) {
-			return getRuleContext(ExpressionContext.class,i);
-		}
 		public List<ExpressionContext> expression() {
 			return getRuleContexts(ExpressionContext.class);
+		}
+		public ExpressionContext expression(int i) {
+			return getRuleContext(ExpressionContext.class,i);
 		}
 		public ExpressionSetContext(ExpressionContext ctx) { copyFrom(ctx); }
 		@Override
@@ -174,11 +211,11 @@ public class SnpSiftParser extends Parser {
 	}
 	public static class ExpressionCompContext extends ExpressionContext {
 		public Token op;
-		public ExpressionContext expression(int i) {
-			return getRuleContext(ExpressionContext.class,i);
-		}
 		public List<ExpressionContext> expression() {
 			return getRuleContexts(ExpressionContext.class);
+		}
+		public ExpressionContext expression(int i) {
+			return getRuleContext(ExpressionContext.class,i);
 		}
 		public ExpressionCompContext(ExpressionContext ctx) { copyFrom(ctx); }
 		@Override
@@ -213,11 +250,11 @@ public class SnpSiftParser extends Parser {
 		}
 	}
 	public static class VarReferenceListContext extends ExpressionContext {
-		public ExpressionContext expression(int i) {
-			return getRuleContext(ExpressionContext.class,i);
-		}
 		public List<ExpressionContext> expression() {
 			return getRuleContexts(ExpressionContext.class);
+		}
+		public ExpressionContext expression(int i) {
+			return getRuleContext(ExpressionContext.class,i);
 		}
 		public VarReferenceListContext(ExpressionContext ctx) { copyFrom(ctx); }
 		@Override
@@ -286,11 +323,11 @@ public class SnpSiftParser extends Parser {
 		}
 	}
 	public static class VarReferenceListSubContext extends ExpressionContext {
-		public ExpressionContext expression(int i) {
-			return getRuleContext(ExpressionContext.class,i);
-		}
 		public List<ExpressionContext> expression() {
 			return getRuleContexts(ExpressionContext.class);
+		}
+		public ExpressionContext expression(int i) {
+			return getRuleContext(ExpressionContext.class,i);
 		}
 		public VarReferenceListSubContext(ExpressionContext ctx) { copyFrom(ctx); }
 		@Override
@@ -309,11 +346,11 @@ public class SnpSiftParser extends Parser {
 	}
 	public static class ExpressionTimesContext extends ExpressionContext {
 		public Token op;
-		public ExpressionContext expression(int i) {
-			return getRuleContext(ExpressionContext.class,i);
-		}
 		public List<ExpressionContext> expression() {
 			return getRuleContexts(ExpressionContext.class);
+		}
+		public ExpressionContext expression(int i) {
+			return getRuleContext(ExpressionContext.class,i);
 		}
 		public ExpressionTimesContext(ExpressionContext ctx) { copyFrom(ctx); }
 		@Override
@@ -352,11 +389,11 @@ public class SnpSiftParser extends Parser {
 	}
 	public static class ExpressionPlusContext extends ExpressionContext {
 		public Token op;
-		public ExpressionContext expression(int i) {
-			return getRuleContext(ExpressionContext.class,i);
-		}
 		public List<ExpressionContext> expression() {
 			return getRuleContexts(ExpressionContext.class);
+		}
+		public ExpressionContext expression(int i) {
+			return getRuleContext(ExpressionContext.class,i);
 		}
 		public ExpressionPlusContext(ExpressionContext ctx) { copyFrom(ctx); }
 		@Override
@@ -375,11 +412,11 @@ public class SnpSiftParser extends Parser {
 	}
 	public static class ExpressionLogicContext extends ExpressionContext {
 		public Token op;
-		public ExpressionContext expression(int i) {
-			return getRuleContext(ExpressionContext.class,i);
-		}
 		public List<ExpressionContext> expression() {
 			return getRuleContexts(ExpressionContext.class);
+		}
+		public ExpressionContext expression(int i) {
+			return getRuleContext(ExpressionContext.class,i);
 		}
 		public ExpressionLogicContext(ExpressionContext ctx) { copyFrom(ctx); }
 		@Override
@@ -398,11 +435,11 @@ public class SnpSiftParser extends Parser {
 	}
 	public static class FunctionCallContext extends ExpressionContext {
 		public TerminalNode ID() { return getToken(SnpSiftParser.ID, 0); }
-		public ExpressionContext expression(int i) {
-			return getRuleContext(ExpressionContext.class,i);
-		}
 		public List<ExpressionContext> expression() {
 			return getRuleContexts(ExpressionContext.class);
+		}
+		public ExpressionContext expression(int i) {
+			return getRuleContext(ExpressionContext.class,i);
 		}
 		public FunctionCallContext(ExpressionContext ctx) { copyFrom(ctx); }
 		@Override
@@ -439,11 +476,11 @@ public class SnpSiftParser extends Parser {
 		}
 	}
 	public static class ExpressionCondContext extends ExpressionContext {
-		public ExpressionContext expression(int i) {
-			return getRuleContext(ExpressionContext.class,i);
-		}
 		public List<ExpressionContext> expression() {
 			return getRuleContexts(ExpressionContext.class);
+		}
+		public ExpressionContext expression(int i) {
+			return getRuleContext(ExpressionContext.class,i);
 		}
 		public ExpressionCondContext(ExpressionContext ctx) { copyFrom(ctx); }
 		@Override
@@ -505,11 +542,13 @@ public class SnpSiftParser extends Parser {
 				setState(8);
 				((ExpressionUnaryContext)_localctx).op = _input.LT(1);
 				_la = _input.LA(1);
-				if ( !((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << T__8) | (1L << T__2) | (1L << T__1))) != 0)) ) {
+				if ( !((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << T__12) | (1L << T__13) | (1L << T__24))) != 0)) ) {
 					((ExpressionUnaryContext)_localctx).op = (Token)_errHandler.recoverInline(this);
+				} else {
+					consume();
 				}
-				consume();
-				setState(9); expression(6);
+				setState(9);
+				expression(6);
 				}
 				break;
 			case 2:
@@ -520,11 +559,13 @@ public class SnpSiftParser extends Parser {
 				setState(10);
 				((ExpressionExistsContext)_localctx).op = _input.LT(1);
 				_la = _input.LA(1);
-				if ( !(_la==T__22 || _la==T__19) ) {
+				if ( !(_la==T__30 || _la==T__31) ) {
 					((ExpressionExistsContext)_localctx).op = (Token)_errHandler.recoverInline(this);
+				} else {
+					consume();
 				}
-				consume();
-				setState(11); expression(4);
+				setState(11);
+				expression(4);
 				}
 				break;
 			case 3:
@@ -532,7 +573,8 @@ public class SnpSiftParser extends Parser {
 				_localctx = new LiteralBoolContext(_localctx);
 				_ctx = _localctx;
 				_prevctx = _localctx;
-				setState(12); match(BOOL_LITERAL);
+				setState(12);
+				match(BOOL_LITERAL);
 				}
 				break;
 			case 4:
@@ -540,7 +582,8 @@ public class SnpSiftParser extends Parser {
 				_localctx = new LiteralIntContext(_localctx);
 				_ctx = _localctx;
 				_prevctx = _localctx;
-				setState(13); match(INT_LITERAL);
+				setState(13);
+				match(INT_LITERAL);
 				}
 				break;
 			case 5:
@@ -548,7 +591,8 @@ public class SnpSiftParser extends Parser {
 				_localctx = new LiteralFloatContext(_localctx);
 				_ctx = _localctx;
 				_prevctx = _localctx;
-				setState(14); match(FLOAT_LITERAL);
+				setState(14);
+				match(FLOAT_LITERAL);
 				}
 				break;
 			case 6:
@@ -556,7 +600,8 @@ public class SnpSiftParser extends Parser {
 				_localctx = new LiteralStringContext(_localctx);
 				_ctx = _localctx;
 				_prevctx = _localctx;
-				setState(15); match(STRING_LITERAL);
+				setState(15);
+				match(STRING_LITERAL);
 				}
 				break;
 			case 7:
@@ -567,10 +612,11 @@ public class SnpSiftParser extends Parser {
 				setState(16);
 				((LiteralIndexContext)_localctx).idx = _input.LT(1);
 				_la = _input.LA(1);
-				if ( !((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << T__28) | (1L << T__26) | (1L << T__23) | (1L << T__4))) != 0)) ) {
+				if ( !((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << T__0) | (1L << T__1) | (1L << T__2) | (1L << T__3))) != 0)) ) {
 					((LiteralIndexContext)_localctx).idx = (Token)_errHandler.recoverInline(this);
+				} else {
+					consume();
 				}
-				consume();
 				}
 				break;
 			case 8:
@@ -578,21 +624,26 @@ public class SnpSiftParser extends Parser {
 				_localctx = new FunctionCallContext(_localctx);
 				_ctx = _localctx;
 				_prevctx = _localctx;
-				setState(17); match(ID);
-				setState(18); match(T__24);
+				setState(17);
+				match(ID);
+				setState(18);
+				match(T__4);
 				setState(27);
 				_la = _input.LA(1);
-				if ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << T__28) | (1L << T__26) | (1L << T__24) | (1L << T__23) | (1L << T__22) | (1L << T__19) | (1L << T__8) | (1L << T__4) | (1L << T__2) | (1L << T__1) | (1L << BOOL_LITERAL) | (1L << INT_LITERAL) | (1L << FLOAT_LITERAL) | (1L << STRING_LITERAL) | (1L << ID))) != 0)) {
+				if ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << T__0) | (1L << T__1) | (1L << T__2) | (1L << T__3) | (1L << T__4) | (1L << T__12) | (1L << T__13) | (1L << T__24) | (1L << T__30) | (1L << T__31) | (1L << BOOL_LITERAL) | (1L << INT_LITERAL) | (1L << FLOAT_LITERAL) | (1L << STRING_LITERAL) | (1L << ID))) != 0)) {
 					{
-					setState(19); expression(0);
+					setState(19);
+					expression(0);
 					setState(24);
 					_errHandler.sync(this);
 					_la = _input.LA(1);
-					while (_la==T__20) {
+					while (_la==T__5) {
 						{
 						{
-						setState(20); match(T__20);
-						setState(21); expression(0);
+						setState(20);
+						match(T__5);
+						setState(21);
+						expression(0);
 						}
 						}
 						setState(26);
@@ -602,7 +653,8 @@ public class SnpSiftParser extends Parser {
 					}
 				}
 
-				setState(29); match(T__3);
+				setState(29);
+				match(T__6);
 				}
 				break;
 			case 9:
@@ -610,7 +662,8 @@ public class SnpSiftParser extends Parser {
 				_localctx = new VarReferenceContext(_localctx);
 				_ctx = _localctx;
 				_prevctx = _localctx;
-				setState(30); match(ID);
+				setState(30);
+				match(ID);
 				}
 				break;
 			case 10:
@@ -618,9 +671,12 @@ public class SnpSiftParser extends Parser {
 				_localctx = new ExpressionParenContext(_localctx);
 				_ctx = _localctx;
 				_prevctx = _localctx;
-				setState(31); match(T__24);
-				setState(32); expression(0);
-				setState(33); match(T__3);
+				setState(31);
+				match(T__4);
+				setState(32);
+				expression(0);
+				setState(33);
+				match(T__6);
 				}
 				break;
 			}
@@ -641,10 +697,14 @@ public class SnpSiftParser extends Parser {
 						pushNewRecursionContext(_localctx, _startState, RULE_expression);
 						setState(37);
 						if (!(precpred(_ctx, 11))) throw new FailedPredicateException(this, "precpred(_ctx, 11)");
-						setState(38); match(T__15);
-						setState(39); expression(0);
-						setState(40); match(T__18);
-						setState(41); expression(12);
+						setState(38);
+						match(T__7);
+						setState(39);
+						expression(0);
+						setState(40);
+						match(T__9);
+						setState(41);
+						expression(12);
 						}
 						break;
 					case 2:
@@ -653,15 +713,19 @@ public class SnpSiftParser extends Parser {
 						pushNewRecursionContext(_localctx, _startState, RULE_expression);
 						setState(43);
 						if (!(precpred(_ctx, 10))) throw new FailedPredicateException(this, "precpred(_ctx, 10)");
-						setState(44); match(T__15);
+						setState(44);
+						match(T__7);
 						setState(45);
 						_la = _input.LA(1);
-						if ( !((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << T__28) | (1L << T__26) | (1L << T__23) | (1L << T__4))) != 0)) ) {
+						if ( !((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << T__0) | (1L << T__1) | (1L << T__2) | (1L << T__3))) != 0)) ) {
 						_errHandler.recoverInline(this);
+						} else {
+							consume();
 						}
-						consume();
-						setState(46); match(T__18);
-						setState(47); expression(11);
+						setState(46);
+						match(T__9);
+						setState(47);
+						expression(11);
 						}
 						break;
 					case 3:
@@ -673,11 +737,13 @@ public class SnpSiftParser extends Parser {
 						setState(49);
 						((ExpressionTimesContext)_localctx).op = _input.LT(1);
 						_la = _input.LA(1);
-						if ( !((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << T__34) | (1L << T__23) | (1L << T__6))) != 0)) ) {
+						if ( !((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << T__1) | (1L << T__10) | (1L << T__11))) != 0)) ) {
 							((ExpressionTimesContext)_localctx).op = (Token)_errHandler.recoverInline(this);
+						} else {
+							consume();
 						}
-						consume();
-						setState(50); expression(10);
+						setState(50);
+						expression(10);
 						}
 						break;
 					case 4:
@@ -689,11 +755,13 @@ public class SnpSiftParser extends Parser {
 						setState(52);
 						((ExpressionPlusContext)_localctx).op = _input.LT(1);
 						_la = _input.LA(1);
-						if ( !(_la==T__2 || _la==T__1) ) {
+						if ( !(_la==T__12 || _la==T__13) ) {
 							((ExpressionPlusContext)_localctx).op = (Token)_errHandler.recoverInline(this);
+						} else {
+							consume();
 						}
-						consume();
-						setState(53); expression(9);
+						setState(53);
+						expression(9);
 						}
 						break;
 					case 5:
@@ -705,11 +773,13 @@ public class SnpSiftParser extends Parser {
 						setState(55);
 						((ExpressionCompContext)_localctx).op = _input.LT(1);
 						_la = _input.LA(1);
-						if ( !((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << T__33) | (1L << T__30) | (1L << T__27) | (1L << T__21) | (1L << T__16) | (1L << T__13) | (1L << T__12) | (1L << T__11) | (1L << T__9) | (1L << T__7))) != 0)) ) {
+						if ( !((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << T__14) | (1L << T__15) | (1L << T__16) | (1L << T__17) | (1L << T__18) | (1L << T__19) | (1L << T__20) | (1L << T__21) | (1L << T__22) | (1L << T__23))) != 0)) ) {
 							((ExpressionCompContext)_localctx).op = (Token)_errHandler.recoverInline(this);
+						} else {
+							consume();
 						}
-						consume();
-						setState(56); expression(8);
+						setState(56);
+						expression(8);
 						}
 						break;
 					case 6:
@@ -721,11 +791,13 @@ public class SnpSiftParser extends Parser {
 						setState(58);
 						((ExpressionLogicContext)_localctx).op = _input.LT(1);
 						_la = _input.LA(1);
-						if ( !((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << T__32) | (1L << T__31) | (1L << T__29) | (1L << T__25) | (1L << T__14))) != 0)) ) {
+						if ( !((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << T__25) | (1L << T__26) | (1L << T__27) | (1L << T__28) | (1L << T__29))) != 0)) ) {
 							((ExpressionLogicContext)_localctx).op = (Token)_errHandler.recoverInline(this);
+						} else {
+							consume();
 						}
-						consume();
-						setState(59); expression(6);
+						setState(59);
+						expression(6);
 						}
 						break;
 					case 7:
@@ -734,10 +806,14 @@ public class SnpSiftParser extends Parser {
 						pushNewRecursionContext(_localctx, _startState, RULE_expression);
 						setState(60);
 						if (!(precpred(_ctx, 1))) throw new FailedPredicateException(this, "precpred(_ctx, 1)");
-						setState(61); match(T__28);
-						setState(62); expression(0);
-						setState(63); match(T__17);
-						setState(64); expression(2);
+						setState(61);
+						match(T__3);
+						setState(62);
+						expression(0);
+						setState(63);
+						match(T__34);
+						setState(64);
+						expression(2);
 						}
 						break;
 					case 8:
@@ -746,9 +822,12 @@ public class SnpSiftParser extends Parser {
 						pushNewRecursionContext(_localctx, _startState, RULE_expression);
 						setState(66);
 						if (!(precpred(_ctx, 12))) throw new FailedPredicateException(this, "precpred(_ctx, 12)");
-						setState(67); match(T__15);
-						setState(68); expression(0);
-						setState(69); match(T__10);
+						setState(67);
+						match(T__7);
+						setState(68);
+						expression(0);
+						setState(69);
+						match(T__8);
 						}
 						break;
 					case 9:
@@ -757,11 +836,16 @@ public class SnpSiftParser extends Parser {
 						pushNewRecursionContext(_localctx, _startState, RULE_expression);
 						setState(71);
 						if (!(precpred(_ctx, 3))) throw new FailedPredicateException(this, "precpred(_ctx, 3)");
-						setState(72); match(T__5);
-						setState(73); match(T__0);
-						setState(74); match(T__15);
-						setState(75); expression(0);
-						setState(76); match(T__10);
+						setState(72);
+						match(T__32);
+						setState(73);
+						match(T__33);
+						setState(74);
+						match(T__7);
+						setState(75);
+						expression(0);
+						setState(76);
+						match(T__8);
 						}
 						break;
 					}
@@ -786,21 +870,31 @@ public class SnpSiftParser extends Parser {
 
 	public boolean sempred(RuleContext _localctx, int ruleIndex, int predIndex) {
 		switch (ruleIndex) {
-		case 1: return expression_sempred((ExpressionContext)_localctx, predIndex);
+		case 1:
+			return expression_sempred((ExpressionContext)_localctx, predIndex);
 		}
 		return true;
 	}
 	private boolean expression_sempred(ExpressionContext _localctx, int predIndex) {
 		switch (predIndex) {
-		case 0: return precpred(_ctx, 11);
-		case 1: return precpred(_ctx, 10);
-		case 2: return precpred(_ctx, 9);
-		case 3: return precpred(_ctx, 8);
-		case 4: return precpred(_ctx, 7);
-		case 5: return precpred(_ctx, 5);
-		case 6: return precpred(_ctx, 1);
-		case 7: return precpred(_ctx, 12);
-		case 8: return precpred(_ctx, 3);
+		case 0:
+			return precpred(_ctx, 11);
+		case 1:
+			return precpred(_ctx, 10);
+		case 2:
+			return precpred(_ctx, 9);
+		case 3:
+			return precpred(_ctx, 8);
+		case 4:
+			return precpred(_ctx, 7);
+		case 5:
+			return precpred(_ctx, 5);
+		case 6:
+			return precpred(_ctx, 1);
+		case 7:
+			return precpred(_ctx, 12);
+		case 8:
+			return precpred(_ctx, 3);
 		}
 		return true;
 	}
@@ -812,25 +906,24 @@ public class SnpSiftParser extends Parser {
 		"&\n\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3"+
 		"\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3"+
 		"\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\7\3Q\n\3\f\3\16\3T\13\3\3\3\2\3\4\4\2\4"+
-		"\2\t\4\2\35\35#$\4\2\17\17\22\22\6\2\t\t\13\13\16\16!!\5\2\3\3\16\16\37"+
-		"\37\3\2#$\n\2\4\4\7\7\n\n\20\20\25\25\30\32\34\34\36\36\6\2\5\6\b\b\f"+
-		"\f\27\27g\2\6\3\2\2\2\4%\3\2\2\2\6\7\5\4\3\2\7\b\7\2\2\3\b\3\3\2\2\2\t"+
-		"\n\b\3\1\2\n\13\t\2\2\2\13&\5\4\3\b\f\r\t\3\2\2\r&\5\4\3\6\16&\7)\2\2"+
-		"\17&\7*\2\2\20&\7+\2\2\21&\7,\2\2\22&\t\4\2\2\23\24\7-\2\2\24\35\7\r\2"+
-		"\2\25\32\5\4\3\2\26\27\7\21\2\2\27\31\5\4\3\2\30\26\3\2\2\2\31\34\3\2"+
-		"\2\2\32\30\3\2\2\2\32\33\3\2\2\2\33\36\3\2\2\2\34\32\3\2\2\2\35\25\3\2"+
-		"\2\2\35\36\3\2\2\2\36\37\3\2\2\2\37&\7\"\2\2 &\7-\2\2!\"\7\r\2\2\"#\5"+
-		"\4\3\2#$\7\"\2\2$&\3\2\2\2%\t\3\2\2\2%\f\3\2\2\2%\16\3\2\2\2%\17\3\2\2"+
-		"\2%\20\3\2\2\2%\21\3\2\2\2%\22\3\2\2\2%\23\3\2\2\2% \3\2\2\2%!\3\2\2\2"+
-		"&R\3\2\2\2\'(\f\r\2\2()\7\26\2\2)*\5\4\3\2*+\7\23\2\2+,\5\4\3\16,Q\3\2"+
-		"\2\2-.\f\f\2\2./\7\26\2\2/\60\t\4\2\2\60\61\7\23\2\2\61Q\5\4\3\r\62\63"+
-		"\f\13\2\2\63\64\t\5\2\2\64Q\5\4\3\f\65\66\f\n\2\2\66\67\t\6\2\2\67Q\5"+
-		"\4\3\1389\f\t\2\29:\t\7\2\2:Q\5\4\3\n;<\f\7\2\2<=\t\b\2\2=Q\5\4\3\b>?"+
-		"\f\3\2\2?@\7\t\2\2@A\5\4\3\2AB\7\24\2\2BC\5\4\3\4CQ\3\2\2\2DE\f\16\2\2"+
-		"EF\7\26\2\2FG\5\4\3\2GH\7\33\2\2HQ\3\2\2\2IJ\f\5\2\2JK\7 \2\2KL\7%\2\2"+
-		"LM\7\26\2\2MN\5\4\3\2NO\7\33\2\2OQ\3\2\2\2P\'\3\2\2\2P-\3\2\2\2P\62\3"+
-		"\2\2\2P\65\3\2\2\2P8\3\2\2\2P;\3\2\2\2P>\3\2\2\2PD\3\2\2\2PI\3\2\2\2Q"+
-		"T\3\2\2\2RP\3\2\2\2RS\3\2\2\2S\5\3\2\2\2TR\3\2\2\2\7\32\35%PR";
+		"\2\t\4\2\17\20\33\33\3\2!\"\3\2\3\6\4\2\4\4\r\16\3\2\17\20\3\2\21\32\3"+
+		"\2\34 g\2\6\3\2\2\2\4%\3\2\2\2\6\7\5\4\3\2\7\b\7\2\2\3\b\3\3\2\2\2\t\n"+
+		"\b\3\1\2\n\13\t\2\2\2\13&\5\4\3\b\f\r\t\3\2\2\r&\5\4\3\6\16&\7)\2\2\17"+
+		"&\7*\2\2\20&\7+\2\2\21&\7,\2\2\22&\t\4\2\2\23\24\7-\2\2\24\35\7\7\2\2"+
+		"\25\32\5\4\3\2\26\27\7\b\2\2\27\31\5\4\3\2\30\26\3\2\2\2\31\34\3\2\2\2"+
+		"\32\30\3\2\2\2\32\33\3\2\2\2\33\36\3\2\2\2\34\32\3\2\2\2\35\25\3\2\2\2"+
+		"\35\36\3\2\2\2\36\37\3\2\2\2\37&\7\t\2\2 &\7-\2\2!\"\7\7\2\2\"#\5\4\3"+
+		"\2#$\7\t\2\2$&\3\2\2\2%\t\3\2\2\2%\f\3\2\2\2%\16\3\2\2\2%\17\3\2\2\2%"+
+		"\20\3\2\2\2%\21\3\2\2\2%\22\3\2\2\2%\23\3\2\2\2% \3\2\2\2%!\3\2\2\2&R"+
+		"\3\2\2\2\'(\f\r\2\2()\7\n\2\2)*\5\4\3\2*+\7\f\2\2+,\5\4\3\16,Q\3\2\2\2"+
+		"-.\f\f\2\2./\7\n\2\2/\60\t\4\2\2\60\61\7\f\2\2\61Q\5\4\3\r\62\63\f\13"+
+		"\2\2\63\64\t\5\2\2\64Q\5\4\3\f\65\66\f\n\2\2\66\67\t\6\2\2\67Q\5\4\3\13"+
+		"89\f\t\2\29:\t\7\2\2:Q\5\4\3\n;<\f\7\2\2<=\t\b\2\2=Q\5\4\3\b>?\f\3\2\2"+
+		"?@\7\6\2\2@A\5\4\3\2AB\7%\2\2BC\5\4\3\4CQ\3\2\2\2DE\f\16\2\2EF\7\n\2\2"+
+		"FG\5\4\3\2GH\7\13\2\2HQ\3\2\2\2IJ\f\5\2\2JK\7#\2\2KL\7$\2\2LM\7\n\2\2"+
+		"MN\5\4\3\2NO\7\13\2\2OQ\3\2\2\2P\'\3\2\2\2P-\3\2\2\2P\62\3\2\2\2P\65\3"+
+		"\2\2\2P8\3\2\2\2P;\3\2\2\2P>\3\2\2\2PD\3\2\2\2PI\3\2\2\2QT\3\2\2\2RP\3"+
+		"\2\2\2RS\3\2\2\2S\5\3\2\2\2TR\3\2\2\2\7\32\35%PR";
 	public static final ATN _ATN =
 		new ATNDeserializer().deserialize(_serializedATN.toCharArray());
 	static {

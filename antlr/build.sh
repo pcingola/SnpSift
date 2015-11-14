@@ -6,7 +6,7 @@ init="main"
 testFile="../test/z.bds"
 
 # Programs
-jar=$HOME/tools/antlr/antlr-4.4-complete.jar
+jar=$HOME/tools/antlr/antlr-*-complete.jar
 antlr4="java -Xmx1g -cp $jar org.antlr.v4.Tool"
 grun="java -Xmx1g -cp .:$jar org.antlr.v4.runtime.misc.TestRig"
 
