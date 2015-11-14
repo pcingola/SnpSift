@@ -301,6 +301,7 @@ public class DbNsfp implements DbMarker<Variant, DbNsfpEntry> {
 			if (verbose) Timer.showStdErr("Opening database file and loading index");
 			tabixReader = new TabixReader(fileName);
 			tabixReader.setShowHeader(false); // Don't show header line in query results
+			tabixReader.setDebug(debug);
 		} catch (IOException e) {
 			throw new RuntimeException("Error opening tabix file '" + fileName + "'", e);
 		}
@@ -434,7 +435,7 @@ public class DbNsfp implements DbMarker<Variant, DbNsfpEntry> {
 			numLines++;
 		}
 
-		Gpr.debug("Parsed lines: " + numLines);
+		if (debug) Gpr.debug("Quey: " + variant.toStr() + "\tParsed lines: " + numLines);
 
 		return results;
 	}
