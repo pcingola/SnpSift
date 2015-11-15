@@ -266,34 +266,73 @@ public class SnpSift implements VcfAnnotator {
 		for (int i = 1; i < args.length; i++) {
 			String arg = args[i];
 
-			if (arg.equalsIgnoreCase("-noLog")) log = false;
-			else if (arg.equals("-h") || arg.equalsIgnoreCase("-help")) help = true;
-			else if (arg.equals("-v") || arg.equalsIgnoreCase("-verbose")) verbose = true;
-			else if (arg.equals("-q") || arg.equalsIgnoreCase("-quiet")) quiet = true;
-			else if (arg.equals("-d") || arg.equalsIgnoreCase("-debug")) debug = true;
-			else if (arg.equalsIgnoreCase("-noLog")) log = false;
-			else if (arg.equalsIgnoreCase("-noDownload")) download = false; // Do not download genome
-			else if ((arg.equals("-c") || arg.equalsIgnoreCase("-config"))) {
-				if ((i + 1) < args.length) configFile = args[++i];
-				else usage("Option '-c' without config file argument");
-			} else if (arg.equalsIgnoreCase("-dataDir")) {
-				if ((i + 1) < args.length) dataDir = args[++i];
-				else usage("Option '-dataDir' without data_dir argument");
-			} else if (arg.equals("-db") || arg.equalsIgnoreCase("-database")) {
-				if (args.length <= i) usage("Missing argument for command line option '-db'");
-				dbFileName = args[++i];
-			} else if (arg.equals("-cpus")) {
-				if (args.length <= i) usage("Missing argument for command line option '-cpus'");
-				numWorkers = Gpr.parseIntSafe(args[++i]);
-				if (numWorkers <= 0) usage("Error: Number of cpus must be positive");
-			} else if (arg.equalsIgnoreCase("-version")) {
-				// Show version number and exit
-				System.out.println(VERSION_SHORT);
-				System.exit(0);
+			if (isOpt(arg)) {
+				switch (arg.toLowerCase()) {
+				case "-c":
+				case "-config":
+					if ((i + 1) < args.length) configFile = args[++i];
+					else usage("Option '-c' without config file argument");
+					break;
+
+				case "-cpus":
+					if (args.length <= i) usage("Missing argument for command line option '-cpus'");
+					numWorkers = Gpr.parseIntSafe(args[++i]);
+					if (numWorkers <= 0) usage("Error: Number of cpus must be positive");
+					break;
+
+				case "-d":
+				case "-debug":
+					debug = true;
+					break;
+
+				case "-datadir":
+					if ((i + 1) < args.length) dataDir = args[++i];
+					else usage("Option '-dataDir' without data_dir argument");
+					break;
+
+				case "-db":
+				case "-database":
+					if (args.length <= i) usage("Missing argument for command line option '-db'");
+					dbFileName = args[++i];
+					break;
+
+				case "-h":
+				case "-help":
+					help = true;
+					break;
+
+				case "-nodownload":
+					download = false;
+					break;// Do not download genome
+
+				case "-nolog":
+					log = false;
+					break;
+
+				case "-noout":
+					suppressOutput = true;
+					break;
+
+				case "-q":
+				case "-quiet":
+					quiet = true;
+					break;
+
+				case "-v":
+				case "-verbose":
+					verbose = true;
+					break;
+
+				case "-version":
+					// Show version number and exit
+					System.out.println(VERSION_SHORT);
+					System.exit(0);
+				}
 			} else argsList.add(args[i]);
 		}
 
 		this.args = argsList.toArray(new String[0]);
+
 	}
 
 	/**
