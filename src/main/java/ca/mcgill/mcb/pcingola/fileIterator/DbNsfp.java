@@ -433,8 +433,10 @@ public class DbNsfp implements DbMarker<Variant, DbNsfpEntry> {
 			// Used cached entries
 			LinkedList<DbNsfpEntry> results = new LinkedList<>();
 
-			for (DbNsfpEntry de : latestResults)
+			for (DbNsfpEntry de : latestResults) {
 				if (match(variant, de)) results.add(de);
+				else if (variant.getEnd() < de.getStart()) break; // Past query end? No need to continue.
+			}
 
 			return results;
 		}
