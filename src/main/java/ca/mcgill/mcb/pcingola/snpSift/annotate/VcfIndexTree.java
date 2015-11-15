@@ -115,10 +115,10 @@ public class VcfIndexTree implements Itree {
 		TIntArrayList right = new TIntArrayList();
 		TIntArrayList intersecting = new TIntArrayList();
 
-		// Try to collapse consecutive entries if there are only a few (i.e. less 
-		// than COLLAPSE_MAX_NUM_ENTRIES) or the block size is small (less 
+		// Try to collapse consecutive entries if there are only a few (i.e. less
+		// than COLLAPSE_MAX_NUM_ENTRIES) or the block size is small (less
 		// than COLLAPSE_MAX_BLOCK_SIZE bytes)
-		if (consecutiveFileBlock(idxs) && // 
+		if (consecutiveFileBlock(idxs) && //
 				((idxs.size() < COLLAPSE_MAX_NUM_ENTRIES) || (consecutiveFileBlockSize(idxs) < COLLAPSE_MAX_BLOCK_SIZE)) //
 		) {
 			// Too few intervals forming a consecutive block?
@@ -151,19 +151,6 @@ public class VcfIndexTree implements Itree {
 	int capacity() {
 		if (left == null) return 0;
 		return left.length;
-	}
-
-	long consecutiveFileBlockSize(TIntArrayList idxs) {
-		long max = -1;
-		long min = Long.MAX_VALUE;
-
-		for (int i = 0; i < idxs.size(); i++) {
-			int idx = idxs.get(i);
-			min = Math.min(min, vcfIndexChromo.getFilePosStart(idx));
-			max = Math.max(max, vcfIndexChromo.getFilePosEnd(idx));
-		}
-
-		return max - min;
 	}
 
 	/**
@@ -206,6 +193,19 @@ public class VcfIndexTree implements Itree {
 		}
 
 		return min;
+	}
+
+	long consecutiveFileBlockSize(TIntArrayList idxs) {
+		long max = -1;
+		long min = Long.MAX_VALUE;
+
+		for (int i = 0; i < idxs.size(); i++) {
+			int idx = idxs.get(i);
+			min = Math.min(min, vcfIndexChromo.getFilePosStart(idx));
+			max = Math.max(max, vcfIndexChromo.getFilePosEnd(idx));
+		}
+
+		return max - min;
 	}
 
 	public String getChromosome() {
@@ -400,6 +400,33 @@ public class VcfIndexTree implements Itree {
 		}
 	}
 
+	/**
+	 * Query VCF entries intersecting 'marker' at node 'idx'
+	 */
+	protected void queryIntersects(Interval queryMarker, int idx, Markers results) {
+		if (intersectFilePosStart[idx] == null) return;
+		if (debug) Gpr.debug("queryIntersects\tidx: " + idx);
+
+		// Read entries from disk
+		List<VcfEntry> vcfEntries = readEntries(idx);
+
+		// Find matching entries
+		for (VcfEntry ve : vcfEntries) {
+			// If any variant within the vcfEntry intersects the query
+			// marker, we store this VCF entry as a result
+			for (Variant var : ve.variants()) {
+				if (var.intersects(queryMarker)) {
+					if (debug) Gpr.debug("\tAdding matching result: " + ve);
+					results.add(ve);
+					break; // Store this entry only once
+				}
+			}
+
+			// Past query's end coordinate? We don't need to look any further
+			if (queryMarker.getEnd() < ve.getStart()) return;
+		}
+	}
+
 	List<VcfEntry> readEntries(int idx) {
 		// Cached?
 		if (cachedLeafNodeIdx == idx) return cachedLeafNode;
@@ -446,30 +473,6 @@ public class VcfIndexTree implements Itree {
 			return vcfEntries;
 		} catch (IOException e) {
 			throw new RuntimeException(e);
-		}
-	}
-
-	/**
-	 * Query VCF entries intersecting 'marker' at node 'idx'
-	 */
-	protected void queryIntersects(Interval queryMarker, int idx, Markers results) {
-		if (intersectFilePosStart[idx] == null) return;
-		if (debug) Gpr.debug("queryIntersects\tidx: " + idx);
-
-		// Read entries from disk
-		List<VcfEntry> vcfEntries = readEntries(idx);
-
-		// Find matching entries
-		for (VcfEntry ve : vcfEntries) {
-			// If any variant within the vcfEntry intersects the query
-			// marker, we store this VCF entry as a result
-			for (Variant var : ve.variants()) {
-				if (var.intersects(queryMarker)) {
-					if (debug) Gpr.debug("\tAdding matching result: " + ve);
-					results.add(ve);
-					break; // Store this entry only once
-				}
-			}
 		}
 	}
 
