@@ -9,8 +9,8 @@ import ca.mcgill.mcb.pcingola.interval.Variant;
 import ca.mcgill.mcb.pcingola.util.Gpr;
 import ca.mcgill.mcb.pcingola.vcf.VariantVcfEntry;
 import ca.mcgill.mcb.pcingola.vcf.VcfEntry;
+import net.sf.samtools.tabix.TabixIterator;
 import net.sf.samtools.tabix.TabixReader;
-import net.sf.samtools.tabix.TabixReader.TabixIterator;
 
 /**
  * Use a bgzip-compressed, tabix indexed VCF file as a database for annotations

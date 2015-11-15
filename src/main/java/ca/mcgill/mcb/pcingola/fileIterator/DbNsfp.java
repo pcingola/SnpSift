@@ -15,8 +15,8 @@ import ca.mcgill.mcb.pcingola.snpSift.annotate.DbMarker;
 import ca.mcgill.mcb.pcingola.util.Gpr;
 import ca.mcgill.mcb.pcingola.util.Timer;
 import ca.mcgill.mcb.pcingola.vcf.VcfInfoType;
+import net.sf.samtools.tabix.TabixIterator;
 import net.sf.samtools.tabix.TabixReader;
-import net.sf.samtools.tabix.TabixReader.TabixIterator;
 
 /**
  * DbNSFP database:
@@ -60,6 +60,8 @@ public class DbNsfp implements DbMarker<Variant, DbNsfpEntry> {
 	protected Genome genome;
 	protected HashMap<String, Integer> names2index; // Map column name to index
 	protected TabixReader tabixReader;
+	protected String latestTabixIteratorBlocks = "";
+	protected List<DbNsfpEntry> latestResults;
 
 	public DbNsfp(String fileName) {
 		this.fileName = fileName;
@@ -299,9 +301,8 @@ public class DbNsfp implements DbMarker<Variant, DbNsfpEntry> {
 
 			// Open tabix reader
 			if (verbose) Timer.showStdErr("Opening database file and loading index");
-			tabixReader = new TabixReader(fileName);
+			tabixReader = new TabixReader(fileName, debug);
 			tabixReader.setShowHeader(false); // Don't show header line in query results
-			tabixReader.setDebug(debug);
 		} catch (IOException e) {
 			throw new RuntimeException("Error opening tabix file '" + fileName + "'", e);
 		}
@@ -419,23 +420,47 @@ public class DbNsfp implements DbMarker<Variant, DbNsfpEntry> {
 	@Override
 	public Collection<DbNsfpEntry> query(Variant variant) {
 		// Query and parse results
-		TabixIterator ti = tabixReader.query(variant);
+		TabixIterator tabixIterator = tabixReader.query(variant);
 
 		// Any results?
-		if (ti == null) return null;
+		if (tabixIterator == null) return null;
 
-		// Any results?
-		List<DbNsfpEntry> results = new LinkedList<>();
+		//---
+		// Do we have a cached result?
+		//---
+		String tiblocks = tabixIterator.toStringBlocks();
+		if (tiblocks.equals(latestTabixIteratorBlocks)) {
+			// Used cached entries
+			LinkedList<DbNsfpEntry> results = new LinkedList<>();
+
+			for (DbNsfpEntry de : latestResults)
+				if (match(variant, de)) results.add(de);
+
+			return results;
+		}
+
+		//---
+		// Not in cache.
+		// Read and parse all entries, select the ones the match query
+		//---
+		tabixIterator.setReadBlock(true);
+		latestResults = new LinkedList<>();
+		LinkedList<DbNsfpEntry> results = new LinkedList<>();
+		latestTabixIteratorBlocks = tiblocks;
 		int numLines = 0;
-		for (String line : ti) {
+		for (String line : tabixIterator) {
+			// Parse
 			line = Gpr.removeBackslashR(line);
 			if (debug) Gpr.debug("Query: Parse line " + line);
 			DbNsfpEntry de = new DbNsfpEntry(this, line);
+
+			// Add
 			if (match(variant, de)) results.add(de);
+			latestResults.add(de);
 			numLines++;
 		}
 
-		if (debug) Gpr.debug("Quey: " + variant.toStr() + "\tParsed lines: " + numLines);
+		if (debug) Gpr.debug("Query: " + variant.toStr() + "\tParsed lines: " + numLines);
 
 		return results;
 	}

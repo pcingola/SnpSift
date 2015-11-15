@@ -282,7 +282,7 @@ public class SnpSift implements VcfAnnotator {
 
 				case "-d":
 				case "-debug":
-					debug = true;
+					debug = verbose = true;
 					break;
 
 				case "-datadir":

@@ -9,8 +9,8 @@ import ca.mcgill.mcb.pcingola.snpSift.annotate.VcfIndex;
 import ca.mcgill.mcb.pcingola.util.Gpr;
 import ca.mcgill.mcb.pcingola.util.Timer;
 import ca.mcgill.mcb.pcingola.vcf.VcfEntry;
+import net.sf.samtools.tabix.TabixIterator;
 import net.sf.samtools.tabix.TabixReader;
-import net.sf.samtools.tabix.TabixReader.TabixIterator;
 
 public class Zzz {
 
