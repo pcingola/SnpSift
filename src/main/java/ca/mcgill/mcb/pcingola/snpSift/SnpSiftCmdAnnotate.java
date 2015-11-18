@@ -30,8 +30,7 @@ public class SnpSiftCmdAnnotate extends SnpSift {
 		SORTED_VCF, MEMORY, TABIX,
 	}
 
-	public static final int SHOW = 10000;
-	public static final int SHOW_LINES = 100 * SHOW;
+	public static final int SHOW = 100;
 
 	protected boolean annotateEmpty; // Annotate empty fields as well?
 	protected boolean useId; // Annotate ID fields
@@ -130,6 +129,7 @@ public class SnpSiftCmdAnnotate extends SnpSift {
 
 		if (annotated) countAnnotated++;
 		count++;
+		if (verbose) Gpr.showMark(count, SHOW);
 
 		return annotated;
 	}
