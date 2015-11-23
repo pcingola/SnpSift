@@ -33,7 +33,7 @@
     <dependency>
       <groupId>ca.mcgill.mcb.pcingola</groupId>
       <artifactId>SnpEff</artifactId>
-      <version>4.2</version>
+      <version>4.3</version>
     </dependency>
     
     <dependency>
@@ -146,5 +146,5 @@
       </plugin>
     </plugins>
   </build>
-  <version>4.2</version>
+  <version>4.3</version>
 </project>
