@@ -13,9 +13,11 @@ package ca.mcgill.mcb.pcingola.snpSift.annotate;
  */
 public class AnnotateVcfDbSorted extends AnnotateVcfDb {
 
-	public AnnotateVcfDbSorted(String dbFileName) {
+	public AnnotateVcfDbSorted(String dbFileName, int maxBlockSize) {
 		super();
-		dbVcf = new DbVcfSorted(dbFileName);
+		DbVcfSorted dbVcfSorted = new DbVcfSorted(dbFileName);
+		dbVcfSorted.setMaxBlockSize(maxBlockSize);
+		dbVcf = dbVcfSorted;
 	}
 
 }

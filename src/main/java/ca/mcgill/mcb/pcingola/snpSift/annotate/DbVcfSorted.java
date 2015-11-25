@@ -25,6 +25,7 @@ import ca.mcgill.mcb.pcingola.vcf.VcfEntry;
 public class DbVcfSorted extends DbVcf {
 
 	VcfIndex vcfIndex;
+	int maxBlockSize = VcfIndexTree.DEFAULT_MAX_BLOCK_SIZE;
 
 	public DbVcfSorted(String dbFileName) {
 		super(dbFileName);
@@ -48,6 +49,7 @@ public class DbVcfSorted extends DbVcf {
 		vcfIndex = new VcfIndex(dbFileName);
 		vcfIndex.setVerbose(verbose);
 		vcfIndex.setDebug(debug);
+		if (maxBlockSize > 0) vcfIndex.setMaxBlockSize(maxBlockSize);
 		vcfIndex.open();
 		vcfHeader = vcfIndex.getVcf().getVcfHeader();
 		vcfIndex.index();
@@ -64,6 +66,10 @@ public class DbVcfSorted extends DbVcf {
 		}
 
 		return list;
+	}
+
+	public void setMaxBlockSize(int maxBlockSize) {
+		this.maxBlockSize = maxBlockSize;
 	}
 
 }

@@ -32,10 +32,10 @@ import gnu.trove.list.array.TIntArrayList;
  */
 public class VcfIndexTree implements Itree {
 
-	public static final int MAX_DIFF_COLLAPSE = 2; // We only allow 2 characters difference to collapse entries ('\r\n')
 	public static final int COLLAPSE_MAX_NUM_ENTRIES = 4; // This number cannot be less then 3 (see comment in code below)
-	public static final int COLLAPSE_MAX_BLOCK_SIZE = 16 * 1024; // Minimum file size to index
+	public static final int DEFAULT_MAX_BLOCK_SIZE = 16 * 1024; // Minimum file size to index
 	public static final int INITIAL_CAPACITY = 1024; // Initial capacity for arrays
+	public static final int MAX_DIFF_COLLAPSE = 2; // We only allow 2 characters difference to collapse entries ('\r\n')
 
 	boolean debug;
 	boolean verbose;
@@ -50,6 +50,7 @@ public class VcfIndexTree implements Itree {
 	long intersectFilePosStart[][]; // Intervals (file position start) intersecting 'mid-point'
 	long intersectFilePosEnd[][]; // Intervals (file position end) intersecting 'mid-point'
 	int size; // Arrays size (index of first unused element in the arrays)
+	int maxBlockSize = DEFAULT_MAX_BLOCK_SIZE;
 	List<VcfEntry> intersect[]; // Cache entries for non-leaf nodes
 	int cachedLeafNodeIdx = -1;
 	List<VcfEntry> cachedLeafNode = null;
@@ -119,7 +120,7 @@ public class VcfIndexTree implements Itree {
 		// than COLLAPSE_MAX_NUM_ENTRIES) or the block size is small (less
 		// than COLLAPSE_MAX_BLOCK_SIZE bytes)
 		if (consecutiveFileBlock(idxs) && //
-				((idxs.size() < COLLAPSE_MAX_NUM_ENTRIES) || (consecutiveFileBlockSize(idxs) < COLLAPSE_MAX_BLOCK_SIZE)) //
+				((idxs.size() < COLLAPSE_MAX_NUM_ENTRIES) || (consecutiveFileBlockSize(idxs) < maxBlockSize)) //
 		) {
 			// Too few intervals forming a consecutive block?
 			// Just add them to the intersect
@@ -545,6 +546,10 @@ public class VcfIndexTree implements Itree {
 
 	public void setDebug(boolean debug) {
 		this.debug = debug;
+	}
+
+	public void setMaxBlockSize(int maxBlockSize) {
+		this.maxBlockSize = maxBlockSize;
 	}
 
 	public void setVcf(VcfFileIterator vcf) {

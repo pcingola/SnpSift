@@ -327,6 +327,10 @@ public class SnpSift implements VcfAnnotator {
 					// Show version number and exit
 					System.out.println(VERSION_SHORT);
 					System.exit(0);
+					break;
+
+				default:
+					argsList.add(args[i]);
 				}
 			} else argsList.add(args[i]);
 		}

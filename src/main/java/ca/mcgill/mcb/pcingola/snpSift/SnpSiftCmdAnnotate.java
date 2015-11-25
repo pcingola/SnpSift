@@ -9,6 +9,7 @@ import ca.mcgill.mcb.pcingola.snpSift.annotate.AnnotateVcfDb;
 import ca.mcgill.mcb.pcingola.snpSift.annotate.AnnotateVcfDbMem;
 import ca.mcgill.mcb.pcingola.snpSift.annotate.AnnotateVcfDbSorted;
 import ca.mcgill.mcb.pcingola.snpSift.annotate.AnnotateVcfDbTabix;
+import ca.mcgill.mcb.pcingola.snpSift.annotate.VcfIndexTree;
 import ca.mcgill.mcb.pcingola.util.Gpr;
 import ca.mcgill.mcb.pcingola.util.Timer;
 import ca.mcgill.mcb.pcingola.vcf.VcfEntry;
@@ -38,6 +39,7 @@ public class SnpSiftCmdAnnotate extends SnpSift {
 	protected boolean useRefAlt;
 	protected AnnotationMethod method;
 	protected int countBadRef = 0;
+	protected int maxBlockSize;
 	int countAnnotated = 0, count = 0;
 	protected String chrPrev = "";
 	protected String prependInfoFieldName;
@@ -168,7 +170,7 @@ public class SnpSiftCmdAnnotate extends SnpSift {
 			break;
 
 		case SORTED_VCF:
-			annotateDb = new AnnotateVcfDbSorted(dbFileName);
+			annotateDb = new AnnotateVcfDbSorted(dbFileName, maxBlockSize);
 			break;
 
 		case TABIX:
@@ -268,6 +270,8 @@ public class SnpSiftCmdAnnotate extends SnpSift {
 		needsConfig = true;
 		needsDb = true;
 		dbTabix = true;
+
+		maxBlockSize = VcfIndexTree.DEFAULT_MAX_BLOCK_SIZE;
 	}
 
 	/**
@@ -296,39 +300,76 @@ public class SnpSiftCmdAnnotate extends SnpSift {
 
 			// Command line option?
 			if (isOpt(arg)) {
-				if (arg.equals("-a")) annotateEmpty = true;
-				else if (arg.equalsIgnoreCase("-id")) {
-					useId = true;
-				} else if (arg.equalsIgnoreCase("-info")) {
-					if (args.length <= (i + 1)) usage("Missing parameter -info");
+				switch (arg.toLowerCase()) {
+				case "-a":
+					annotateEmpty = true;
+					break;
 
+				case "-clinvar":
+					dbType = "clinvar";
+					method = AnnotationMethod.TABIX;
+					break;
+
+				case "-dbsnp":
+					dbType = "dbsnp";
+					method = AnnotationMethod.TABIX;
+					break;
+
+				case "-exists":
+					if (args.length > (i + 1)) existsInfoField = args[++i];
+					else usage("Missing parameter -exists");
+					break;
+
+				case "-id":
+					useId = true;
+					break;
+
+				case "-info":
+					if (args.length <= (i + 1)) usage("Missing parameter -info");
 					useInfoField = true;
 
 					infoFields = new ArrayList<String>();
 					for (String infoField : args[++i].split(","))
 						infoFields.add(infoField);
+					break;
 
-				} else if (arg.equalsIgnoreCase("-exists")) {
-					if (args.length > (i + 1)) existsInfoField = args[++i];
-					else usage("Missing parameter -exists");
-				} else if (arg.equalsIgnoreCase("-noId")) {
-					useId = false;
-				} else if (arg.equalsIgnoreCase("-noInfo")) {
-					useInfoField = false;
-				} else if (arg.equalsIgnoreCase("-name")) {
+				case "-maxblocksize":
+					if (args.length > (i + 1)) maxBlockSize = Gpr.parseIntSafe(args[++i]);
+					else usage("Missing parameter -maxBlockSize");
+					break;
+
+				case "-mem":
+					method = AnnotationMethod.MEMORY; // This should only be used for test cases (not in productions environments)
+					break;
+
+				case "-name":
 					if (args.length > (i + 1)) prependInfoFieldName = args[++i];
 					else usage("Missing parameter -name");
-				} else if (arg.equalsIgnoreCase("-noAlt")) useRefAlt = false;
-				else if (arg.equalsIgnoreCase("-dbSnp")) {
-					dbType = "dbsnp";
+					break;
+
+				case "-noalt":
+					useRefAlt = false;
+					break;
+
+				case "-noid":
+					useId = false;
+					break;
+
+				case "-noinfo":
+					useInfoField = false;
+					break;
+
+				case "-sorted":
+					method = AnnotationMethod.SORTED_VCF;
+					break;
+
+				case "-tabix":
 					method = AnnotationMethod.TABIX;
-				} else if (arg.equalsIgnoreCase("-clinVar")) {
-					dbType = "clinvar";
-					method = AnnotationMethod.TABIX;
-				} else if (arg.equalsIgnoreCase("-mem")) method = AnnotationMethod.MEMORY; // This should only be used for test cases (not in productions environments)
-				else if (arg.equalsIgnoreCase("-sorted")) method = AnnotationMethod.SORTED_VCF;
-				else if (arg.equalsIgnoreCase("-tabix")) method = AnnotationMethod.TABIX;
-				else usage("Unknown command line option '" + arg + "'");
+					break;
+
+				default:
+					usage("Unknown command line option '" + arg + "'");
+				}
 			} else {
 				if (dbType == null && dbFileName == null) dbFileName = arg;
 				else if (vcfInputFile == null) vcfInputFile = arg;
@@ -389,6 +430,7 @@ public class SnpSiftCmdAnnotate extends SnpSift {
 		System.err.println("\t-id                  : Only annotate ID field (do not add INFO field). Default: " + useId);
 		System.err.println("\t-info <list>         : Annotate using a list of info fields (list is a comma separated list of fields). Default: ALL.");
 		System.err.println("\t-name str            : Prepend 'str' to all annotated INFO fields. Default: ''.");
+		System.err.println("\t-maxBlockSize <int>  : Use 'max block size' when creating index ('-sorted' command line option). Default: " + maxBlockSize);
 		System.err.println("\t-noAlt               : Do not use REF and ALT fields when comparing database.vcf entries to file.vcf entries. Default: " + !useRefAlt);
 		System.err.println("\t-noId                : Do not annotate ID field. Default: " + !useId);
 		System.err.println("\t-noInfo              : Do not annotate INFO fields. Default: " + !useInfoField);

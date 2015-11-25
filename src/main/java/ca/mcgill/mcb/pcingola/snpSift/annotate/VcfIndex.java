@@ -42,6 +42,7 @@ public class VcfIndex {
 
 	boolean verbose;
 	boolean debug;
+	int maxBlockSize = VcfIndexTree.DEFAULT_MAX_BLOCK_SIZE;
 	String fileName;
 	Map<String, VcfIndexDataChromo> vcfIndexByChromo;
 	Map<String, VcfIndexTree> forest; // A hash of trees
@@ -110,6 +111,7 @@ public class VcfIndex {
 		for (String chr : chromosomes()) {
 			VcfIndexDataChromo vic = getVcfIndexChromo(chr);
 			VcfIndexTree vcfTree = new VcfIndexTree(vcf, vic);
+			vcfTree.setMaxBlockSize(maxBlockSize);
 			vcfTree.build();
 			if (verbose) System.err.println("\t" + vcfTree);
 
@@ -366,6 +368,10 @@ public class VcfIndex {
 			for (VcfIndexTree it : forest.values())
 				it.setDebug(debug);
 		}
+	}
+
+	public void setMaxBlockSize(int maxBlockSize) {
+		this.maxBlockSize = maxBlockSize;
 	}
 
 	/**
