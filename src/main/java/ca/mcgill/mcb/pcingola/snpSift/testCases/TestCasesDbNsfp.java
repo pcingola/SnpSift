@@ -112,8 +112,8 @@ public class TestCasesDbNsfp extends TestCase {
 		VcfEntry vcfEntry = results.get(0);
 
 		// Check all values
-		Assert.assertEquals("2.31", vcfEntry.getInfo(SnpSiftCmdDbNsfp.DBNSFP_VCF_INFO_PREFIX + "GERP++_RS"));
-		Assert.assertEquals("2.31", vcfEntry.getInfo(SnpSiftCmdDbNsfp.DBNSFP_VCF_INFO_PREFIX + "GERP++_NR"));
+		Assert.assertEquals("2.31", vcfEntry.getInfo(SnpSiftCmdDbNsfp.DBNSFP_VCF_INFO_PREFIX + "GERP___RS"));
+		Assert.assertEquals("2.31", vcfEntry.getInfo(SnpSiftCmdDbNsfp.DBNSFP_VCF_INFO_PREFIX + "GERP___NR"));
 		Assert.assertEquals("0.004785", vcfEntry.getInfo(SnpSiftCmdDbNsfp.DBNSFP_VCF_INFO_PREFIX + "ESP6500_AA_AF"));
 		Assert.assertEquals("8.5094", vcfEntry.getInfo(SnpSiftCmdDbNsfp.DBNSFP_VCF_INFO_PREFIX + "29way_logOdds"));
 		Assert.assertEquals("B", vcfEntry.getInfo(SnpSiftCmdDbNsfp.DBNSFP_VCF_INFO_PREFIX + "Polyphen2_HVAR_pred"));
@@ -179,7 +179,7 @@ public class TestCasesDbNsfp extends TestCase {
 		for (VcfEntry vcfEntry : results) {
 
 			// Check that position (annotated from dbNSFP) actually matches
-			String posDb = vcfEntry.getInfo("dbNSFP_pos(1-coor)"); // Get INFO field annotated from dbNSFP
+			String posDb = vcfEntry.getInfo("dbNSFP_pos_1_coor_"); // Get INFO field annotated from dbNSFP
 			int pos = vcfEntry.getStart() + 1; // Get position
 			Assert.assertEquals("" + pos, posDb); // Compare
 		}
@@ -196,7 +196,7 @@ public class TestCasesDbNsfp extends TestCase {
 
 		for (VcfEntry vcfEntry : results) {
 			// Check that position (annotated from dbNSFP) actually matches
-			String posDb = vcfEntry.getInfo("dbNSFP_pos(1-coor)"); // Get INFO field annotated from dbNSFP
+			String posDb = vcfEntry.getInfo("dbNSFP_pos_1_coor_"); // Get INFO field annotated from dbNSFP
 			int pos = vcfEntry.getStart() + 1; // Get position
 			if (debug) Gpr.debug(vcfEntry.getChromosomeName() + ":" + pos + "\t" + posDb);
 
