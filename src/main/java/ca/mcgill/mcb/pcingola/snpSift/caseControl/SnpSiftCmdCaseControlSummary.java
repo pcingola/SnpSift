@@ -168,7 +168,7 @@ public class SnpSiftCmdCaseControlSummary extends SnpSift {
 	void parseDbNsfpFields(VcfFileIterator vcf) {
 		VcfHeader vcfHeader = vcf.getVcfHeader();
 		for (VcfHeaderInfo vcfInfo : vcfHeader.getVcfInfo())
-			if (vcfInfo.getId().startsWith(SnpSiftCmdDbNsfp.VCF_INFO_PREFIX)) infoFields.add(vcfInfo.getId());
+			if (vcfInfo.getId().startsWith(SnpSiftCmdDbNsfp.DBNSFP_VCF_INFO_PREFIX)) infoFields.add(vcfInfo.getId());
 		Collections.sort(infoFields);
 
 	}
@@ -199,7 +199,7 @@ public class SnpSiftCmdCaseControlSummary extends SnpSift {
 		// Add an sort info fields
 		VcfHeader vcfHeader = vcf.getVcfHeader();
 		for (VcfHeaderInfo vcfInfo : vcfHeader.getVcfInfo())
-			if (vcfInfo.getId().startsWith(SnpSiftCmdDbNsfp.VCF_INFO_PREFIX)) infoFields.add(vcfInfo.getId());
+			if (vcfInfo.getId().startsWith(SnpSiftCmdDbNsfp.DBNSFP_VCF_INFO_PREFIX)) infoFields.add(vcfInfo.getId());
 		Collections.sort(infoFields);
 
 		return sampleIds;

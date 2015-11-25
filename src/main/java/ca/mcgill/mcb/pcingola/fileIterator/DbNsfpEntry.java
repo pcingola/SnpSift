@@ -59,14 +59,14 @@ public class DbNsfpEntry extends Variant {
 		String val = values.get(key);
 		if (val == null) return null;
 
-		if (val.indexOf('\t') < 0) return VcfEntry.vcfInfoSafe(val);
+		if (val.indexOf('\t') < 0) return VcfEntry.vcfInfoValueSafe(val);
 
 		// Split and re-join using commas
 		String vals[] = val.split("\t");
 		StringBuilder sb = new StringBuilder();
 		for (int i = 0; i < vals.length; i++) {
 			if (i > 0) sb.append(",");
-			sb.append(VcfEntry.vcfInfoSafe(vals[i]));
+			sb.append(VcfEntry.vcfInfoValueSafe(vals[i]));
 		}
 
 		return sb.toString();

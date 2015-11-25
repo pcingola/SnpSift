@@ -115,11 +115,11 @@ public class TestCasesZzz extends TestCase {
 		VcfEntry vcfEntry = results.get(0);
 
 		// Check all values
-		Assert.assertEquals("ENST00000368485,ENST00000515190", vcfEntry.getInfo(SnpSiftCmdDbNsfp.VCF_INFO_PREFIX + "Ensembl_transcriptid"));
-		Assert.assertEquals("IL6R", vcfEntry.getInfo(SnpSiftCmdDbNsfp.VCF_INFO_PREFIX + "genename"));
-		Assert.assertEquals("ENSG00000160712", vcfEntry.getInfo(SnpSiftCmdDbNsfp.VCF_INFO_PREFIX + "Ensembl_geneid"));
-		Assert.assertEquals("A,L", vcfEntry.getInfo(SnpSiftCmdDbNsfp.VCF_INFO_PREFIX + "aaalt"));
-		Assert.assertEquals("D,I", vcfEntry.getInfo(SnpSiftCmdDbNsfp.VCF_INFO_PREFIX + "aaref"));
+		Assert.assertEquals("ENST00000368485,ENST00000515190", vcfEntry.getInfo(SnpSiftCmdDbNsfp.DBNSFP_VCF_INFO_PREFIX + "Ensembl_transcriptid"));
+		Assert.assertEquals("IL6R", vcfEntry.getInfo(SnpSiftCmdDbNsfp.DBNSFP_VCF_INFO_PREFIX + "genename"));
+		Assert.assertEquals("ENSG00000160712", vcfEntry.getInfo(SnpSiftCmdDbNsfp.DBNSFP_VCF_INFO_PREFIX + "Ensembl_geneid"));
+		Assert.assertEquals("A,L", vcfEntry.getInfo(SnpSiftCmdDbNsfp.DBNSFP_VCF_INFO_PREFIX + "aaalt"));
+		Assert.assertEquals("D,I", vcfEntry.getInfo(SnpSiftCmdDbNsfp.DBNSFP_VCF_INFO_PREFIX + "aaref"));
 	}
 
 }

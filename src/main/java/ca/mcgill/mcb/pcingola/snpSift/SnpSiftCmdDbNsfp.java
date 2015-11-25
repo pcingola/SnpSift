@@ -40,7 +40,7 @@ import ca.mcgill.mcb.pcingola.vcf.VcfInfoType;
  */
 public class SnpSiftCmdDbNsfp extends SnpSift {
 
-	public static final String VCF_INFO_PREFIX = "dbNSFP_";
+	public static final String DBNSFP_VCF_INFO_PREFIX = "dbNSFP_";
 
 	public static final String DEFAULT_FIELDS_NAMES_TO_ADD = "" // Default fields to add
 			// DbNSFP version 2
@@ -102,15 +102,16 @@ public class SnpSiftCmdDbNsfp extends SnpSift {
 	@Override
 	public boolean addHeaders(VcfFileIterator vcfFile) {
 		super.addHeaders(vcfFile);
-		for (String fieldName : fieldsToAdd.keySet()) {
+		for (String key : fieldsToAdd.keySet()) {
 			// Get type
-			String type = fieldsType.get(fieldName);
+			String type = fieldsType.get(key);
 			if (type == null) {
-				System.err.println("WARNING: Cannot find type for field '" + fieldName + "', using 'String'.");
+				System.err.println("WARNING: Cannot find type for field '" + key + "', using 'String'.");
 				type = VcfInfoType.String.toString();
 			}
 
-			vcfFile.getVcfHeader().addLine("##INFO=<ID=" + VCF_INFO_PREFIX + fieldName + ",Number=A,Type=" + type + ",Description=\"" + fieldsToAdd.get(fieldName) + "\">");
+			String infoKey = VcfEntry.vcfInfoKeySafe(DBNSFP_VCF_INFO_PREFIX + key);
+			vcfFile.getVcfHeader().addLine("##INFO=<ID=" + infoKey + ",Number=A,Type=" + type + ",Description=\"" + fieldsToAdd.get(key) + "\">");
 		}
 
 		return false;
@@ -251,8 +252,10 @@ public class SnpSiftCmdDbNsfp extends SnpSift {
 			Collections.sort(keys);
 
 			// Add INFO fields
-			for (String key : keys)
-				vcfEntry.addInfo(VCF_INFO_PREFIX + key, info.get(key));
+			for (String key : keys) {
+				String infoKey = VcfEntry.vcfInfoKeySafe(DBNSFP_VCF_INFO_PREFIX + key);
+				vcfEntry.addInfo(infoKey, info.get(key));
+			}
 
 		}
 

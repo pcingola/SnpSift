@@ -248,7 +248,7 @@ public class SnpSiftCmdGwasCatalog extends SnpSift {
 
 		if (value == null || value.isEmpty()) value = VcfFileIterator.MISSING;
 
-		sb.append(VcfEntry.vcfInfoSafe(value));
+		sb.append(VcfEntry.vcfInfoValueSafe(value));
 	}
 
 	/**
