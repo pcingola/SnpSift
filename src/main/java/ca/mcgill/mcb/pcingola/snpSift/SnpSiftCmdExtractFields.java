@@ -125,7 +125,7 @@ public class SnpSiftCmdExtractFields extends SnpSift {
 
 		// Show title
 		if (!createList) {
-			String sep = "#";
+			String sep = "";
 			for (String fieldName : expressionStrs) {
 				System.out.print(sep + fieldName);
 				sep = "\t";
@@ -168,11 +168,11 @@ public class SnpSiftCmdExtractFields extends SnpSift {
 
 		showVersion();
 
-		System.err.println("Usage: java -jar " + SnpSift.class.getSimpleName() + ".jar extractFields [options] file.vcf filedName1 filedName2 ... filedNameN > tabFile.txt\n" //
+		System.err.println("Usage: java -jar " + SnpSift.class.getSimpleName() + ".jar extractFields [options] file.vcf fieldName1 fieldName2 ... fieldNameN > tabFile.txt\n" //
 				+ "\nOptions:" //
 				+ "\n\t-s     : Same field separator. Default: '" + sameFieldSeparator + "'" //
 				+ "\n\t-e     : Empty field. Default: '" + emptyFieldString + "'" //
-				);
+		);
 
 		System.exit(1);
 	}
