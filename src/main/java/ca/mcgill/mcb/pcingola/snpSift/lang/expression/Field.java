@@ -47,6 +47,7 @@ public class Field extends Expression {
 
 		// Not a sub-field?
 		// Check 'number'
+		Gpr.debug("CHECK THIS CONDITION!");
 		if (vcfInfo.getNumber() <= 1) return vcfInfo.getVcfInfoType();
 		return VcfInfoType.String;
 	}
