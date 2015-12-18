@@ -1,0 +1,6 @@
+##fileformat=VCFv4.1
+##INFO=<ID=Field1,Number=0,Type=Flag,Description="Field1">
+##INFO=<ID=Field2,Number=1,Type=Flag,Description="Field2">
+#CHROM	POS	ID	REF	ALT	QUAL	FILTER	INFO
+1	100	.	A	G	0	.	Field1
+1	200	.	C	T	0	.	Field2

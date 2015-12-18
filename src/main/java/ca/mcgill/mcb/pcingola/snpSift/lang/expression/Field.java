@@ -7,6 +7,7 @@ import ca.mcgill.mcb.pcingola.vcf.VcfEntry;
 import ca.mcgill.mcb.pcingola.vcf.VcfGenotype;
 import ca.mcgill.mcb.pcingola.vcf.VcfHeader;
 import ca.mcgill.mcb.pcingola.vcf.VcfHeaderInfo;
+import ca.mcgill.mcb.pcingola.vcf.VcfHeaderInfo.VcfInfoNumber;
 import ca.mcgill.mcb.pcingola.vcf.VcfHeaderInfoGenotype;
 import ca.mcgill.mcb.pcingola.vcf.VcfInfoType;
 
@@ -24,6 +25,9 @@ public class Field extends Expression {
 	protected String name;
 	protected VcfInfoType returnType;
 	protected boolean exceptionIfNotFound = true;
+	protected VcfHeaderInfo vcfInfo;
+	protected int number = -1;
+	protected VcfInfoNumber vcfInfoNumber;
 
 	public Field(String name) {
 		this.name = name;
@@ -42,18 +46,20 @@ public class Field extends Expression {
 		else returnType = VcfInfoType.UNKNOWN;
 	}
 
-	protected VcfInfoType calcReturnType(VcfHeaderInfo vcfInfo) {
-		if (isSub()) return vcfInfo.getVcfInfoType();
-
-		// Not a sub-field?
-		// Check 'number'
-		Gpr.debug("CHECK THIS CONDITION!");
-		if (vcfInfo.getNumber() <= 1) return vcfInfo.getVcfInfoType();
-		return VcfInfoType.String;
-	}
+	//	protected VcfInfoType calcReturnType(VcfHeaderInfo vcfInfo) {
+	//		return vcfInfo.getVcfInfoType();
+	//		//		if (isSub()) return vcfInfo.getVcfInfoType();
+	//		//
+	//		// Not a sub-field?
+	//		// Check 'number'
+	//		//		Gpr.debug("CHECK THIS CONDITION!");
+	//		//		if (vcfInfo.getNumber() <= 1) return vcfInfo.getVcfInfoType();
+	//		//		return VcfInfoType.String;
+	//	}
 
 	@Override
 	public Value eval(VcfEntry vcfEntry) {
+
 		switch (getReturnType(vcfEntry)) {
 
 		case Integer:
@@ -76,7 +82,6 @@ public class Field extends Expression {
 
 	@Override
 	public Value eval(VcfGenotype vcfGenotype) {
-
 		switch (getReturnType(vcfGenotype)) {
 
 		case Integer:
@@ -122,7 +127,7 @@ public class Field extends Expression {
 	 *
 	 * Note: 'Float' according to VCF spec., not according to java (that is why it returns a double)
 	 */
-	public Double getFieldFloat(VcfEntry vcfEntry) {
+	Double getFieldFloat(VcfEntry vcfEntry) {
 		if (name.equals("QUAL")) return vcfEntry.getQuality();
 
 		String value = getFieldString(vcfEntry);
@@ -185,8 +190,10 @@ public class Field extends Expression {
 		if (name.equals("QUAL")) return "" + vcfEntry.getQuality();
 
 		// Is there a filed 'name'
-		VcfHeaderInfo vcfInfo = vcfEntry.getVcfFileIterator().getVcfHeader().getVcfInfo(name);
-		if (vcfInfo == null) return (String) fieldHeaderNotFound(vcfEntry);
+		if (vcfInfo == null) {
+			vcfInfo = vcfEntry.getVcfFileIterator().getVcfHeader().getVcfInfo(name);
+			if (vcfInfo == null) return (String) fieldHeaderNotFound(vcfEntry);
+		}
 
 		// Get field value
 		String value = vcfEntry.getInfo(name);
@@ -212,20 +219,22 @@ public class Field extends Expression {
 	/**
 	 * Calculate return 'type' for this field
 	 */
-	public VcfInfoType getReturnType(VcfEntry vcfEntry) {
-		if (returnType != VcfInfoType.UNKNOWN) return returnType;
+	VcfInfoType getReturnType(VcfEntry vcfEntry) {
+		if (returnType != VcfInfoType.UNKNOWN) return returnType(vcfEntry);
 
 		VcfHeader vcfHeader = vcfEntry.getVcfFileIterator().getVcfHeader();
 
 		// Is there a filed 'name'
-		VcfHeaderInfo vcfInfo = vcfHeader.getVcfInfo(name);
+		vcfInfo = vcfHeader.getVcfInfo(name);
 		if (vcfInfo != null) {
-			returnType = calcReturnType(vcfInfo);
+			returnType = vcfInfo.getVcfInfoType();
+			number = vcfInfo.getNumber();
+			vcfInfoNumber = vcfInfo.getVcfInfoNumber();
 		} else {
 			// Is there a genotype 'name'
 			VcfHeaderInfoGenotype vcfInfoGenotype = vcfHeader.getVcfInfoGenotype(name);
 			if (vcfInfoGenotype != null) {
-				returnType = calcReturnType(vcfInfoGenotype);
+				returnType = vcfInfoGenotype.getVcfInfoType();
 			} else {
 				// Is this a special field name?
 				if (FieldConstant.isConstantField(name)) returnType = FieldConstantNames.valueOf(name).getType();
@@ -234,25 +243,25 @@ public class Field extends Expression {
 			}
 		}
 
-		return returnType;
+		return returnType(vcfEntry);
 	}
 
 	public VcfInfoType getReturnType(VcfGenotype vcfGenotype) {
 		if (returnType == VcfInfoType.UNKNOWN) {
 			// Is there a field 'name'
 			VcfHeader vcfHeader = vcfGenotype.getVcfEntry().getVcfFileIterator().getVcfHeader();
-			VcfHeaderInfoGenotype vcfInfoGenotype = vcfHeader.getVcfInfoGenotype(name);
-			if (vcfInfoGenotype == null) {
+			vcfInfo = vcfHeader.getVcfInfoGenotype(name);
+			if (vcfInfo == null) {
 				// Is this a special field name?
 				if (FieldConstant.isConstantField(name)) returnType = FieldConstantNames.valueOf(name).getType();
 				else if (isSampleName(vcfGenotype.getVcfEntry(), name)) returnType = VcfInfoType.Integer;
 				else throw new RuntimeException("Genotype field '" + name + "' not found in VCF header"); // Error: Not found
 			}
 
-			returnType = calcReturnType(vcfInfoGenotype);
+			returnType = vcfInfo.getVcfInfoType();
 		}
 
-		return returnType;
+		return returnType(vcfGenotype);
 	}
 
 	protected int getSampleNum(VcfEntry vcfEntry, String name) {
@@ -273,6 +282,14 @@ public class Field extends Expression {
 		return Integer.toString(index);
 	}
 
+	/**
+	 * Does this field contain many values (e.g. 'Number' in VCF header)
+	 */
+	boolean isMultiple(String val) {
+		if (val == null) return false;
+		return val.indexOf(VcfEntry.WITHIN_FIELD_SEP) >= 0;
+	}
+
 	protected boolean isSampleName(VcfEntry vcfEntry, String name) {
 		return vcfEntry.getVcfFileIterator().getVcfHeader().getSampleNum(name) >= 0;
 	}
@@ -290,6 +307,30 @@ public class Field extends Expression {
 		if (text.equals("?")) return -2;
 		if (text.equals("ALL")) return -2;
 		return Gpr.parseIntSafe(text);
+	}
+
+	public VcfInfoType returnType(VcfEntry vcfEntry) {
+		if (returnType == null || returnType == VcfInfoType.String) return VcfInfoType.String;
+		if (number == 0 || number == 1) return returnType;
+
+		// If there can be multiple items, but there is only one, then
+		// it's a 'returnType'. Otherwise it's a String
+		String val = getFieldString(vcfEntry);
+		if (isMultiple(val)) return VcfInfoType.String;
+
+		return returnType;
+	}
+
+	public VcfInfoType returnType(VcfGenotype vcfGenotype) {
+		if (returnType == null || returnType == VcfInfoType.String) return VcfInfoType.String;
+		if (number == 0 || number == 1) return returnType;
+
+		// If there can be multiple items, but there is only one, then
+		// it's a 'returnType'. Otherwise it's a String
+		String val = getFieldString(vcfGenotype);
+		if (isMultiple(val)) return VcfInfoType.String;
+
+		return returnType;
 	}
 
 	public void setExceptionIfNotFound(boolean exceptionIfNotFound) {

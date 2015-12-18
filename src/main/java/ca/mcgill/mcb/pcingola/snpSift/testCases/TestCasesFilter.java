@@ -2,14 +2,14 @@ package ca.mcgill.mcb.pcingola.snpSift.testCases;
 
 import java.util.List;
 
-import junit.framework.Assert;
-import junit.framework.TestCase;
 import ca.mcgill.mcb.pcingola.snpSift.SnpSiftCmdFilter;
 import ca.mcgill.mcb.pcingola.util.Gpr;
 import ca.mcgill.mcb.pcingola.vcf.VcfEffect;
 import ca.mcgill.mcb.pcingola.vcf.VcfEntry;
 import ca.mcgill.mcb.pcingola.vcf.VcfGenotype;
 import ca.mcgill.mcb.pcingola.vcf.VcfLof;
+import junit.framework.Assert;
+import junit.framework.TestCase;
 
 /**
  * Filter test cases
@@ -202,8 +202,8 @@ public class TestCasesFilter extends TestCase {
 		for (VcfEntry vcfEntry : list) {
 			if (verbose) System.out.println("\t" + vcfEntry);
 			Assert.assertTrue( //
-			(vcfEntry.getStart() >= (minPos - 1)) //
-					|| (vcfEntry.getStart() <= (maxPos - 1)) //
+					(vcfEntry.getStart() >= (minPos - 1)) //
+							|| (vcfEntry.getStart() <= (maxPos - 1)) //
 			);
 		}
 	}
@@ -1545,6 +1545,63 @@ public class TestCasesFilter extends TestCase {
 
 		// Check that all lines satisfy the condition
 		Assert.assertEquals(7, list.size());
+	}
+
+	/**
+	 * Test compare a field having 'Number=A' INFO header
+	 */
+	public void test_55() {
+		Gpr.debug("Test");
+
+		// Filter data
+		SnpSiftCmdFilter snpsiftFilter = new SnpSiftCmdFilter();
+		String expression = "AC <= 1";
+		List<VcfEntry> list = snpsiftFilter.filter("test/test55.vcf", expression, true);
+
+		// Check that it satisfies the condition
+		if (verbose) System.out.println("Expression: '" + expression + "'");
+		Assert.assertNotNull(list);
+		Assert.assertEquals("Number of results expected does not match", 1, list.size());
+		if (verbose) Gpr.debug("Result: " + list.get(0));
+		Assert.assertEquals("Expected VCF entry does not match (checking POS)", 199, list.get(0).getStart());
+	}
+
+	/**
+	 * Test compare a field having 'Number=A' INFO header
+	 */
+	public void test_55_2() {
+		Gpr.debug("Test");
+
+		// Filter data
+		SnpSiftCmdFilter snpsiftFilter = new SnpSiftCmdFilter();
+		String expression = "AC = 1";
+		List<VcfEntry> list = snpsiftFilter.filter("test/test55.vcf", expression, true);
+
+		// Check that it satisfies the condition
+		if (verbose) System.out.println("Expression: '" + expression + "'");
+		Assert.assertNotNull(list);
+		Assert.assertEquals("Number of results expected does not match", 1, list.size());
+		if (verbose) Gpr.debug("Result: " + list.get(0));
+		Assert.assertEquals("Expected VCF entry does not match (checking POS)", 199, list.get(0).getStart());
+	}
+
+	/**
+	 * Test compare a field having 'Number=A' INFO header
+	 */
+	public void test_55_3() {
+		Gpr.debug("Test");
+
+		// Filter data
+		SnpSiftCmdFilter snpsiftFilter = new SnpSiftCmdFilter();
+		String expression = "AC == 1";
+		List<VcfEntry> list = snpsiftFilter.filter("test/test55.vcf", expression, true);
+
+		// Check that it satisfies the condition
+		if (verbose) System.out.println("Expression: '" + expression + "'");
+		Assert.assertNotNull(list);
+		Assert.assertEquals("Number of results expected does not match", 1, list.size());
+		if (verbose) Gpr.debug("Result: " + list.get(0));
+		Assert.assertEquals("Expected VCF entry does not match (checking POS)", 199, list.get(0).getStart());
 	}
 
 }
