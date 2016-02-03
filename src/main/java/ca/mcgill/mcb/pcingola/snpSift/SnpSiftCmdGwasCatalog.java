@@ -9,7 +9,6 @@ import ca.mcgill.mcb.pcingola.interval.Genome;
 import ca.mcgill.mcb.pcingola.interval.Marker;
 import ca.mcgill.mcb.pcingola.interval.Markers;
 import ca.mcgill.mcb.pcingola.interval.tree.IntervalForest;
-import ca.mcgill.mcb.pcingola.snpEffect.Config;
 import ca.mcgill.mcb.pcingola.snpSift.gwasCatalog.GwasCatalog;
 import ca.mcgill.mcb.pcingola.snpSift.gwasCatalog.GwasCatalogEntry;
 import ca.mcgill.mcb.pcingola.util.Gpr;
@@ -33,7 +32,7 @@ public class SnpSiftCmdGwasCatalog extends SnpSift {
 	public static final int SHOW_LINES = 100 * SHOW;
 
 	public final String GWAS_CATALOG = "GWASCAT";
-	public final String CONFIG_GWAS_DB_FILE = "database.local.gwascatalog";
+	public final String CONFIG_GWAS_DB_NAME = "gwascatalog";
 
 	GwasCatalog gwasCatalog;
 	IntervalForest intervalForest;
@@ -126,10 +125,7 @@ public class SnpSiftCmdGwasCatalog extends SnpSift {
 		// Get database name from config file?
 		// Note this can happen when invoked a VcfAnnotator (e.g. form ClinEff)
 		if (dbFileName == null && config != null) {
-			String configKey = CONFIG_GWAS_DB_FILE;
-			String coordinates = config.getString(Config.KEY_COORDINATES);
-			if (coordinates != null) configKey += "." + coordinates;
-			dbFileName = config.getString(configKey);
+			dbFileName = config.getDatabaseLocal(CONFIG_GWAS_DB_NAME);
 		}
 
 		// Read database

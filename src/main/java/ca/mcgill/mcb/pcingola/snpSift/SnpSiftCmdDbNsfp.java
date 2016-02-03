@@ -14,7 +14,6 @@ import ca.mcgill.mcb.pcingola.fileIterator.DbNsfp;
 import ca.mcgill.mcb.pcingola.fileIterator.DbNsfpEntry;
 import ca.mcgill.mcb.pcingola.fileIterator.VcfFileIterator;
 import ca.mcgill.mcb.pcingola.interval.Variant;
-import ca.mcgill.mcb.pcingola.snpEffect.Config;
 import ca.mcgill.mcb.pcingola.util.Gpr;
 import ca.mcgill.mcb.pcingola.util.Timer;
 import ca.mcgill.mcb.pcingola.vcf.VcfEntry;
@@ -69,7 +68,7 @@ public class SnpSiftCmdDbNsfp extends SnpSift {
 	public static final int MIN_JUMP = 100;
 
 	public static final int SHOW_EVERY = 100;
-	public final String CONFIG_DBNSFP_DB_FILE = "database.local.dbnsfp";
+	public final String CONFIG_DBNSFP_DB_NAME = "dbnsfp";
 
 	protected Map<String, String> fieldsToAdd;
 	protected Map<String, String> fieldsDescription;
@@ -278,10 +277,7 @@ public class SnpSiftCmdDbNsfp extends SnpSift {
 		// Get database name from config file?
 		// Note this can happen when invoked a VcfAnnotator (e.g. form ClinEff)
 		if (dbFileName == null && config != null) {
-			String configKey = CONFIG_DBNSFP_DB_FILE;
-			String coordinates = config.getString(Config.KEY_COORDINATES);
-			if (coordinates != null) configKey += "." + coordinates;
-			dbFileName = config.getString(configKey);
+			dbFileName = config.getDatabaseLocal(CONFIG_DBNSFP_DB_NAME);
 		}
 
 		// Check and open dbNsfp
