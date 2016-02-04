@@ -78,14 +78,20 @@ public class SnpSiftCmdSort extends SnpSift {
 	void processHeader(String file) {
 		// Open VCF file
 		VcfFileIterator vcf = new VcfFileIterator(file);
+		vcf.next();
 
 		// Process header
 		if (vcfHeader == null) vcfHeader = vcf.getVcfHeader();
 		else {
+			VcfHeader newVcfHeader = vcf.getVcfHeader();
+
 			// Add missing headers
-			for (VcfHeaderInfo vhi : vcfHeader.getVcfInfo()) {
-				if (!vcfHeader.hasHeaderInfo(vhi)) vcfHeader.add(vhi);
-			}
+			for (VcfHeaderInfo vhi : newVcfHeader.getVcfInfo())
+				if (!vhi.isImplicit() && !vcfHeader.hasHeaderInfo(vhi)) vcfHeader.add(vhi);
+
+			// Add other lines
+			for (String line : newVcfHeader.getLines())
+				if (!VcfHeader.isInfoOrGtLine(line)) vcfHeader.addLine(line);
 		}
 
 		vcf.close();
