@@ -72,9 +72,11 @@ public class SnpSiftCmdAnnotate extends SnpSift {
 			throw new RuntimeException(e);
 		}
 
+		boolean empty = true;
 		int pos = -1;
 		String chr = "";
 		for (VcfEntry vcfEntry : vcfFile) {
+			empty = false;
 			try {
 				processVcfHeader(vcfFile);
 
@@ -97,6 +99,9 @@ public class SnpSiftCmdAnnotate extends SnpSift {
 				e.printStackTrace();
 			}
 		}
+
+		// Empty VCF file, we still should to show headers
+		if (empty) processVcfHeader(vcfFile);
 
 		annotateDb.close();
 
