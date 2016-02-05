@@ -380,7 +380,7 @@ public class SnpSiftCmdAnnotate extends SnpSift {
 		// Sanity check
 		if (dbType == null && dbFileName == null)
 
-		usage("Missing database option or file: [-dbSnp | -clinVar | database.vcf ]");
+			usage("Missing database option or file: [-dbSnp | -clinVar | database.vcf ]");
 	}
 
 	/**

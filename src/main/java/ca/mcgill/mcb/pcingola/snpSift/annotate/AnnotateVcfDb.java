@@ -64,6 +64,9 @@ public abstract class AnnotateVcfDb {
 		List<QueryResult> queryResults = new LinkedList<>();
 		Set<VcfEntry> uniqueVcfEntries = new HashSet<>();
 		for (Variant var : vcfEntry.variants()) {
+			// Skip huge deletions
+			if (var.isHugeDel()) continue;
+
 			// Query database
 			Collection<VariantVcfEntry> results = query(var);
 

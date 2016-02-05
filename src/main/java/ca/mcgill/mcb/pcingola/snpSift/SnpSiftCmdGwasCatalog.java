@@ -8,6 +8,7 @@ import ca.mcgill.mcb.pcingola.interval.Chromosome;
 import ca.mcgill.mcb.pcingola.interval.Genome;
 import ca.mcgill.mcb.pcingola.interval.Marker;
 import ca.mcgill.mcb.pcingola.interval.Markers;
+import ca.mcgill.mcb.pcingola.interval.Variant;
 import ca.mcgill.mcb.pcingola.interval.tree.IntervalForest;
 import ca.mcgill.mcb.pcingola.snpSift.gwasCatalog.GwasCatalog;
 import ca.mcgill.mcb.pcingola.snpSift.gwasCatalog.GwasCatalogEntry;
@@ -92,23 +93,28 @@ public class SnpSiftCmdGwasCatalog extends SnpSift {
 		boolean annotated = false;
 
 		// Query interval tree
-		Markers results = intervalForest.query(vcfEntry);
+		for (Variant var : vcfEntry.variants()) {
+			// Skip non-variants and huge deletions
+			if (var.isVariant() || var.isHugeDel()) continue;
 
-		// Any results? Annotate VcfEntry
-		if (!results.isEmpty()) {
-			// First we need to get the original gwas-catalog entries (marker IDs are the keys)
-			List<GwasCatalogEntry> resultsGwasCat = new LinkedList<>();
+			Markers results = intervalForest.query(var);
 
-			for (Marker m : results) {
-				// Map marker ID to original gwas-catalog entries
-				String key = m.getId();
-				List<GwasCatalogEntry> resultsKey = gwasCatalog.get(key);
-				if (resultsKey != null) resultsGwasCat.addAll(resultsKey);
+			// Any results? Annotate VcfEntry
+			if (!results.isEmpty()) {
+				// First we need to get the original gwas-catalog entries (marker IDs are the keys)
+				List<GwasCatalogEntry> resultsGwasCat = new LinkedList<>();
+
+				for (Marker m : results) {
+					// Map marker ID to original gwas-catalog entries
+					String key = m.getId();
+					List<GwasCatalogEntry> resultsKey = gwasCatalog.get(key);
+					if (resultsKey != null) resultsGwasCat.addAll(resultsKey);
+				}
+
+				// Annotate
+				vcfAnnotation(vcfEntry, resultsGwasCat);
+				annotated = true;
 			}
-
-			// Annotate
-			vcfAnnotation(vcfEntry, resultsGwasCat);
-			annotated = true;
 		}
 
 		return annotated;

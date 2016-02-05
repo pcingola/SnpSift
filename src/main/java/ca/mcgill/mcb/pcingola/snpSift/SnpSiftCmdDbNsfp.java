@@ -198,6 +198,9 @@ public class SnpSiftCmdDbNsfp extends SnpSift {
 	public boolean annotate(Variant variant, Map<String, String> info) {
 		if (verbose) Gpr.showMark(++countVariants, SHOW_EVERY);
 
+		// dbNSFP only has SNP information
+		if (!variant.isSnp()) return false;
+
 		// Find in database
 		Collection<DbNsfpEntry> dbEntries = dbNsfp.query(variant);
 		if (dbEntries == null || dbEntries.isEmpty()) return false;
