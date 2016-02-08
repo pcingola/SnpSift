@@ -95,7 +95,7 @@ public class SnpSiftCmdGwasCatalog extends SnpSift {
 		// Query interval tree
 		for (Variant var : vcfEntry.variants()) {
 			// Skip non-variants and huge deletions
-			if (var.isVariant() || var.isHugeDel()) continue;
+			if (var.isVariant() || var.isStructuralHuge()) continue;
 
 			Markers results = intervalForest.query(var);
 

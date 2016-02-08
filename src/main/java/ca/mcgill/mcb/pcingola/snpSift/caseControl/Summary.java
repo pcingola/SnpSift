@@ -8,7 +8,7 @@ import ca.mcgill.mcb.pcingola.vcf.VcfEntry;
 
 /**
  * Summarize a VCF annotated file
- *  
+ *
  * @author pcingola
  */
 public class Summary {
@@ -28,7 +28,7 @@ public class Summary {
 				for (VariantEffect.FunctionalClass functClass : VariantEffect.FunctionalClass.values()) {
 					if (functClass != VariantEffect.FunctionalClass.NONE) {
 						for (VcfEntry.AlleleFrequencyType variantAf : VcfEntry.AlleleFrequencyType.values()) {
-							// Get count 
+							// Get count
 							String key = group + "\t" + caseControl + "\t" + functClass + "\t" + variantAf;
 							long count = countByType.get(key);
 
