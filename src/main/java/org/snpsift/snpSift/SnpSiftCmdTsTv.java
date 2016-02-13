@@ -31,7 +31,6 @@ public class SnpSiftCmdTsTv extends SnpSift {
 
 	/**
 	 * Show an error (if not 'quiet' mode)
-	 * @param message
 	 */
 	@Override
 	public void error(Throwable e, String message) {
@@ -41,7 +40,6 @@ public class SnpSiftCmdTsTv extends SnpSift {
 
 	/**
 	 * Parse command line arguments
-	 * @param args
 	 */
 	@Override
 	public void parse(String[] args) {
