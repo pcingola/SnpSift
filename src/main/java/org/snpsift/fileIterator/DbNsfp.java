@@ -15,7 +15,7 @@ import org.snpeff.interval.Variant;
 import org.snpeff.util.Gpr;
 import org.snpeff.util.Timer;
 import org.snpeff.vcf.VcfInfoType;
-import org.snpsift.snpSift.annotate.DbMarker;
+import org.snpsift.annotate.DbMarker;
 
 import net.sf.samtools.tabix.TabixIterator;
 import net.sf.samtools.tabix.TabixReader;
