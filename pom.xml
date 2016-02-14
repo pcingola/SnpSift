@@ -131,7 +131,7 @@
           </descriptorRefs>
           <archive>
             <manifest>
-              <mainClass>org.snpsift.snpSift.SnpSift</mainClass>
+              <mainClass>org.snpsift.SnpSift</mainClass>
             </manifest>
           </archive>
         </configuration>
