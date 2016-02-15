@@ -385,7 +385,7 @@ public class SnpSiftCmdAnnotate extends SnpSift {
 		// Sanity check
 		if (dbType == null && dbFileName == null)
 
-			usage("Missing database option or file: [-dbSnp | -clinVar | database.vcf ]");
+		usage("Missing database option or file: [-dbSnp | -clinVar | database.vcf ]");
 	}
 
 	/**
@@ -424,7 +424,7 @@ public class SnpSiftCmdAnnotate extends SnpSift {
 
 		showVersion();
 
-		System.err.println("Usage: java -jar " + SnpSift.class.getSimpleName() + ".jar " + command + " [options] [-dbSnp | -clinvar | database.vcf] file.vcf > newFile.vcf");
+		System.err.println("Usage: java -jar " + SnpSift.class.getSimpleName() + ".jar " + command + " [options] database.vcf file.vcf > newFile.vcf");
 		System.err.println("\nDatabase options:");
 		System.err.println("\tdatabase.vcf         : Use 'database.vcf' file as annotations database. Note: The VCF file can be bgzipped and tabix-indexed.");
 		System.err.println("\t-dbsnp               : Use DbSnp database.");
