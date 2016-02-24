@@ -44,7 +44,7 @@ public class SnpSiftCmdSort extends SnpSift {
 			// Read the whole file
 			LineFileIterator lfi = new LineFileIterator(file);
 			for (String line : lfi)
-				if (!line.startsWith("#")) {
+				if (!line.startsWith("#") && !line.isEmpty()) {
 					LineChrPos lineChrPos = new LineChrPos(line);
 					vcfEntries.add(lineChrPos);
 				}
