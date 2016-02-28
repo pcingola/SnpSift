@@ -110,18 +110,19 @@ public class SnpSiftCmdVcf2Tped extends SnpSift {
 	 * Return REF anf ALT values as if they were a SNP
 	 *
 	 * Important: If the variant is NOT a SNP, we create a 'fake' snp ( A -> T ).
-	 * 			  This is done in order to be able to MAP InDels into PED files and keep compatibility with downstream programs (GenAble).
-	 * 			  Yes, it's an awful hack. YOu've been warned!
+	 * 			  This is done in order to be able to MAP InDels into PED files and keep
+	 * 			  compatibility with downstream programs (GenAble).
+	 * 			  Yes, it's an awful hack.
 	 */
 	String snpGenotype(VcfEntry ve, VcfGenotype gen, int genoNum) {
 		String base = "";
 
-		if (ve.isSnp()) {
+		if (ve.isSingleSnp()) {
 			// SNPs
 			if (genoNum < 0) base = ve.getRef(); // Reference
 			else base = gen.getGenotype(genoNum);
 		} else {
-			// Indel, MNP or other subsitutions
+			// Other variants
 			// Create fake SNP "A -> T" and map InDel values to it
 			if (genoNum < 0) base = "A"; // Reference
 			else if (gen.getGenotype(genoNum).equals(ve.getRef())) base = "A"; // ALT[genoNum] == REF
@@ -204,7 +205,7 @@ public class SnpSiftCmdVcf2Tped extends SnpSift {
 					if (onlyBiAllelic && (ve.getAlts().length != 1)) { // No bi-allelic? => We skip it if 'onlyBiAllelic' is true
 						skipNonBiAllelic++;
 						if (debug) System.err.println("Skipping line " + vcf.getLineNum() + ": Not bi-allelic");
-					} else if (onlySnp && !ve.isSnp()) { // Not a SNP? skip it if 'onlySnp' is true
+					} else if (onlySnp && !ve.isSingleSnp()) { // Not a SNP? skip it if 'onlySnp' is true
 						skipNotSnp++;
 						if (debug) System.err.println("Skipping line " + vcf.getLineNum() + ": Not a SNP");
 					} else {

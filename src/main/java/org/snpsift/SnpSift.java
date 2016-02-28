@@ -458,7 +458,6 @@ public class SnpSift implements VcfAnnotator {
 		else if (command.startsWith("PRIVATE")) cmd = new SnpSiftCmdPrivate(args);
 		else if (command.startsWith("RMINFO")) cmd = new SnpSiftCmdRmInfo(args);
 		else if (command.startsWith("RMREF")) cmd = new SnpSiftCmdRemoveReferenceGenotypes(args);
-		else if (command.startsWith("SIMPLIFYINDELS")) cmd = new SnpSiftCmdSimplifyIndels(args);
 		else if (command.startsWith("SORT")) cmd = new SnpSiftCmdSort(args);
 		else if (command.startsWith("SPLIT")) cmd = new SnpSiftCmdSplit(args);
 		else if (command.startsWith("TS")) cmd = new SnpSiftCmdTsTv(args);

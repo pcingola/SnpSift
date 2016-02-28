@@ -5,12 +5,13 @@ import java.util.List;
 
 import org.snpeff.fileIterator.VcfFileIterator;
 import org.snpeff.interval.Variant;
+import org.snpeff.interval.Variant.VariantType;
 import org.snpeff.util.Timer;
 import org.snpeff.vcf.VcfEntry;
 import org.snpeff.vcf.VcfHeaderEntry;
 import org.snpeff.vcf.VcfHeaderInfo;
-import org.snpeff.vcf.VcfInfoType;
 import org.snpeff.vcf.VcfHeaderInfo.VcfInfoNumber;
+import org.snpeff.vcf.VcfInfoType;
 
 /**
  * Annotate a VCF file with variant type
@@ -36,8 +37,17 @@ public class SnpSiftCmdVarType extends SnpSift {
 	 */
 	@Override
 	public boolean annotate(VcfEntry vcfEntry) {
-		// Entry type?
-		if (vcfEntry.getVariantType() != null) vcfEntry.addInfo(vcfEntry.getVariantType().toString(), null);
+		// Variant type
+		VariantType varType = null;
+		for (Variant var : vcfEntry.variants()) {
+			VariantType vt = var.getVariantType();
+			if (vt != null && vt != VariantType.INTERVAL) {
+				varType = vt;
+				break;
+			}
+		}
+
+		if (varType != null) vcfEntry.addInfo(varType.toString(), null);
 
 		// Heterozygous?
 		boolean annotated = false;

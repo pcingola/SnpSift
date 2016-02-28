@@ -1,11 +1,11 @@
 package org.snpsift.testCases;
 
-import junit.framework.Assert;
-import junit.framework.TestCase;
-
 import org.snpeff.fileIterator.VcfFileIterator;
 import org.snpeff.vcf.VcfEntry;
 import org.snpsift.SnpSiftCmdVarType;
+
+import junit.framework.Assert;
+import junit.framework.TestCase;
 
 /**
  * VarType test cases
@@ -30,6 +30,10 @@ public class TestCasesVarType extends TestCase {
 			varType.annotate(ve);
 
 			// Check that all variants are the ones expected
+			if (verbose) System.out.println(ve //
+					+ "\n\tvarTypeExpected: " + varTypeExpected //
+					+ "\n\tINFO flag      : " + ve.getInfoFlag(varTypeExpected) //
+			);
 			if (!ve.getInfoFlag(varTypeExpected)) System.err.println("Eror in file '" + file + "':\n" + ve);
 			Assert.assertEquals(true, ve.getInfoFlag(varTypeExpected));
 		}
