@@ -96,6 +96,37 @@ public class SnpSiftCmdFilter extends SnpSift {
 		vcfEntry.setFilterPass(filter);
 	}
 
+	@Override
+	public boolean annotate(VcfEntry vcfEntry) {
+		boolean eval = evaluate(vcfEntry);
+
+		// Use FILTER field? ('PASS' or filter name)
+		if (usePassField) {
+			if (eval) vcfEntry.setFilterPass("PASS"); // Filter passed: PASS
+			else addVcfFilter(vcfEntry, filterId); // Filter not passed? Show filter name
+		}
+
+		// Add or delete strings from filter field
+		if (eval) {
+			if (addFilterField != null) addVcfFilter(vcfEntry, addFilterField); // Filter passed? Add to FILTER field
+			if (rmFilterField != null) delVcfFilter(vcfEntry, rmFilterField); // Filter passed? Delete string from FILTER field
+		}
+
+		return eval;
+	}
+
+	@Override
+	public boolean annotateInit(VcfFileIterator vcfFile) {
+		// Parse expression
+		try {
+			parseExpression(expression);
+		} catch (Exception e) {
+			e.printStackTrace();
+			usage("Error parsing expression: '" + expression + "'");
+		}
+		return true; // By default nothing is done
+	}
+
 	/**
 	 * Remove a string from FILTER vcf field
 	 */
@@ -183,7 +214,7 @@ public class SnpSiftCmdFilter extends SnpSift {
 	protected List<VcfHeaderEntry> headers() {
 		List<VcfHeaderEntry> addHeader = super.headers();
 		String expr = expression.replace('\n', ' ').replace('\r', ' ').replace('\t', ' ').trim();
-		if (!filterId.isEmpty()) addHeader.add(new VcfHeaderEntry("##FILTER=<ID=" + filterId + ",Description=\"" + VERSION + ", Expression used: " + expr + "\">"));
+		if (!filterId.isEmpty()) addHeader.add(new VcfHeaderEntry("##FILTER=<ID=" + filterId + ",Description=\"" + VERSION_NO_NAME + ", Expression used: " + expr + "\">"));
 		return addHeader;
 	}
 
@@ -214,27 +245,70 @@ public class SnpSiftCmdFilter extends SnpSift {
 
 			// Argument starts with '-'?
 			if (isOpt(arg)) {
-				if (arg.equals("-h") || arg.equalsIgnoreCase("-help")) usage(null);
-				else if (arg.equals("-f") || arg.equalsIgnoreCase("--file")) vcfInputFile = args[++i];
-				else if (arg.equals("-s") || arg.equalsIgnoreCase("--set")) addSet(args[++i]);
-				else if (arg.equals("-p") || arg.equalsIgnoreCase("--pass")) usePassField = true;
-				else if (arg.equalsIgnoreCase("--errMissing")) exceptionIfNotFound = true;
-				else if (arg.equals("-i") || arg.equalsIgnoreCase("--filterId")) {
+
+				switch (arg.toLowerCase()) {
+				case "-h":
+				case "-help":
+					usage(null);
+					break;
+
+				case "-f":
+				case "--file":
+					vcfInputFile = args[++i];
+					break;
+
+				case "-s":
+				case "--set":
+					addSet(args[++i]);
+					break;
+
+				case "-p":
+				case "--pass":
+					usePassField = true;
+					break;
+
+				case "--errMissing":
+					exceptionIfNotFound = true;
+					break;
+
+				case "-i":
+				case "--filterId":
 					usePassField = true;
 					filterId = args[++i];
-				} else if (arg.equals("-a") || arg.equalsIgnoreCase("--addFilter")) addFilterField = args[++i];
-				else if (arg.equals("-r") || arg.equalsIgnoreCase("--rmFilter")) rmFilterField = args[++i];
-				else if (arg.equals("-n") || arg.equalsIgnoreCase("--inverse")) inverse = true;
-				else if (arg.equalsIgnoreCase("--format")) {
+					break;
+
+				case "-a":
+				case "--addFilter":
+					addFilterField = args[++i];
+					break;
+
+				case "-r":
+				case "--rmFilter":
+					rmFilterField = args[++i];
+					break;
+
+				case "-n":
+				case "--inverse":
+					inverse = true;
+					break;
+
+				case "--format":
 					String formatVer = args[++i];
 					if (formatVer.equals("2")) formatVersion = EffFormatVersion.FORMAT_EFF_2;
 					else if (formatVer.equals("3")) formatVersion = EffFormatVersion.FORMAT_EFF_3;
 					else usage("Unknown format version '" + formatVer + "'");
-				} else if (arg.equals("-e") || arg.equalsIgnoreCase("--exprfile")) {
+					break;
+
+				case "-e":
+				case "--exprfile":
 					String exprFile = args[++i];
 					if (verbose) System.err.println("Reading expression from file '" + exprFile + "'");
 					expression = Gpr.readFile(exprFile);
-				} else usage("Unknown option '" + arg + "'");
+					break;
+
+				default:
+					usage("Unknown option '" + arg + "'");
+				}
 			} else if (expression == null) expression = arg;
 			else if (vcfInputFile == null) vcfInputFile = arg;
 			else usage("Unknown parameter '" + arg + "'");
@@ -278,45 +352,21 @@ public class SnpSiftCmdFilter extends SnpSift {
 		// Debug mode?
 		if (debug) Expression.debug = true;
 
-		// Parse expression
-		try {
-			parseExpression(expression);
-		} catch (Exception e) {
-			e.printStackTrace();
-			usage("Error parsing expression: '" + expression + "'");
-		}
-
 		// Initialize
 		LinkedList<VcfEntry> passEntries = (createList ? new LinkedList<VcfEntry>() : null);
 
 		// Open and read entries
 		showHeader = !createList;
 		VcfFileIterator vcfFile = openVcfInputFile();
+		annotateInit(vcfFile);
 		for (VcfEntry vcfEntry : vcfFile) {
 			processVcfHeader(vcfFile);
 
-			// Evaluate expression
-			boolean eval = evaluate(vcfEntry);
-			boolean show = eval; // Does this entry pass the filter? => Show it
-
-			//---
-			// Actions after evaluation
-			//---
+			// Annotate (evaluate expression)
+			boolean show = annotate(vcfEntry);
 
 			// Always show entries (just change FILTER field)
 			if (usePassField || (addFilterField != null) || (rmFilterField != null)) show = true;
-
-			// Use FILTER field? ('PASS' or filter name)
-			if (usePassField) {
-				if (eval) vcfEntry.setFilterPass("PASS"); // Filter passed: PASS
-				else addVcfFilter(vcfEntry, filterId); // Filter not passed? Show filter name
-			}
-
-			// Add or delete strings from filter field
-			if (eval) {
-				if (addFilterField != null) addVcfFilter(vcfEntry, addFilterField); // Filter passed? Add to FILTER field
-				if (rmFilterField != null) delVcfFilter(vcfEntry, rmFilterField); // Filter passed? Delete string from FILTER field
-			}
 
 			// Show
 			if (show) {
@@ -326,6 +376,42 @@ public class SnpSiftCmdFilter extends SnpSift {
 		}
 
 		return passEntries;
+	}
+
+	public void setAddFilterField(String addFilterField) {
+		this.addFilterField = addFilterField;
+	}
+
+	public void setExceptionIfNotFound(boolean exceptionIfNotFound) {
+		this.exceptionIfNotFound = exceptionIfNotFound;
+	}
+
+	public void setExpression(String expression) {
+		this.expression = expression;
+	}
+
+	public void setFilterId(String filterId) {
+		this.filterId = filterId;
+	}
+
+	public void setFormatVersion(EffFormatVersion formatVersion) {
+		this.formatVersion = formatVersion;
+	}
+
+	public void setInverse(boolean inverse) {
+		this.inverse = inverse;
+	}
+
+	public void setRmFilterField(String rmFilterField) {
+		this.rmFilterField = rmFilterField;
+	}
+
+	public void setSets(ArrayList<HashSet<String>> sets) {
+		this.sets = sets;
+	}
+
+	public void setUsePassField(boolean usePassField) {
+		this.usePassField = usePassField;
 	}
 
 	/**

@@ -185,7 +185,7 @@ public class SnpSiftCmdGtFilter extends SnpSift {
 	protected List<VcfHeaderEntry> headers() {
 		List<VcfHeaderEntry> addHeader = super.headers();
 		String expr = expression.replace('\n', ' ').replace('\r', ' ').replace('\t', ' ').trim();
-		if (!filterId.isEmpty()) addHeader.add(new VcfHeaderEntry("##FILTER=<ID=" + filterId + ",Description=\"" + VERSION + ", Expression used: " + expr + "\">"));
+		if (!filterId.isEmpty()) addHeader.add(new VcfHeaderEntry("##FILTER=<ID=" + filterId + ",Description=\"" + VERSION_NO_NAME + ", Expression used: " + expr + "\">"));
 		return addHeader;
 	}
 

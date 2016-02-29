@@ -175,7 +175,7 @@ public class SnpSiftCmdIntersect extends SnpSift {
 		if (verbose && !notFileNames.isEmpty()) Timer.showStdErr("Total number of 'NOT' markers (all files) : " + markersNotAll.size());
 
 		// Show header
-		System.out.println("# " + SnpSift.VERSION);
+		System.out.println("# " + SnpSift.VERSION_NO_NAME);
 		System.out.println("# Command line: " + commandLineStr());
 
 		//---

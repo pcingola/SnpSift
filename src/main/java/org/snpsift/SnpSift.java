@@ -32,8 +32,8 @@ public class SnpSift implements VcfAnnotator {
 	public static final String VERSION_MAJOR = SnpEff.VERSION_MAJOR;
 	public static final String REVISION = SnpEff.REVISION;
 	public static final String VERSION_SHORT = VERSION_MAJOR + REVISION;
-	public static final String VERSION_NO_NAME = VERSION_SHORT + " (build " + BUILD + "), by " + Pcingola.BY;
-	public static final String VERSION = SOFTWARE_NAME + " " + VERSION_NO_NAME;
+	public static final String VERSION = VERSION_SHORT + " (build " + BUILD + "), by " + Pcingola.BY;
+	public static final String VERSION_NO_NAME = SOFTWARE_NAME + " " + VERSION;
 	public static final int MAX_ERRORS = 10; // Report an error no more than X times
 	public static int SHOW_EVERY_VCFLINES = 100; // Show a mark every N vcf lines processed
 	public static final String[] EMPTY_ARGS = new String[0];
@@ -46,6 +46,7 @@ public class SnpSift implements VcfAnnotator {
 	protected boolean download = true; // Download database, if not available
 	protected boolean showHeader = true;
 	protected boolean saveOutput = false; // Save output to buffer (instead of printing it to STDOUT)
+	protected boolean showVersion = true;
 	protected boolean suppressOutput = false; // Do not show output (used for debugging and test cases)
 	protected boolean needsConfig; // Does this command need a config file?
 	protected boolean needsDb; // Does this command need a database file?
@@ -204,7 +205,7 @@ public class SnpSift implements VcfAnnotator {
 	 */
 	protected List<VcfHeaderEntry> headers() {
 		ArrayList<VcfHeaderEntry> newHeaders = new ArrayList<VcfHeaderEntry>();
-		newHeaders.add(new VcfHeaderEntry("##SnpSiftVersion=\"" + VERSION + "\""));
+		newHeaders.add(new VcfHeaderEntry("##SnpSiftVersion=\"" + VERSION_NO_NAME + "\""));
 		newHeaders.add(new VcfHeaderEntry("##SnpSiftCmd=\"" + commandLineStr() + "\""));
 		return newHeaders;
 	}
@@ -398,6 +399,10 @@ public class SnpSift implements VcfAnnotator {
 		this.saveOutput = saveOutput;
 	}
 
+	public void setShowVersion(boolean showVersion) {
+		this.showVersion = showVersion;
+	}
+
 	public void setSuppressOutput(boolean suppressOutput) {
 		this.suppressOutput = suppressOutput;
 	}
@@ -423,7 +428,7 @@ public class SnpSift implements VcfAnnotator {
 	 * Show version number
 	 */
 	public void showVersion() {
-		System.err.println(SnpSift.class.getSimpleName() + " version " + VERSION_NO_NAME + "\n");
+		System.err.println(SnpSift.class.getSimpleName() + " version " + VERSION + "\n");
 	}
 
 	/**
@@ -470,8 +475,8 @@ public class SnpSift implements VcfAnnotator {
 		if (help) cmd.usage(null);
 
 		// Show version and command
-		if (!help && (verbose || debug)) {
-			Timer.showStdErr("SnpSift version " + VERSION_NO_NAME);
+		if (!help && (verbose || debug) && showVersion) {
+			Timer.showStdErr("SnpSift version " + VERSION);
 			Timer.showStdErr("Command: '" + command + "'");
 		}
 
