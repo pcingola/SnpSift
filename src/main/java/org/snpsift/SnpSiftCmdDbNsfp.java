@@ -299,6 +299,15 @@ public class SnpSiftCmdDbNsfp extends SnpSift {
 	 * Initialize fields to annotate
 	 */
 	void annotateInitFields() {
+		// Get field names to add from config file (unless already configure by command line
+		if (fieldsNamesToAdd == null) {
+			String dbNsfpFields = config.getDbNsfpFields();
+			if (dbNsfpFields != null && !dbNsfpFields.isEmpty()) {
+				fieldsNamesToAdd = dbNsfpFields;
+				if (verbose) Timer.showStdErr("Using fields from config file: '" + fieldsNamesToAdd + "'");
+			}
+		}
+
 		//---
 		// Fields to use
 		//---
@@ -349,7 +358,6 @@ public class SnpSiftCmdDbNsfp extends SnpSift {
 						if (verbose) Timer.showStdErr("Warning: Default field name '" + fn + "' not found, ignoring");
 					} else usage("Error: Field name '" + fn + "' not found");
 				} else fieldsToAdd.put(fn, fieldsDescription.get(fn)); // Add field
-
 			}
 		}
 
@@ -461,12 +469,28 @@ public class SnpSiftCmdDbNsfp extends SnpSift {
 		for (int i = 0; i < args.length; i++) {
 			String arg = args[i];
 
-			if (arg.equals("-a")) annotateEmpty = true;
-			else if (arg.equals("-f")) fieldsNamesToAdd = args[++i]; // Filed to be used
-			else if (arg.equalsIgnoreCase("-noCollapse")) collapseRepeatedValues = false;
-			else if (arg.equalsIgnoreCase("-collapse")) collapseRepeatedValues = true;
-			else if (arg.equalsIgnoreCase("-n")) inverseFieldSelection = true;
-			else {
+			switch (arg.toLowerCase()) {
+			case "-a":
+				annotateEmpty = true;
+				break;
+
+			case "-f":
+				fieldsNamesToAdd = args[++i];
+				break;
+
+			case "-nocollapse":
+				collapseRepeatedValues = false;
+				break;
+
+			case "-collapse":
+				collapseRepeatedValues = true;
+				break;
+
+			case "-n":
+				inverseFieldSelection = true;
+				break;
+
+			default:
 				if (vcfFileName == null) vcfFileName = arg;
 				else usage("Unknown extra parameter '" + arg + "'");
 			}
