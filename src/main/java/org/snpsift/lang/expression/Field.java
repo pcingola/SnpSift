@@ -5,9 +5,9 @@ import org.snpeff.vcf.VcfEntry;
 import org.snpeff.vcf.VcfGenotype;
 import org.snpeff.vcf.VcfHeader;
 import org.snpeff.vcf.VcfHeaderInfo;
+import org.snpeff.vcf.VcfHeaderInfo.VcfInfoNumber;
 import org.snpeff.vcf.VcfHeaderInfoGenotype;
 import org.snpeff.vcf.VcfInfoType;
-import org.snpeff.vcf.VcfHeaderInfo.VcfInfoNumber;
 import org.snpsift.lang.Value;
 import org.snpsift.lang.expression.FieldConstant.FieldConstantNames;
 
