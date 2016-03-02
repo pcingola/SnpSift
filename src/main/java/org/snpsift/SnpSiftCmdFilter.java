@@ -267,23 +267,23 @@ public class SnpSiftCmdFilter extends SnpSift {
 					usePassField = true;
 					break;
 
-				case "--errMissing":
+				case "--errmissing":
 					exceptionIfNotFound = true;
 					break;
 
 				case "-i":
-				case "--filterId":
+				case "--filterid":
 					usePassField = true;
 					filterId = args[++i];
 					break;
 
 				case "-a":
-				case "--addFilter":
+				case "--addfilter":
 					addFilterField = args[++i];
 					break;
 
 				case "-r":
-				case "--rmFilter":
+				case "--rmfilter":
 					rmFilterField = args[++i];
 					break;
 
