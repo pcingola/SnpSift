@@ -107,7 +107,7 @@ public class SnpSiftCmdSplit extends SnpSift {
 	 * Parse command line arguments
 	 */
 	@Override
-	public void parse(String[] args) {
+	public void parseArgs(String[] args) {
 		if (args.length == 0) usage(null);
 
 		// Initialize
@@ -141,9 +141,10 @@ public class SnpSiftCmdSplit extends SnpSift {
 	 * Run
 	 */
 	@Override
-	public void run() {
+	public boolean run() {
 		if (join) join(false);
 		else split();
+		return true;
 	}
 
 	/**

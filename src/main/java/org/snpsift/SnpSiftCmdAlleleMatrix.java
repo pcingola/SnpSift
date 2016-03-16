@@ -35,7 +35,7 @@ public class SnpSiftCmdAlleleMatrix extends SnpSift {
 	 * Parse command line arguments
 	 */
 	@Override
-	public void parse(String[] args) {
+	public void parseArgs(String[] args) {
 		if (args.length <= 0) usage(null);
 
 		for (int i = 0; i < args.length; i++) {
@@ -75,7 +75,7 @@ public class SnpSiftCmdAlleleMatrix extends SnpSift {
 	 * Process the whole VCF file
 	 */
 	@Override
-	public void run() {
+	public boolean run() {
 		int i = 1;
 		VcfFileIterator vcf = openVcfInputFile();
 		for (VcfEntry ve : vcf) {
@@ -99,6 +99,7 @@ public class SnpSiftCmdAlleleMatrix extends SnpSift {
 		}
 
 		if (verbose) Timer.showStdErr("Done");
+		return true;
 	}
 
 	/**

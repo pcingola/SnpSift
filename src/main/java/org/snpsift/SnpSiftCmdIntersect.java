@@ -91,7 +91,7 @@ public class SnpSiftCmdIntersect extends SnpSift {
 	}
 
 	@Override
-	public void parse(String[] args) {
+	public void parseArgs(String[] args) {
 		if (args.length <= 0) usage(null);
 
 		// Defaults
@@ -123,7 +123,7 @@ public class SnpSiftCmdIntersect extends SnpSift {
 	 * Run annotations
 	 */
 	@Override
-	public void run() {
+	public boolean run() {
 		//---
 		// Initialize
 		//---
@@ -206,6 +206,7 @@ public class SnpSiftCmdIntersect extends SnpSift {
 		}
 
 		if (verbose) Timer.showStdErr("Total number of markers intersected : " + done.size() + (coutFilteredOut > 0 ? "\n\tFiltered out : " + coutFilteredOut : ""));
+		return true;
 	}
 
 	/**

@@ -7,8 +7,8 @@ import org.snpeff.util.Gpr;
 import org.snpeff.vcf.VcfEntry;
 import org.snpeff.vcf.VcfHeaderEntry;
 import org.snpeff.vcf.VcfHeaderInfo;
-import org.snpeff.vcf.VcfInfoType;
 import org.snpeff.vcf.VcfHeaderInfo.VcfInfoNumber;
+import org.snpeff.vcf.VcfInfoType;
 
 /**
  * Add genotype information to INFO fields
@@ -46,7 +46,7 @@ public class SnpSiftCmdGt extends SnpSift {
 	 * Parse command line arguments
 	 */
 	@Override
-	public void parse(String[] args) {
+	public void parseArgs(String[] args) {
 		if (args.length == 0) usage(null);
 
 		for (int i = 0; i < args.length; i++) {
@@ -63,7 +63,7 @@ public class SnpSiftCmdGt extends SnpSift {
 	 * Process a VCF entry and return a string (tab separated values)
 	 */
 	@Override
-	public void run() {
+	public boolean run() {
 		int i = 1;
 		VcfFileIterator vcf = openVcfInputFile();
 		for (VcfEntry ve : vcf) {
@@ -80,6 +80,7 @@ public class SnpSiftCmdGt extends SnpSift {
 
 			if (verbose) Gpr.showMark(i++, SHOW_EVERY);
 		}
+		return true;
 	}
 
 	@Override

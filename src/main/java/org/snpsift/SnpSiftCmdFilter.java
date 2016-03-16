@@ -239,7 +239,7 @@ public class SnpSiftCmdFilter extends SnpSift {
 	 * Parse command line options
 	 */
 	@Override
-	public void parse(String[] args) {
+	public void parseArgs(String[] args) {
 		for (int i = 0; i < args.length; i++) {
 			String arg = args[i];
 
@@ -339,8 +339,9 @@ public class SnpSiftCmdFilter extends SnpSift {
 	}
 
 	@Override
-	public void run() {
+	public boolean run() {
 		run(false);
+		return true;
 	}
 
 	/**

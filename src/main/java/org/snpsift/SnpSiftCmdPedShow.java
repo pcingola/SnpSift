@@ -74,7 +74,7 @@ public class SnpSiftCmdPedShow extends SnpSift {
 	}
 
 	@Override
-	public void parse(String[] args) {
+	public void parseArgs(String[] args) {
 		// Parse command line
 		if (args.length < 3) {
 			System.err.println("Usage: " + SnpSiftCmdPedShow.class.getSimpleName() + " pedigree.txt file.vcf outDir [chr:pos1 chr:pos2 ... chr:posN]");
@@ -105,7 +105,7 @@ public class SnpSiftCmdPedShow extends SnpSift {
 	 * @param chrPos
 	 */
 	@Override
-	public void run() {
+	public boolean run() {
 		// Initialize
 		PedigreeDraw pedigree = null;
 		VcfFileIterator vcfFile = new VcfFileIterator(vcfFileName);
@@ -147,6 +147,8 @@ public class SnpSiftCmdPedShow extends SnpSift {
 			for (Map.Entry<String, Boolean> me : chrPos.entrySet())
 				if (!me.getValue()) System.err.println("Entry '" + me.getKey() + "' not found.");
 		}
+
+		return true;
 	}
 
 	@Override

@@ -5,10 +5,10 @@ import java.util.HashMap;
 import java.util.List;
 
 import org.snpeff.Pcingola;
+import org.snpeff.SnpEff;
 import org.snpeff.fileIterator.VcfFileIterator;
 import org.snpeff.snpEffect.Config;
 import org.snpeff.snpEffect.VcfAnnotator;
-import org.snpeff.snpEffect.commandLine.SnpEff;
 import org.snpeff.util.Download;
 import org.snpeff.util.Gpr;
 import org.snpeff.util.Timer;
@@ -76,7 +76,7 @@ public class SnpSift implements VcfAnnotator {
 		this.command = command;
 		errCount = new HashMap<String, Integer>();
 		init();
-		if (args != null) parse(args);
+		if (args != null) parseArgs(args);
 	}
 
 	/**
@@ -188,6 +188,11 @@ public class SnpSift implements VcfAnnotator {
 		System.exit(-1);
 	}
 
+	@Override
+	public String[] getArgs() {
+		return args;
+	}
+
 	public Config getConfig() {
 		return config;
 	}
@@ -256,7 +261,8 @@ public class SnpSift implements VcfAnnotator {
 	/**
 	 * Parse command line arguments
 	 */
-	public void parse(String[] args) {
+	@Override
+	public void parseArgs(String[] args) {
 		if (args.length < 1) usage(null);
 
 		// Get command
@@ -366,11 +372,14 @@ public class SnpSift implements VcfAnnotator {
 		return "";
 	}
 
-	public void run() {
+	@Override
+	public boolean run() {
 		SnpSift cmd = snpSiftCmd();
 
 		// Execute command
 		cmd.run();
+
+		return true;
 	}
 
 	@Override
@@ -529,6 +538,7 @@ public class SnpSift implements VcfAnnotator {
 	/**
 	 * Show usage message
 	 */
+	@Override
 	public void usage(String msg) {
 		if (msg != null) {
 			System.err.println("Error: " + msg);

@@ -69,7 +69,7 @@ public class SnpSiftCmdIntervals extends SnpSift {
 	}
 
 	@Override
-	public void parse(String[] args) {
+	public void parseArgs(String[] args) {
 		if (args.length <= 0) usage(null);
 
 		bedFiles = new LinkedList<String>();
@@ -84,8 +84,9 @@ public class SnpSiftCmdIntervals extends SnpSift {
 	}
 
 	@Override
-	public void run() {
+	public boolean run() {
 		run(false);
+		return true;
 	}
 
 	/**

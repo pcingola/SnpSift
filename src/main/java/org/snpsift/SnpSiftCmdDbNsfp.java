@@ -463,7 +463,7 @@ public class SnpSiftCmdDbNsfp extends SnpSift {
 	 * Parse command line arguments
 	 */
 	@Override
-	public void parse(String[] args) {
+	public void parseArgs(String[] args) {
 		if (args.length == 0) usage(null);
 
 		for (int i = 0; i < args.length; i++) {
@@ -501,8 +501,9 @@ public class SnpSiftCmdDbNsfp extends SnpSift {
 	}
 
 	@Override
-	public void run() {
+	public boolean run() {
 		run(false);
+		return true;
 	}
 
 	/**

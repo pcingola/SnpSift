@@ -112,7 +112,7 @@ public class SnpSiftCmdCovarianceMatrix extends SnpSift {
 	 * Parse command line arguments
 	 */
 	@Override
-	public void parse(String[] args) {
+	public void parseArgs(String[] args) {
 		if (args.length != 1) usage(null);
 		matrixFile = args[0];
 	}
@@ -121,7 +121,7 @@ public class SnpSiftCmdCovarianceMatrix extends SnpSift {
 	 * Process the whole file
 	 */
 	@Override
-	public void run() {
+	public boolean run() {
 		Timer.showStdErr("Pass1: Processing file '" + matrixFile + "'");
 		mean();
 
@@ -130,6 +130,7 @@ public class SnpSiftCmdCovarianceMatrix extends SnpSift {
 
 		System.out.println(this);
 		Timer.showStdErr("Done");
+		return true;
 	}
 
 	@Override

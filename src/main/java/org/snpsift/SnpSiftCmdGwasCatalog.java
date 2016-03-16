@@ -15,8 +15,8 @@ import org.snpeff.util.Timer;
 import org.snpeff.vcf.VcfEntry;
 import org.snpeff.vcf.VcfHeaderEntry;
 import org.snpeff.vcf.VcfHeaderInfo;
-import org.snpeff.vcf.VcfInfoType;
 import org.snpeff.vcf.VcfHeaderInfo.VcfInfoNumber;
+import org.snpeff.vcf.VcfInfoType;
 import org.snpsift.gwasCatalog.GwasCatalog;
 import org.snpsift.gwasCatalog.GwasCatalogEntry;
 
@@ -187,7 +187,7 @@ public class SnpSiftCmdGwasCatalog extends SnpSift {
 	 * Parse command line arguments
 	 */
 	@Override
-	public void parse(String[] args) {
+	public void parseArgs(String[] args) {
 		for (int i = 0; i < args.length; i++) {
 			String arg = args[i];
 			if (isOpt(arg) && (arg.equals("-h") || arg.equals("-help"))) usage(null);
@@ -210,7 +210,7 @@ public class SnpSiftCmdGwasCatalog extends SnpSift {
 	 * Annotate entries
 	 */
 	@Override
-	public void run() {
+	public boolean run() {
 		// Read config
 		if (config == null) loadConfig();
 
@@ -223,6 +223,7 @@ public class SnpSiftCmdGwasCatalog extends SnpSift {
 		);
 
 		annotate();
+		return true;
 	}
 
 	/**

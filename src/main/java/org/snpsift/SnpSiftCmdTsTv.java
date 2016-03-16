@@ -42,7 +42,7 @@ public class SnpSiftCmdTsTv extends SnpSift {
 	 * Parse command line arguments
 	 */
 	@Override
-	public void parse(String[] args) {
+	public void parseArgs(String[] args) {
 		if (args.length < 1) usage(null);
 		int argc = 0;
 		vcfFileName = args[argc++]; // VCF file
@@ -52,7 +52,7 @@ public class SnpSiftCmdTsTv extends SnpSift {
 	 * Analyze the file
 	 */
 	@Override
-	public void run() {
+	public boolean run() {
 		Timer.showStdErr("Analysing '" + vcfFileName + "'");
 
 		// Create stats objects
@@ -99,6 +99,7 @@ public class SnpSiftCmdTsTv extends SnpSift {
 		System.out.println(alleleCountStats);
 
 		Timer.showStdErr("Done");
+		return true;
 	}
 
 	/**

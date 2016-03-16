@@ -1,7 +1,5 @@
 package org.snpsift;
 
-import gnu.trove.set.hash.TIntHashSet;
-
 import java.util.LinkedList;
 import java.util.List;
 
@@ -12,6 +10,8 @@ import org.snpeff.interval.Chromosome;
 import org.snpeff.util.Gpr;
 import org.snpeff.util.Timer;
 import org.snpeff.vcf.VcfEntry;
+
+import gnu.trove.set.hash.TIntHashSet;
 
 /**
  * Filter using CHROM:POS only
@@ -77,7 +77,7 @@ public class SnpSiftCmdFilterChrPos extends SnpSift {
 	 * Parse command line options
 	 */
 	@Override
-	public void parse(String[] args) {
+	public void parseArgs(String[] args) {
 		for (int i = 0; i < args.length; i++) {
 			String arg = args[i];
 
@@ -93,8 +93,9 @@ public class SnpSiftCmdFilterChrPos extends SnpSift {
 	}
 
 	@Override
-	public void run() {
+	public boolean run() {
 		run(false);
+		return true;
 	}
 
 	/**

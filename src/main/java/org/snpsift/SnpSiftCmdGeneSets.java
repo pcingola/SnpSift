@@ -15,8 +15,8 @@ import org.snpeff.vcf.VcfEffect;
 import org.snpeff.vcf.VcfEntry;
 import org.snpeff.vcf.VcfHeaderEntry;
 import org.snpeff.vcf.VcfHeaderInfo;
-import org.snpeff.vcf.VcfInfoType;
 import org.snpeff.vcf.VcfHeaderInfo.VcfInfoNumber;
+import org.snpeff.vcf.VcfInfoType;
 
 /**
  * Annotate a VCF file using Gene sets (MSigDb) or gene ontology (GO)
@@ -106,7 +106,7 @@ public class SnpSiftCmdGeneSets extends SnpSift {
 	 * Parse command line arguments
 	 */
 	@Override
-	public void parse(String[] args) {
+	public void parseArgs(String[] args) {
 		int argNum = 0;
 		if (args.length == 0) usage(null);
 
@@ -123,8 +123,9 @@ public class SnpSiftCmdGeneSets extends SnpSift {
 	 * Annotate entries
 	 */
 	@Override
-	public void run() {
+	public boolean run() {
 		run(false);
+		return true;
 	}
 
 	public List<VcfEntry> run(boolean createList) {

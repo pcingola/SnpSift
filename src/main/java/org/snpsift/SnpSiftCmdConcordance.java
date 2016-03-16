@@ -310,7 +310,7 @@ public class SnpSiftCmdConcordance extends SnpSift {
 	 * Parse command line arguments
 	 */
 	@Override
-	public void parse(String[] args) {
+	public void parseArgs(String[] args) {
 		if (args.length == 0) usage(null);
 
 		for (int i = 0; i < args.length; i++) {
@@ -401,7 +401,7 @@ public class SnpSiftCmdConcordance extends SnpSift {
 	}
 
 	@Override
-	public void run() {
+	public boolean run() {
 		// Read samples file
 		if (restrictSamplesFile != null) {
 			restrictSamples = new HashSet<String>();
@@ -491,6 +491,7 @@ public class SnpSiftCmdConcordance extends SnpSift {
 
 		// Show results
 		showResults(titleBySample.toString());
+		return true;
 	}
 
 	public void setWriteBySampleFile(boolean writeBySampleFile) {

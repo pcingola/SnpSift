@@ -49,7 +49,7 @@ public class SnpSiftCmdHwe extends SnpSift {
 	 * Parse command line arguments
 	 */
 	@Override
-	public void parse(String[] args) {
+	public void parseArgs(String[] args) {
 		if (args.length == 0) usage(null);
 
 		for (int argc = 0; argc < args.length; argc++) {
@@ -73,7 +73,7 @@ public class SnpSiftCmdHwe extends SnpSift {
 	 * Analyze the file (run multi-thread mode)
 	 */
 	@Override
-	public void run() {
+	public boolean run() {
 		Timer.showStdErr("Reading '" + vcfInputFile + "'. Running single threaded mode.");
 
 		VcfFileIterator vcfFile = new VcfFileIterator(vcfInputFile);
@@ -100,6 +100,7 @@ public class SnpSiftCmdHwe extends SnpSift {
 		}
 
 		Timer.showStdErr("Done: " + entryNum + " entries processed.");
+		return true;
 	}
 
 	/**

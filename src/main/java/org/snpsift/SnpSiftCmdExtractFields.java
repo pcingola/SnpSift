@@ -69,7 +69,7 @@ public class SnpSiftCmdExtractFields extends SnpSift {
 	 * Parse command line arguments
 	 */
 	@Override
-	public void parse(String[] args) {
+	public void parseArgs(String[] args) {
 		if (args.length == 0) usage(null);
 
 		expressionStrs = new ArrayList<String>();
@@ -113,8 +113,9 @@ public class SnpSiftCmdExtractFields extends SnpSift {
 	 * Run main algorithm
 	 */
 	@Override
-	public void run() {
+	public boolean run() {
 		run(false);
+		return true;
 	}
 
 	public List<String> run(boolean createList) {

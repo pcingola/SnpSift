@@ -55,7 +55,7 @@ public class SnpSiftCmdSort extends SnpSift {
 	 * Parse command line arguments
 	 */
 	@Override
-	public void parse(String[] args) {
+	public void parseArgs(String[] args) {
 		if (args.length == 0) usage(null);
 
 		// Initialize
@@ -101,9 +101,10 @@ public class SnpSiftCmdSort extends SnpSift {
 	 * Run
 	 */
 	@Override
-	public void run() {
+	public boolean run() {
 		loadVcfFiles();
 		sort();
+		return true;
 	}
 
 	void sort() {

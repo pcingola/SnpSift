@@ -94,7 +94,7 @@ public class SnpSiftCmdVarType extends SnpSift {
 	 * Parse command line arguments
 	 */
 	@Override
-	public void parse(String[] args) {
+	public void parseArgs(String[] args) {
 		int argNum = 0;
 		if (args.length == 0) usage(null);
 
@@ -106,7 +106,7 @@ public class SnpSiftCmdVarType extends SnpSift {
 	 * Annotate entries
 	 */
 	@Override
-	public void run() {
+	public boolean run() {
 		if (verbose) Timer.showStdErr("Annotating variants type entries from: '" + vcfFile + "'");
 
 		VcfFileIterator vcf = new VcfFileIterator(vcfFile);
@@ -125,6 +125,7 @@ public class SnpSiftCmdVarType extends SnpSift {
 			annotate(vcfEntry);
 			System.out.println(vcfEntry);
 		}
+		return true;
 	}
 
 	/**

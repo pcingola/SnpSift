@@ -64,7 +64,7 @@ public class SnpSiftCmdVcf2Tped extends SnpSift {
 	}
 
 	@Override
-	public void parse(String[] args) {
+	public void parseArgs(String[] args) {
 		if (args.length <= 0) usage(null);
 
 		for (int argc = 0; argc < args.length; argc++) {
@@ -95,7 +95,7 @@ public class SnpSiftCmdVcf2Tped extends SnpSift {
 	 * Run annotations
 	 */
 	@Override
-	public void run() {
+	public boolean run() {
 		// Create output file names
 		outTpedFile = outputFileName + ".tped";
 		outTfamFile = outputFileName + ".tfam";
@@ -104,6 +104,7 @@ public class SnpSiftCmdVcf2Tped extends SnpSift {
 
 		// Convert from VCF to TPED
 		vcf2Tped(vcfFile, tfamFile, outTfamFile, outTpedFile);
+		return true;
 	}
 
 	/**

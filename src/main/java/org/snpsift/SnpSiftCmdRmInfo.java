@@ -22,7 +22,7 @@ public class SnpSiftCmdRmInfo extends SnpSift {
 	}
 
 	@Override
-	public void parse(String[] args) {
+	public void parseArgs(String[] args) {
 		infos = new HashSet<String>();
 		rmId = false;
 
@@ -44,7 +44,7 @@ public class SnpSiftCmdRmInfo extends SnpSift {
 	 * Analyze the file
 	 */
 	@Override
-	public void run() {
+	public boolean run() {
 		Timer.showStdErr("Reading STDIN");
 		VcfFileIterator vcfFile = new VcfFileIterator(vcfFileName);
 		vcfFile.setDebug(debug);
@@ -69,6 +69,7 @@ public class SnpSiftCmdRmInfo extends SnpSift {
 		}
 
 		Timer.showStdErr("Done");
+		return true;
 	}
 
 	/**

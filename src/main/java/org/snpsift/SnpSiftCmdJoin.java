@@ -105,7 +105,7 @@ public class SnpSiftCmdJoin extends SnpSift {
 	 * @param args
 	 */
 	@Override
-	public void parse(String[] args) {
+	public void parseArgs(String[] args) {
 		for (int i = 0; i < args.length; i++) {
 			// Argument starts with '-'?
 			if (args[i].startsWith("-")) {
@@ -195,7 +195,7 @@ public class SnpSiftCmdJoin extends SnpSift {
 	 * Run algorithm
 	 */
 	@Override
-	public void run() {
+	public boolean run() {
 		readFiles();
 		build(list[1]);
 
@@ -235,6 +235,7 @@ public class SnpSiftCmdJoin extends SnpSift {
 			double perc = 100.0 * countIntersect / list[0].size();
 			Timer.showStdErr("Done.\n\tTotal intervals: " + list[0].size() + "\n\tTotal intersected: " + countIntersect + " " + String.format("(%.2f%%)", perc));
 		}
+		return true;
 	}
 
 	/**

@@ -297,7 +297,7 @@ public class SnpSiftCmdAnnotate extends SnpSift {
 	 * Parse command line arguments
 	 */
 	@Override
-	public void parse(String[] args) {
+	public void parseArgs(String[] args) {
 		if (args.length == 0) usage(null);
 
 		for (int i = 0; i < args.length; i++) {
@@ -385,15 +385,16 @@ public class SnpSiftCmdAnnotate extends SnpSift {
 		// Sanity check
 		if (dbType == null && dbFileName == null)
 
-		usage("Missing database option or file: [-dbSnp | -clinVar | database.vcf ]");
+			usage("Missing database option or file: [-dbSnp | -clinVar | database.vcf ]");
 	}
 
 	/**
 	 * Annotate each entry of a VCF file
 	 */
 	@Override
-	public void run() {
+	public boolean run() {
 		run(false);
+		return true;
 	}
 
 	/**

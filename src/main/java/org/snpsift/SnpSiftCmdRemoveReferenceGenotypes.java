@@ -25,7 +25,7 @@ public class SnpSiftCmdRemoveReferenceGenotypes extends SnpSift {
 	}
 
 	@Override
-	public void parse(String[] args) {
+	public void parseArgs(String[] args) {
 		if (args.length <= 0) vcfFileName = "-";
 		else if (args.length == 1) vcfFileName = args[0];
 		else usage("Too many arguments");
@@ -35,7 +35,7 @@ public class SnpSiftCmdRemoveReferenceGenotypes extends SnpSift {
 	 * Analyze the file
 	 */
 	@Override
-	public void run() {
+	public boolean run() {
 		Timer.showStdErr("Reading STDIN");
 		VcfFileIterator vcfFile = new VcfFileIterator(vcfFileName);
 		vcfFile.setDebug(debug);
@@ -77,6 +77,7 @@ public class SnpSiftCmdRemoveReferenceGenotypes extends SnpSift {
 		}
 
 		Timer.showStdErr("Done");
+		return true;
 	}
 
 	/**

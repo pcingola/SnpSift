@@ -66,7 +66,7 @@ public class SnpSiftCmdIntervalsIndex extends SnpSift {
 	 * @param args
 	 */
 	@Override
-	public void parse(String[] args) {
+	public void parseArgs(String[] args) {
 		for (int i = 0; i < args.length; i++) {
 
 			// Argument starts with '-'?
@@ -122,7 +122,7 @@ public class SnpSiftCmdIntervalsIndex extends SnpSift {
 	 * @param fileName
 	 */
 	@Override
-	public void run() {
+	public boolean run() {
 		if (!listCommandLine) loadIntervals();
 
 		// Read and show header
@@ -157,6 +157,7 @@ public class SnpSiftCmdIntervalsIndex extends SnpSift {
 			}
 		}
 		if (verbose) Timer.showStdErr("Done");
+		return true;
 	}
 
 	public void setInOffset(int inOffset) {
