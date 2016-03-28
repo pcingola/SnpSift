@@ -467,6 +467,7 @@ public class SnpSift implements VcfAnnotator {
 		else if (command.startsWith("INTERS")) cmd = new SnpSiftCmdIntersect(args);
 		else if (command.startsWith("INTERV")) cmd = new SnpSiftCmdIntervals(args);
 		else if (command.startsWith("JOIN")) cmd = new SnpSiftCmdJoin(args);
+		else if (command.startsWith("OP")) cmd = new SnpSiftCmdVcfOperator(args);
 		else if (command.startsWith("PEDSHOW")) cmd = new SnpSiftCmdPedShow(args);
 		else if (command.startsWith("PHASTCONS")) cmd = new SnpSiftCmdPhastCons(args);
 		else if (command.startsWith("PRIVATE")) cmd = new SnpSiftCmdPrivate(args);
