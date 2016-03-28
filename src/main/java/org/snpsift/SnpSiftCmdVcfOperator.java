@@ -5,7 +5,6 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.snpeff.fileIterator.VcfFileIterator;
-import org.snpeff.util.Gpr;
 import org.snpeff.vcf.VcfEntry;
 import org.snpeff.vcf.VcfHeaderEntry;
 import org.snpeff.vcf.VcfHeaderInfo;
@@ -40,7 +39,6 @@ public class SnpSiftCmdVcfOperator extends SnpSift {
 	public boolean annotate(VcfEntry vcfEntry) {
 		List<Double> values = getValues(vcfEntry);
 		Double res = applyOp(values);
-		Gpr.debug("ANNOTATE:" + res + "\t" + values);
 		if (res != null) vcfEntry.addInfo(outField, "" + res);
 		return false;
 	}
