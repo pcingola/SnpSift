@@ -569,6 +569,7 @@ public class SnpSift implements VcfAnnotator {
 				+ "\n\tintervals     : Keep variants that intersect with intervals." //
 				+ "\n\tintIdx        : Keep variants that intersect with intervals. Index-based method: Used for large VCF file and a few intervals to retrieve" //
 				+ "\n\tjoin          : Join files by genomic region." //
+				+ "\n\top            : Annotate using an operator." //
 				+ "\n\tphastCons     : Annotate using conservation scores (phastCons)." //
 				+ "\n\tprivate       : Annotate if a variant is private to a family or group." //
 				+ "\n\trmRefGen      : Remove reference genotypes." //
