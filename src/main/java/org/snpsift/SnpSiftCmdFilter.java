@@ -90,10 +90,12 @@ public class SnpSiftCmdFilter extends SnpSift {
 	void addVcfFilter(VcfEntry vcfEntry, String filterStr) {
 		// Get current value
 		String filter = vcfEntry.getFilter();
-		if (filter.equals(".")) filter = ""; // Empty?
+
+		if (filter.equals(".") || filter.equals(VcfEntry.FILTER_PASS)) filter = ""; // Empty?
+
 		// Append new value
 		filter += (!filter.isEmpty() ? ";" : "") + filterStr; // Add this filter to the not-passed list
-		vcfEntry.setFilterPass(filter);
+		vcfEntry.setFilter(filter);
 	}
 
 	@Override
@@ -102,7 +104,7 @@ public class SnpSiftCmdFilter extends SnpSift {
 
 		// Use FILTER field? ('PASS' or filter name)
 		if (usePassField) {
-			if (eval) vcfEntry.setFilterPass("PASS"); // Filter passed: PASS
+			if (eval) vcfEntry.setFilter(VcfEntry.FILTER_PASS); // Filter passed: PASS
 			else addVcfFilter(vcfEntry, filterId); // Filter not passed? Show filter name
 		}
 
@@ -145,7 +147,7 @@ public class SnpSiftCmdFilter extends SnpSift {
 		// Changed? Set new value
 		if (removed) {
 			if (debug) Gpr.debug("REMOVE:" + filter + "\t" + filterStr + "\t=>\t" + sbFilter);
-			vcfEntry.setFilterPass(sbFilter.toString());
+			vcfEntry.setFilter(sbFilter.toString());
 		}
 	}
 

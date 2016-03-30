@@ -73,7 +73,7 @@ public class SnpSiftCmdGtFilter extends SnpSift {
 		if (filter.equals(".")) filter = ""; // Empty?
 		// Append new value
 		filter += (!filter.isEmpty() ? ";" : "") + filterStr; // Add this filter to the not-passed list
-		vcfEntry.setFilterPass(filter);
+		vcfEntry.setFilter(filter);
 	}
 
 	/**
@@ -94,7 +94,7 @@ public class SnpSiftCmdGtFilter extends SnpSift {
 		// Changed? Set new value
 		if (removed) {
 			if (debug) Gpr.debug("REMOVE:" + filter + "\t" + filterStr + "\t=>\t" + sbFilter);
-			vcfEntry.setFilterPass(sbFilter.toString());
+			vcfEntry.setFilter(sbFilter.toString());
 		}
 	}
 
