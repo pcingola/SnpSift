@@ -84,20 +84,6 @@ public class SnpSiftCmdFilter extends SnpSift {
 		if (verbose) System.err.println("Adding set '" + fileName + "', " + set.size() + " elements.");
 	}
 
-	/**
-	 * Add string to FILTER vcf field
-	 */
-	void addVcfFilter(VcfEntry vcfEntry, String filterStr) {
-		// Get current value
-		String filter = vcfEntry.getFilter();
-
-		if (filter.equals(".") || filter.equals(VcfEntry.FILTER_PASS)) filter = ""; // Empty?
-
-		// Append new value
-		filter += (!filter.isEmpty() ? ";" : "") + filterStr; // Add this filter to the not-passed list
-		vcfEntry.setFilter(filter);
-	}
-
 	@Override
 	public boolean annotate(VcfEntry vcfEntry) {
 		boolean eval = evaluate(vcfEntry);
@@ -105,13 +91,13 @@ public class SnpSiftCmdFilter extends SnpSift {
 		// Use FILTER field? ('PASS' or filter name)
 		if (usePassField) {
 			if (eval) vcfEntry.setFilter(VcfEntry.FILTER_PASS); // Filter passed: PASS
-			else addVcfFilter(vcfEntry, filterId); // Filter not passed? Show filter name
+			else vcfEntry.addFilter(filterId); // Filter not passed? Show filter name
 		}
 
 		// Add or delete strings from filter field
 		if (eval) {
-			if (addFilterField != null) addVcfFilter(vcfEntry, addFilterField); // Filter passed? Add to FILTER field
-			if (rmFilterField != null) delVcfFilter(vcfEntry, rmFilterField); // Filter passed? Delete string from FILTER field
+			if (addFilterField != null) vcfEntry.addFilter(addFilterField); // Filter passed? Add to FILTER field
+			if (rmFilterField != null) vcfEntry.delFilter(rmFilterField); // Filter passed? Delete string from FILTER field
 		}
 
 		return eval;
@@ -127,28 +113,6 @@ public class SnpSiftCmdFilter extends SnpSift {
 			usage("Error parsing expression: '" + expression + "'");
 		}
 		return true; // By default nothing is done
-	}
-
-	/**
-	 * Remove a string from FILTER vcf field
-	 */
-	void delVcfFilter(VcfEntry vcfEntry, String filterStr) {
-		// Get current value
-		String filter = vcfEntry.getFilter();
-		StringBuilder sbFilter = new StringBuilder();
-
-		// Split by semicolon and filter out the undesired values
-		boolean removed = false;
-		for (String f : filter.split(";")) {
-			if (!f.equals(filterStr)) sbFilter.append((sbFilter.length() > 0 ? ";" : "") + f); // Append if it does not match filterStr
-			else removed = true;
-		}
-
-		// Changed? Set new value
-		if (removed) {
-			if (debug) Gpr.debug("REMOVE:" + filter + "\t" + filterStr + "\t=>\t" + sbFilter);
-			vcfEntry.setFilter(sbFilter.toString());
-		}
 	}
 
 	/**

@@ -65,40 +65,6 @@ public class SnpSiftCmdGtFilter extends SnpSift {
 	}
 
 	/**
-	 * Add string to FILTER vcf field
-	 */
-	void addVcfFilter(VcfEntry vcfEntry, String filterStr) {
-		// Get current value
-		String filter = vcfEntry.getFilter();
-		if (filter.equals(".")) filter = ""; // Empty?
-		// Append new value
-		filter += (!filter.isEmpty() ? ";" : "") + filterStr; // Add this filter to the not-passed list
-		vcfEntry.setFilter(filter);
-	}
-
-	/**
-	 * Remove a string from FILTER vcf field
-	 */
-	void delVcfFilter(VcfEntry vcfEntry, String filterStr) {
-		// Get current value
-		String filter = vcfEntry.getFilter();
-		StringBuilder sbFilter = new StringBuilder();
-
-		// Split by semicolon and filter out the undesired values
-		boolean removed = false;
-		for (String f : filter.split(";")) {
-			if (!f.equals(filterStr)) sbFilter.append((sbFilter.length() > 0 ? ";" : "") + f); // Append if it does not match filterStr
-			else removed = true;
-		}
-
-		// Changed? Set new value
-		if (removed) {
-			if (debug) Gpr.debug("REMOVE:" + filter + "\t" + filterStr + "\t=>\t" + sbFilter);
-			vcfEntry.setFilter(sbFilter.toString());
-		}
-	}
-
-	/**
 	 * Evaluate all genotypes for this entry
 	 */
 	boolean evaluate(VcfEntry vcfEntry) {
