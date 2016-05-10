@@ -105,14 +105,16 @@ public class SnpSiftCmdFilter extends SnpSift {
 
 	@Override
 	public boolean annotateInit(VcfFileIterator vcfFile) {
-		// Parse expression
+		super.annotateInit(vcfFile);
+
 		try {
+			// Parse expression
 			parseExpression(expression);
 		} catch (Exception e) {
 			e.printStackTrace();
 			usage("Error parsing expression: '" + expression + "'");
 		}
-		return true; // By default nothing is done
+		return true;
 	}
 
 	/**
@@ -323,7 +325,7 @@ public class SnpSiftCmdFilter extends SnpSift {
 		LinkedList<VcfEntry> passEntries = (createList ? new LinkedList<VcfEntry>() : null);
 
 		// Open and read entries
-		showHeader = !createList;
+		showVcfHeader = !createList;
 		VcfFileIterator vcfFile = openVcfInputFile();
 		annotateInit(vcfFile);
 		for (VcfEntry vcfEntry : vcfFile) {
@@ -341,6 +343,7 @@ public class SnpSiftCmdFilter extends SnpSift {
 				else System.out.println(vcfEntry);
 			}
 		}
+		annotateFinish(vcfFile);
 
 		return passEntries;
 	}

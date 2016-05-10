@@ -72,11 +72,9 @@ public class SnpSiftCmdAnnotate extends SnpSift {
 			throw new RuntimeException(e);
 		}
 
-		boolean empty = true;
 		int pos = -1;
 		String chr = "";
 		for (VcfEntry vcfEntry : vcfFile) {
-			empty = false;
 			try {
 				processVcfHeader(vcfFile);
 
@@ -100,10 +98,8 @@ public class SnpSiftCmdAnnotate extends SnpSift {
 			}
 		}
 
-		// Empty VCF file, we still should to show headers
-		if (empty) processVcfHeader(vcfFile);
-
-		annotateDb.close();
+		// Finish up
+		annotateFinish(vcfFile);
 
 		// Show some statistics
 		if (verbose) {
@@ -139,11 +135,6 @@ public class SnpSiftCmdAnnotate extends SnpSift {
 		if (verbose) Gpr.showMark(count, SHOW);
 
 		return annotated;
-	}
-
-	@Override
-	public boolean annotateFinish() {
-		return false;
 	}
 
 	/**
@@ -385,7 +376,7 @@ public class SnpSiftCmdAnnotate extends SnpSift {
 		// Sanity check
 		if (dbType == null && dbFileName == null)
 
-			usage("Missing database option or file: [-dbSnp | -clinVar | database.vcf ]");
+		usage("Missing database option or file: [-dbSnp | -clinVar | database.vcf ]");
 	}
 
 	/**

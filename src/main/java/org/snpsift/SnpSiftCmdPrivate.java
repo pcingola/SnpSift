@@ -180,7 +180,7 @@ public class SnpSiftCmdPrivate extends SnpSift {
 
 		if (verbose) Timer.showStdErr("Done.\n\tVCF entries: " + countLines + "\n\tVCF entries annotated: " + countAnnotated);
 
-		annotateFinish();
+		annotateFinish(vcf);
 
 		return vcfEntries;
 	}

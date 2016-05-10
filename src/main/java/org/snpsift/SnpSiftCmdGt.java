@@ -66,6 +66,7 @@ public class SnpSiftCmdGt extends SnpSift {
 	public boolean run() {
 		int i = 1;
 		VcfFileIterator vcf = openVcfInputFile();
+		annotateInit(vcf);
 		for (VcfEntry ve : vcf) {
 			processVcfHeader(vcf);
 
@@ -80,6 +81,7 @@ public class SnpSiftCmdGt extends SnpSift {
 
 			if (verbose) Gpr.showMark(i++, SHOW_EVERY);
 		}
+		annotateFinish(vcf);
 		return true;
 	}
 

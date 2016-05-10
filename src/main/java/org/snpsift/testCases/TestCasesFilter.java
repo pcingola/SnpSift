@@ -1,5 +1,7 @@
 package org.snpsift.testCases;
 
+import java.io.ByteArrayOutputStream;
+import java.io.PrintStream;
 import java.util.List;
 
 import org.snpeff.util.Gpr;
@@ -20,6 +22,7 @@ import junit.framework.TestCase;
 public class TestCasesFilter extends TestCase {
 
 	public static boolean verbose = false;
+	public static final int STDOUT_BUFFER_SIZE = 10 * 1024 * 1024;
 
 	/**
 	 * Filter by quality
@@ -1603,6 +1606,42 @@ public class TestCasesFilter extends TestCase {
 		Assert.assertEquals("Number of results expected does not match", 1, list.size());
 		if (verbose) Gpr.debug("Result: " + list.get(0));
 		Assert.assertEquals("Expected VCF entry does not match (checking POS)", 199, list.get(0).getStart());
+	}
+
+	/**
+	 * If header is shown when input file is empty
+	 */
+	public void test_56_empty_vcf() {
+		Gpr.debug("Test");
+
+		// Capture STDOUT to check if header is present
+		PrintStream oldOut = System.out;
+		String standardOutput = "";
+		ByteArrayOutputStream output = new ByteArrayOutputStream(STDOUT_BUFFER_SIZE);
+		try {
+			// Capture STDOUT
+			System.setOut(new PrintStream(output));
+
+			// Run command
+			SnpSiftCmdFilter snpsiftFilter = new SnpSiftCmdFilter();
+			String expression = "TYPE = 'SNP'"; // Expression doesn't matter here since the input file is empty
+			snpsiftFilter.filter("test/empty_with_header.vcf", expression, false);
+
+		} catch (Throwable t) {
+			t.printStackTrace();
+		} finally {
+			// Get output
+			standardOutput = output.toString();
+
+			// Restore old output
+			System.setOut(oldOut);
+		}
+
+		// Is headeer shown?
+		if (verbose) System.out.println("STDOUT:\n----------\n" + standardOutput + "\n----------");
+		Assert.assertNotNull(standardOutput);
+		Assert.assertFalse(standardOutput.isEmpty());
+		Assert.assertTrue(standardOutput.contains("#CHROM\tPOS\tID\tREF\tALT"));
 	}
 
 }
