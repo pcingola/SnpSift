@@ -2,6 +2,7 @@ package org.snpsift.testCases;
 
 import java.util.List;
 
+import org.junit.Assert;
 import org.snpeff.util.Gpr;
 import org.snpeff.vcf.VcfEntry;
 import org.snpsift.SnpSiftCmdPrivate;
@@ -22,13 +23,17 @@ public class TestCasesPrivate extends TestCase {
 		String args[] = { tfamFile, vcfFile };
 		SnpSiftCmdPrivate cmd = new SnpSiftCmdPrivate(args);
 
+		int count = 0;
 		List<VcfEntry> vcfEntries = cmd.run(true);
 		for (VcfEntry ve : vcfEntries) {
 			if (verbose) System.out.println(ve);
 
 			if (!isPrivate && (ve.getInfo(VcfEntry.VCF_INFO_PRIVATE) != null)) throw new RuntimeException("This should not be a 'private' variant!");
 			if (isPrivate && (ve.getInfo(VcfEntry.VCF_INFO_PRIVATE) == null)) throw new RuntimeException("This should be a 'private' variant!");
+			count++;
 		}
+
+		Assert.assertTrue("No variants checked!", count > 0);
 	}
 
 	/**

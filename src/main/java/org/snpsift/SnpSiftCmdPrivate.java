@@ -169,6 +169,7 @@ public class SnpSiftCmdPrivate extends SnpSift {
 
 				// Show header
 				if (!createList) System.out.println(vcf.getVcfHeader());
+				vcfHeaderProcessed = true;
 			}
 
 			annotate(ve);
