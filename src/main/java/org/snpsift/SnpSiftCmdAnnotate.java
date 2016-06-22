@@ -178,6 +178,7 @@ public class SnpSiftCmdAnnotate extends SnpSift {
 		}
 
 		// Set parameters & open database file
+		annotateDb.setAnnotateEmpty(annotateEmpty);
 		annotateDb.setUseId(useId);
 		annotateDb.setUseRefAlt(useRefAlt);
 		annotateDb.setInfoFields(useInfoField, infoFields);
