@@ -75,7 +75,7 @@ public class SnpSift implements VcfAnnotator {
 	public SnpSift(String[] args, String command) {
 		this.args = args;
 		this.command = command;
-		errCount = new HashMap<String, Integer>();
+		errCount = new HashMap<>();
 		init();
 		if (args != null) parseArgs(args);
 	}
@@ -215,7 +215,7 @@ public class SnpSift implements VcfAnnotator {
 	 * Headers to add
 	 */
 	protected List<VcfHeaderEntry> headers() {
-		ArrayList<VcfHeaderEntry> newHeaders = new ArrayList<VcfHeaderEntry>();
+		ArrayList<VcfHeaderEntry> newHeaders = new ArrayList<>();
 		newHeaders.add(new VcfHeaderEntry("##SnpSiftVersion=\"" + VERSION_NO_NAME + "\""));
 		newHeaders.add(new VcfHeaderEntry("##SnpSiftCmd=\"" + commandLineStr() + "\""));
 		return newHeaders;
@@ -275,7 +275,7 @@ public class SnpSift implements VcfAnnotator {
 		command = args[0];
 
 		// Create new array shifting everything 1 position
-		ArrayList<String> argsList = new ArrayList<String>();
+		ArrayList<String> argsList = new ArrayList<>();
 		for (int i = 1; i < args.length; i++) {
 			String arg = args[i];
 
@@ -583,6 +583,7 @@ public class SnpSift implements VcfAnnotator {
 				+ "\n\tprivate       : Annotate if a variant is private to a family or group." //
 				+ "\n\trmRefGen      : Remove reference genotypes." //
 				+ "\n\trmInfo        : Remove INFO fields." //
+				+ "\n\tsort          : Sort VCF file/s (if multiple input VCFs, merge and sort)." //
 				+ "\n\tsplit         : Split VCF by chromosome." //
 				+ "\n\ttstv          : Calculate transiton to transversion ratio." //
 				+ "\n\tvarType       : Annotate variant type (SNP,MNP,INS,DEL or MIXED)." //
