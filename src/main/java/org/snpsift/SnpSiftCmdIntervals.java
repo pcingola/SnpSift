@@ -61,8 +61,9 @@ public class SnpSiftCmdIntervals extends SnpSift {
 
 		if (verbose) Timer.showStdErr("Total " + seqChangesAll.size() + " intervals added.");
 
+		// Filter only variants that match these intervals
 		if (verbose) Timer.showStdErr("Building interval forest.");
-		intervalForest = new IntervalForest(); // Filter only seqChanges that match these intervals
+		intervalForest = new IntervalForest();
 		intervalForest.add(seqChangesAll);
 		intervalForest.build();
 		if (verbose) Timer.showStdErr("Done.");
@@ -118,7 +119,8 @@ public class SnpSiftCmdIntervals extends SnpSift {
 
 			// Show?
 			if (queryResult.isEmpty()) {
-				// It does not intercept any interval. Show if we are interested in excluding intervals
+				// It does not intercept any interval
+				// Show if we are interested in excluding intervals
 				if (exclude) {
 					results.add(vcfEntry);
 					print(vcfEntry);

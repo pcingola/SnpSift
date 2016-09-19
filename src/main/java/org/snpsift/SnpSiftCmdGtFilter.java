@@ -290,7 +290,8 @@ public class SnpSiftCmdGtFilter extends SnpSift {
 
 		// Open and read entries
 		VcfFileIterator vcfFile = openVcfInputFile();
-		showHeader = !createList;
+		annotateInit(vcfFile);
+		showVcfHeader = !createList;
 		for (VcfEntry vcfEntry : vcfFile) {
 			// Show header before first entry
 			processVcfHeader(vcfFile);
@@ -301,6 +302,7 @@ public class SnpSiftCmdGtFilter extends SnpSift {
 			if (passEntries != null) passEntries.add(vcfEntry); // Do not show. just add to the list (this is used for debugging and testing)
 			else System.out.println(vcfEntry);
 		}
+		annotateFinish(vcfFile);
 
 		return passEntries;
 	}

@@ -3,6 +3,7 @@ package org.snpsift.testCases;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
@@ -12,7 +13,6 @@ import org.snpeff.vcf.VcfEntry;
 import org.snpsift.SnpSiftCmdAnnotate;
 
 import junit.framework.TestCase;
-import scala.actors.threadpool.Arrays;
 
 /**
  * Annotate test case
@@ -751,6 +751,31 @@ public class TestCasesAnnotate extends TestCase {
 		Arrays.sort(expectedCaf);
 		Arrays.sort(caf);
 		Assert.assertArrayEquals("Number of CAF annotations differ", expectedCaf, caf);
+	}
+
+	/**
+	 * Annotate empty
+	 */
+	public void test_43() {
+		Gpr.debug("Test");
+		String dbFileName = "./test/db_test_43.vcf";
+		String fileName = "./test/annotate_43.vcf";
+		String extraArgs[] = { "-a" };
+		List<VcfEntry> results = annotate(dbFileName, fileName, extraArgs);
+
+		// Get first entry
+		VcfEntry ve = results.get(0);
+		if (verbose) System.out.println(ve);
+		String infoStr = ve.getInfoStr();
+
+		// Check that CAF annotation is added
+		Assert.assertTrue("Missing CAF annotation", infoStr.indexOf("CAF=") >= 0);
+
+		// Compare against expected output
+		// Note: We don't care about annotation order in this case
+		String expectedCaf = ".";
+		String caf = ve.getInfo("CAF");
+		Assert.assertEquals("Expecting empty field", expectedCaf, caf);
 	}
 
 }

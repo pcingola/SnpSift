@@ -287,10 +287,10 @@ public abstract class AnnotateVcfDb {
 	 * Add a value to INFO hash for field 'infoFieldName'
 	 */
 	void findDbInfoAddValue(Map<String, String> info, String infoFieldName, String newValue) {
-		if (newValue == null) return;
+		if (newValue == null && !annotateEmpty) return;
 		if (debug) Gpr.debug("\tINFO:" + infoFieldName + "\tnewValue: " + newValue);
 		String oldValue = info.get(infoFieldName);
-		String val = (oldValue == null ? "" : oldValue + ",") + newValue;
+		String val = (oldValue == null ? "" : oldValue + ",") + (newValue != null ? newValue : ".");
 		info.put(infoFieldName, val);
 	}
 

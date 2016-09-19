@@ -214,7 +214,7 @@ public class SnpSiftCmdVcfOperator extends SnpSift {
 		LinkedList<VcfEntry> vcfEntries = (createList ? new LinkedList<VcfEntry>() : null);
 
 		// Open and read entries
-		showHeader = !createList;
+		showVcfHeader = !createList;
 		VcfFileIterator vcfFile = openVcfInputFile();
 		annotateInit(vcfFile);
 		for (VcfEntry vcfEntry : vcfFile) {
@@ -226,6 +226,7 @@ public class SnpSiftCmdVcfOperator extends SnpSift {
 			if (vcfEntries != null) vcfEntries.add(vcfEntry); // Do not show. just add to the list (this is used for debugging and testing)
 			else System.out.println(vcfEntry);
 		}
+		annotateFinish(vcfFile);
 
 		return vcfEntries;
 	}

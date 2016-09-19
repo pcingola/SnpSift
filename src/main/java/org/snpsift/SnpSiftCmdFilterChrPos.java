@@ -111,8 +111,9 @@ public class SnpSiftCmdFilterChrPos extends SnpSift {
 		loadChrPos();
 
 		// Open and read entries
-		showHeader = !createList;
+		showVcfHeader = !createList;
 		VcfFileIterator vcfFile = openVcfInputFile();
+		annotateInit(vcfFile);
 		int countVcfLines = 0;
 		for (VcfEntry vcfEntry : vcfFile) {
 			countVcfLines++;
@@ -127,6 +128,8 @@ public class SnpSiftCmdFilterChrPos extends SnpSift {
 
 			if (verbose) Gpr.showMark(countVcfLines, SHOW_EVERY_VCFLINES);
 		}
+
+		annotateFinish(vcfFile);
 
 		if (verbose) Timer.showStdErr("Done filtering." //
 				+ "\n\t\tVCF lines                : " + countVcfLines //

@@ -77,7 +77,7 @@ public class SnpSiftCmdGwasCatalog extends SnpSift {
 			count++;
 		}
 
-		annotateFinish();
+		annotateFinish(vcf);
 
 		double perc = (100.0 * countAnnotated) / count;
 		if (verbose) Timer.showStdErr("Done." //
@@ -121,7 +121,8 @@ public class SnpSiftCmdGwasCatalog extends SnpSift {
 	}
 
 	@Override
-	public boolean annotateFinish() {
+	public boolean annotateFinish(VcfFileIterator vcfFile) {
+		super.annotateFinish(vcfFile);
 		return true; // Nothing to do
 	}
 

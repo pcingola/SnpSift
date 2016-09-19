@@ -44,10 +44,11 @@ public class SnpSift implements VcfAnnotator {
 	protected boolean quiet; // Be quiet
 	protected boolean log; // Log to server (statistics)
 	protected boolean download = true; // Download database, if not available
-	protected boolean showHeader = true;
+	protected boolean showVcfHeader = true; // Should VCF header be shown
 	protected boolean saveOutput = false; // Save output to buffer (instead of printing it to STDOUT)
-	protected boolean showVersion = true;
+	protected boolean showVersion = true; // Show version number and exit
 	protected boolean suppressOutput = false; // Do not show output (used for debugging and test cases)
+	protected boolean vcfHeaderProcessed = false; // Has the VCF header been processed?
 	protected boolean needsConfig; // Does this command need a config file?
 	protected boolean needsDb; // Does this command need a database file?
 	protected boolean dbTabix; // Is this database supposed to be in tabix indexed form?
@@ -74,7 +75,7 @@ public class SnpSift implements VcfAnnotator {
 	public SnpSift(String[] args, String command) {
 		this.args = args;
 		this.command = command;
-		errCount = new HashMap<String, Integer>();
+		errCount = new HashMap<>();
 		init();
 		if (args != null) parseArgs(args);
 	}
@@ -96,7 +97,12 @@ public class SnpSift implements VcfAnnotator {
 	}
 
 	@Override
-	public boolean annotateFinish() {
+	public boolean annotateFinish(VcfFileIterator vcfFile) {
+		if (vcfFile != null) {
+			// Empty VCF file (with only header) might have not processed the header at this stage
+			if (!vcfHeaderProcessed) processVcfHeader(vcfFile);
+			vcfFile.close();
+		}
 		return true; // By default nothing is done
 	}
 
@@ -209,7 +215,7 @@ public class SnpSift implements VcfAnnotator {
 	 * Headers to add
 	 */
 	protected List<VcfHeaderEntry> headers() {
-		ArrayList<VcfHeaderEntry> newHeaders = new ArrayList<VcfHeaderEntry>();
+		ArrayList<VcfHeaderEntry> newHeaders = new ArrayList<>();
 		newHeaders.add(new VcfHeaderEntry("##SnpSiftVersion=\"" + VERSION_NO_NAME + "\""));
 		newHeaders.add(new VcfHeaderEntry("##SnpSiftCmd=\"" + commandLineStr() + "\""));
 		return newHeaders;
@@ -269,7 +275,7 @@ public class SnpSift implements VcfAnnotator {
 		command = args[0];
 
 		// Create new array shifting everything 1 position
-		ArrayList<String> argsList = new ArrayList<String>();
+		ArrayList<String> argsList = new ArrayList<>();
 		for (int i = 1; i < args.length; i++) {
 			String arg = args[i];
 
@@ -358,12 +364,15 @@ public class SnpSift implements VcfAnnotator {
 	 * Process VCF header related issues
 	 */
 	protected String processVcfHeader(VcfFileIterator vcf) {
-		if (!vcf.isHeadeSection() && vcf.getLineNum() > 1) return ""; // First line is always a header
+		if (vcfHeaderProcessed // Already processed? Skip
+				|| (!vcf.isHeadeSection() && vcf.getLineNum() > 1) // First line is always a header
+		) return "";
 
 		// Add lines to header
 		addHeaders(vcf);
+		vcfHeaderProcessed = true;
 
-		if (showHeader) {
+		if (showVcfHeader) {
 			String headerStr = vcf.getVcfHeader().toString();
 			if (!headerStr.isEmpty()) print(headerStr);
 			return headerStr;
@@ -574,6 +583,7 @@ public class SnpSift implements VcfAnnotator {
 				+ "\n\tprivate       : Annotate if a variant is private to a family or group." //
 				+ "\n\trmRefGen      : Remove reference genotypes." //
 				+ "\n\trmInfo        : Remove INFO fields." //
+				+ "\n\tsort          : Sort VCF file/s (if multiple input VCFs, merge and sort)." //
 				+ "\n\tsplit         : Split VCF by chromosome." //
 				+ "\n\ttstv          : Calculate transiton to transversion ratio." //
 				+ "\n\tvarType       : Annotate variant type (SNP,MNP,INS,DEL or MIXED)." //

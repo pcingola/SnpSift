@@ -176,8 +176,7 @@ public class SnpSiftCmdDbNsfp extends SnpSift {
 			}
 		}
 
-		annotateFinish();
-		vcfFile.close();
+		annotateFinish(vcfFile);
 
 		// Show some stats
 		if (verbose) {
@@ -265,7 +264,8 @@ public class SnpSiftCmdDbNsfp extends SnpSift {
 	}
 
 	@Override
-	public boolean annotateFinish() {
+	public boolean annotateFinish(VcfFileIterator vcfFile) {
+		super.annotateFinish(vcfFile);
 		if (dbNsfp != null) dbNsfp.close();
 		return true;
 	}
