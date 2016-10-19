@@ -17,7 +17,7 @@ import net.sf.samtools.util.StringUtil;
 public class FieldIterator {
 
 	public enum IteratorType {
-		VAR, EFFECT, GENOTYPE, GENOTYPE_VAR, LOF, NMD
+		EFFECT, GENOTYPE, GENOTYPE_VAR, LOF, NMD
 	}
 
 	private static final FieldIterator fieldIterator = new FieldIterator();
@@ -64,9 +64,6 @@ public class FieldIterator {
 
 		case NMD:
 			return nmd.current;
-
-		case VAR:
-		    throw new UnsupportedOperationException("Must specify field name associated with " + iterType);
 
 		default:
 			throw new RuntimeException("Unknown iterator type '" + iterType + "'");
@@ -181,9 +178,6 @@ public class FieldIterator {
 		case NMD:
 			nmd.max = Math.max(max, nmd.max);
 			break;
-
-		case VAR:
-		    throw new UnsupportedOperationException("Must specify field name associated with " + iterType);
 
 		default:
 			throw new RuntimeException("Unknown iterator type '" + iterType + "'");

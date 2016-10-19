@@ -100,7 +100,7 @@ public class FieldSub extends Field {
 		if (index < 0) {
 			FieldIterator.get().setMax(IteratorType.GENOTYPE_VAR, sub.length - 1);
 			FieldIterator.get().setType(index);
-			idx = FieldIterator.get().get(IteratorType.VAR);
+			idx = FieldIterator.get().get(IteratorType.GENOTYPE_VAR);
 		}
 
 		if (sub.length <= idx) return "";
