@@ -1644,4 +1644,24 @@ public class TestCasesFilter extends TestCase {
 		Assert.assertTrue(standardOutput.contains("#CHROM\tPOS\tID\tREF\tALT"));
 	}
 
+    /**
+     * Filter: Multiple [*]
+     */
+    public void test_57() {
+        Gpr.debug("Test");
+
+        // Filter data
+        SnpSiftCmdFilter snpsiftFilter = new SnpSiftCmdFilter();
+        String expression = "(EXAC_AF[*] <= 0.1) & (COSMIC_SITE_COUNT_SOMATIC[*] >= 2)";
+        List<VcfEntry> list = snpsiftFilter.filter("test/test_filter_multiple_var.vcf", expression, true);
+
+        if (verbose) {
+            System.out.println("Expression: '" + expression + "'");
+            for (VcfEntry vcfEntry : list)
+                if (verbose) System.out.println("VCF entry:\t" + vcfEntry);
+        }
+
+        // Check that all lines satisfy the condition
+        Assert.assertEquals(1, list.size());
+    }
 }

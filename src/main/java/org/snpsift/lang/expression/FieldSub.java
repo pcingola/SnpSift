@@ -71,9 +71,9 @@ public class FieldSub extends Field {
 		// Is this field 'iterable'?
 		int idx = index;
 		if (index < 0) {
-			FieldIterator.get().setMax(IteratorType.VAR, sub.length - 1);
+			FieldIterator.get().setVarMax(name, sub.length - 1);
 			FieldIterator.get().setType(index);
-			idx = FieldIterator.get().get(IteratorType.VAR);
+			idx = FieldIterator.get().getVar(name);
 		}
 
 		if (sub.length <= idx) return "";
