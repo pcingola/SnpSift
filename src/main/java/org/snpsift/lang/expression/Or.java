@@ -1,5 +1,6 @@
 package org.snpsift.lang.expression;
 
+import org.snpeff.vcf.VcfEntry;
 import org.snpsift.lang.Value;
 
 /**
@@ -11,6 +12,20 @@ public class Or extends ExpressionBinary {
 
 	public Or(Expression left, Expression right) {
 		super(left, right, "|");
+	}
+
+	@Override
+	public Value eval(VcfEntry vcfEntry) {
+		Value lval = left.eval(vcfEntry);
+
+		// Boolean? Try short-circuit operator
+		if (lval.isBool()) {
+			if (lval.asBool()) return Value.TRUE;
+		}
+
+		Value rval = right != null ? right.eval(vcfEntry) : null;
+
+		return evalOp(lval, rval);
 	}
 
 	@Override

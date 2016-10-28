@@ -1644,4 +1644,25 @@ public class TestCasesFilter extends TestCase {
 		Assert.assertTrue(standardOutput.contains("#CHROM\tPOS\tID\tREF\tALT"));
 	}
 
+	/**
+	 * In AND operators, second expression should not be evaluated if first one is FALSE
+	 */
+	public void test_57_short_circuit_AND_OR_operators() {
+		Gpr.debug("Test");
+
+		// This will throw an exception (division by zero) if short circuit is not correctly implemented.
+		SnpSiftCmdFilter snpsiftFilter = new SnpSiftCmdFilter();
+		String expression = "(GEN[0067_3_D58].DP > 0) && ((GEN[0067_3_D58].AD[0] / GEN[0067_3_D58].DP) > 0.1)";
+		List<VcfEntry> list = snpsiftFilter.filter("test/test57.vcf", expression, true);
+
+		// Check that it satisfies the condition
+		if (verbose) System.out.println("Expression: '" + expression + "'");
+		Assert.assertNotNull(list);
+		Assert.assertTrue(list.size() > 0);
+		for (VcfEntry vcfEntry : list) {
+			if (verbose) System.out.println("\t" + vcfEntry);
+		}
+		Assert.assertEquals("Filter results doesn't match the number of expected lines", 29, list.size());
+	}
+
 }
