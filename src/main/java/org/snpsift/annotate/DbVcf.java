@@ -19,12 +19,13 @@ import org.snpeff.vcf.VcfHeader;
  *          a given variant. This is why we use 'VariantVcfEntry' as opposed
  *          to 'VcfEntry'
  *
- * TODO: If another query matches the same region of the file, then we could use
- * some sort of caching to speed up the process.
+ * Notes:
+ *   If another query matches the same region of the file, then we could use
+ *   some sort of caching to speed up the process.
  *
- * TODO: If the same file region is matched multiple times by successive
- * queries, creating an intervalTree from the VCF entries matching the region
- * might be effective
+ *   If the same file region is matched multiple times by successive
+ *   queries, creating an intervalTree from the VCF entries matching the region
+ *   might be effective
  *
  *
  * @author pcingola

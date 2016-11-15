@@ -277,7 +277,6 @@ public class VcfIndexTree implements Itree {
 
 	@Override
 	public Iterator<Marker> iterator() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
