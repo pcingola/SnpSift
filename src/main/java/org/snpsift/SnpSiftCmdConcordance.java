@@ -41,7 +41,7 @@ public class SnpSiftCmdConcordance extends SnpSift {
 	String[] sampleNameIdx2;
 	CountByType errors = new CountByType();
 	CountByType concordance = new CountByType();
-	AutoHashMap<String, CountByType> concordanceBySample = new AutoHashMap<String, CountByType>(new CountByType());
+	AutoHashMap<String, CountByType> concordanceBySample = new AutoHashMap<>(new CountByType());
 	List<String> labels;
 	FileIndexChrPos indexVcf;
 	StringBuilder summary = new StringBuilder();
@@ -160,7 +160,7 @@ public class SnpSiftCmdConcordance extends SnpSift {
 	 * Create a list of labels to show
 	 */
 	List<String> createLabels() {
-		ArrayList<String> labels = new ArrayList<String>();
+		ArrayList<String> labels = new ArrayList<>();
 
 		for (int gtCode1 = -2; gtCode1 <= 2; gtCode1++)
 			for (int gtCode2 = -2; gtCode2 <= 2; gtCode2++) {
@@ -276,6 +276,7 @@ public class SnpSiftCmdConcordance extends SnpSift {
 
 	@Override
 	public void init() {
+		super.init();
 		writeSummaryFile = writeBySampleFile = true;
 		errorOnNonBiallelic = false;
 	}
@@ -339,13 +340,13 @@ public class SnpSiftCmdConcordance extends SnpSift {
 		if (vcf2.getSampleNames() == null) fatalError("Unable to parse sample names from file '" + vcfFileName2 + "'. Missing header line?");
 
 		// Map sample names to sample number
-		HashMap<String, Integer> vcf1Name2Idx = new HashMap<String, Integer>();
+		HashMap<String, Integer> vcf1Name2Idx = new HashMap<>();
 		int idx = 0;
 		for (String sampleName : vcf1.getSampleNames())
 			vcf1Name2Idx.put(sampleName, idx++);
 
 		// Map sample names to sample number
-		HashMap<String, Integer> vcf2Name2Idx = new HashMap<String, Integer>();
+		HashMap<String, Integer> vcf2Name2Idx = new HashMap<>();
 		idx2toidx1 = new int[vcf2.getSampleNames().size()];
 		sampleNameIdx2 = new String[vcf2.getSampleNames().size()];
 		idx = 0;
@@ -404,7 +405,7 @@ public class SnpSiftCmdConcordance extends SnpSift {
 	public boolean run() {
 		// Read samples file
 		if (restrictSamplesFile != null) {
-			restrictSamples = new HashSet<String>();
+			restrictSamples = new HashSet<>();
 			for (String s : Gpr.readFile(restrictSamplesFile).split("\n"))
 				restrictSamples.add(s.trim());
 		}
@@ -537,7 +538,7 @@ public class SnpSiftCmdConcordance extends SnpSift {
 
 			StringBuilder bySample = new StringBuilder();
 			bySample.append(titleBySample + "\n"); // Add title
-			ArrayList<String> sampleNames = new ArrayList<String>(); // Sort samples by name
+			ArrayList<String> sampleNames = new ArrayList<>(); // Sort samples by name
 			sampleNames.addAll(concordanceBySample.keySet());
 			Collections.sort(sampleNames);
 			for (String sample : sampleNames)

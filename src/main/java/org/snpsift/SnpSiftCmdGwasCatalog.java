@@ -178,6 +178,7 @@ public class SnpSiftCmdGwasCatalog extends SnpSift {
 	 */
 	@Override
 	public void init() {
+		super.init();
 		needsConfig = true;
 		needsDb = true;
 		dbTabix = false;

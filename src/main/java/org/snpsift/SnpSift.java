@@ -51,12 +51,14 @@ public class SnpSift implements VcfAnnotator {
 	protected boolean vcfHeaderProcessed = false; // Has the VCF header been processed?
 	protected boolean needsConfig; // Does this command need a config file?
 	protected boolean needsDb; // Does this command need a database file?
+	protected boolean needsGenome; // Does this command need a genome version?
 	protected boolean dbTabix; // Is this database supposed to be in tabix indexed form?
 	protected String args[];
 	protected String command;
 	protected String vcfInputFile; // VCF Input file
 	protected String dbFileName;
 	protected String dbType;
+	protected String genomeVersion;
 	protected int numWorkers = 1; //  Max number of threads (if multi-threaded version is available)
 	protected StringBuilder output = new StringBuilder();
 	protected HashMap<String, Integer> errCount;
@@ -172,7 +174,10 @@ public class SnpSift implements VcfAnnotator {
 			dbFileName = config.getDatabaseLocal(dbType);
 
 			// Still empty: Something is wrong!
-			if (dbFileName == null || dbFileName.isEmpty()) fatalError("Database file name is empty. Missing '" + Config.KEY_DATABASE_LOCAL + "." + dbType + "' entry in SnpEff's config file?");
+			if (dbFileName == null || dbFileName.isEmpty()) {
+				String coordinates = config.getCoordinates();
+				fatalError("Database file name is empty. Missing '" + Config.KEY_DATABASE_LOCAL + "." + dbType + "." + coordinates + "' entry in SnpEff's config file?");
+			}
 		}
 
 		return dbFileName;
@@ -225,6 +230,7 @@ public class SnpSift implements VcfAnnotator {
 	 * Initialize default values
 	 */
 	public void init() {
+		genomeVersion = "";
 	}
 
 	/**
@@ -245,7 +251,7 @@ public class SnpSift implements VcfAnnotator {
 
 		if (verbose) Timer.showStdErr("Reading configuration file '" + configFile + "'");
 
-		config = new Config("", configFile, dataDir, null); // Read configuration
+		config = new Config(genomeVersion, configFile, dataDir, null); // Read configuration
 		if (verbose) Timer.showStdErr("done");
 
 		// Set some parameters
@@ -312,6 +318,12 @@ public class SnpSift implements VcfAnnotator {
 				case "-h":
 				case "-help":
 					help = true;
+					break;
+
+				case "-g":
+				case "-genome":
+					if ((i + 1) < args.length) genomeVersion = args[++i];
+					else usage("Option '-g' without argument");
 					break;
 
 				case "-nodownload":
@@ -511,11 +523,14 @@ public class SnpSift implements VcfAnnotator {
 		cmd.needsConfig = needsConfig;
 		cmd.configFile = configFile;
 		cmd.config = config;
+		cmd.genomeVersion = genomeVersion;
 
 		cmd.download = download;
 		cmd.log = log;
 
 		cmd.needsDb = needsDb;
+		cmd.needsGenome = needsGenome;
+
 		if (cmd.dbFileName == null) cmd.dbFileName = dbFileName;
 		if (cmd.dbType == null) cmd.dbType = dbType;
 
@@ -605,6 +620,7 @@ public class SnpSift implements VcfAnnotator {
 				+ "\t-d                   : Debug.\n" //
 				+ (needsDb ? "\t-db <file>           : Database file name (for commands that require databases).\n" : "") //
 				+ "\t-download            : Download database, if not available locally. Default: " + download + ".\n" //
+				+ (needsGenome ? "\t-g <name>            : Genome version (for commands that require databases).\n" : "") //
 				+ "\t-noDownload          : Do not download a database, if not available locally.\n" //
 				+ "\t-noLog               : Do not report usage statistics to server.\n" //
 				+ "\t-h                   : Help.\n" //

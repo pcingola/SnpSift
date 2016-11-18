@@ -33,7 +33,7 @@ public class SnpSiftCmdJoin extends SnpSift {
 
 		list = new ArrayList[2];
 		for (int i = 0; i < 2; i++)
-			list[i] = new ArrayList<GenericMarker>();
+			list[i] = new ArrayList<>();
 	}
 
 	/** 		 
@@ -89,6 +89,7 @@ public class SnpSiftCmdJoin extends SnpSift {
 
 	@Override
 	public void init() {
+		super.init();
 		file = new String[2];
 		inOffset = new int[2];
 		colChr = new int[2];
@@ -184,7 +185,7 @@ public class SnpSiftCmdJoin extends SnpSift {
 	 * Read a peaks file from an XLS file (MACS 'negative peaks' format).
 	 */
 	ArrayList<GenericMarker> readMarkers(int num) {
-		ArrayList<GenericMarker> list = new ArrayList<GenericMarker>();
+		ArrayList<GenericMarker> list = new ArrayList<>();
 		GenericMarkerFileIterator gmfi = new GenericMarkerFileIterator(file[num], colChr[num], colStart[num], colEnd[num], inOffset[num]);
 		for (GenericMarker gm : gmfi)
 			list.add(gm);

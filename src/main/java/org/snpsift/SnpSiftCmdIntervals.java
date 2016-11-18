@@ -35,6 +35,7 @@ public class SnpSiftCmdIntervals extends SnpSift {
 	 */
 	@Override
 	public void init() {
+		super.init();
 		verbose = false;
 		genome = new Genome("genome");
 		exclude = false;
@@ -46,7 +47,7 @@ public class SnpSiftCmdIntervals extends SnpSift {
 	 * @param bedFileNames
 	 */
 	void loadIntervals() {
-		LinkedList<Variant> seqChangesAll = new LinkedList<Variant>();
+		LinkedList<Variant> seqChangesAll = new LinkedList<>();
 
 		// Read filter interval files
 		for (String bedFileName : bedFiles) {
@@ -73,7 +74,7 @@ public class SnpSiftCmdIntervals extends SnpSift {
 	public void parseArgs(String[] args) {
 		if (args.length <= 0) usage(null);
 
-		bedFiles = new LinkedList<String>();
+		bedFiles = new LinkedList<>();
 		for (int i = 0; i < args.length; i++) {
 			// Argument starts with '-'?
 			if (isOpt(args[i])) {
@@ -98,7 +99,7 @@ public class SnpSiftCmdIntervals extends SnpSift {
 	public List<VcfEntry> run(boolean createList) {
 		loadIntervals();
 		if (verbose) Timer.showStdErr("FileName: '" + vcfFileName + "'\n\t\t\tIntervals: " + bedFiles + "\n\t\t\tExclude : " + exclude);
-		List<VcfEntry> results = new ArrayList<VcfEntry>();
+		List<VcfEntry> results = new ArrayList<>();
 
 		// Read all vcfEntries
 		VcfFileIterator vcfFile = new VcfFileIterator(vcfFileName);

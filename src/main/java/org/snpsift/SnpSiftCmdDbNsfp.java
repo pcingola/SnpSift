@@ -54,7 +54,7 @@ public class SnpSiftCmdDbNsfp extends SnpSift {
 			+ ",phastCons100way_vertebrate" // Conservation
 			+ ",1000Gp1_AF,1000Gp1_AFR_AF,1000Gp1_EUR_AF,1000Gp1_AMR_AF,1000Gp1_ASN_AF" // Allele frequencies 1000 Genomes project
 			+ ",ESP6500_AA_AF,ESP6500_EA_AF" // Allele frequencies Exome sequencing project
-	// DbNSFP version 3 fields (some fields have different names than in version 2)
+			// DbNSFP version 3 fields (some fields have different names than in version 2)
 			+ ",MutationTaster_pred" //
 			+ ",MutationAssessor_pred" //
 			+ ",FATHMM_pred" //
@@ -64,7 +64,7 @@ public class SnpSiftCmdDbNsfp extends SnpSift {
 			+ ",1000Gp3_AC,1000Gp3_AF,1000Gp3_AFR_AC,1000Gp3_AFR_AF,1000Gp3_EUR_AC,1000Gp3_EUR_AF,1000Gp3_AMR_AC,1000Gp3_AMR_AF,1000Gp3_EAS_AC,1000Gp3_EAS_AF,1000Gp3_SAS_AC,1000Gp3_SAS_AF" //
 			+ ",ESP6500_AA_AC,ESP6500_AA_AF,ESP6500_EA_AC,ESP6500_EA_AF"//
 			+ ",ExAC_AC,ExAC_AF,ExAC_Adj_AC,ExAC_Adj_AF,ExAC_AFR_AC,ExAC_AFR_AF,ExAC_AMR_AC,ExAC_AMR_AF,ExAC_EAS_AC,ExAC_EAS_AF,ExAC_FIN_AC,ExAC_FIN_AF,ExAC_NFE_AC,ExAC_NFE_AF,ExAC_SAS_AC,ExAC_SAS_AF" //
-			;
+	;
 	public static final int MIN_JUMP = 100;
 
 	public static final int SHOW_EVERY = 100;
@@ -150,6 +150,7 @@ public class SnpSiftCmdDbNsfp extends SnpSift {
 
 					// Check that the fields we want to add are actually in the database
 					checkFieldsToAdd();
+					vcfHeaderProcessed = true;
 				}
 
 				// Check if file is sorted
@@ -327,7 +328,7 @@ public class SnpSiftCmdDbNsfp extends SnpSift {
 			// Inverted selection: Start with ALL fields and then remove the ones selected
 
 			// Add all fields
-			Set<String> fields = new HashSet<String>();
+			Set<String> fields = new HashSet<>();
 			fields.addAll(fieldsDescription.keySet());
 
 			// Remove selected fields
@@ -337,7 +338,7 @@ public class SnpSiftCmdDbNsfp extends SnpSift {
 			}
 
 			// Sort
-			ArrayList<String> fieldsSort = new ArrayList<String>();
+			ArrayList<String> fieldsSort = new ArrayList<>();
 			fieldsSort.addAll(fields);
 			Collections.sort(fieldsSort);
 
@@ -363,7 +364,7 @@ public class SnpSiftCmdDbNsfp extends SnpSift {
 
 		// Show selected fields
 		if (verbose) {
-			ArrayList<String> fieldsSort = new ArrayList<String>();
+			ArrayList<String> fieldsSort = new ArrayList<>();
 			fieldsSort.addAll(fieldsToAdd.keySet());
 			Collections.sort(fieldsSort);
 
@@ -394,7 +395,7 @@ public class SnpSiftCmdDbNsfp extends SnpSift {
 
 		// Only append values once
 		StringBuilder sb = new StringBuilder();
-		HashSet<String> valuesAdded = new HashSet<String>();
+		HashSet<String> valuesAdded = new HashSet<>();
 		for (String val : values)
 			if (valuesAdded.add(val)) {
 				if (sb.length() > 0) sb.append(',');
@@ -433,14 +434,16 @@ public class SnpSiftCmdDbNsfp extends SnpSift {
 	 */
 	@Override
 	public void init() {
+		super.init();
 		needsConfig = true;
 		needsDb = true;
+		needsGenome = true;
 		dbTabix = true;
 		dbType = "dbnsfp";
 
-		fieldsToAdd = new HashMap<String, String>();
-		fieldsType = new HashMap<String, String>();
-		fieldsDescription = new HashMap<String, String>();
+		fieldsToAdd = new HashMap<>();
+		fieldsType = new HashMap<>();
+		fieldsDescription = new HashMap<>();
 		annotateEmpty = false;
 		collapseRepeatedValues = false;
 	}
@@ -510,6 +513,8 @@ public class SnpSiftCmdDbNsfp extends SnpSift {
 	 * Run annotation algorithm
 	 */
 	public List<VcfEntry> run(boolean createList) {
+		if (genomeVersion.isEmpty() && dbFileName == null) usage("You must provide either a genome name or a database path (i.e. '-g' or '-db' command line options)");
+
 		// Read config
 		if (config == null) loadConfig();
 
@@ -540,7 +545,7 @@ public class SnpSiftCmdDbNsfp extends SnpSift {
 
 		StringBuilder sb = new StringBuilder();
 		for (String f : DEFAULT_FIELDS_NAMES_TO_ADD.split(","))
-			sb.append("\t                - " + f + "\n");
+			sb.append((sb.length() > 0 ? ", " : "") + f);
 
 		showVersion();
 
@@ -548,10 +553,12 @@ public class SnpSiftCmdDbNsfp extends SnpSift {
 				+ "Options:\n" //
 				+ "\t-a            : Annotate fields, even if the database has an empty value (annotates using '.' for empty).\n" //
 				+ "\t-collapse     : Collapse repeated values from dbNSFP. Default: " + collapseRepeatedValues + "\n" //
+				+ "\t-db <file>    : Path to dbNSFP database file (bgzip + tabix).\n" //
+				+ "\t-g <name>     : Genome version.\n" //
 				+ "\t-noCollapse   : Switch off 'collapsing' repeated values from dbNSFP. Default: " + !collapseRepeatedValues + "\n" //
 				+ "\t-n            : Invert 'fields to add' selection (i.e. use all fields except the ones specified in option '-f').\n" //
 				+ "\t-f            : A comma separated list of fields to add.\n" //
-				+ "\t                Default fields to add:\n" + sb //
+				+ "\t                Default fields to add: " + sb //
 		);
 
 		usageGenericAndDb();

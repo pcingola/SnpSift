@@ -61,6 +61,7 @@ public class SnpSiftCmdExtractFields extends SnpSift {
 
 	@Override
 	public void init() {
+		super.init();
 		sameFieldSeparator = "\t";
 		emptyFieldString = "";
 	}
@@ -72,7 +73,7 @@ public class SnpSiftCmdExtractFields extends SnpSift {
 	public void parseArgs(String[] args) {
 		if (args.length == 0) usage(null);
 
-		expressionStrs = new ArrayList<String>();
+		expressionStrs = new ArrayList<>();
 		for (int i = 0; i < args.length; i++) {
 			String arg = args[i];
 
@@ -93,7 +94,7 @@ public class SnpSiftCmdExtractFields extends SnpSift {
 	 * Parse fields
 	 */
 	List<Expression> parseFields(List<String> expressionsStr) {
-		List<Expression> fields = new ArrayList<Expression>();
+		List<Expression> fields = new ArrayList<>();
 		for (String exprStr : expressionsStr) {
 			// Parse and create field
 			// Field field = new Field(fieldName);
@@ -119,7 +120,7 @@ public class SnpSiftCmdExtractFields extends SnpSift {
 	}
 
 	public List<String> run(boolean createList) {
-		LinkedList<String> list = new LinkedList<String>();
+		LinkedList<String> list = new LinkedList<>();
 
 		// Parse fiels
 		expressions = parseFields(expressionStrs);

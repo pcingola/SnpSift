@@ -259,6 +259,7 @@ public class SnpSiftCmdAnnotate extends SnpSift {
 	 */
 	@Override
 	public void init() {
+		super.init();
 		useInfoField = true; // Default: Use INFO fields
 		useId = true; // Annotate ID fields
 		useRefAlt = true; // Use REF and ALT fields when comparing
@@ -325,7 +326,7 @@ public class SnpSiftCmdAnnotate extends SnpSift {
 					if (args.length <= (i + 1)) usage("Missing parameter -info");
 					useInfoField = true;
 
-					infoFields = new ArrayList<String>();
+					infoFields = new ArrayList<>();
 					for (String infoField : args[++i].split(","))
 						infoFields.add(infoField);
 					break;
@@ -377,7 +378,7 @@ public class SnpSiftCmdAnnotate extends SnpSift {
 		// Sanity check
 		if (dbType == null && dbFileName == null)
 
-		usage("Missing database option or file: [-dbSnp | -clinVar | database.vcf ]");
+			usage("Missing database option or file: [-dbSnp | -clinVar | database.vcf ]");
 	}
 
 	/**

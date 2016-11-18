@@ -37,9 +37,10 @@ public class SnpSiftCmdIntervalsIndex extends SnpSift {
 
 	@Override
 	public void init() {
+		super.init();
 		genome = new Genome("genome");
 		listCommandLine = false;
-		seqChanges = new ArrayList<Variant>();
+		seqChanges = new ArrayList<>();
 		inOffset = 0;
 		vcfFile = null;
 		bedFile = null;

@@ -75,7 +75,7 @@ public class SnpSiftCmdFilter extends SnpSift {
 		if (file.isEmpty()) throw new RuntimeException("Could not read any entries from file '" + fileName + "'");
 
 		// Create hash
-		HashSet<String> set = new HashSet<String>();
+		HashSet<String> set = new HashSet<>();
 		for (String str : file.split("\n"))
 			set.add(str.trim());
 
@@ -191,6 +191,7 @@ public class SnpSiftCmdFilter extends SnpSift {
 	 */
 	@Override
 	public void init() {
+		super.init();
 		verbose = false;
 		usePassField = false;
 		inverse = false;
@@ -198,7 +199,7 @@ public class SnpSiftCmdFilter extends SnpSift {
 		filterId = SnpSift.class.getSimpleName();
 		addFilterField = null;
 		rmFilterField = null;
-		sets = new ArrayList<HashSet<String>>();
+		sets = new ArrayList<>();
 		formatVersion = null; // VcfEffect.FormatVersion.FORMAT_SNPEFF_3;
 		exceptionIfNotFound = false;
 	}

@@ -135,6 +135,7 @@ public class SnpSiftCmdCaseControl extends SnpSift {
 
 	@Override
 	public void init() {
+		super.init();
 		pvalueThreshold = 1.0;
 		useChiSquare = false;
 	}
@@ -367,7 +368,7 @@ public class SnpSiftCmdCaseControl extends SnpSift {
 					+ "\tchr: " + vcfEntry.getChromosomeName() //
 					+ "\tpos: " + (vcfEntry.getStart() + 1) //
 					+ (!vcfEntry.getId().isEmpty() ? "\tid: " + vcfEntry.getId() : "") //
-		);
+			);
 
 		if ((p > 0) && (p < pValueMin)) {
 			pValueMin = p;
@@ -392,7 +393,7 @@ public class SnpSiftCmdCaseControl extends SnpSift {
 	 */
 	public List<VcfEntry> run(boolean createList) {
 		showVcfHeader = !createList;
-		ArrayList<VcfEntry> list = new ArrayList<VcfEntry>();
+		ArrayList<VcfEntry> list = new ArrayList<>();
 
 		if (tfamFile != null) parseCaseControlTfam();
 		else parseCaseControlString();

@@ -47,6 +47,7 @@ public class SnpSiftCmdVcf2Tped extends SnpSift {
 	 */
 	@Override
 	public void init() {
+		super.init();
 		onlySnp = false; // Only use SNPs in VCF files
 		onlyBiAllelic = false; // Only use bi-allelic variants.
 		force = false; // Overwrite files
@@ -305,7 +306,7 @@ public class SnpSiftCmdVcf2Tped extends SnpSift {
 		List<String> sampleNamesVcf = vcf.getSampleNames();
 
 		// Create a 'common' list of samples
-		HashSet<String> stfam = new HashSet<String>();
+		HashSet<String> stfam = new HashSet<>();
 		stfam.addAll(tfam.getSampleIds());
 
 		// Create a boolean array showing which samples to use

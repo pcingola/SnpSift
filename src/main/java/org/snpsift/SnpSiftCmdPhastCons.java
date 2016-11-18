@@ -143,6 +143,7 @@ public class SnpSiftCmdPhastCons extends SnpSift {
 
 	@Override
 	public void init() {
+		super.init();
 		minScore = 0.0;
 		bed = false;
 	}
@@ -224,7 +225,7 @@ public class SnpSiftCmdPhastCons extends SnpSift {
 		if (!Gpr.exists(file)) { throw new RuntimeException("Cannot find fasta index file '" + file + "'\n\tYou can create one by running 'samtools faidx' command and copying the resulting index file to " + file + "\n\n"); }
 
 		// Read and parse file
-		chromoSize = new HashMap<String, Integer>();
+		chromoSize = new HashMap<>();
 		String txt = Gpr.readFile(file);
 		for (String line : txt.split("\n")) {
 			String fields[] = line.split("\\s+");
@@ -304,7 +305,7 @@ public class SnpSiftCmdPhastCons extends SnpSift {
 		// Run on BED file?
 		if (bed) {
 			runBed();
-			return new ArrayList<VcfEntry>();
+			return new ArrayList<>();
 		}
 
 		// Run VCF
@@ -337,7 +338,7 @@ public class SnpSiftCmdPhastCons extends SnpSift {
 	 */
 	List<VcfEntry> runVcf(boolean createList) {
 		// Iterate over file
-		ArrayList<VcfEntry> list = new ArrayList<VcfEntry>();
+		ArrayList<VcfEntry> list = new ArrayList<>();
 		VcfFileIterator vcf = new VcfFileIterator(vcfFile);
 		vcf.setDebug(debug);
 		String chrPrev = "";
