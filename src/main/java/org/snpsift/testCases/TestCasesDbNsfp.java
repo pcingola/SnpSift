@@ -266,4 +266,34 @@ public class TestCasesDbNsfp extends TestCase {
 		Assert.assertEquals("5.62,5.62,5.62", vcfEntry.getInfo(SnpSiftCmdDbNsfp.DBNSFP_VCF_INFO_PREFIX + "GERP___NR"));
 	}
 
+	/**
+	 * Missing database entries
+	 */
+	public void test_10() {
+		String vcfFileName = "test/test_dbNSFP_10.vcf";
+		String dbFileName = "test/dbNSFP2.4.chr4_55946200_55946300.txt.gz";
+		String args[] = { "-collapse", "-a", "-m", "-f", "Polyphen2_HDIV_score" };
+
+		List<VcfEntry> results = annotate(dbFileName, vcfFileName, args);
+		VcfEntry vcfEntry = results.get(0);
+
+		// Check all values
+		Assert.assertEquals(".", vcfEntry.getInfo(SnpSiftCmdDbNsfp.DBNSFP_VCF_INFO_PREFIX + "Polyphen2_HDIV_score"));
+	}
+
+	/**
+	 * Missing database entries + non-missing entry
+	 */
+	public void test_11() {
+		String vcfFileName = "test/test_dbNSFP_11.vcf";
+		String dbFileName = "test/dbNSFP2.4.chr4_55946200_55946300.txt.gz";
+		String args[] = { "-collapse", "-a", "-m", "-f", "Polyphen2_HDIV_score" };
+
+		List<VcfEntry> results = annotate(dbFileName, vcfFileName, args);
+		VcfEntry vcfEntry = results.get(0);
+
+		// Check all values
+		Assert.assertEquals(".,1.0", vcfEntry.getInfo(SnpSiftCmdDbNsfp.DBNSFP_VCF_INFO_PREFIX + "Polyphen2_HDIV_score"));
+	}
+
 }

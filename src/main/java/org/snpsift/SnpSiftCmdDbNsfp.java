@@ -54,7 +54,7 @@ public class SnpSiftCmdDbNsfp extends SnpSift {
 			+ ",phastCons100way_vertebrate" // Conservation
 			+ ",1000Gp1_AF,1000Gp1_AFR_AF,1000Gp1_EUR_AF,1000Gp1_AMR_AF,1000Gp1_ASN_AF" // Allele frequencies 1000 Genomes project
 			+ ",ESP6500_AA_AF,ESP6500_EA_AF" // Allele frequencies Exome sequencing project
-			// DbNSFP version 3 fields (some fields have different names than in version 2)
+	// DbNSFP version 3 fields (some fields have different names than in version 2)
 			+ ",MutationTaster_pred" //
 			+ ",MutationAssessor_pred" //
 			+ ",FATHMM_pred" //
@@ -64,7 +64,7 @@ public class SnpSiftCmdDbNsfp extends SnpSift {
 			+ ",1000Gp3_AC,1000Gp3_AF,1000Gp3_AFR_AC,1000Gp3_AFR_AF,1000Gp3_EUR_AC,1000Gp3_EUR_AF,1000Gp3_AMR_AC,1000Gp3_AMR_AF,1000Gp3_EAS_AC,1000Gp3_EAS_AF,1000Gp3_SAS_AC,1000Gp3_SAS_AF" //
 			+ ",ESP6500_AA_AC,ESP6500_AA_AF,ESP6500_EA_AC,ESP6500_EA_AF"//
 			+ ",ExAC_AC,ExAC_AF,ExAC_Adj_AC,ExAC_Adj_AF,ExAC_AFR_AC,ExAC_AFR_AF,ExAC_AMR_AC,ExAC_AMR_AF,ExAC_EAS_AC,ExAC_EAS_AF,ExAC_FIN_AC,ExAC_FIN_AF,ExAC_NFE_AC,ExAC_NFE_AF,ExAC_SAS_AC,ExAC_SAS_AF" //
-	;
+			;
 	public static final int MIN_JUMP = 100;
 
 	public static final int SHOW_EVERY = 100;
@@ -74,6 +74,7 @@ public class SnpSiftCmdDbNsfp extends SnpSift {
 	protected Map<String, String> fieldsDescription;
 	protected Map<String, String> fieldsType;
 	protected boolean annotateEmpty; // Annotate empty fields as well?
+	protected boolean annotateMissing; // Annotate entries even if missing in dbNSFP? 
 	protected boolean collapseRepeatedValues; // Collapse values if repeated?
 	protected boolean inverseFieldSelection; // Inverse field selection
 	protected boolean tabixCheck = true;
@@ -203,7 +204,9 @@ public class SnpSiftCmdDbNsfp extends SnpSift {
 
 		// Find in database
 		Collection<DbNsfpEntry> dbEntries = dbNsfp.query(variant);
-		if (dbEntries == null || dbEntries.isEmpty()) return false;
+		if (dbEntries == null || dbEntries.isEmpty()) {
+			if (!annotateMissing) return false;
+		}
 
 		// Add all INFO fields that refer to this allele
 		boolean annotated = false;
@@ -212,7 +215,7 @@ public class SnpSiftCmdDbNsfp extends SnpSift {
 			String infoValue = getVcfInfo(dbEntries, fieldKey);
 
 			// Missing or empty?
-			if (annotateEmpty) {
+			if (annotateEmpty || annotateMissing) {
 				if (infoValue.isEmpty()) infoValue = ".";
 			} else if (isDbNsfpValueEmpty(infoValue)) {
 				infoValue = null;
@@ -481,6 +484,10 @@ public class SnpSiftCmdDbNsfp extends SnpSift {
 				fieldsNamesToAdd = args[++i];
 				break;
 
+			case "-m":
+				annotateMissing = true;
+				break;
+
 			case "-nocollapse":
 				collapseRepeatedValues = false;
 				break;
@@ -556,6 +563,7 @@ public class SnpSiftCmdDbNsfp extends SnpSift {
 				+ "\t-db <file>    : Path to dbNSFP database file (bgzip + tabix).\n" //
 				+ "\t-g <name>     : Genome version.\n" //
 				+ "\t-noCollapse   : Switch off 'collapsing' repeated values from dbNSFP. Default: " + !collapseRepeatedValues + "\n" //
+				+ "\t-m            : Annotate fields even if there are no database matching entries (annotates using '.').\n" //
 				+ "\t-n            : Invert 'fields to add' selection (i.e. use all fields except the ones specified in option '-f').\n" //
 				+ "\t-f            : A comma separated list of fields to add.\n" //
 				+ "\t                Default fields to add: " + sb //
