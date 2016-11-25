@@ -6,6 +6,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -206,6 +207,7 @@ public class SnpSiftCmdDbNsfp extends SnpSift {
 		Collection<DbNsfpEntry> dbEntries = dbNsfp.query(variant);
 		if (dbEntries == null || dbEntries.isEmpty()) {
 			if (!annotateMissing) return false;
+			if (dbEntries == null) dbEntries = new LinkedList<>();
 		}
 
 		// Add all INFO fields that refer to this allele
