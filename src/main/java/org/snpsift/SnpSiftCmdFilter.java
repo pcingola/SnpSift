@@ -47,6 +47,8 @@ import org.snpsift.lang.expression.FieldIterator;
  */
 public class SnpSiftCmdFilter extends SnpSift {
 
+	public static final String VCF_INFO_FILTER_DELETED = "FILTER_DELETED";
+
 	boolean usePassField; // Use Filter field
 	boolean inverse; // Inverse filter (i.e. do NOT show lines that match the filter)
 	boolean exceptionIfNotFound; // Throw an exception of a field is not found?
@@ -97,7 +99,15 @@ public class SnpSiftCmdFilter extends SnpSift {
 		// Add or delete strings from filter field
 		if (eval) {
 			if (addFilterField != null) vcfEntry.addFilter(addFilterField); // Filter passed? Add to FILTER field
-			if (rmFilterField != null) vcfEntry.delFilter(rmFilterField); // Filter passed? Delete string from FILTER field
+			if (rmFilterField != null) {
+				// Filter passed? Delete string from FILTER field
+				vcfEntry.delFilter(rmFilterField);
+
+				// Update 'FILTER_DELETED' info field
+				String filterDeleted = vcfEntry.getInfo(VCF_INFO_FILTER_DELETED);
+				filterDeleted = (filterDeleted == null ? rmFilterField : filterDeleted + "," + rmFilterField);
+				vcfEntry.addInfo(VCF_INFO_FILTER_DELETED, filterDeleted);
+			}
 		}
 
 		return eval;
@@ -181,8 +191,16 @@ public class SnpSiftCmdFilter extends SnpSift {
 	@Override
 	protected List<VcfHeaderEntry> headers() {
 		List<VcfHeaderEntry> addHeader = super.headers();
-		String expr = expression.replace('\n', ' ').replace('\r', ' ').replace('\t', ' ').trim();
-		if (!filterId.isEmpty()) addHeader.add(new VcfHeaderEntry("##FILTER=<ID=" + filterId + ",Description=\"" + VERSION_NO_NAME + ", Expression used: " + expr + "\">"));
+
+		if (!filterId.isEmpty()) {
+			String expr = expression.replace('\n', ' ').replace('\r', ' ').replace('\t', ' ').trim();
+			addHeader.add(new VcfHeaderEntry("##FILTER=<ID=" + filterId + ",Description=\"" + VERSION_NO_NAME + ", Expression used: " + expr + "\">"));
+		}
+
+		if (rmFilterField != null) {
+			addHeader.add(new VcfHeaderEntry("##FILTER=<ID=" + VCF_INFO_FILTER_DELETED + ",Description=\"Old filter fields removed by 'SnpSift filter -rmFilter' command\">"));
+		}
+
 		return addHeader;
 	}
 
