@@ -101,12 +101,12 @@ public class SnpSiftCmdFilter extends SnpSift {
 			if (addFilterField != null) vcfEntry.addFilter(addFilterField); // Filter passed? Add to FILTER field
 			if (rmFilterField != null) {
 				// Filter passed? Delete string from FILTER field
-				vcfEntry.delFilter(rmFilterField);
-
-				// Update 'FILTER_DELETED' info field
-				String filterDeleted = vcfEntry.getInfo(VCF_INFO_FILTER_DELETED);
-				filterDeleted = (filterDeleted == null ? rmFilterField : filterDeleted + "," + rmFilterField);
-				vcfEntry.addInfo(VCF_INFO_FILTER_DELETED, filterDeleted);
+				if (vcfEntry.delFilter(rmFilterField)) { // Removed? 
+					// Update 'FILTER_DELETED' info field
+					String filterDeleted = vcfEntry.getInfo(VCF_INFO_FILTER_DELETED);
+					filterDeleted = (filterDeleted == null ? rmFilterField : filterDeleted + "," + rmFilterField);
+					vcfEntry.addInfo(VCF_INFO_FILTER_DELETED, filterDeleted);
+				}
 			}
 		}
 
