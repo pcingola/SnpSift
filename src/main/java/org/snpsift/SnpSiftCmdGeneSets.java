@@ -42,7 +42,6 @@ public class SnpSiftCmdGeneSets extends SnpSift {
 
 	/**
 	 * Annotate one entry
-	 * @param vcfEntry
 	 */
 	@Override
 	public boolean annotate(VcfEntry vcfEntry) {

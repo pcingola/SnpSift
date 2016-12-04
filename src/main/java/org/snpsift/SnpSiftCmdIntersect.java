@@ -31,8 +31,6 @@ public class SnpSiftCmdIntersect extends SnpSift {
 
 	/**
 	 * Intersect marker 'm'
-	 * @param m
-	 * @return
 	 */
 	Marker intersect(Marker m) {
 		if (forests.size() == 1) return m; // Nothing to do?
@@ -77,8 +75,6 @@ public class SnpSiftCmdIntersect extends SnpSift {
 
 	/**
 	 * Does it intersect with any 'NOT' file
-	 * @param marker
-	 * @return
 	 */
 	boolean isNot(Marker marker) {
 		if (notForests.isEmpty()) return false;

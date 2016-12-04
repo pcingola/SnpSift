@@ -27,7 +27,7 @@ import org.snpsift.lang.expression.FieldIterator;
  *
  * @author pablocingolani
  */
-public class SnpSiftCmdGtFilter extends SnpSift {
+public class SnpSiftCmdFilterGt extends SnpSift {
 
 	boolean inverse; // Inverse filter (i.e. do NOT show lines that match the filter)
 	boolean exceptionIfNotFound; // Throw an exception of a field is not found?
@@ -38,11 +38,11 @@ public class SnpSiftCmdGtFilter extends SnpSift {
 	ArrayList<HashSet<String>> sets;
 	EffFormatVersion formatVersion;
 
-	public SnpSiftCmdGtFilter() {
+	public SnpSiftCmdFilterGt() {
 		super(null, "filter");
 	}
 
-	public SnpSiftCmdGtFilter(String args[]) {
+	public SnpSiftCmdFilterGt(String args[]) {
 		super(args, "filter");
 	}
 

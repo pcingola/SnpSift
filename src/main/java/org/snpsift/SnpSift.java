@@ -429,6 +429,10 @@ public class SnpSift implements VcfAnnotator {
 		this.saveOutput = saveOutput;
 	}
 
+	public void setShowVcfHeader(boolean showVcfHeader) {
+		this.showVcfHeader = showVcfHeader;
+	}
+
 	public void setShowVersion(boolean showVersion) {
 		this.showVersion = showVersion;
 	}
@@ -480,7 +484,7 @@ public class SnpSift implements VcfAnnotator {
 		else if (command.startsWith("FILTERC")) cmd = new SnpSiftCmdFilterChrPos(args);
 		else if (command.startsWith("FI")) cmd = new SnpSiftCmdFilter(args);
 		else if (command.startsWith("GENESETS")) cmd = new SnpSiftCmdGeneSets(args);
-		else if (command.startsWith("GTF")) cmd = new SnpSiftCmdGtFilter(args);
+		else if (command.startsWith("GTF")) cmd = new SnpSiftCmdFilterGt(args);
 		else if (command.startsWith("GT")) cmd = new SnpSiftCmdGt(args);
 		else if (command.startsWith("GWASCAT")) cmd = new SnpSiftCmdGwasCatalog(args);
 		else if (command.startsWith("HW")) cmd = new SnpSiftCmdHwe(args);

@@ -6,7 +6,7 @@ import org.junit.Assert;
 import org.snpeff.util.Gpr;
 import org.snpeff.vcf.VcfEntry;
 import org.snpeff.vcf.VcfGenotype;
-import org.snpsift.SnpSiftCmdGtFilter;
+import org.snpsift.SnpSiftCmdFilterGt;
 
 import junit.framework.TestCase;
 
@@ -26,7 +26,7 @@ public class TestCasesFilterGt extends TestCase {
 		Gpr.debug("Test");
 		String expression = "(GQ < 50) | (DP < 20)";
 
-		SnpSiftCmdGtFilter gtfilter = new SnpSiftCmdGtFilter();
+		SnpSiftCmdFilterGt gtfilter = new SnpSiftCmdFilterGt();
 		List<VcfEntry> list = gtfilter.filter("test/testGtFilter01.vcf", expression, true);
 
 		for (VcfEntry ve : list) {
@@ -58,7 +58,7 @@ public class TestCasesFilterGt extends TestCase {
 		Gpr.debug("Test");
 		String expression = "(GQ < 50) | (DP < 20)";
 
-		SnpSiftCmdGtFilter gtfilter = new SnpSiftCmdGtFilter();
+		SnpSiftCmdFilterGt gtfilter = new SnpSiftCmdFilterGt();
 		List<VcfEntry> list = gtfilter.filter("test/testGtFilter02.vcf", expression, true);
 
 		for (VcfEntry ve : list) {

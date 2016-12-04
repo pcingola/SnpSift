@@ -207,9 +207,11 @@ public class SnpSiftCmdAnnotate extends SnpSift {
 	AnnotationMethod guessAnnotationMethod() {
 		if (method != null) return method;
 
-		if (dbFileName.endsWith(".gz") //
-				&& (Gpr.exists(dbFileName + ".tbi") || Gpr.exists(dbFileName + ".gz.tbi")))
-			return AnnotationMethod.TABIX;
+		if (dbFileName.endsWith(".gz")) {
+			if (Gpr.exists(dbFileName + ".tbi") || Gpr.exists(dbFileName + ".gz.tbi")) return AnnotationMethod.TABIX;
+			throw new RuntimeException("Index not found for file '" + dbFileName + "'.\n\tERROR: Compressed VCF files require a tabix index.");
+		}
+
 		return AnnotationMethod.SORTED_VCF;
 	}
 
@@ -378,7 +380,7 @@ public class SnpSiftCmdAnnotate extends SnpSift {
 		// Sanity check
 		if (dbType == null && dbFileName == null)
 
-			usage("Missing database option or file: [-dbSnp | -clinVar | database.vcf ]");
+		usage("Missing database option or file: [-dbSnp | -clinVar | database.vcf ]");
 	}
 
 	/**
