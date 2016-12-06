@@ -38,21 +38,22 @@ public class SnpSift implements VcfAnnotator {
 	public static int SHOW_EVERY_VCFLINES = 100; // Show a mark every N vcf lines processed
 	public static final String[] EMPTY_ARGS = new String[0];
 
-	protected boolean help; // Be verbose
-	protected boolean verbose; // Be verbose
+	protected boolean dbTabix; // Is this database supposed to be in tabix indexed form?
 	protected boolean debug; // Debug mode
-	protected boolean quiet; // Be quiet
-	protected boolean log; // Log to server (statistics)
 	protected boolean download = true; // Download database, if not available
-	protected boolean showVcfHeader = true; // Should VCF header be shown
-	protected boolean saveOutput = false; // Save output to buffer (instead of printing it to STDOUT)
-	protected boolean showVersion = true; // Show version number and exit
-	protected boolean suppressOutput = false; // Do not show output (used for debugging and test cases)
-	protected boolean vcfHeaderProcessed = false; // Has the VCF header been processed?
+	protected boolean help; // Be verbose
+	protected boolean log; // Log to server (statistics)
 	protected boolean needsConfig; // Does this command need a config file?
 	protected boolean needsDb; // Does this command need a database file?
 	protected boolean needsGenome; // Does this command need a genome version?
-	protected boolean dbTabix; // Is this database supposed to be in tabix indexed form?
+	protected boolean quiet; // Be quiet
+	protected boolean saveOutput = false; // Save output to buffer (instead of printing it to STDOUT)
+	protected boolean showVcfHeader = true; // Should VCF header be shown
+	protected boolean showVersion = true; // Show version number and exit
+	protected boolean suppressOutput = false; // Do not show output (used for debugging and test cases)
+	protected boolean vcfHeaderProcessed = false; // Has the VCF header been processed?
+	protected boolean vcfHeaderAddProgramVersion = true; // Add program verison and command line to VCF header
+	protected boolean verbose; // Be verbose
 	protected String args[];
 	protected String command;
 	protected String vcfInputFile; // VCF Input file
@@ -221,8 +222,10 @@ public class SnpSift implements VcfAnnotator {
 	 */
 	protected List<VcfHeaderEntry> headers() {
 		ArrayList<VcfHeaderEntry> newHeaders = new ArrayList<>();
-		newHeaders.add(new VcfHeaderEntry("##SnpSiftVersion=\"" + VERSION_NO_NAME + "\""));
-		newHeaders.add(new VcfHeaderEntry("##SnpSiftCmd=\"" + commandLineStr() + "\""));
+		if (vcfHeaderAddProgramVersion) {
+			newHeaders.add(new VcfHeaderEntry("##SnpSiftVersion=\"" + VERSION_NO_NAME + "\""));
+			newHeaders.add(new VcfHeaderEntry("##SnpSiftCmd=\"" + commandLineStr() + "\""));
+		}
 		return newHeaders;
 	}
 
@@ -441,6 +444,10 @@ public class SnpSift implements VcfAnnotator {
 		this.suppressOutput = suppressOutput;
 	}
 
+	public void setVcfHeaderAddProgramVersion(boolean vcfHeaderAddProgramVersion) {
+		this.vcfHeaderAddProgramVersion = vcfHeaderAddProgramVersion;
+	}
+
 	@Override
 	public void setVerbose(boolean verbose) {
 		this.verbose = verbose;
@@ -516,24 +523,22 @@ public class SnpSift implements VcfAnnotator {
 		}
 
 		// Copy parsed parameters
-		cmd.verbose = verbose;
-		cmd.quiet = quiet;
-		cmd.debug = debug;
-		cmd.help = help;
-		cmd.suppressOutput = suppressOutput;
-
-		cmd.numWorkers = numWorkers;
-
-		cmd.needsConfig = needsConfig;
-		cmd.configFile = configFile;
 		cmd.config = config;
-		cmd.genomeVersion = genomeVersion;
-
+		cmd.configFile = configFile;
+		cmd.debug = debug;
 		cmd.download = download;
+		cmd.genomeVersion = genomeVersion;
+		cmd.help = help;
 		cmd.log = log;
-
+		cmd.needsConfig = needsConfig;
 		cmd.needsDb = needsDb;
 		cmd.needsGenome = needsGenome;
+		cmd.numWorkers = numWorkers;
+		cmd.quiet = quiet;
+		cmd.suppressOutput = suppressOutput;
+		cmd.vcfHeaderAddProgramVersion = vcfHeaderAddProgramVersion;
+		cmd.showVcfHeader = cmd.showVcfHeader;
+		cmd.verbose = verbose;
 
 		if (cmd.dbFileName == null) cmd.dbFileName = dbFileName;
 		if (cmd.dbType == null) cmd.dbType = dbType;

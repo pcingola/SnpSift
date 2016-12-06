@@ -193,8 +193,9 @@ public class SnpSiftCmdFilter extends SnpSift {
 		List<VcfHeaderEntry> addHeader = super.headers();
 
 		if (!filterId.isEmpty()) {
+
 			String expr = expression.replace('\n', ' ').replace('\r', ' ').replace('\t', ' ').trim();
-			addHeader.add(new VcfHeaderEntry("##FILTER=<ID=" + filterId + ",Description=\"" + VERSION_NO_NAME + ", Expression used: " + expr + "\">"));
+			addHeader.add(new VcfHeaderEntry("##FILTER=<ID=" + filterId + ",Description=\"" + (vcfHeaderAddProgramVersion ? VERSION_NO_NAME + ", " : "") + "Expression used: " + expr + "\">"));
 		}
 
 		if (rmFilterField != null) {
