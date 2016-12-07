@@ -1,5 +1,5 @@
 ##fileformat=VCFv4.1
-##SnpSiftVersion="SnpSift 4.3g (build 2016-11-30 10:17), by Pablo Cingolani"
+##SnpSiftVersion="SnpSift 4.3h (build 2016-12-07 14:17), by Pablo Cingolani"
 ##SnpSiftCmd="SnpSift gt test/gt_test.01.vcf"
 ##INFO=<ID=HO,Number=.,Type=Integer,Description="List of sample indexes having homozygous ALT genotypes">
 ##INFO=<ID=HE,Number=.,Type=Integer,Description="List of sample indexes having heterozygous ALT genotypes">
