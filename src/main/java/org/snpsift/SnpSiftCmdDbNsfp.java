@@ -530,8 +530,8 @@ public class SnpSiftCmdDbNsfp extends SnpSift {
 		// Find or download database
 		dbFileName = databaseFind();
 
-		if (verbose) Timer.showStdErr("Annotating\n" //
-				+ "\tInput file    : '" + vcfFileName + "'\n" //
+		if (verbose) Timer.showStdErr("Annotating:" //
+				+ "\tInput file : '" + vcfFileName + "'" //
 				+ "\tDatabase file : '" + dbFileName + "'" //
 		);
 

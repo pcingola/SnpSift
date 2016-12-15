@@ -151,8 +151,8 @@ public class SnpSiftCmdAnnotate extends SnpSift {
 		method = guessAnnotationMethod();
 
 		dbFileName = fixDbName();
-		if (verbose) Timer.showStdErr("Annotating\n" //
-				+ (vcfInputFile != null ? "\tInput file    : '" + vcfInputFile + "'\n" : "") //
+		if (verbose) Timer.showStdErr("Annotating:" //
+				+ (vcfInputFile != null ? "\tInput file    : '" + vcfInputFile + "'" : "") //
 				+ "\tDatabase file : '" + dbFileName + "'" //
 		);
 
