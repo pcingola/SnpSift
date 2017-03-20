@@ -364,7 +364,6 @@ public class SnpSift implements VcfAnnotator {
 		}
 
 		this.args = argsList.toArray(new String[0]);
-
 	}
 
 	/**
@@ -535,9 +534,9 @@ public class SnpSift implements VcfAnnotator {
 		cmd.needsGenome = needsGenome;
 		cmd.numWorkers = numWorkers;
 		cmd.quiet = quiet;
+		cmd.showVcfHeader = cmd.showVcfHeader;
 		cmd.suppressOutput = suppressOutput;
 		cmd.vcfHeaderAddProgramVersion = vcfHeaderAddProgramVersion;
-		cmd.showVcfHeader = cmd.showVcfHeader;
 		cmd.verbose = verbose;
 
 		if (cmd.dbFileName == null) cmd.dbFileName = dbFileName;
