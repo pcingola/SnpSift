@@ -14,11 +14,11 @@ import org.snpeff.vcf.VcfEntry;
 public class SnpSiftCmdVcfCheck extends SnpSift {
 
 	public SnpSiftCmdVcfCheck() {
-		super(null, null);
+		super();
 	}
 
 	public SnpSiftCmdVcfCheck(String[] args) {
-		super(args, "alleleMatrix");
+		super(args);
 	}
 
 	/**

@@ -66,21 +66,23 @@ public class SnpSift implements VcfAnnotator {
 	protected String configFile; // Config file
 	protected Config config; // Configuration
 	protected String dataDir; // Override data_dir in config file
+	protected String shiftArgs[];
 
 	/**
 	 * Main
 	 */
 	public static void main(String[] args) {
-		SnpSift snpSift = new SnpSift(args, null);
+		SnpSift snpSift = new SnpSift(args);
 		snpSift.run();
 	}
 
-	public SnpSift(String[] args, String command) {
-		this.args = args;
-		this.command = command;
-		errCount = new HashMap<>();
+	public SnpSift() {
 		init();
-		if (args != null) parseArgs(args);
+	}
+
+	public SnpSift(String[] args) {
+		this.args = args;
+		init();
 	}
 
 	/**
@@ -115,6 +117,155 @@ public class SnpSift implements VcfAnnotator {
 	}
 
 	/**
+	 * Run: Executes the appropriate class
+	 */
+	public SnpSift cmd() {
+		// Parse command line arguments (generic and database specific arguments)
+		parseArgs(args);
+
+		// Create a command
+		SnpSift cmd = cmdFactory(command);
+
+		// Copy parsed parameters
+		copyValues(cmd);
+
+		// Help? Show help and exit
+		if (help) {
+			cmd.usage(null);
+			return null;
+		}
+
+		// Show version and command
+		if ((verbose || debug) && showVersion) {
+			Timer.showStdErr("SnpSift version " + VERSION);
+			Timer.showStdErr("Command: '" + command + "'");
+		}
+
+		// Parse command specific arguments
+		cmd.parseArgs(shiftArgs);
+		return cmd;
+	}
+
+	SnpSift cmdFactory(String command) {
+		switch (command.trim().toLowerCase()) {
+		case "all":
+		case "allelematrix":
+			return new SnpSiftCmdAlleleMatrix();
+
+		case "ann":
+		case "annotate":
+			return new SnpSiftCmdAnnotate();
+
+		case "ca":
+		case "casecontrol":
+			return new SnpSiftCmdCaseControl();
+
+		case "ccs":
+		case "casecontrolsummary":
+			return new SnpSiftCmdCaseControlSummary();
+
+		case "conc":
+		case "concordance":
+			return new SnpSiftCmdConcordance();
+
+		case "covmat":
+		case "covariancematrix":
+			return new SnpSiftCmdCovarianceMatrix();
+
+		case "dbnsfp":
+			return new SnpSiftCmdDbNsfp();
+
+		case "ex":
+		case "extractfields":
+			return new SnpSiftCmdExtractFields();
+
+		case "filterc":
+		case "filterchrpos":
+			return new SnpSiftCmdFilterChrPos();
+
+		case "fi":
+		case "filter":
+			return new SnpSiftCmdFilter();
+
+		case "genesets":
+			return new SnpSiftCmdGeneSets();
+
+		case "gtf":
+		case "filtergt":
+			return new SnpSiftCmdFilterGt();
+
+		case "gt":
+			return new SnpSiftCmdGt();
+
+		case "gwascat":
+		case "gwascatalog":
+			return new SnpSiftCmdGwasCatalog();
+
+		case "hw":
+		case "hwe":
+			return new SnpSiftCmdHwe();
+
+		case "intidx":
+		case "intervalsindex":
+			return new SnpSiftCmdIntervalsIndex();
+
+		case "inters":
+		case "intersect":
+			return new SnpSiftCmdIntersect();
+
+		case "interv":
+		case "intervals":
+			return new SnpSiftCmdIntervals();
+
+		case "join":
+			return new SnpSiftCmdJoin();
+
+		case "op":
+		case "vcfoperator":
+			return new SnpSiftCmdVcfOperator();
+
+		case "pedshow":
+			return new SnpSiftCmdPedShow();
+
+		case "phastcons":
+			return new SnpSiftCmdPhastCons();
+
+		case "private":
+			return new SnpSiftCmdPrivate();
+
+		case "rminfo":
+			return new SnpSiftCmdRmInfo();
+
+		case "rmref":
+		case "removereferencegenotypes":
+			return new SnpSiftCmdRemoveReferenceGenotypes();
+
+		case "sort":
+			return new SnpSiftCmdSort();
+
+		case "split":
+			return new SnpSiftCmdSplit();
+
+		case "ts":
+		case "tstv":
+			return new SnpSiftCmdTsTv();
+
+		case "vartype":
+			return new SnpSiftCmdVarType();
+
+		case "vcf2tped":
+			return new SnpSiftCmdVcf2Tped();
+
+		case "vcfcheck":
+			return new SnpSiftCmdVcfCheck();
+
+		default:
+			usage("Unknown command '" + command + "'");
+			return null;
+		}
+	}
+
+	/**
 	 * Show command line
 	 */
 	protected String commandLineStr() {
@@ -132,6 +283,30 @@ public class SnpSift implements VcfAnnotator {
 		}
 
 		return argsList.toString().trim();
+	}
+
+	/**
+	 * Copy command parameters
+	 */
+	void copyValues(SnpSift cmd) {
+		cmd.config = config;
+		cmd.configFile = configFile;
+		cmd.dbFileName = dbFileName;
+		cmd.dbType = dbType;
+		cmd.debug = debug;
+		cmd.download = download;
+		cmd.genomeVersion = genomeVersion;
+		cmd.help = help;
+		cmd.log = log;
+		cmd.needsConfig = needsConfig;
+		cmd.needsDb = needsDb;
+		cmd.needsGenome = needsGenome;
+		cmd.numWorkers = numWorkers;
+		cmd.quiet = quiet;
+		cmd.showVcfHeader = cmd.showVcfHeader;
+		cmd.suppressOutput = suppressOutput;
+		cmd.vcfHeaderAddProgramVersion = vcfHeaderAddProgramVersion;
+		cmd.verbose = verbose;
 	}
 
 	/**
@@ -234,6 +409,8 @@ public class SnpSift implements VcfAnnotator {
 	 */
 	public void init() {
 		genomeVersion = "";
+		errCount = new HashMap<>();
+		setCommand(this.getClass());
 	}
 
 	/**
@@ -363,7 +540,13 @@ public class SnpSift implements VcfAnnotator {
 			} else argsList.add(args[i]);
 		}
 
-		this.args = argsList.toArray(new String[0]);
+		shiftArgs = argsList.toArray(new String[0]);
+
+		// Show version and command
+		if (!help && (verbose || debug)) {
+			Timer.showStdErr("SnpSift version " + VERSION);
+			Timer.showStdErr("Command: '" + command + "'");
+		}
 	}
 
 	/**
@@ -397,12 +580,26 @@ public class SnpSift implements VcfAnnotator {
 
 	@Override
 	public boolean run() {
-		SnpSift cmd = snpSiftCmd();
+		SnpSift cmd = cmd();
 
 		// Execute command
 		cmd.run();
 
 		return true;
+	}
+
+	@SuppressWarnings("rawtypes")
+	public void setCommand(Class clss) {
+		command = clss.getSimpleName();
+
+		// Guess command name from class name
+		int idx = "SnpSiftCmd".length();
+		if (command.length() > idx) command = command.substring(idx);
+
+	}
+
+	public void setCommand(String command) {
+		this.command = command;
 	}
 
 	@Override
@@ -469,81 +666,6 @@ public class SnpSift implements VcfAnnotator {
 	 */
 	public void showVersion() {
 		System.err.println(SnpSift.class.getSimpleName() + " version " + VERSION + "\n");
-	}
-
-	/**
-	 * Run: Executes the appropriate class
-	 */
-	public SnpSift snpSiftCmd() {
-		SnpSift cmd = null;
-
-		command = command.trim().toUpperCase();
-
-		if (command.startsWith("ALL")) cmd = new SnpSiftCmdAlleleMatrix(args);
-		else if (command.startsWith("ANN")) cmd = new SnpSiftCmdAnnotate(args);
-		else if (command.startsWith("CA")) cmd = new SnpSiftCmdCaseControl(args);
-		else if (command.startsWith("CCS")) cmd = new SnpSiftCmdCaseControlSummary(args);
-		else if (command.startsWith("CONC")) cmd = new SnpSiftCmdConcordance(args);
-		else if (command.startsWith("COVMAT")) cmd = new SnpSiftCmdCovarianceMatrix(args);
-		else if (command.startsWith("DBNSFP")) cmd = new SnpSiftCmdDbNsfp(args);
-		else if (command.startsWith("EX")) cmd = new SnpSiftCmdExtractFields(args);
-		else if (command.startsWith("FILTERC")) cmd = new SnpSiftCmdFilterChrPos(args);
-		else if (command.startsWith("FI")) cmd = new SnpSiftCmdFilter(args);
-		else if (command.startsWith("GENESETS")) cmd = new SnpSiftCmdGeneSets(args);
-		else if (command.startsWith("GTF")) cmd = new SnpSiftCmdFilterGt(args);
-		else if (command.startsWith("GT")) cmd = new SnpSiftCmdGt(args);
-		else if (command.startsWith("GWASCAT")) cmd = new SnpSiftCmdGwasCatalog(args);
-		else if (command.startsWith("HW")) cmd = new SnpSiftCmdHwe(args);
-		else if (command.startsWith("INTIDX")) cmd = new SnpSiftCmdIntervalsIndex(args);
-		else if (command.startsWith("INTERS")) cmd = new SnpSiftCmdIntersect(args);
-		else if (command.startsWith("INTERV")) cmd = new SnpSiftCmdIntervals(args);
-		else if (command.startsWith("JOIN")) cmd = new SnpSiftCmdJoin(args);
-		else if (command.startsWith("OP")) cmd = new SnpSiftCmdVcfOperator(args);
-		else if (command.startsWith("PEDSHOW")) cmd = new SnpSiftCmdPedShow(args);
-		else if (command.startsWith("PHASTCONS")) cmd = new SnpSiftCmdPhastCons(args);
-		else if (command.startsWith("PRIVATE")) cmd = new SnpSiftCmdPrivate(args);
-		else if (command.startsWith("RMINFO")) cmd = new SnpSiftCmdRmInfo(args);
-		else if (command.startsWith("RMREF")) cmd = new SnpSiftCmdRemoveReferenceGenotypes(args);
-		else if (command.startsWith("SORT")) cmd = new SnpSiftCmdSort(args);
-		else if (command.startsWith("SPLIT")) cmd = new SnpSiftCmdSplit(args);
-		else if (command.startsWith("TS")) cmd = new SnpSiftCmdTsTv(args);
-		else if (command.startsWith("VARTYPE")) cmd = new SnpSiftCmdVarType(args);
-		else if (command.startsWith("VCF2TPED")) cmd = new SnpSiftCmdVcf2Tped(args);
-		else if (command.startsWith("VCFCHECK")) cmd = new SnpSiftCmdVcfCheck(args);
-		else usage("Unknown command '" + command + "'");
-
-		// Help? Show help and exit
-		if (help) cmd.usage(null);
-
-		// Show version and command
-		if (!help && (verbose || debug) && showVersion) {
-			Timer.showStdErr("SnpSift version " + VERSION);
-			Timer.showStdErr("Command: '" + command + "'");
-		}
-
-		// Copy parsed parameters
-		cmd.config = config;
-		cmd.configFile = configFile;
-		cmd.debug = debug;
-		cmd.download = download;
-		cmd.genomeVersion = genomeVersion;
-		cmd.help = help;
-		cmd.log = log;
-		cmd.needsConfig = needsConfig;
-		cmd.needsDb = needsDb;
-		cmd.needsGenome = needsGenome;
-		cmd.numWorkers = numWorkers;
-		cmd.quiet = quiet;
-		cmd.showVcfHeader = cmd.showVcfHeader;
-		cmd.suppressOutput = suppressOutput;
-		cmd.vcfHeaderAddProgramVersion = vcfHeaderAddProgramVersion;
-		cmd.verbose = verbose;
-
-		if (cmd.dbFileName == null) cmd.dbFileName = dbFileName;
-		if (cmd.dbType == null) cmd.dbType = dbType;
-
-		// Execute command
-		return cmd;
 	}
 
 	/**

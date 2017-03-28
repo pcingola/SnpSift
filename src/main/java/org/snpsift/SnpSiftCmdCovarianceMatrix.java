@@ -23,11 +23,11 @@ public class SnpSiftCmdCovarianceMatrix extends SnpSift {
 	double matrix[][];
 
 	public SnpSiftCmdCovarianceMatrix() {
-		super(null, null);
+		super();
 	}
 
 	public SnpSiftCmdCovarianceMatrix(String[] args) {
-		super(args, "alleleMatrix");
+		super(args);
 	}
 
 	/**

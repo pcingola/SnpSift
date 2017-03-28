@@ -31,8 +31,12 @@ public class SnpSiftCmdIntervalsIndex extends SnpSift {
 	String vcfFile;
 	String bedFile;
 
+	public SnpSiftCmdIntervalsIndex() {
+		super();
+	}
+
 	public SnpSiftCmdIntervalsIndex(String[] args) {
-		super(args, "intidx");
+		super(args);
 	}
 
 	@Override

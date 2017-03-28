@@ -24,12 +24,12 @@ public class SnpSiftCmdAlleleMatrix extends SnpSift {
 	public static int SHOW_EVERY = 1000;
 
 	public SnpSiftCmdAlleleMatrix() {
-		super(null, null);
+		super();
 	}
 
-	public SnpSiftCmdAlleleMatrix(String[] args) {
-		super(args, "alleleMatrix");
-	}
+	//	public SnpSiftCmdAlleleMatrix(String[] args) {
+	//		super(args, "alleleMatrix");
+	//	}
 
 	/**
 	 * Parse command line arguments

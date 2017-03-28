@@ -35,8 +35,13 @@ public class SnpSiftCmdGeneSets extends SnpSift {
 	GeneSets geneSets;
 	CountByType countByGeneSet;
 
+	public SnpSiftCmdGeneSets() {
+		super();
+		countByGeneSet = new CountByType();
+	}
+
 	public SnpSiftCmdGeneSets(String args[]) {
-		super(args, "geneSets");
+		super(args);
 		countByGeneSet = new CountByType();
 	}
 

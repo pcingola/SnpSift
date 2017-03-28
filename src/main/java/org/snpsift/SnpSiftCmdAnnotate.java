@@ -48,12 +48,12 @@ public class SnpSiftCmdAnnotate extends SnpSift {
 	protected VcfFileIterator vcfFile;
 	protected AnnotateVcfDb annotateDb;
 
-	public SnpSiftCmdAnnotate(String args[]) {
-		super(args, "annotate");
+	protected SnpSiftCmdAnnotate() {
+		super();
 	}
 
-	protected SnpSiftCmdAnnotate(String args[], String command) {
-		super(args, command);
+	public SnpSiftCmdAnnotate(String args[]) {
+		super(args);
 	}
 
 	/**

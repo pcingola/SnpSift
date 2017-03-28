@@ -25,8 +25,12 @@ public class SnpSiftCmdPrivate extends SnpSift {
 	List<String> sampleIds; // Sample IDs
 	PedPedigree pedigree;
 
+	public SnpSiftCmdPrivate() {
+		super();
+	}
+
 	public SnpSiftCmdPrivate(String[] args) {
-		super(args, "private");
+		super(args);
 	}
 
 	/**

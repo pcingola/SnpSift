@@ -29,11 +29,11 @@ public class SnpSiftCmdHwe extends SnpSift {
 	}
 
 	public SnpSiftCmdHwe() {
-		super(null, null);
+		super();
 	}
 
 	public SnpSiftCmdHwe(String[] args) {
-		super(args, "hwe");
+		super(args);
 	}
 
 	@Override

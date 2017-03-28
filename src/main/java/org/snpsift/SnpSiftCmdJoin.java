@@ -1,6 +1,7 @@
 package org.snpsift;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import org.snpeff.fileIterator.GenericMarkerFileIterator;
 import org.snpeff.interval.Chromosome;
@@ -22,24 +23,22 @@ public class SnpSiftCmdJoin extends SnpSift {
 	boolean showEmpty, showAll, showClosest;
 	String file[];
 	int inOffset[], colChr[], colStart[], colEnd[];
-
 	Genome genome = new Genome("genome");
-	ArrayList<GenericMarker> list[];
+	List<GenericMarker> list[];
 	SnpEffectPredictor snpEffectPredictor = new SnpEffectPredictor(genome);
 
-	@SuppressWarnings("unchecked")
-	public SnpSiftCmdJoin(String[] args) {
-		super(args, "join");
+	public SnpSiftCmdJoin() {
+		super();
+	}
 
-		list = new ArrayList[2];
-		for (int i = 0; i < 2; i++)
-			list[i] = new ArrayList<>();
+	public SnpSiftCmdJoin(String[] args) {
+		super(args);
 	}
 
 	/** 		 
 	 * Create SnpEffect predictor and add all peaks
 	 */
-	void build(ArrayList<GenericMarker> list) {
+	void build(List<GenericMarker> list) {
 		if (verbose) Timer.showStdErr("Creating interval forest");
 		for (Marker m : list)
 			snpEffectPredictor.add(m);
@@ -87,6 +86,7 @@ public class SnpSiftCmdJoin extends SnpSift {
 		return null; // Nothing found
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public void init() {
 		super.init();
@@ -99,6 +99,11 @@ public class SnpSiftCmdJoin extends SnpSift {
 		showEmpty = false;
 		showAll = false;
 		showClosest = false;
+
+		list = new ArrayList[2];
+		for (int i = 0; i < 2; i++)
+			list[i] = new ArrayList<>();
+
 	}
 
 	/**
@@ -242,7 +247,7 @@ public class SnpSiftCmdJoin extends SnpSift {
 	/**
 	 * Update missing chromosome, also update chromosome length
 	 */
-	void updateChromos(ArrayList<GenericMarker> list) {
+	void updateChromos(List<GenericMarker> list) {
 		for (Marker m : list) {
 			// Get chromosome
 			String chr = m.getChromosomeName();

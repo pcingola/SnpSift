@@ -28,8 +28,12 @@ public class SnpSiftCmdVarType extends SnpSift {
 	String vcfFile;
 	HashMap<String, String> db = new HashMap<String, String>();
 
+	public SnpSiftCmdVarType() {
+		super();
+	}
+
 	public SnpSiftCmdVarType(String args[]) {
-		super(args, "varType");
+		super(args);
 	}
 
 	/**

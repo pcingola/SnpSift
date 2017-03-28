@@ -25,8 +25,12 @@ public class SnpSiftCmdSort extends SnpSift {
 	VcfHeader vcfHeader;
 	List<LineChrPos> vcfEntries;
 
+	public SnpSiftCmdSort() {
+		super();
+	}
+
 	public SnpSiftCmdSort(String args[]) {
-		super(args, "sort");
+		super(args);
 	}
 
 	/**

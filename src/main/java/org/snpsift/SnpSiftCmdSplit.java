@@ -27,8 +27,12 @@ public class SnpSiftCmdSplit extends SnpSift {
 	int numLines; // Number of lines to use when splitting
 	ArrayList<String> fileNames;
 
+	public SnpSiftCmdSplit() {
+		super();
+	}
+
 	public SnpSiftCmdSplit(String args[]) {
-		super(args, "split");
+		super(args);
 	}
 
 	/**

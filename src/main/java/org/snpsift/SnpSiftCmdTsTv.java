@@ -25,8 +25,12 @@ public class SnpSiftCmdTsTv extends SnpSift {
 	VariantTypeStats variantTypeStats;
 	String vcfFileName;
 
+	public SnpSiftCmdTsTv() {
+		super();
+	}
+
 	public SnpSiftCmdTsTv(String[] args) {
-		super(args, "tstv");
+		super(args);
 	}
 
 	/**
