@@ -141,9 +141,6 @@ public class SnpSift implements VcfAnnotator {
 			Timer.showStdErr("Command: '" + command + "'");
 		}
 
-		if (cmd.dbFileName == null) cmd.dbFileName = dbFileName;
-		if (cmd.dbType == null) cmd.dbType = dbType;
-
 		// Parse command specific arguments
 		cmd.parseArgs(shiftArgs);
 		return cmd;
@@ -288,10 +285,14 @@ public class SnpSift implements VcfAnnotator {
 		return argsList.toString().trim();
 	}
 
+	/**
+	 * Copy command parameters
+	 */
 	void copyValues(SnpSift cmd) {
-		// Copy parsed parameters
 		cmd.config = config;
 		cmd.configFile = configFile;
+		cmd.dbFileName = dbFileName;
+		cmd.dbType = dbType;
 		cmd.debug = debug;
 		cmd.download = download;
 		cmd.genomeVersion = genomeVersion;
@@ -306,7 +307,6 @@ public class SnpSift implements VcfAnnotator {
 		cmd.suppressOutput = suppressOutput;
 		cmd.vcfHeaderAddProgramVersion = vcfHeaderAddProgramVersion;
 		cmd.verbose = verbose;
-
 	}
 
 	/**
