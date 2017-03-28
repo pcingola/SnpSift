@@ -38,8 +38,12 @@ public class SnpSiftCmdVcf2Tped extends SnpSift {
 	String outTpedFile, outTfamFile;
 	PedPedigree pedigree;
 
+	public SnpSiftCmdVcf2Tped() {
+		super();
+	}
+
 	public SnpSiftCmdVcf2Tped(String[] args) {
-		super(args, "vcf2tped");
+		super(args);
 	}
 
 	/**

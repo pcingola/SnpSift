@@ -39,11 +39,11 @@ public class SnpSiftCmdGwasCatalog extends SnpSift {
 	IntervalForest intervalForest;
 
 	public SnpSiftCmdGwasCatalog() {
-		this(null);
+		super();
 	}
 
 	public SnpSiftCmdGwasCatalog(String args[]) {
-		super(args, "gwasCat");
+		super(args);
 	}
 
 	/**

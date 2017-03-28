@@ -94,7 +94,7 @@ public class SnpSiftCmdDbNsfp extends SnpSift {
 	}
 
 	public SnpSiftCmdDbNsfp(String args[]) {
-		super(args, "dbnsfp");
+		super(args);
 	}
 
 	/**

@@ -31,8 +31,12 @@ public class SnpSiftCmdVcfOperator extends SnpSift {
 	protected Operator operator;
 	protected String infoFields[];
 
+	public SnpSiftCmdVcfOperator() {
+		super();
+	}
+
 	public SnpSiftCmdVcfOperator(String args[]) {
-		super(args, "operator");
+		super(args);
 	}
 
 	@Override

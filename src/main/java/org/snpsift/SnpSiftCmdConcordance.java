@@ -53,8 +53,12 @@ public class SnpSiftCmdConcordance extends SnpSift {
 	boolean writeBySampleFile;
 	boolean errorOnNonBiallelic;
 
+	public SnpSiftCmdConcordance() {
+		super();
+	}
+
 	public SnpSiftCmdConcordance(String args[]) {
-		super(args, "concordance");
+		super(args);
 	}
 
 	/**

@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.snpeff.util.Gpr;
 import org.snpeff.vcf.VcfEntry;
+import org.snpsift.SnpSift;
 import org.snpsift.SnpSiftCmdFilter;
 
 import junit.framework.Assert;
@@ -22,53 +23,33 @@ public class TestCasesZzz extends TestCase {
 	public TestCasesZzz() {
 	}
 
+	List<VcfEntry> snpSiftFilter(String args[]) {
+		SnpSift snpSift = new SnpSift(args);
+		SnpSiftCmdFilter snpSiftFilter = (SnpSiftCmdFilter) snpSift.cmd();
+		return snpSiftFilter.run(true);
+	}
+
 	/**
-	 * Remove filter option '-rmFilter'. Check that INFO 
-	 * field 'FILTER_DELETED' is properly added
+	 * Inverse of a filter
 	 */
-	public void test_58_rmFilter_info_field() {
+	public void test_36() {
 		Gpr.debug("Test");
 
+		double minQ = 50;
+
 		// Filter data
-		String expression = "( DP < 5 )";
-		String vcfFile = "test/test_rmfilter.vcf";
-		String args[] = { "-f", vcfFile, "--rmFilter", "DP_OK", expression }; // Remove 'PASS' if there is not enough depth
-		SnpSiftCmdFilter snpsiftFilter = new SnpSiftCmdFilter(args);
-		List<VcfEntry> list = snpsiftFilter.filter(vcfFile, expression, true);
+		String expression = "QUAL >= " + minQ;
+		String args[] = { "filter", "-f", "test/test01.vcf", "-n", expression };
+		List<VcfEntry> list = snpSiftFilter(args);
 
 		// Check that it satisfies the condition
 		if (verbose) System.out.println("Expression: '" + expression + "'");
 		Assert.assertNotNull(list);
-		Assert.assertTrue("List size does not matched expected", list.size() == 3);
-
-		// Check result (hould be only one entry)
-		int countOk = 0;
+		Assert.assertTrue(list.size() > 0);
 		for (VcfEntry vcfEntry : list) {
-			if (verbose) System.out.println(vcfEntry.getFilter() + "\t" + vcfEntry);
-
-			// Filter deleted
-			if (vcfEntry.getStart() == 219134261) {
-				Assert.assertEquals("OTHER", vcfEntry.getFilter());
-				Assert.assertEquals("DP_OK", vcfEntry.getInfo("FILTER_DELETED"));
-				countOk++;
-			}
-
-			// Nothing done
-			if (vcfEntry.getStart() == 219134272) {
-				Assert.assertEquals("DP_OK;OTHER", vcfEntry.getFilter());
-				Assert.assertEquals(null, vcfEntry.getInfo("FILTER_DELETED"));
-				countOk++;
-			}
-
-			// Filter deleted + old "FILTER_DELETED" entry kept
-			if (vcfEntry.getStart() == 219134298) {
-				Assert.assertEquals("OTHER", vcfEntry.getFilter());
-				Assert.assertEquals("DELETED_BEFORE,DP_OK", vcfEntry.getInfo("FILTER_DELETED"));
-				countOk++;
-			}
+			if (verbose) System.out.println("\t" + vcfEntry);
+			Assert.assertTrue(vcfEntry.getQuality() < minQ);
 		}
-		Assert.assertEquals("Number of entries checkd does not match expected", countOk, 3);
-
 	}
 
 }

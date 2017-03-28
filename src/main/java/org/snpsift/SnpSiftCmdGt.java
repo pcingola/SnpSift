@@ -21,11 +21,11 @@ public class SnpSiftCmdGt extends SnpSift {
 	boolean uncompress;
 
 	public SnpSiftCmdGt() {
-		super(null, null);
+		super();
 	}
 
 	public SnpSiftCmdGt(String[] args) {
-		super(args, "gt");
+		super(args);
 	}
 
 	@Override

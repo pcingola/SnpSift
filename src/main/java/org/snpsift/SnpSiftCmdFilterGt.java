@@ -39,11 +39,11 @@ public class SnpSiftCmdFilterGt extends SnpSift {
 	EffFormatVersion formatVersion;
 
 	public SnpSiftCmdFilterGt() {
-		super(null, "filter");
+		super();
 	}
 
 	public SnpSiftCmdFilterGt(String args[]) {
-		super(args, "filter");
+		super(args);
 	}
 
 	/**

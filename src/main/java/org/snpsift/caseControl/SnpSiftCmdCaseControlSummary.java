@@ -50,8 +50,12 @@ public class SnpSiftCmdCaseControlSummary extends SnpSift {
 	AutoHashMap<Marker, Summary> summaryByInterval; // Summary by interval
 	ArrayList<String> infoFields; // Other info fields to include in summaries (per snp)
 
+	public SnpSiftCmdCaseControlSummary() {
+		super();
+	}
+
 	public SnpSiftCmdCaseControlSummary(String[] args) {
-		super(args, "caseControlSummary");
+		super(args);
 	}
 
 	/**

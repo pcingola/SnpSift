@@ -41,8 +41,12 @@ public class SnpSiftCmdPhastCons extends SnpSift {
 	HashMap<String, Integer> chromoSize;
 	short score[];
 
+	public SnpSiftCmdPhastCons() {
+		super();
+	}
+
 	public SnpSiftCmdPhastCons(String[] args) {
-		super(args, "phastCons");
+		super(args);
 	}
 
 	/**

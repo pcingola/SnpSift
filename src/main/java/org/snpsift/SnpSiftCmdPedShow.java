@@ -25,8 +25,12 @@ public class SnpSiftCmdPedShow extends SnpSift {
 	List<String> sampleNames = null;
 	HashMap<String, Boolean> chrPos = null;
 
+	public SnpSiftCmdPedShow() {
+		super();
+	}
+
 	public SnpSiftCmdPedShow(String[] args) {
-		super(args, "pedShow");
+		super(args);
 	}
 
 	/**

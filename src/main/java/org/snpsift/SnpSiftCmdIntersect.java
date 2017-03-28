@@ -25,8 +25,12 @@ public class SnpSiftCmdIntersect extends SnpSift {
 	List<IntervalForest> forests;
 	List<IntervalForest> notForests;
 
+	public SnpSiftCmdIntersect() {
+		super();
+	}
+
 	public SnpSiftCmdIntersect(String[] args) {
-		super(args, "intersect");
+		super(args);
 	}
 
 	/**

@@ -9,6 +9,7 @@ import org.snpeff.vcf.VcfEffect;
 import org.snpeff.vcf.VcfEntry;
 import org.snpeff.vcf.VcfGenotype;
 import org.snpeff.vcf.VcfLof;
+import org.snpsift.SnpSift;
 import org.snpsift.SnpSiftCmdFilter;
 
 import junit.framework.Assert;
@@ -23,6 +24,12 @@ public class TestCasesFilter extends TestCase {
 
 	public static boolean verbose = false;
 	public static final int STDOUT_BUFFER_SIZE = 10 * 1024 * 1024;
+
+	List<VcfEntry> snpSiftFilter(String args[]) {
+		SnpSift snpSift = new SnpSift(args);
+		SnpSiftCmdFilter snpSiftFilter = (SnpSiftCmdFilter) snpSift.cmd();
+		return snpSiftFilter.run(true);
+	}
 
 	/**
 	 * Filter by quality
@@ -1149,9 +1156,8 @@ public class TestCasesFilter extends TestCase {
 
 		// Filter data
 		String expression = "QUAL >= " + minQ;
-		String args[] = { "-f", "test/test01.vcf", "-n", expression };
-		SnpSiftCmdFilter snpsiftFilter = new SnpSiftCmdFilter(args);
-		List<VcfEntry> list = snpsiftFilter.filter("test/test01.vcf", expression, true);
+		String args[] = { "filter", "-f", "test/test01.vcf", "-n", expression };
+		List<VcfEntry> list = snpSiftFilter(args);
 
 		// Check that it satisfies the condition
 		if (verbose) System.out.println("Expression: '" + expression + "'");
@@ -1173,9 +1179,8 @@ public class TestCasesFilter extends TestCase {
 
 		// Filter data
 		String expression = "QUAL >= " + minQ;
-		String args[] = { "-f", "test/test01.vcf", "-p", expression };
-		SnpSiftCmdFilter snpsiftFilter = new SnpSiftCmdFilter(args);
-		List<VcfEntry> list = snpsiftFilter.filter("test/test01.vcf", expression, true);
+		String args[] = { "filter", "-f", "test/test01.vcf", "-p", expression };
+		List<VcfEntry> list = snpSiftFilter(args);
 
 		// Check that it satisfies the condition
 		if (verbose) System.out.println("Expression: '" + expression + "'");
@@ -1198,9 +1203,8 @@ public class TestCasesFilter extends TestCase {
 
 		// Filter data
 		String expression = "QUAL >= " + minQ;
-		String args[] = { "-f", "test/test01.vcf", "-a", "ADD", expression };
-		SnpSiftCmdFilter snpsiftFilter = new SnpSiftCmdFilter(args);
-		List<VcfEntry> list = snpsiftFilter.filter("test/test01.vcf", expression, true);
+		String args[] = { "filter", "-f", "test/test01.vcf", "-a", "ADD", expression };
+		List<VcfEntry> list = snpSiftFilter(args);
 
 		// Check that it satisfies the condition
 		if (verbose) System.out.println("Expression: '" + expression + "'");
@@ -1222,9 +1226,8 @@ public class TestCasesFilter extends TestCase {
 		// Filter data
 		String expression = "REF = 'A'";
 		String vcfFile = "test/downstream.vcf";
-		String args[] = { "-f", vcfFile, "-r", "SVM", expression }; // Remove FILTER string 'SVM' from all reference = 'A'
-		SnpSiftCmdFilter snpsiftFilter = new SnpSiftCmdFilter(args);
-		List<VcfEntry> list = snpsiftFilter.filter(vcfFile, expression, true);
+		String args[] = { "filter", "-f", vcfFile, "-r", "SVM", expression }; // Remove FILTER string 'SVM' from all reference = 'A'
+		List<VcfEntry> list = snpSiftFilter(args);
 
 		// Check that it satisfies the condition
 		if (verbose) System.out.println("Expression: '" + expression + "'");
@@ -1245,9 +1248,8 @@ public class TestCasesFilter extends TestCase {
 		// Filter data
 		String expression = "( EFF[*].EFFECT = 'SPLICE_SITE_ACCEPTOR' )";
 		String vcfFile = "test/test_jim.vcf";
-		String args[] = { "-f", vcfFile, "-n", expression }; // FILTER iNverse
-		SnpSiftCmdFilter snpsiftFilter = new SnpSiftCmdFilter(args);
-		List<VcfEntry> list = snpsiftFilter.filter(vcfFile, expression, true);
+		String args[] = { "filter", "-f", vcfFile, "-n", expression }; // FILTER iNverse
+		List<VcfEntry> list = snpSiftFilter(args);
 
 		// Check that it satisfies the condition
 		if (verbose) System.out.println("Expression: '" + expression + "'");
@@ -1270,9 +1272,8 @@ public class TestCasesFilter extends TestCase {
 		// Filter data
 		String expression = "( DP < 5 )";
 		String vcfFile = "test/test_rmfilter.vcf";
-		String args[] = { "-f", vcfFile, "--rmFilter", "DP_OK", expression }; // Remove 'PASS' if there is not enough depth
-		SnpSiftCmdFilter snpsiftFilter = new SnpSiftCmdFilter(args);
-		List<VcfEntry> list = snpsiftFilter.filter(vcfFile, expression, true);
+		String args[] = { "filter", "-f", vcfFile, "--rmFilter", "DP_OK", expression }; // Remove 'PASS' if there is not enough depth
+		List<VcfEntry> list = snpSiftFilter(args);
 
 		// Check that it satisfies the condition
 		if (verbose) System.out.println("Expression: '" + expression + "'");
@@ -1381,23 +1382,17 @@ public class TestCasesFilter extends TestCase {
 		Gpr.debug("Test");
 
 		String fileName = "./test/test46.vcf";
-		String args[] = { "-f", fileName, "exists dbNSFP_SIFT_pred" };
-
-		SnpSiftCmdFilter snpSiftFilter = new SnpSiftCmdFilter(args);
-		List<VcfEntry> ves = snpSiftFilter.run(true);
+		String args[] = { "filter", "-f", fileName, "exists dbNSFP_SIFT_pred" };
+		List<VcfEntry> ves = snpSiftFilter(args);
 
 		Assert.assertEquals(1, ves.size());
 	}
 
 	public void test_47() {
 		Gpr.debug("Test");
-
 		String fileName = "./test/test46.vcf";
 		String args[] = { "-f", fileName, "dbNSFP_SIFT_pred != 'D'" };
-
-		SnpSiftCmdFilter snpSiftFilter = new SnpSiftCmdFilter(args);
-		List<VcfEntry> ves = snpSiftFilter.run(true);
-
+		List<VcfEntry> ves = snpSiftFilter(args);
 		Assert.assertEquals(1, ves.size());
 		String field = ves.get(0).getInfo("dbNSFP_SIFT_pred");
 		Assert.assertEquals("T", field);
@@ -1686,8 +1681,7 @@ public class TestCasesFilter extends TestCase {
 		String expression = "( DP < 5 )";
 		String vcfFile = "test/test_rmfilter_2.vcf";
 		String args[] = { "-f", vcfFile, "--rmFilter", "DP_OK", expression }; // Remove 'PASS' if there is not enough depth
-		SnpSiftCmdFilter snpsiftFilter = new SnpSiftCmdFilter(args);
-		List<VcfEntry> list = snpsiftFilter.filter(vcfFile, expression, true);
+		List<VcfEntry> list = snpSiftFilter(args);
 
 		// Check that it satisfies the condition
 		if (verbose) System.out.println("Expression: '" + expression + "'");

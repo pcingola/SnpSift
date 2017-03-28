@@ -25,8 +25,13 @@ public class SnpSiftCmdFilterChrPos extends SnpSift {
 	String chrPosFile;
 	int countChrPosLines = 0, countChrPosAdded = 0, countVcfFiltered = 0;
 
+	public SnpSiftCmdFilterChrPos() {
+		super();
+		chrpos = new AutoHashMap<String, TIntHashSet>(new TIntHashSet());
+	}
+
 	public SnpSiftCmdFilterChrPos(String args[]) {
-		super(args, "filterChrPos");
+		super(args);
 		chrpos = new AutoHashMap<String, TIntHashSet>(new TIntHashSet());
 	}
 

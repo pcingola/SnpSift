@@ -17,8 +17,12 @@ public class SnpSiftCmdRmInfo extends SnpSift {
 	HashSet<String> infos;
 	boolean rmId;
 
+	public SnpSiftCmdRmInfo() {
+		super();
+	}
+
 	public SnpSiftCmdRmInfo(String[] args) {
-		super(args, "rmInfo");
+		super(args);
 	}
 
 	@Override

@@ -20,8 +20,12 @@ public class SnpSiftCmdRemoveReferenceGenotypes extends SnpSift {
 
 	String vcfFileName;
 
+	public SnpSiftCmdRemoveReferenceGenotypes() {
+		super();
+	}
+
 	public SnpSiftCmdRemoveReferenceGenotypes(String[] args) {
-		super(args, "RemoveReferenceGenotypes");
+		super(args);
 	}
 
 	@Override

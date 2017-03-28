@@ -43,8 +43,12 @@ public class SnpSiftCmdCaseControl extends SnpSift {
 	String posMin = "";
 	double pValueMin = 1.0;
 
+	public SnpSiftCmdCaseControl() {
+		super();
+	}
+
 	public SnpSiftCmdCaseControl(String args[]) {
-		super(args, "casecontrol");
+		super(args);
 	}
 
 	/**
@@ -368,7 +372,7 @@ public class SnpSiftCmdCaseControl extends SnpSift {
 					+ "\tchr: " + vcfEntry.getChromosomeName() //
 					+ "\tpos: " + (vcfEntry.getStart() + 1) //
 					+ (!vcfEntry.getId().isEmpty() ? "\tid: " + vcfEntry.getId() : "") //
-			);
+		);
 
 		if ((p > 0) && (p < pValueMin)) {
 			pValueMin = p;

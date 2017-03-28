@@ -26,8 +26,12 @@ public class SnpSiftCmdExtractFields extends SnpSift {
 	List<String> expressionStrs;
 	List<Expression> expressions;
 
+	public SnpSiftCmdExtractFields() {
+		super();
+	}
+
 	public SnpSiftCmdExtractFields(String args[]) {
-		super(args, "extractFields");
+		super(args);
 	}
 
 	/**
