@@ -29,6 +29,7 @@ import org.junit.runners.Suite.SuiteClasses;
 		TestCasesDbNsfp.class, // Test that use 'data type cache' files build in previous test
 		TestCasesIntervals.class, //
 		TestCasesExtractFields.class, //
+		TestCasesSort.class, //
 		TestCasesSplit.class, //
 		TestCasesPrivate.class, //
 		TestCasesGt.class, //

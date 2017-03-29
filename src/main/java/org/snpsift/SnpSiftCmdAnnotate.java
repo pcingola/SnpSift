@@ -229,18 +229,18 @@ public class SnpSiftCmdAnnotate extends SnpSift {
 			VcfHeader vcfDbHeader = vcfDb.readHeader();
 
 			// Add all corresponding INFO headers
-			for (VcfHeaderInfo vcfHeaderDb : vcfDbHeader.getVcfInfo()) {
+			for (VcfHeaderInfo vcfHeaderDb : vcfDbHeader.getVcfHeaderInfo()) {
 				String id = (prependInfoFieldName != null ? prependInfoFieldName : "") + vcfHeaderDb.getId();
 
 				// Get same vcfInfo from file to annotate
-				VcfHeaderInfo vcfHeaderFile = vcfFile.getVcfHeader().getVcfInfo(id);
+				VcfHeaderInfo vcfHeaderFile = vcfFile.getVcfHeader().getVcfHeaderInfo(id);
 
 				// Add header entry only if...
 				if (isAnnotateInfo(vcfHeaderDb) // It is used for annotations
 						&& !vcfHeaderDb.isImplicit() //  AND it is not an "implicit" header in Db (i.e. created automatically by VcfHeader class)
 						&& ((vcfHeaderFile == null) || vcfHeaderFile.isImplicit()) // AND it is not already added OR is already added, but it is implicit
 				) {
-					VcfHeaderInfo newHeader = VcfHeaderInfo.factory(vcfHeaderDb);
+					VcfHeaderInfo newHeader = new VcfHeaderInfo(vcfHeaderDb);
 					if (prependInfoFieldName != null) newHeader.setId(id); // Change ID?
 					headerInfos.add(newHeader);
 				}
@@ -380,7 +380,7 @@ public class SnpSiftCmdAnnotate extends SnpSift {
 		// Sanity check
 		if (dbType == null && dbFileName == null)
 
-		usage("Missing database option or file: [-dbSnp | -clinVar | database.vcf ]");
+			usage("Missing database option or file: [-dbSnp | -clinVar | database.vcf ]");
 	}
 
 	/**

@@ -3,6 +3,7 @@ package org.snpsift.testCases;
 import java.util.ArrayList;
 
 import org.snpeff.util.Gpr;
+import org.snpsift.SnpSift;
 import org.snpsift.SnpSiftCmdGt;
 
 import junit.framework.Assert;
@@ -29,8 +30,9 @@ public class TestCasesGt extends TestCase {
 		//---
 		// Run compress command
 		//---
-		String args[] = { file };
-		SnpSiftCmdGt cmd = new SnpSiftCmdGt(args);
+		String args[] = { "gt", file };
+		SnpSift snpSift = new SnpSift(args);
+		SnpSiftCmdGt cmd = (SnpSiftCmdGt) snpSift.cmd();
 		cmd.setVerbose(verbose);
 		cmd.setDebug(debug);
 		cmd.setSaveOutput(true);
@@ -43,8 +45,9 @@ public class TestCasesGt extends TestCase {
 		//---
 		// Run uncompress command
 		//---
-		String argsUn[] = { "-u", fileGt };
-		SnpSiftCmdGt cmdUn = new SnpSiftCmdGt(argsUn);
+		String argsUn[] = { "gt", "-u", fileGt };
+		snpSift = new SnpSift(argsUn);
+		SnpSiftCmdGt cmdUn = (SnpSiftCmdGt) snpSift.cmd();
 		cmdUn.setVerbose(verbose);
 		cmdUn.setDebug(debug);
 		cmdUn.setSaveOutput(true);
@@ -56,12 +59,12 @@ public class TestCasesGt extends TestCase {
 		//---
 
 		// Read all non-header lines form original file
-		ArrayList<String> ori = new ArrayList<String>();
+		ArrayList<String> ori = new ArrayList<>();
 		for (String line : Gpr.readFile(file).split("\n"))
 			if (!line.startsWith("#")) ori.add(line);
 
 		// Get all non-header lines form uncompressed file
-		ArrayList<String> un = new ArrayList<String>();
+		ArrayList<String> un = new ArrayList<>();
 		for (String line : outputUn.split("\n"))
 			if (!line.startsWith("#")) un.add(line);
 

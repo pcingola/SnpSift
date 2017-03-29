@@ -174,7 +174,7 @@ public abstract class AnnotateVcfDb {
 
 		// Find INFO form VcfHeader
 		if (dbVcf != null && dbVcf.getVcfHeader() != null) {
-			for (VcfHeaderInfo vcfInfo : dbVcf.getVcfHeader().getVcfInfo()) {
+			for (VcfHeaderInfo vcfInfo : dbVcf.getVcfHeader().getVcfHeaderInfo()) {
 
 				// Don't add implicit fields at this stage
 				// Note: They are added if they are found in a VCF entry later
@@ -354,7 +354,7 @@ public abstract class AnnotateVcfDb {
 	boolean isVcfInfoPerAllele(String fieldName) {
 		// Look up information and cache it
 		if (vcfInfoPerAllele.get(fieldName) == null) {
-			VcfHeaderInfo vcfInfo = dbVcf.getVcfHeader().getVcfInfo(fieldName);
+			VcfHeaderInfo vcfInfo = dbVcf.getVcfHeader().getVcfHeaderInfo(fieldName);
 			boolean isPerAllele = vcfInfo != null && (vcfInfo.isNumberOnePerAllele() || vcfInfo.isNumberAllAlleles());
 			vcfInfoPerAllele.put(fieldName, isPerAllele);
 		}
@@ -368,7 +368,7 @@ public abstract class AnnotateVcfDb {
 	boolean isVcfInfoPerAlleleRef(String fieldName) {
 		// Look up information and cache it
 		if (vcfInfoPerAlleleRef.get(fieldName) == null) {
-			VcfHeaderInfo vcfInfo = dbVcf.getVcfHeader().getVcfInfo(fieldName);
+			VcfHeaderInfo vcfInfo = dbVcf.getVcfHeader().getVcfHeaderInfo(fieldName);
 			boolean isPerAlleleRef = (vcfInfo != null && vcfInfo.isNumberAllAlleles());
 			vcfInfoPerAlleleRef.put(fieldName, isPerAlleleRef);
 

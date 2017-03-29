@@ -372,7 +372,7 @@ public class SnpSiftCmdCaseControl extends SnpSift {
 					+ "\tchr: " + vcfEntry.getChromosomeName() //
 					+ "\tpos: " + (vcfEntry.getStart() + 1) //
 					+ (!vcfEntry.getId().isEmpty() ? "\tid: " + vcfEntry.getId() : "") //
-		);
+			);
 
 		if ((p > 0) && (p < pValueMin)) {
 			pValueMin = p;

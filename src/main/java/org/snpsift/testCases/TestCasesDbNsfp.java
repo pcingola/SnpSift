@@ -8,6 +8,7 @@ import java.util.Map;
 import org.junit.Assert;
 import org.snpeff.util.Gpr;
 import org.snpeff.vcf.VcfEntry;
+import org.snpsift.SnpSift;
 import org.snpsift.SnpSiftCmdDbNsfp;
 import org.snpsift.fileIterator.DbNsfp;
 
@@ -38,7 +39,9 @@ public class TestCasesDbNsfp extends TestCase {
 
 		// Create command line
 		String args[] = argsList(dbFileName, fileName, extraArgs);
-		SnpSiftCmdDbNsfp cmd = new SnpSiftCmdDbNsfp(args);
+		SnpSift snpSift = new SnpSift(args);
+		SnpSiftCmdDbNsfp cmd = (SnpSiftCmdDbNsfp) snpSift.cmd();
+
 		cmd.setDbFileName(dbFileName);
 		cmd.setVerbose(verbose);
 		cmd.setSuppressOutput(!verbose);
@@ -60,7 +63,8 @@ public class TestCasesDbNsfp extends TestCase {
 
 		// Create command line
 		String args[] = argsList(dbFileName, fileName, extraArgs);
-		SnpSiftCmdDbNsfp cmd = new SnpSiftCmdDbNsfp(args);
+		SnpSift snpSift = new SnpSift(args);
+		SnpSiftCmdDbNsfp cmd = (SnpSiftCmdDbNsfp) snpSift.cmd();
 		cmd.setDbFileName(dbFileName);
 		cmd.setVerbose(verbose);
 		cmd.setSuppressOutput(!verbose);
@@ -76,7 +80,9 @@ public class TestCasesDbNsfp extends TestCase {
 	}
 
 	protected String[] argsList(String dbFileName, String fileName, String[] extraArgs) {
-		ArrayList<String> argsList = new ArrayList<String>();
+		ArrayList<String> argsList = new ArrayList<>();
+
+		argsList.add("dbNsfp");
 
 		if (defaultExtraArgs != null) {
 			for (String arg : defaultExtraArgs)

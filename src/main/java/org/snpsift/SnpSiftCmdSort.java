@@ -2,14 +2,15 @@ package org.snpsift;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.LinkedList;
 import java.util.List;
 
 import org.snpeff.fileIterator.LineFileIterator;
 import org.snpeff.fileIterator.VcfFileIterator;
 import org.snpeff.util.Timer;
 import org.snpeff.vcf.LineChrPos;
+import org.snpeff.vcf.VcfEntry;
 import org.snpeff.vcf.VcfHeader;
-import org.snpeff.vcf.VcfHeaderInfo;
 
 /**
  * Sort VCF file/s by chromosome & position
@@ -23,7 +24,7 @@ public class SnpSiftCmdSort extends SnpSift {
 
 	ArrayList<String> fileNames;
 	VcfHeader vcfHeader;
-	List<LineChrPos> vcfEntries;
+	List<LineChrPos> vcfLines;
 
 	public SnpSiftCmdSort() {
 		super();
@@ -34,10 +35,26 @@ public class SnpSiftCmdSort extends SnpSift {
 	}
 
 	/**
+	 * Create a list of VcfEntry using raw lines
+	 * Used for testing / debugging
+	 */
+	List<VcfEntry> createList() {
+		List<VcfEntry> ves = new LinkedList<>();
+		VcfFileIterator vcf = new VcfFileIterator();
+		vcf.setVcfHeader(vcfHeader);
+		int lineNum = 0;
+		for (LineChrPos lp : vcfLines) {
+			VcfEntry ve = new VcfEntry(vcf, lp.getLine(), lineNum++, true);
+			ves.add(ve);
+		}
+		return ves;
+	}
+
+	/**
 	 * Load VCF files
 	 */
 	public void loadVcfFiles() {
-		vcfEntries = new ArrayList<>();
+		vcfLines = new ArrayList<>();
 		vcfHeader = null;
 
 		// Iterate all files
@@ -46,11 +63,13 @@ public class SnpSiftCmdSort extends SnpSift {
 			processHeader(file);
 
 			// Read the whole file
+			// Note: We use a lightweight 'LineChrPos' instead of VcfEntry
+			//       for memory and speed efficiency
 			LineFileIterator lfi = new LineFileIterator(file);
 			for (String line : lfi)
 				if (!line.startsWith("#") && !line.isEmpty()) {
 					LineChrPos lineChrPos = new LineChrPos(line);
-					vcfEntries.add(lineChrPos);
+					vcfLines.add(lineChrPos);
 				}
 		}
 	}
@@ -63,7 +82,7 @@ public class SnpSiftCmdSort extends SnpSift {
 		if (args.length == 0) usage(null);
 
 		// Initialize
-		fileNames = new ArrayList<String>();
+		fileNames = new ArrayList<>();
 
 		// Parse args
 		for (int i = 0; i < args.length; i++) {
@@ -86,17 +105,7 @@ public class SnpSiftCmdSort extends SnpSift {
 
 		// Process header
 		if (vcfHeader == null) vcfHeader = vcf.getVcfHeader();
-		else {
-			VcfHeader newVcfHeader = vcf.getVcfHeader();
-
-			// Add missing headers
-			for (VcfHeaderInfo vhi : newVcfHeader.getVcfInfo())
-				if (!vhi.isImplicit() && !vcfHeader.hasInfo(vhi)) vcfHeader.addInfo(vhi);
-
-			// Add other lines
-			for (String line : newVcfHeader.getLines())
-				if (!VcfHeader.isInfoOrGtLine(line)) vcfHeader.addLine(line);
-		}
+		else vcfHeader.add(vcf.getVcfHeader());
 
 		vcf.close();
 	}
@@ -106,19 +115,26 @@ public class SnpSiftCmdSort extends SnpSift {
 	 */
 	@Override
 	public boolean run() {
-		loadVcfFiles();
-		sort();
+		run(false);
 		return true;
 	}
 
+	public List<VcfEntry> run(boolean createList) {
+		loadVcfFiles();
+		sort();
+		return (createList ? createList() : null);
+	}
+
 	void sort() {
-		Collections.sort(vcfEntries);
+		Collections.sort(vcfLines);
+
+		if (quiet) return; // Don't show results?
 
 		// Show header
 		System.out.println(vcfHeader);
 
 		// Show lines
-		for (LineChrPos lp : vcfEntries)
+		for (LineChrPos lp : vcfLines)
 			System.out.println(lp.getLine());
 	}
 

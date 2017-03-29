@@ -1391,7 +1391,7 @@ public class TestCasesFilter extends TestCase {
 	public void test_47() {
 		Gpr.debug("Test");
 		String fileName = "./test/test46.vcf";
-		String args[] = { "-f", fileName, "dbNSFP_SIFT_pred != 'D'" };
+		String args[] = { "filter", "-f", fileName, "dbNSFP_SIFT_pred != 'D'" };
 		List<VcfEntry> ves = snpSiftFilter(args);
 		Assert.assertEquals(1, ves.size());
 		String field = ves.get(0).getInfo("dbNSFP_SIFT_pred");
@@ -1680,7 +1680,7 @@ public class TestCasesFilter extends TestCase {
 		// Filter data
 		String expression = "( DP < 5 )";
 		String vcfFile = "test/test_rmfilter_2.vcf";
-		String args[] = { "-f", vcfFile, "--rmFilter", "DP_OK", expression }; // Remove 'PASS' if there is not enough depth
+		String args[] = { "filter", "-f", vcfFile, "--rmFilter", "DP_OK", expression }; // Remove 'PASS' if there is not enough depth
 		List<VcfEntry> list = snpSiftFilter(args);
 
 		// Check that it satisfies the condition

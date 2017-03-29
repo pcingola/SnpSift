@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.snpeff.vcf.VcfEntry;
+import org.snpsift.SnpSift;
 import org.snpsift.SnpSiftCmdFilterChrPos;
 
 import junit.framework.Assert;
@@ -22,7 +23,9 @@ public class TestCasesFilterChrPos extends TestCase {
 	protected String[] defaultExtraArgs = null;
 
 	protected String[] argsList(String chrPosFileName, String vcfFileName, String[] extraArgs) {
-		ArrayList<String> argsList = new ArrayList<String>();
+		ArrayList<String> argsList = new ArrayList<>();
+
+		argsList.add("filterChrPos");
 
 		if (defaultExtraArgs != null) {
 			for (String arg : defaultExtraArgs)
@@ -53,7 +56,8 @@ public class TestCasesFilterChrPos extends TestCase {
 		String args[] = argsList(chrPosFileName, vcfFileName, extraArgs);
 
 		// Iterate over VCF entries
-		SnpSiftCmdFilterChrPos snpSiftCmd = new SnpSiftCmdFilterChrPos(args);
+		SnpSift snpSift = new SnpSift(args);
+		SnpSiftCmdFilterChrPos snpSiftCmd = (SnpSiftCmdFilterChrPos) snpSift.cmd();
 		snpSiftCmd.setDebug(debug);
 		snpSiftCmd.setVerbose(verbose);
 		snpSiftCmd.setSuppressOutput(!verbose);

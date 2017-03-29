@@ -2,12 +2,13 @@ package org.snpsift.testCases;
 
 import java.util.List;
 
-import junit.framework.TestCase;
-
 import org.junit.Assert;
 import org.snpeff.util.Gpr;
 import org.snpeff.vcf.VcfEntry;
+import org.snpsift.SnpSift;
 import org.snpsift.caseControl.SnpSiftCmdCaseControl;
+
+import junit.framework.TestCase;
 
 /**
  * Case control test cases
@@ -20,8 +21,9 @@ public class TestCasesCaseControl extends TestCase {
 	public static boolean debug = false;
 
 	void checkCaseControlString(String vcfFile, String geoupStr, String casesStr, String controlStr) {
-		String args[] = { geoupStr, vcfFile };
-		SnpSiftCmdCaseControl cmd = new SnpSiftCmdCaseControl(args);
+		String args[] = { "caseControl", geoupStr, vcfFile };
+		SnpSift snpSift = new SnpSift(args);
+		SnpSiftCmdCaseControl cmd = (SnpSiftCmdCaseControl) snpSift.cmd();
 
 		List<VcfEntry> vcfEntries = cmd.run(true);
 		for (VcfEntry ve : vcfEntries) {
@@ -32,8 +34,9 @@ public class TestCasesCaseControl extends TestCase {
 	}
 
 	void checkCaseControlTfam(String vcfFile, String tfamFile, String casesStr, String controlStr) {
-		String args[] = { "-tfam", tfamFile, vcfFile };
-		SnpSiftCmdCaseControl cmd = new SnpSiftCmdCaseControl(args);
+		String args[] = { "caseControl", "-tfam", tfamFile, vcfFile };
+		SnpSift snpSift = new SnpSift(args);
+		SnpSiftCmdCaseControl cmd = (SnpSiftCmdCaseControl) snpSift.cmd();
 
 		List<VcfEntry> vcfEntries = cmd.run(true);
 		for (VcfEntry ve : vcfEntries) {
@@ -127,8 +130,9 @@ public class TestCasesCaseControl extends TestCase {
 		String tfamFile = "test/caseContorlStudies.tfam";
 		double maxDiff = 0.01;
 
-		String args[] = { "-chi2", "-tfam", tfamFile, vcfFile };
-		SnpSiftCmdCaseControl cmd = new SnpSiftCmdCaseControl(args);
+		String args[] = { "caseControl", "-chi2", "-tfam", tfamFile, vcfFile };
+		SnpSift snpSift = new SnpSift(args);
+		SnpSiftCmdCaseControl cmd = (SnpSiftCmdCaseControl) snpSift.cmd();
 
 		List<VcfEntry> vcfEntries = cmd.run(true);
 		for (VcfEntry ve : vcfEntries) {
@@ -196,8 +200,9 @@ public class TestCasesCaseControl extends TestCase {
 		String vcfFile = "test/caseContorlStudies.vcf";
 		String tfamFile = "test/caseContorlStudies.tfam";
 
-		String args[] = { "-tfam", tfamFile, vcfFile };
-		SnpSiftCmdCaseControl cmd = new SnpSiftCmdCaseControl(args);
+		String args[] = { "caseControl", "-tfam", tfamFile, vcfFile };
+		SnpSift snpSift = new SnpSift(args);
+		SnpSiftCmdCaseControl cmd = (SnpSiftCmdCaseControl) snpSift.cmd();
 
 		List<VcfEntry> vcfEntries = cmd.run(true);
 		for (VcfEntry ve : vcfEntries) {

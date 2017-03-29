@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.snpeff.util.Gpr;
 import org.snpeff.vcf.VcfEntry;
+import org.snpsift.SnpSift;
 import org.snpsift.SnpSiftCmdGeneSets;
 
 import junit.framework.Assert;
@@ -24,14 +25,16 @@ public class TestCasesGeneSets extends TestCase {
 
 		String msigDb = "test/c1.all.v4.0.symbols.gmt.gz";
 		String vcf = "test/test_geneSets.vcf";
-		String args[] = { msigDb, vcf };
+		String args[] = { "geneSets", msigDb, vcf };
 
 		// Run command
-		SnpSiftCmdGeneSets snpSiftCmdEpistasis = new SnpSiftCmdGeneSets(args);
-		snpSiftCmdEpistasis.setVerbose(verbose);
-		snpSiftCmdEpistasis.setSuppressOutput(!verbose);
-		snpSiftCmdEpistasis.setDebug(debug);
-		List<VcfEntry> results = snpSiftCmdEpistasis.run(true);
+		SnpSift snpSift = new SnpSift(args);
+		SnpSiftCmdGeneSets gs = (SnpSiftCmdGeneSets) snpSift.cmd();
+
+		gs.setVerbose(verbose);
+		gs.setSuppressOutput(!verbose);
+		gs.setDebug(debug);
+		List<VcfEntry> results = gs.run(true);
 
 		// Check
 		for (VcfEntry ve : results) {

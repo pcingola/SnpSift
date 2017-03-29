@@ -4,9 +4,9 @@ import org.snpeff.util.Gpr;
 import org.snpeff.vcf.VcfEntry;
 import org.snpeff.vcf.VcfGenotype;
 import org.snpeff.vcf.VcfHeader;
+import org.snpeff.vcf.VcfHeaderFormat;
 import org.snpeff.vcf.VcfHeaderInfo;
 import org.snpeff.vcf.VcfHeaderInfo.VcfInfoNumber;
-import org.snpeff.vcf.VcfHeaderFormatGenotype;
 import org.snpeff.vcf.VcfInfoType;
 import org.snpsift.lang.Value;
 import org.snpsift.lang.expression.FieldConstant.FieldConstantNames;
@@ -191,7 +191,7 @@ public class Field extends Expression {
 
 		// Is there a filed 'name'
 		if (vcfInfo == null) {
-			vcfInfo = vcfEntry.getVcfFileIterator().getVcfHeader().getVcfInfo(name);
+			vcfInfo = vcfEntry.getVcfFileIterator().getVcfHeader().getVcfHeaderInfo(name);
 			if (vcfInfo == null) return (String) fieldHeaderNotFound(vcfEntry);
 		}
 
@@ -225,16 +225,16 @@ public class Field extends Expression {
 		VcfHeader vcfHeader = vcfEntry.getVcfFileIterator().getVcfHeader();
 
 		// Is there a filed 'name'
-		vcfInfo = vcfHeader.getVcfInfo(name);
+		vcfInfo = vcfHeader.getVcfHeaderInfo(name);
 		if (vcfInfo != null) {
 			returnType = vcfInfo.getVcfInfoType();
 			number = vcfInfo.getNumber();
 			vcfInfoNumber = vcfInfo.getVcfInfoNumber();
 		} else {
 			// Is there a genotype 'name'
-			VcfHeaderFormatGenotype vcfInfoGenotype = vcfHeader.getVcfInfoGenotype(name);
-			if (vcfInfoGenotype != null) {
-				returnType = vcfInfoGenotype.getVcfInfoType();
+			VcfHeaderFormat vcfFormat = vcfHeader.getVcfHeaderFormat(name);
+			if (vcfFormat != null) {
+				returnType = vcfFormat.getVcfInfoType();
 			} else {
 				// Is this a special field name?
 				if (FieldConstant.isConstantField(name)) returnType = FieldConstantNames.valueOf(name).getType();
@@ -250,7 +250,7 @@ public class Field extends Expression {
 		if (returnType == VcfInfoType.UNKNOWN) {
 			// Is there a field 'name'
 			VcfHeader vcfHeader = vcfGenotype.getVcfEntry().getVcfFileIterator().getVcfHeader();
-			vcfInfo = vcfHeader.getVcfInfoGenotype(name);
+			vcfInfo = vcfHeader.getVcfHeaderFormat(name);
 			if (vcfInfo == null) {
 				// Is this a special field name?
 				if (FieldConstant.isConstantField(name)) returnType = FieldConstantNames.valueOf(name).getType();

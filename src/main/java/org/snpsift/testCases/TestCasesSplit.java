@@ -3,6 +3,7 @@ package org.snpsift.testCases;
 import java.io.File;
 
 import org.snpeff.util.Gpr;
+import org.snpsift.SnpSift;
 import org.snpsift.SnpSiftCmdSplit;
 
 import junit.framework.Assert;
@@ -30,8 +31,9 @@ public class TestCasesSplit extends TestCase {
 		(new File("test/test_split_01.19.vcf")).delete();
 
 		// Run command
-		String args[] = { file };
-		SnpSiftCmdSplit cmd = new SnpSiftCmdSplit(args);
+		String args[] = { "split", file };
+		SnpSift snpSift = new SnpSift(args);
+		SnpSiftCmdSplit cmd = (SnpSiftCmdSplit) snpSift.cmd();
 		cmd.setVerbose(verbose);
 		cmd.setDebug(debug);
 		cmd.run();
@@ -56,8 +58,9 @@ public class TestCasesSplit extends TestCase {
 		String file = "test/test_split_01.vcf";
 
 		// Run command
-		String args[] = { "-l", numLines + "", file };
-		SnpSiftCmdSplit cmd = new SnpSiftCmdSplit(args);
+		String args[] = { "split", "-l", numLines + "", file };
+		SnpSift snpSift = new SnpSift(args);
+		SnpSiftCmdSplit cmd = (SnpSiftCmdSplit) snpSift.cmd();
 		cmd.setVerbose(verbose);
 		cmd.setDebug(debug);
 		cmd.run();
@@ -87,8 +90,9 @@ public class TestCasesSplit extends TestCase {
 		(new File("test/test_split_01.19.vcf")).delete();
 
 		// Run command
-		String args[] = { file };
-		SnpSiftCmdSplit cmd = new SnpSiftCmdSplit(args);
+		String args[] = { "split", file };
+		SnpSift snpSift = new SnpSift(args);
+		SnpSiftCmdSplit cmd = (SnpSiftCmdSplit) snpSift.cmd();
 		cmd.setVerbose(verbose);
 		cmd.setDebug(debug);
 		cmd.run();
@@ -96,8 +100,9 @@ public class TestCasesSplit extends TestCase {
 		//---
 		// Join
 		//---
-		String argsJoin[] = { "-j", "test/test_split_01.Y.vcf", "test/test_split_01.19.vcf" };
-		cmd = new SnpSiftCmdSplit(argsJoin);
+		String argsJoin[] = { "split", "-j", "test/test_split_01.Y.vcf", "test/test_split_01.19.vcf" };
+		snpSift = new SnpSift(argsJoin);
+		cmd = (SnpSiftCmdSplit) snpSift.cmd();
 		cmd.setVerbose(true);
 		cmd.setDebug(debug);
 		String joinedFile = cmd.join(true);

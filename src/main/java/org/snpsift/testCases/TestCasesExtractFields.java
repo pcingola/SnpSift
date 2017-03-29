@@ -6,6 +6,7 @@ import org.snpeff.util.Gpr;
 import org.snpeff.vcf.VcfEffect;
 import org.snpeff.vcf.VcfHeader;
 import org.snpeff.vcf.VcfHeaderInfo;
+import org.snpsift.SnpSift;
 import org.snpsift.SnpSiftCmdExtractFields;
 
 import junit.framework.Assert;
@@ -24,8 +25,9 @@ public class TestCasesExtractFields extends TestCase {
 	 * Extract fields and return the output lines
 	 */
 	List<String> extract(String vcfFileName, String fieldExpression) {
-		String args[] = { vcfFileName, fieldExpression };
-		SnpSiftCmdExtractFields ssef = new SnpSiftCmdExtractFields(args);
+		String args[] = { "extractFields", vcfFileName, fieldExpression };
+		SnpSift snpSift = new SnpSift(args);
+		SnpSiftCmdExtractFields ssef = (SnpSiftCmdExtractFields) snpSift.cmd();
 
 		List<String> linesList = ssef.run(true);
 
@@ -71,7 +73,7 @@ public class TestCasesExtractFields extends TestCase {
 		if (debug) System.out.println("ANN:");
 		for (String annField : VcfEffect.ANN_FIELD_NAMES) {
 			annField = "ANN." + annField;
-			VcfHeaderInfo vi = vcfHeader.getVcfInfo(annField);
+			VcfHeaderInfo vi = vcfHeader.getVcfHeaderInfo(annField);
 			if (debug) System.out.println("\t" + annField + "\t" + vi);
 			Assert.assertTrue("Cannot find INFO header for field '" + annField + "'", vi != null);
 		}
@@ -80,7 +82,7 @@ public class TestCasesExtractFields extends TestCase {
 		if (debug) System.out.println("EFF:");
 		for (String effField : VcfEffect.EFF_FIELD_NAMES) {
 			effField = "EFF." + effField;
-			VcfHeaderInfo vi = vcfHeader.getVcfInfo(effField);
+			VcfHeaderInfo vi = vcfHeader.getVcfHeaderInfo(effField);
 			if (debug) System.out.println("\t" + effField + "\t" + vi);
 			Assert.assertTrue("Cannot find INFO header for field '" + effField + "'", vi != null);
 		}

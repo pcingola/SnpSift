@@ -1,10 +1,12 @@
 package org.snpsift.testCases;
 
-import org.snpeff.fileIterator.VcfFileIterator;
+import java.util.List;
+
+import org.junit.Assert;
 import org.snpeff.util.Gpr;
 import org.snpeff.vcf.VcfEntry;
-import org.snpeff.vcf.VcfHeader;
-import org.snpeff.vcf.VcfHeaderInfo;
+import org.snpsift.SnpSift;
+import org.snpsift.caseControl.SnpSiftCmdCaseControl;
 
 import junit.framework.TestCase;
 
@@ -21,27 +23,34 @@ public class TestCasesZzz extends TestCase {
 	public TestCasesZzz() {
 	}
 
-	/**
-	 * Vcf Header bug: FORMAT and INFO having the same ID
-	 */
-	public void test_36_info_format_id_collision() {
-		Gpr.debug("Test");
+	void checkCaseControlString(String vcfFile, String geoupStr, String casesStr, String controlStr) {
+		String args[] = { geoupStr, vcfFile };
+		SnpSiftCmdCaseControl cmd = new SnpSiftCmdCaseControl(args);
 
-		VcfFileIterator vcf = new VcfFileIterator("test/test_36_info_format_id_collision_01.vcf");
-		for (VcfEntry ve : vcf) {
-			if (vcf.isHeadeSection()) {
-				VcfHeader vcfHeader = vcf.getVcfHeader();
-				System.out.println(vcfHeader);
-
-				VcfHeader newVcfHeader = vcf.getVcfHeader();
-				for (VcfHeaderInfo vhi : newVcfHeader.getVcfInfo())
-					if (!vhi.isImplicit() && !vcfHeader.hasInfo(vhi)) {
-						Gpr.debug("VHI: " + vhi);
-						vcfHeader.addInfo(vhi);
-					}
-
-			}
+		List<VcfEntry> vcfEntries = cmd.run(true);
+		for (VcfEntry ve : vcfEntries) {
+			if (verbose) System.out.println(ve);
+			Assert.assertEquals(casesStr, ve.getInfo(SnpSiftCmdCaseControl.VCF_INFO_CASE));
+			Assert.assertEquals(controlStr, ve.getInfo(SnpSiftCmdCaseControl.VCF_INFO_CONTROL));
 		}
+	}
+
+	void checkCaseControlTfam(String vcfFile, String tfamFile, String casesStr, String controlStr) {
+		String args[] = { "caseControl", "-tfam", tfamFile, vcfFile };
+		SnpSift snpSift = new SnpSift(args);
+		SnpSiftCmdCaseControl cmd = (SnpSiftCmdCaseControl) snpSift.cmd();
+
+		List<VcfEntry> vcfEntries = cmd.run(true);
+		for (VcfEntry ve : vcfEntries) {
+			if (verbose) System.out.println(ve);
+			Assert.assertEquals(casesStr, ve.getInfo(SnpSiftCmdCaseControl.VCF_INFO_CASE));
+			Assert.assertEquals(controlStr, ve.getInfo(SnpSiftCmdCaseControl.VCF_INFO_CONTROL));
+		}
+	}
+
+	public void test_01() {
+		Gpr.debug("Test");
+		checkCaseControlTfam("test/test.private.01.vcf", "test/test.private.01.tfam", "0,0,0", "0,0,0");
 	}
 
 }

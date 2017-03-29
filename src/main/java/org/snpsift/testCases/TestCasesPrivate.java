@@ -5,6 +5,7 @@ import java.util.List;
 import org.junit.Assert;
 import org.snpeff.util.Gpr;
 import org.snpeff.vcf.VcfEntry;
+import org.snpsift.SnpSift;
 import org.snpsift.SnpSiftCmdPrivate;
 
 import junit.framework.TestCase;
@@ -20,8 +21,9 @@ public class TestCasesPrivate extends TestCase {
 	public static boolean verbose = false;
 
 	void checkPrivate(String vcfFile, String tfamFile, boolean isPrivate) {
-		String args[] = { tfamFile, vcfFile };
-		SnpSiftCmdPrivate cmd = new SnpSiftCmdPrivate(args);
+		String args[] = { "private", tfamFile, vcfFile };
+		SnpSift snpSift = new SnpSift(args);
+		SnpSiftCmdPrivate cmd = (SnpSiftCmdPrivate) snpSift.cmd();
 
 		int count = 0;
 		List<VcfEntry> vcfEntries = cmd.run(true);

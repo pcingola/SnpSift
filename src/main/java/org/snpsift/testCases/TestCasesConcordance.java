@@ -1,11 +1,12 @@
 package org.snpsift.testCases;
 
-import junit.framework.Assert;
-import junit.framework.TestCase;
-
 import org.snpeff.stats.CountByType;
 import org.snpeff.util.Gpr;
+import org.snpsift.SnpSift;
 import org.snpsift.SnpSiftCmdConcordance;
+
+import junit.framework.Assert;
+import junit.framework.TestCase;
 
 /**
  * Concordance test cases
@@ -19,9 +20,11 @@ public class TestCasesConcordance extends TestCase {
 
 	SnpSiftCmdConcordance checkConcordance(String refVcfFile, String vcfFile) {
 		if (verbose) System.err.println("\n\nConcordance between: " + refVcfFile + "\t" + vcfFile);
-		String args[] = { refVcfFile, vcfFile };
+		String args[] = { "concordance", refVcfFile, vcfFile };
 
-		SnpSiftCmdConcordance ssconc = new SnpSiftCmdConcordance(args);
+		SnpSift snpSift = new SnpSift(args);
+		SnpSiftCmdConcordance ssconc = (SnpSiftCmdConcordance) snpSift.cmd();
+
 		ssconc.setVerbose(verbose);
 		ssconc.setSuppressOutput(!verbose);
 		ssconc.setDebug(debug);

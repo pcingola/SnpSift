@@ -10,6 +10,7 @@ import java.util.List;
 import org.junit.Assert;
 import org.snpeff.util.Gpr;
 import org.snpeff.vcf.VcfEntry;
+import org.snpsift.SnpSift;
 import org.snpsift.SnpSiftCmdAnnotate;
 
 import junit.framework.TestCase;
@@ -43,8 +44,10 @@ public class TestCasesAnnotate extends TestCase {
 		// Create command line
 		String args[] = argsList(dbFileName, fileName, extraArgs);
 
-		// Iterate over VCF entries
-		SnpSiftCmdAnnotate snpSiftAnnotate = new SnpSiftCmdAnnotate(args);
+		// Create command
+		SnpSift snpSift = new SnpSift(args);
+		SnpSiftCmdAnnotate snpSiftAnnotate = (SnpSiftCmdAnnotate) snpSift.cmd();
+
 		snpSiftAnnotate.setDebug(debug);
 		snpSiftAnnotate.setVerbose(verbose);
 		snpSiftAnnotate.setSuppressOutput(!verbose);
@@ -67,15 +70,17 @@ public class TestCasesAnnotate extends TestCase {
 		// Create command line
 		String args[] = argsList(dbFileName, fileName, extraArgs);
 
-		// Iterate over VCF entries
-		SnpSiftCmdAnnotate snpSift = new SnpSiftCmdAnnotate(args);
-		snpSift.setDebug(debug);
-		snpSift.setVerbose(verbose);
-		snpSift.setSaveOutput(true);
-		snpSift.run();
+		// Create command
+		SnpSift snpSift = new SnpSift(args);
+		SnpSiftCmdAnnotate snpSiftAnnotate = (SnpSiftCmdAnnotate) snpSift.cmd();
+
+		snpSiftAnnotate.setDebug(debug);
+		snpSiftAnnotate.setVerbose(verbose);
+		snpSiftAnnotate.setSaveOutput(true);
+		snpSiftAnnotate.run();
 
 		// Check
-		return snpSift.getOutput();
+		return snpSiftAnnotate.getOutput();
 	}
 
 	public void annotateTest(String dbFileName, String fileName) {
@@ -108,7 +113,9 @@ public class TestCasesAnnotate extends TestCase {
 	}
 
 	protected String[] argsList(String dbFileName, String fileName, String[] extraArgs) {
-		ArrayList<String> argsList = new ArrayList<String>();
+		ArrayList<String> argsList = new ArrayList<>();
+
+		argsList.add("annotate");
 
 		if (defaultExtraArgs != null) {
 			for (String arg : defaultExtraArgs)
@@ -182,16 +189,17 @@ public class TestCasesAnnotate extends TestCase {
 		List<VcfEntry> results = annotate(dbFileName, fileName, null);
 
 		// Check
-		Assert.assertEquals("PREVIOUS=annotation;TEST=yes" //
-				+ ";ABE=0.678" //
-				+ ";ABZ=47.762" //
-				+ ";AF=0.002" //
-				+ ";AN=488" //
-				+ ";AOI=-410.122" //
-				+ ";AOZ=-399.575" //
-				+ ";IOD=0.000" //
-				+ ";OBS=4,1,1636,2011,3,1,6780,9441" //
-				+ ";RSPOS=16346045" //
+		Assert.assertEquals(
+				"PREVIOUS=annotation;TEST=yes" //
+						+ ";ABE=0.678" //
+						+ ";ABZ=47.762" //
+						+ ";AF=0.002" //
+						+ ";AN=488" //
+						+ ";AOI=-410.122" //
+						+ ";AOZ=-399.575" //
+						+ ";IOD=0.000" //
+						+ ";OBS=4,1,1636,2011,3,1,6780,9441" //
+						+ ";RSPOS=16346045" //
 				, results.get(0).getInfoStr() //
 		);
 	}
@@ -368,7 +376,7 @@ public class TestCasesAnnotate extends TestCase {
 		String fileName = "./test/annotate_oder_snp.vcf";
 
 		// Fake annotations (in files)
-		HashMap<String, String> types = new HashMap<String, String>();
+		HashMap<String, String> types = new HashMap<>();
 		types.put("0", "zero");
 		types.put("1", "first");
 		types.put("2", "second");

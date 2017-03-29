@@ -68,7 +68,7 @@ public class FieldLof extends FieldSub {
 
 		// Is there a field 'name'
 		String headerName = infoFieldName + "." + name;
-		VcfHeaderInfo vcfInfo = vcfHeader.getVcfInfo(headerName);
+		VcfHeaderInfo vcfInfo = vcfHeader.getVcfHeaderInfo(headerName);
 		if (vcfInfo != null) returnType = vcfInfo.getVcfInfoType();
 		else throw new RuntimeException("Sub-field '" + headerName + "' not found in VCF header");
 
