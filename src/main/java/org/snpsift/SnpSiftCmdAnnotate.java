@@ -240,7 +240,7 @@ public class SnpSiftCmdAnnotate extends SnpSift {
 						&& !vcfHeaderDb.isImplicit() //  AND it is not an "implicit" header in Db (i.e. created automatically by VcfHeader class)
 						&& ((vcfHeaderFile == null) || vcfHeaderFile.isImplicit()) // AND it is not already added OR is already added, but it is implicit
 				) {
-					VcfHeaderInfo newHeader = new VcfHeaderInfo(vcfHeaderDb);
+					VcfHeaderInfo newHeader = VcfHeaderInfo.factory(vcfHeaderDb);
 					if (prependInfoFieldName != null) newHeader.setId(id); // Change ID?
 					headerInfos.add(newHeader);
 				}

@@ -1,13 +1,11 @@
 package org.snpsift.testCases;
 
-import java.util.List;
-
+import org.snpeff.fileIterator.VcfFileIterator;
 import org.snpeff.util.Gpr;
 import org.snpeff.vcf.VcfEntry;
-import org.snpsift.SnpSift;
-import org.snpsift.SnpSiftCmdFilter;
+import org.snpeff.vcf.VcfHeader;
+import org.snpeff.vcf.VcfHeaderInfo;
 
-import junit.framework.Assert;
 import junit.framework.TestCase;
 
 /**
@@ -23,32 +21,26 @@ public class TestCasesZzz extends TestCase {
 	public TestCasesZzz() {
 	}
 
-	List<VcfEntry> snpSiftFilter(String args[]) {
-		SnpSift snpSift = new SnpSift(args);
-		SnpSiftCmdFilter snpSiftFilter = (SnpSiftCmdFilter) snpSift.cmd();
-		return snpSiftFilter.run(true);
-	}
-
 	/**
-	 * Inverse of a filter
+	 * Vcf Header bug: FORMAT and INFO having the same ID
 	 */
-	public void test_36() {
+	public void test_36_info_format_id_collision() {
 		Gpr.debug("Test");
 
-		double minQ = 50;
+		VcfFileIterator vcf = new VcfFileIterator("test/test_36_info_format_id_collision_01.vcf");
+		for (VcfEntry ve : vcf) {
+			if (vcf.isHeadeSection()) {
+				VcfHeader vcfHeader = vcf.getVcfHeader();
+				System.out.println(vcfHeader);
 
-		// Filter data
-		String expression = "QUAL >= " + minQ;
-		String args[] = { "filter", "-f", "test/test01.vcf", "-n", expression };
-		List<VcfEntry> list = snpSiftFilter(args);
+				VcfHeader newVcfHeader = vcf.getVcfHeader();
+				for (VcfHeaderInfo vhi : newVcfHeader.getVcfInfo())
+					if (!vhi.isImplicit() && !vcfHeader.hasInfo(vhi)) {
+						Gpr.debug("VHI: " + vhi);
+						vcfHeader.addInfo(vhi);
+					}
 
-		// Check that it satisfies the condition
-		if (verbose) System.out.println("Expression: '" + expression + "'");
-		Assert.assertNotNull(list);
-		Assert.assertTrue(list.size() > 0);
-		for (VcfEntry vcfEntry : list) {
-			if (verbose) System.out.println("\t" + vcfEntry);
-			Assert.assertTrue(vcfEntry.getQuality() < minQ);
+			}
 		}
 	}
 

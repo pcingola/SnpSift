@@ -91,7 +91,7 @@ public class SnpSiftCmdSort extends SnpSift {
 
 			// Add missing headers
 			for (VcfHeaderInfo vhi : newVcfHeader.getVcfInfo())
-				if (!vhi.isImplicit() && !vcfHeader.hasHeaderInfo(vhi)) vcfHeader.add(vhi);
+				if (!vhi.isImplicit() && !vcfHeader.hasInfo(vhi)) vcfHeader.addInfo(vhi);
 
 			// Add other lines
 			for (String line : newVcfHeader.getLines())

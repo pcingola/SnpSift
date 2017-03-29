@@ -6,7 +6,7 @@ import org.snpeff.vcf.VcfGenotype;
 import org.snpeff.vcf.VcfHeader;
 import org.snpeff.vcf.VcfHeaderInfo;
 import org.snpeff.vcf.VcfHeaderInfo.VcfInfoNumber;
-import org.snpeff.vcf.VcfHeaderInfoGenotype;
+import org.snpeff.vcf.VcfHeaderFormatGenotype;
 import org.snpeff.vcf.VcfInfoType;
 import org.snpsift.lang.Value;
 import org.snpsift.lang.expression.FieldConstant.FieldConstantNames;
@@ -232,7 +232,7 @@ public class Field extends Expression {
 			vcfInfoNumber = vcfInfo.getVcfInfoNumber();
 		} else {
 			// Is there a genotype 'name'
-			VcfHeaderInfoGenotype vcfInfoGenotype = vcfHeader.getVcfInfoGenotype(name);
+			VcfHeaderFormatGenotype vcfInfoGenotype = vcfHeader.getVcfInfoGenotype(name);
 			if (vcfInfoGenotype != null) {
 				returnType = vcfInfoGenotype.getVcfInfoType();
 			} else {
