@@ -48,7 +48,7 @@ public class SnpSiftCmdAnnotate extends SnpSift {
 	protected VcfFileIterator vcfFile;
 	protected AnnotateVcfDb annotateDb;
 
-	protected SnpSiftCmdAnnotate() {
+	public SnpSiftCmdAnnotate() {
 		super();
 	}
 
@@ -88,6 +88,10 @@ public class SnpSiftCmdAnnotate extends SnpSift {
 
 				// Annotate variants
 				annotate(vcfEntry);
+
+				// Show
+				if (!suppressOutput) print(vcfEntry);
+
 				if (list != null) list.add(vcfEntry);
 
 				// Update chr:pos
@@ -126,9 +130,6 @@ public class SnpSiftCmdAnnotate extends SnpSift {
 				throw new RuntimeException(e);
 			}
 		}
-
-		// Show
-		if (!suppressOutput) print(vcfEntry);
 
 		if (annotated) countAnnotated++;
 		count++;
