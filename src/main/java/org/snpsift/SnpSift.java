@@ -142,7 +142,7 @@ public class SnpSift implements VcfAnnotator {
 		}
 
 		// Parse command specific arguments
-		cmd.parseArgs(shiftArgs);
+		if (shiftArgs != null) cmd.parseArgs(shiftArgs);
 		return cmd;
 	}
 
@@ -455,6 +455,7 @@ public class SnpSift implements VcfAnnotator {
 	 */
 	@Override
 	public void parseArgs(String[] args) {
+		if (args == null) return; // Commands may be parsed later
 		if (args.length < 1) usage(null);
 
 		// Get command
@@ -562,7 +563,7 @@ public class SnpSift implements VcfAnnotator {
 	 */
 	protected String processVcfHeader(VcfFileIterator vcf) {
 		if (vcfHeaderProcessed // Already processed? Skip
-				|| (!vcf.isHeadeSection() && vcf.getLineNum() > 1) // First line is always a header
+				|| (!vcf.isHeadeSection() && vcf.getLineNum() > 1) // First line is header (when missing)
 		) return "";
 
 		// Add lines to header
