@@ -62,7 +62,7 @@ public class SnpSiftCmdAnnotate extends SnpSift {
 	 * @param createList : If true, return a list with all annotated entries (used for test cases & debugging)
 	 */
 	ArrayList<VcfEntry> annotate(boolean createList) {
-		ArrayList<VcfEntry> list = (createList ? new ArrayList<VcfEntry>() : null);
+		ArrayList<VcfEntry> list = (createList ? new ArrayList<>() : null);
 		if (verbose) Timer.showStdErr("Annotating entries from: '" + vcfInputFile + "'");
 
 		vcfFile = openVcfInputFile(); // Open input VCF
