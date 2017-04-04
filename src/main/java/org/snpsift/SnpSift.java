@@ -9,6 +9,7 @@ import org.snpeff.SnpEff;
 import org.snpeff.fileIterator.VcfFileIterator;
 import org.snpeff.snpEffect.Config;
 import org.snpeff.snpEffect.VcfAnnotator;
+import org.snpeff.snpEffect.commandLine.CommandLine;
 import org.snpeff.util.Download;
 import org.snpeff.util.Gpr;
 import org.snpeff.util.Timer;
@@ -23,7 +24,7 @@ import org.snpsift.hwe.SnpSiftCmdHwe;
  *
  * @author pablocingolani
  */
-public class SnpSift implements VcfAnnotator {
+public class SnpSift implements VcfAnnotator, CommandLine {
 
 	// Version info (in sync with SnpEff)
 	public static final String BUILD = SnpEff.BUILD;
