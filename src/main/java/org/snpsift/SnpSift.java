@@ -193,6 +193,7 @@ public class SnpSift implements VcfAnnotator, CommandLine {
 
 		case "gtf":
 		case "filtergt":
+		case "gtfilter":
 			return new SnpSiftCmdFilterGt();
 
 		case "gt":
