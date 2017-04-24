@@ -179,8 +179,8 @@ public class VcfLd {
 			if (!gb.isPhased()) throw new RuntimeException("Only phased genotypes can be used\n\tvcfEntryB:\t" + vcfEntryB);
 
 			// Count genotypes on both strands
-			byte genA[] = ga.getGenotype();
-			byte genB[] = gb.getGenotype();
+			int genA[] = ga.getGenotype();
+			int genB[] = gb.getGenotype();
 			countGenotypes(genA[0], genB[0]); // One strand (remember that the vcfEntries are phased)
 			countGenotypes(genA[1], genB[1]); // Another strand
 			Gpr.debug(ga + "\tgenA: " + genA[0] + " , " + genA[1] + "\tcountA: " + countA);
