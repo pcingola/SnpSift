@@ -15,7 +15,6 @@ import org.snpeff.util.Gpr;
 import org.snpeff.util.Timer;
 import org.snpeff.vcf.VcfEntry;
 import org.snpeff.vcf.VcfHeaderEntry;
-import org.snpsift.caseControl.SnpSiftCmdCaseControl;
 import org.snpsift.caseControl.SnpSiftCmdCaseControlSummary;
 import org.snpsift.hwe.SnpSiftCmdHwe;
 
@@ -129,6 +128,7 @@ public class SnpSift implements VcfAnnotator, CommandLine {
 
 		// Copy parsed parameters
 		copyValues(cmd);
+		cmd.init();
 
 		// Help? Show help and exit
 		if (help) {
@@ -309,6 +309,9 @@ public class SnpSift implements VcfAnnotator, CommandLine {
 		cmd.suppressOutput = suppressOutput;
 		cmd.vcfHeaderAddProgramVersion = vcfHeaderAddProgramVersion;
 		cmd.verbose = verbose;
+
+		// This value may be set at init()
+		if (cmd.dbType == null || cmd.dbType.isEmpty()) cmd.dbType = dbType;
 	}
 
 	/**
@@ -353,8 +356,8 @@ public class SnpSift implements VcfAnnotator, CommandLine {
 
 			// Still empty: Something is wrong!
 			if (dbFileName == null || dbFileName.isEmpty()) {
-				String coordinates = config.getCoordinates();
-				fatalError("Database file name is empty. Missing '" + Config.KEY_DATABASE_LOCAL + "." + dbType + "." + coordinates + "' entry in SnpEff's config file?");
+				String confgiKey = config.getDatabaseLocalKey(dbType);
+				fatalError("Database file name not found. Missing '" + confgiKey + "' entry in SnpEff's config file?");
 			}
 		}
 
@@ -544,12 +547,6 @@ public class SnpSift implements VcfAnnotator, CommandLine {
 		}
 
 		shiftArgs = argsList.toArray(new String[0]);
-
-		// Show version and command
-		if (!help && (verbose || debug)) {
-			Timer.showStdErr("SnpSift version " + VERSION);
-			Timer.showStdErr("Command: '" + command + "'");
-		}
 	}
 
 	/**

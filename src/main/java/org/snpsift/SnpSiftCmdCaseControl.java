@@ -1,4 +1,4 @@
-package org.snpsift.caseControl;
+package org.snpsift;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,7 +14,6 @@ import org.snpeff.util.Timer;
 import org.snpeff.vcf.VcfEntry;
 import org.snpeff.vcf.VcfGenotype;
 import org.snpeff.vcf.VcfHeaderEntry;
-import org.snpsift.SnpSift;
 
 /**
  * Count number of cases and controls

@@ -181,6 +181,7 @@ public class SnpSiftCmdGwasCatalog extends SnpSift {
 		super.init();
 		needsConfig = true;
 		needsDb = true;
+		needsGenome = true;
 		dbTabix = false;
 		dbType = "gwascatalog";
 	}
@@ -190,6 +191,8 @@ public class SnpSiftCmdGwasCatalog extends SnpSift {
 	 */
 	@Override
 	public void parseArgs(String[] args) {
+		if (args.length < 1) usage(null);
+
 		for (int i = 0; i < args.length; i++) {
 			String arg = args[i];
 			if (isOpt(arg) && (arg.equals("-h") || arg.equals("-help"))) usage(null);
@@ -239,7 +242,7 @@ public class SnpSiftCmdGwasCatalog extends SnpSift {
 		}
 
 		showVersion();
-		System.err.println("Usage: java -jar " + SnpSift.class.getSimpleName() + ".jar gwasCat [file.vcf] > newFile.vcf.");
+		System.err.println("Usage: java -jar " + SnpSift.class.getSimpleName() + ".jar gwasCat [-db path/to/gwascat.txt] [file.vcf] > newFile.vcf.");
 		usageGenericAndDb();
 
 		System.exit(1);

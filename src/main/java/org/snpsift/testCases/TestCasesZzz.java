@@ -6,7 +6,7 @@ import org.junit.Assert;
 import org.snpeff.util.Gpr;
 import org.snpeff.vcf.VcfEntry;
 import org.snpsift.SnpSift;
-import org.snpsift.caseControl.SnpSiftCmdCaseControl;
+import org.snpsift.SnpSiftCmdCaseControl;
 
 import junit.framework.TestCase;
 
