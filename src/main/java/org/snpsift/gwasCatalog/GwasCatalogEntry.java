@@ -103,7 +103,7 @@ public class GwasCatalogEntry {
 				+ "cnv                    : " + cnv + "\n" //
 				+ "mappedTrait            : " + mappedTrait + "\n" //
 				+ "mappedTraitUri         : " + mappedTraitUri + "\n" //
-				;
+		;
 	}
 
 }

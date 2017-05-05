@@ -1,5 +1,6 @@
 package org.snpsift;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -49,7 +50,7 @@ public class SnpSiftCmdGwasCatalog extends SnpSift {
 	/**
 	 * Annotate input VCF file
 	 */
-	void annotate() {
+	List<VcfEntry> annotate(boolean saveResults) {
 		// Open file
 		VcfFileIterator vcf = openVcfInputFile();
 		vcf.setDebug(debug);
@@ -58,20 +59,22 @@ public class SnpSiftCmdGwasCatalog extends SnpSift {
 
 		int countAnnotated = 0, count = 0;
 		boolean showHeader = true;
+		List<VcfEntry> vcfEntries = saveResults ? new ArrayList<>() : null;
 
 		for (VcfEntry vcfEntry : vcf) {
 			// Show header?
 			if (showHeader) {
 				addHeaders(vcf);
 				String headerStr = vcf.getVcfHeader().toString();
-				if (!headerStr.isEmpty()) System.out.println(headerStr);
+				if (!headerStr.isEmpty()) print(headerStr);
 				showHeader = false;
 			}
 
 			boolean annotated = annotate(vcfEntry);
 
 			// Show entry
-			System.out.println(vcfEntry);
+			if (saveResults) vcfEntries.add(vcfEntry);
+			else print(vcfEntry);
 
 			if (annotated) countAnnotated++;
 			count++;
@@ -85,6 +88,8 @@ public class SnpSiftCmdGwasCatalog extends SnpSift {
 				+ "\n\tTotal entries           : " + count //
 				+ "\n\tPercent                 : " + String.format("%.2f%%", perc) //
 		);
+
+		return vcfEntries;
 	}
 
 	@Override
@@ -95,7 +100,7 @@ public class SnpSiftCmdGwasCatalog extends SnpSift {
 		// Query interval tree
 		for (Variant var : vcfEntry.variants()) {
 			// Skip non-variants and huge deletions
-			if (var.isVariant() || var.isStructuralHuge()) continue;
+			if (!var.isVariant() || var.isStructuralHuge()) continue;
 
 			Markers results = intervalForest.query(var);
 
@@ -128,7 +133,6 @@ public class SnpSiftCmdGwasCatalog extends SnpSift {
 
 	@Override
 	public boolean annotateInit(VcfFileIterator vcfFile) {
-
 		// Get database name from config file?
 		// Note this can happen when invoked a VcfAnnotator (e.g. form ClinEff)
 		if (dbFileName == null && config != null) {
@@ -138,11 +142,20 @@ public class SnpSiftCmdGwasCatalog extends SnpSift {
 		// Read database
 		readDb();
 
+		buildIntervalForest();
+
+		return true;
+	}
+
+	/**
+	 * Build interval forest from markers
+	 */
+	void buildIntervalForest() {
 		// Convert to markers
 		Genome genome = new Genome();
 		Markers markers = new Markers();
 		for (GwasCatalogEntry ge : gwasCatalog) {
-			ge.chrId = Chromosome.simpleName(ge.chrId); // Conver to to simple name (e.g. no 'chr')
+			ge.chrId = Chromosome.simpleName(ge.chrId); // Convert to to simple name (e.g. no 'chr')
 
 			int pos = ge.chrPos - 1; // Zero-based coordinates
 			Chromosome chr = genome.getOrCreateChromosome(ge.chrId);
@@ -156,8 +169,6 @@ public class SnpSiftCmdGwasCatalog extends SnpSift {
 		if (verbose) Timer.showStdErr("Creating interval tree for GWAS catalog");
 		intervalForest = new IntervalForest(markers);
 		intervalForest.build();
-
-		return true;
 	}
 
 	@Override
@@ -216,6 +227,11 @@ public class SnpSiftCmdGwasCatalog extends SnpSift {
 	 */
 	@Override
 	public boolean run() {
+		run(false);
+		return true;
+	}
+
+	public List<VcfEntry> run(boolean saveResults) {
 		// Read config
 		if (config == null) loadConfig();
 
@@ -227,8 +243,7 @@ public class SnpSiftCmdGwasCatalog extends SnpSift {
 				+ "\tDatabase file : '" + dbFileName + "'" //
 		);
 
-		annotate();
-		return true;
+		return annotate(saveResults);
 	}
 
 	/**

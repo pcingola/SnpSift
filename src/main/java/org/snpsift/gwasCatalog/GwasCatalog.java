@@ -23,8 +23,8 @@ public class GwasCatalog implements Iterable<GwasCatalogEntry> {
 	MultivalueHashMap<String, GwasCatalogEntry> gwasEntryByRs; // Entry by RS number
 
 	public GwasCatalog(String fileName) {
-		gwasEntryByChrPos = new MultivalueHashMap<String, GwasCatalogEntry>();
-		gwasEntryByRs = new MultivalueHashMap<String, GwasCatalogEntry>();
+		gwasEntryByChrPos = new MultivalueHashMap<>();
+		gwasEntryByRs = new MultivalueHashMap<>();
 		load(fileName);
 	}
 
@@ -83,7 +83,9 @@ public class GwasCatalog implements Iterable<GwasCatalogEntry> {
 
 			// Add entries by RS
 			for (String rs : ge.snps.split(","))
-				if (!rs.equals("NR")) gwasEntryByRs.add(rs, ge);
+				if (!rs.isEmpty() && !rs.equals("NR")) {
+					gwasEntryByRs.add(rs, ge);
+				}
 		}
 	}
 }
