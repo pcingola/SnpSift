@@ -122,7 +122,7 @@ public class SnpSiftCmdDbNsfp extends SnpSift {
 	 * Annotate a VCF file using dbNSFP
 	 */
 	ArrayList<VcfEntry> annotate(boolean createList) {
-		ArrayList<VcfEntry> list = (createList ? new ArrayList<VcfEntry>() : null);
+		ArrayList<VcfEntry> list = (createList ? new ArrayList<>() : null);
 
 		// Open VCF file
 		vcfFile = new VcfFileIterator(vcfFileName);
@@ -318,7 +318,7 @@ public class SnpSiftCmdDbNsfp extends SnpSift {
 			String type = (types[i] != null ? types[i].toString() : "String");
 			fieldsType.put(fieldNames[i], type);
 			fieldsDescription.put(fieldNames[i], "Field '" + fieldNames[i] + "' from dbNSFP");
-			if (verbose) System.err.println("\t'" + fieldNames[i] + "'");
+			if (verbose) System.err.println("\t\t\t'" + fieldNames[i] + "'");
 		}
 
 		currentDbEntry = null;
@@ -369,7 +369,7 @@ public class SnpSiftCmdDbNsfp extends SnpSift {
 
 			Timer.showStdErr("Fields to add:");
 			for (String fn : fieldsSort)
-				System.err.println("\t\t\t" + fn);
+				System.err.println("\t\t\t'" + fn + "'");
 		}
 	}
 
@@ -530,6 +530,10 @@ public class SnpSiftCmdDbNsfp extends SnpSift {
 		);
 
 		return annotate(createList);
+	}
+
+	public void setFieldsNamesToAdd(String fieldsNamesToAdd) {
+		this.fieldsNamesToAdd = fieldsNamesToAdd;
 	}
 
 	public void setTabixCheck(boolean tabixCheck) {
