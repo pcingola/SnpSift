@@ -59,7 +59,7 @@ public class SnpSiftCmdGwasCatalog extends SnpSift {
 
 		int countAnnotated = 0, count = 0;
 		boolean showHeader = true;
-		List<VcfEntry> vcfEntries = saveResults ? new ArrayList<>() : null;
+		List<VcfEntry> vcfEntries = saveResults ? new ArrayList<VcfEntry>() : null;
 
 		for (VcfEntry vcfEntry : vcf) {
 			// Show header?

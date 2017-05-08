@@ -122,7 +122,7 @@ public class SnpSiftCmdDbNsfp extends SnpSift {
 	 * Annotate a VCF file using dbNSFP
 	 */
 	ArrayList<VcfEntry> annotate(boolean createList) {
-		ArrayList<VcfEntry> list = (createList ? new ArrayList<>() : null);
+		ArrayList<VcfEntry> list = (createList ? new ArrayList<VcfEntry>() : null);
 
 		// Open VCF file
 		vcfFile = new VcfFileIterator(vcfFileName);

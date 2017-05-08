@@ -42,8 +42,8 @@ public abstract class AnnotateVcfDb {
 	protected VcfFileIterator vcfDbFile;
 	protected HashMap<String, Integer> errCount;
 	protected Set<String> infoFields; // Use only these INFO fields
-	protected Map<String, Boolean> vcfInfoPerAllele = new HashMap<String, Boolean>(); // Is a VCF INFO field annotated 'per allele' basis?
-	protected Map<String, Boolean> vcfInfoPerAlleleRef = new HashMap<String, Boolean>(); // Is a VCF INFO field annotated 'per allele' basis AND requires reference to be annotated (i.e. VCF header has Number=R)?
+	protected Map<String, Boolean> vcfInfoPerAllele = new HashMap<>(); // Is a VCF INFO field annotated 'per allele' basis?
+	protected Map<String, Boolean> vcfInfoPerAlleleRef = new HashMap<>(); // Is a VCF INFO field annotated 'per allele' basis AND requires reference to be annotated (i.e. VCF header has Number=R)?
 
 	public AnnotateVcfDb() {
 	}
@@ -103,7 +103,7 @@ public abstract class AnnotateVcfDb {
 		// Annotate input vcfEntry
 		annotated |= annotateIds(vcfEntry, idSet);
 		annotated |= annotateInfo(vcfEntry, infos);
-		if (exists) annotateExists(vcfEntry);
+		if (exists) annotated |= annotateExists(vcfEntry);
 
 		return annotated;
 	}
@@ -111,8 +111,9 @@ public abstract class AnnotateVcfDb {
 	/**
 	 * Add 'exists' flag to INFO fields
 	 */
-	protected void annotateExists(VcfEntry vcfEntry) {
+	protected boolean annotateExists(VcfEntry vcfEntry) {
 		vcfEntry.addInfo(existsInfoField, null);
+		return true;
 	}
 
 	/**
@@ -141,9 +142,10 @@ public abstract class AnnotateVcfDb {
 	 */
 	protected boolean annotateInfo(VcfEntry vcfEntry, Map<String, String> info) {
 		if (info == null || info.isEmpty()) return false;
+		boolean annotated = false;
 
 		// Sort keys alphabetically
-		ArrayList<String> keys = new ArrayList<String>();
+		ArrayList<String> keys = new ArrayList<>();
 		keys.addAll(info.keySet());
 		Collections.sort(keys);
 
@@ -157,9 +159,10 @@ public abstract class AnnotateVcfDb {
 			// Add INFO entry
 			if (prependInfoFieldName != null) key = prependInfoName(key);
 			vcfEntry.addInfo(key, value);
+			annotated = true;
 		}
 
-		return true;
+		return annotated;
 	}
 
 	public void close() {
@@ -167,7 +170,7 @@ public abstract class AnnotateVcfDb {
 	}
 
 	protected void discoverInfoFields() {
-		if (infoFields == null) infoFields = new HashSet<String>();
+		if (infoFields == null) infoFields = new HashSet<>();
 
 		// Discover some INFO fields
 		if (!useAllInfoFields) return;
@@ -466,7 +469,7 @@ public abstract class AnnotateVcfDb {
 				// We use INFO but do not specify any particular field => Use ALL available INFO fields
 				if (useInfoFields) useAllInfoFields = true;
 			} else {
-				this.infoFields = new HashSet<String>();
+				this.infoFields = new HashSet<>();
 				this.infoFields.addAll(infoFields);
 			}
 		} else {
@@ -500,7 +503,7 @@ public abstract class AnnotateVcfDb {
 				+ "\n\tprependInfoFieldName :" + prependInfoFieldName //
 				+ "\n\tuseRefAlt            :" + useRefAlt //
 				+ "\n\tdbVcf:\n" + Gpr.prependEachLine("\t\t", dbVcf) //
-				;
+		;
 	}
 
 	/**
