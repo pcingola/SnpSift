@@ -30,7 +30,6 @@ public class SnpSiftCmdGeneSets extends SnpSift {
 
 	public static final String INFO_GENE_SETS = "MSigDb";
 
-	String vcfFile;
 	String msigdb;
 	GeneSets geneSets;
 	CountByType countByGeneSet;
@@ -60,7 +59,7 @@ public class SnpSiftCmdGeneSets extends SnpSift {
 			// Do we have gene name field?
 			if ((gene != null) && !gene.isEmpty()) {
 				// Create hash
-				if (sets == null) sets = new HashSet<String>();
+				if (sets == null) sets = new HashSet<>();
 
 				// Find all gene sets that this gene belongs to
 				HashSet<GeneSet> geneSetsByGene = geneSets.getGeneSetsByGene(gene);
@@ -80,7 +79,7 @@ public class SnpSiftCmdGeneSets extends SnpSift {
 				countByGeneSet.inc(geneSetName);
 
 			// Sort
-			ArrayList<String> setsSorted = new ArrayList<String>();
+			ArrayList<String> setsSorted = new ArrayList<>();
 			setsSorted.addAll(sets);
 			Collections.sort(setsSorted);
 
@@ -100,6 +99,19 @@ public class SnpSiftCmdGeneSets extends SnpSift {
 	}
 
 	@Override
+	public boolean annotateInit(VcfFileIterator vcfFile) {
+		super.annotateInit(vcfFile);
+
+		if (msigdb == null || msigdb.isEmpty()) fatalError("Missing argument / config: MSigDb file name");
+
+		if (verbose) Timer.showStdErr("Reading MSigDb from file: '" + msigdb + "'");
+		geneSets = new GeneSets(msigdb);
+		if (verbose) Timer.showStdErr("Done. Total:\n\t" + geneSets.getGeneSetCount() + " gene sets\n\t" + geneSets.getGeneCount() + " genes");
+
+		return true;
+	}
+
+	@Override
 	protected List<VcfHeaderEntry> headers() {
 		List<VcfHeaderEntry> newHeaders = super.headers();
 		newHeaders.add(new VcfHeaderInfo(INFO_GENE_SETS, VcfInfoType.String, VcfInfoNumber.UNLIMITED.toString(), "Gene set from MSigDB database (GSEA)"));
@@ -116,11 +128,11 @@ public class SnpSiftCmdGeneSets extends SnpSift {
 
 		// Parse arguments
 		if (args.length > argNum) msigdb = args[argNum++];
-		if (args.length > argNum) vcfFile = args[argNum++];
+		if (args.length > argNum) vcfInputFile = args[argNum++];
 
 		// Sanity check
 		if (msigdb == null) usage("Missing 'msigdb.gmt'");
-		if (vcfFile == null) usage("Missing 'file.vcf'");
+		if (vcfInputFile == null) usage("Missing 'file.vcf'");
 	}
 
 	/**
@@ -133,15 +145,13 @@ public class SnpSiftCmdGeneSets extends SnpSift {
 	}
 
 	public List<VcfEntry> run(boolean createList) {
-		LinkedList<VcfEntry> results = new LinkedList<VcfEntry>();
+		LinkedList<VcfEntry> results = new LinkedList<>();
 
-		if (verbose) Timer.showStdErr("Reading MSigDb from file: '" + msigdb + "'");
-		geneSets = new GeneSets(msigdb);
-		if (verbose) Timer.showStdErr("Done. Total:\n\t" + geneSets.getGeneSetCount() + " gene sets\n\t" + geneSets.getGeneCount() + " genes");
-
-		if (verbose) Timer.showStdErr("Annotating variants from: '" + vcfFile + "'");
-		VcfFileIterator vcf = new VcfFileIterator(vcfFile);
+		if (verbose) Timer.showStdErr("Annotating variants from: '" + vcfInputFile + "'");
+		VcfFileIterator vcf = new VcfFileIterator(vcfInputFile);
 		vcf.setDebug(debug);
+
+		annotateInit(vcf);
 
 		for (VcfEntry vcfEntry : vcf) {
 			// Show header?
@@ -168,9 +178,12 @@ public class SnpSiftCmdGeneSets extends SnpSift {
 		return results;
 	}
 
+	public void setMsigdb(String msigdb) {
+		this.msigdb = msigdb;
+	}
+
 	/**
 	 * Show usage message
-	 * @param msg
 	 */
 	@Override
 	public void usage(String msg) {

@@ -56,15 +56,15 @@ public class SnpSift implements VcfAnnotator, CommandLine {
 	protected boolean verbose; // Be verbose
 	protected String args[];
 	protected String command;
-	protected String vcfInputFile; // VCF Input file
 	protected String dbFileName;
 	protected String dbType;
 	protected String genomeVersion;
+	protected String vcfInputFile; // VCF Input file
 	protected int numWorkers = 1; //  Max number of threads (if multi-threaded version is available)
 	protected StringBuilder output = new StringBuilder();
 	protected HashMap<String, Integer> errCount;
-	protected String configFile; // Config file
 	protected Config config; // Configuration
+	protected String configFile; // Config file
 	protected String dataDir; // Override data_dir in config file
 	protected String shiftArgs[];
 
