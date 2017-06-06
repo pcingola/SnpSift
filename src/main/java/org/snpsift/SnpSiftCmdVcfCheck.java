@@ -19,6 +19,7 @@ public class SnpSiftCmdVcfCheck extends SnpSift {
 
 	public SnpSiftCmdVcfCheck(String[] args) {
 		super(args);
+		this.args = args;
 	}
 
 	/**
@@ -35,7 +36,7 @@ public class SnpSiftCmdVcfCheck extends SnpSift {
 		int count = 1;
 		for (VcfEntry ve : vcf) {
 			Gpr.showMark(count++, 1000);
-		};
+		} ;
 
 		if (verbose) Timer.showStdErr("Finished file '" + vcfFile + "'");
 	}
@@ -45,6 +46,7 @@ public class SnpSiftCmdVcfCheck extends SnpSift {
 	 */
 	@Override
 	public void parseArgs(String[] args) {
+		this.args = args;
 		if (args.length < 1) usage(null);
 	}
 
