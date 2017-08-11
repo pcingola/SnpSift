@@ -26,7 +26,7 @@ public class SnpSiftCmdVarType extends SnpSift {
 	public static final String VARTYPE = "VARTYPE";
 
 	String vcfFile;
-	HashMap<String, String> db = new HashMap<String, String>();
+	HashMap<String, String> db = new HashMap<>();
 
 	public SnpSiftCmdVarType() {
 		super();
@@ -82,14 +82,14 @@ public class SnpSiftCmdVarType extends SnpSift {
 
 		newHeaders.add(new VcfHeaderInfo(VARTYPE, VcfInfoType.String, VcfInfoNumber.ALLELE.toString(), "Comma separated list of variant types. One per allele"));
 
-		newHeaders.add(new VcfHeaderInfo("SNP", VcfInfoType.Flag, VcfInfoNumber.ALLELE.toString(), "Variant is a SNP"));
-		newHeaders.add(new VcfHeaderInfo("MNP", VcfInfoType.Flag, VcfInfoNumber.ALLELE.toString(), "Variant is a MNP"));
-		newHeaders.add(new VcfHeaderInfo("INS", VcfInfoType.Flag, VcfInfoNumber.ALLELE.toString(), "Variant is a INS"));
-		newHeaders.add(new VcfHeaderInfo("DEL", VcfInfoType.Flag, VcfInfoNumber.ALLELE.toString(), "Variant is a DEL"));
-		newHeaders.add(new VcfHeaderInfo("MIXED", VcfInfoType.Flag, VcfInfoNumber.ALLELE.toString(), "Variant is a MIXED"));
+		newHeaders.add(new VcfHeaderInfo("SNP", VcfInfoType.Flag, "0", "Variant is a SNP"));
+		newHeaders.add(new VcfHeaderInfo("MNP", VcfInfoType.Flag, "0", "Variant is a MNP"));
+		newHeaders.add(new VcfHeaderInfo("INS", VcfInfoType.Flag, "0", "Variant is a INS"));
+		newHeaders.add(new VcfHeaderInfo("DEL", VcfInfoType.Flag, "0", "Variant is a DEL"));
+		newHeaders.add(new VcfHeaderInfo("MIXED", VcfInfoType.Flag, "0", "Variant is a MIXED"));
 
-		newHeaders.add(new VcfHeaderInfo("HOM", VcfInfoType.Flag, VcfInfoNumber.ALLELE.toString(), "Variant is homozygous"));
-		newHeaders.add(new VcfHeaderInfo("HET", VcfInfoType.Flag, VcfInfoNumber.ALLELE.toString(), "Variant is heterozygous"));
+		newHeaders.add(new VcfHeaderInfo("HOM", VcfInfoType.Flag, "0", "Variant is homozygous"));
+		newHeaders.add(new VcfHeaderInfo("HET", VcfInfoType.Flag, "0", "Variant is heterozygous"));
 
 		return newHeaders;
 	}
