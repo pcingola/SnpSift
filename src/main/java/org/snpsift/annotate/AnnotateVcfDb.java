@@ -303,22 +303,25 @@ public abstract class AnnotateVcfDb {
 	 */
 	protected String findDbInfoAlt(String infoFieldName, QueryResult qr) {
 		for (VariantVcfEntry varVe : qr.results) {
-			if (varVe != null) {
-				// IMPORTANT: When a variant is parse, the original 'ALT' entry is stored in
-				//            the 'Variant.genotype' whereas 'variant.alt' contains
-				//            a 'minimal ALT'. E.g. if we have
-				//                vcfEntry.ref = 'AC'
-				//                vcfEntry.alt = 'A'
-				//            Then
-				//                variant.ref = 'C'
-				//                variant.alt = ''
-				//                variant.genotype = 'A'   <-- This is the 'original' ALT field from vcfEntry
-				//            That's why we use 'var.getGenotype()' in the following 'getInfo()' method.
-				String vcfAlt = qr.variant.getGenotype();
+			if (varVe == null) continue;
 
-				String val = varVe.getVcfEntry().getInfo(infoFieldName, vcfAlt);
-				if (!VcfEntry.isEmpty(val)) return val;
-			}
+			// REMOVE COMMNENT !!!!!!!!!!!!!!!!!
+			// IMPORTANT: When a variant is parse, the original 'ALT' entry is stored in
+			//            the 'Variant.genotype' whereas 'variant.alt' contains
+			//            a 'minimal ALT'. E.g. if we have
+			//                vcfEntry.ref = 'AC'
+			//                vcfEntry.alt = 'A'
+			//            Then
+			//                variant.ref = 'C'
+			//                variant.alt = ''
+			//                variant.genotype = 'A'   <-- This is the 'original' ALT field from vcfEntry
+			//            That's why we use 'var.getGenotype()' in the following 'getInfo()' method.
+			//
+			//			String vcfAlt = qr.variant.getGenotype();
+			//			String val = varVe.getVcfEntry().getInfo(infoFieldName, vcfAlt);
+
+			String val = varVe.getVcfEntry().getInfo(infoFieldName, qr.variant);
+			if (!VcfEntry.isEmpty(val)) return val;
 		}
 
 		return VcfFileIterator.MISSING;
@@ -433,10 +436,10 @@ public abstract class AnnotateVcfDb {
 		List<VariantVcfEntry> list = new LinkedList<>();
 		for (VariantVcfEntry dbEntry : results) {
 			if (match(variant, dbEntry)) {
-				if (debug) Gpr.debug("dbEntry matches query\tvariant: " + variant + "\tdbEntry: " + dbEntry);
+				if (debug) Gpr.debug("dbEntry matches query\n\tvariant: " + variant + "\n\tdbEntry: " + dbEntry);
 				list.add(dbEntry);
 			} else {
-				if (debug) Gpr.debug("dbEntry does NOT match query\tvariant: " + variant + "\tdbEntry: " + dbEntry);
+				if (debug) Gpr.debug("dbEntry does NOT match query\n\tvariant: " + variant + "\n\tdbEntry: " + dbEntry);
 			}
 
 		}

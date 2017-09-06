@@ -786,4 +786,29 @@ public class TestCasesAnnotate extends TestCase {
 		Assert.assertEquals("Expecting empty field", expectedCaf, caf);
 	}
 
+	/**
+	 * Annotate GnomAd with multiple entries
+	 */
+	public void test_44() {
+		Gpr.debug("Test");
+		String dbFileName = "./test/ann/gnomad_db_multiple_entries.vcf";
+		String fileName = "./test/ann/annotate_44.vcf";
+		String extraArgs[] = { "-info", "AF_AFR" };
+		List<VcfEntry> results = annotate(dbFileName, fileName, extraArgs);
+
+		// Get first entry
+		VcfEntry ve = results.get(0);
+		if (verbose) System.out.println(ve);
+		String infoStr = ve.getInfoStr();
+
+		// Check that annotation is added
+		Assert.assertTrue("Missing AF_AFR annotation", infoStr.indexOf("AF_AFR=") >= 0);
+
+		// Compare against expected output
+		// Note: We don't care about annotation order in this case
+		String expectedAfAfr = "6.60044e-03";
+		String afAfr = ve.getInfo("AF_AFR");
+		Assert.assertEquals("Expecting empty field", expectedAfAfr, afAfr);
+	}
+
 }
