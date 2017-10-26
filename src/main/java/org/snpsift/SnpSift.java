@@ -239,6 +239,7 @@ public class SnpSift implements VcfAnnotator, CommandLine {
 			return new SnpSiftCmdRmInfo();
 
 		case "rmref":
+		case "rmrefgen":
 		case "removereferencegenotypes":
 			return new SnpSiftCmdRemoveReferenceGenotypes();
 
