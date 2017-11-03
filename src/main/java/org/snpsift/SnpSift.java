@@ -292,6 +292,7 @@ public class SnpSift implements VcfAnnotator, CommandLine {
 	 * Copy command parameters
 	 */
 	void copyValues(SnpSift cmd) {
+		cmd.args = shiftArgs;
 		cmd.config = config;
 		cmd.configFile = configFile;
 		cmd.dbFileName = dbFileName;
