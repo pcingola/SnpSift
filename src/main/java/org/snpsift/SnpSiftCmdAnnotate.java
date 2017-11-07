@@ -213,6 +213,11 @@ public class SnpSiftCmdAnnotate extends SnpSift {
 			throw new RuntimeException("Index not found for file '" + dbFileName + "'.\n\tERROR: Compressed VCF files require a tabix index.");
 		}
 
+		if (dbFileName.endsWith(".bgz")) {
+			if (Gpr.exists(dbFileName + ".tbi") || Gpr.exists(dbFileName + ".bgz.tbi")) return AnnotationMethod.TABIX;
+			throw new RuntimeException("Index not found for file '" + dbFileName + "'.\n\tERROR: Compressed VCF files require a tabix index.");
+		}
+
 		return AnnotationMethod.SORTED_VCF;
 	}
 
