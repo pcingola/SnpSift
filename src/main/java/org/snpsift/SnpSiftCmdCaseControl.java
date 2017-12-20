@@ -166,7 +166,17 @@ public class SnpSiftCmdCaseControl extends SnpSift {
 		double pdown = FisherExactTest.get().pValueDown(k, N, D, n, pvalueTh);
 		double pup = FisherExactTest.get().pValueUp(k, N, D, n, pvalueTh);
 
-		return Math.min(pup, pdown);
+		double pvalue = Math.min(pup, pdown);
+		if (debug) {
+			Gpr.debug("pAllelic: " + pvalue //
+					+ "\tFisherExactTest.pValueDown(" + k + ", " + N + ", " + D + ", " + n + ", " + pvalueTh + "): " + pdown //
+					+ "\tR: " + FisherExactTest.get().toR(k, N, D, n, true) //
+					+ "\tFisherExactTest.pValueUp(" + k + ", " + N + ", " + D + ", " + n + ", " + pvalueTh + "): " + pup //
+					+ "\tR: " + FisherExactTest.get().toR(k - 1, N, D, n, false) //
+			);
+		}
+
+		return pvalue;
 	}
 
 	@Override
@@ -228,7 +238,17 @@ public class SnpSiftCmdCaseControl extends SnpSift {
 		double pdown = FisherExactTest.get().pValueDown(k, N, D, n, pvalueTh);
 		double pup = FisherExactTest.get().pValueUp(k, N, D, n, pvalueTh);
 
-		return Math.min(pup, pdown);
+		double pvalue = Math.min(pup, pdown);
+		if (debug) {
+			Gpr.debug("pDominant: " + pvalue //
+					+ "\tFisherExactTest.pValueDown(" + k + ", " + N + ", " + D + ", " + n + ", " + pvalueTh + "): " + pdown //
+					+ "\tR: " + FisherExactTest.get().toR(k, N, D, n, true) //
+					+ "\tFisherExactTest.pValueUp(" + k + ", " + N + ", " + D + ", " + n + ", " + pvalueTh + "): " + pup //
+					+ "\tR: " + FisherExactTest.get().toR(k, N, D, n, false) //
+			);
+		}
+
+		return pvalue;
 	}
 
 	/**
@@ -273,7 +293,9 @@ public class SnpSiftCmdCaseControl extends SnpSift {
 
 		// Null hypothesis of no association
 		// Degrees of freedom: 2
-		double pvalue = 1 - new ChiSquaredDistribution(2).cumulativeProbability(chi2);
+		double oneMinusPvalue = new ChiSquaredDistribution(2).cumulativeProbability(chi2);
+		double pvalue = 1 - oneMinusPvalue;
+		if (debug) Gpr.debug("pGenotypic: " + pvalue + "\tChiSquaredDistribution(2).cumulativeProbability(chi2): " + oneMinusPvalue);
 		return pvalue;
 	}
 
@@ -293,7 +315,16 @@ public class SnpSiftCmdCaseControl extends SnpSift {
 		double pdown = FisherExactTest.get().pValueDown(k, N, D, n, pvalueTh);
 		double pup = FisherExactTest.get().pValueUp(k, N, D, n, pvalueTh);
 
-		return Math.min(pup, pdown);
+		double pvalue = Math.min(pup, pdown);
+		if (debug) {
+			Gpr.debug("pRecessive: " + pvalue //
+					+ "\tFisherExactTest.pValueDown(" + k + ", " + N + ", " + D + ", " + n + ", " + pvalueTh + "): " + pdown //
+					+ "\tR: " + FisherExactTest.get().toR(k, N, D, n, true) //
+					+ "\tFisherExactTest.pValueUp(" + k + ", " + N + ", " + D + ", " + n + ", " + pvalueTh + "): " + pup //
+					+ "\tR: " + FisherExactTest.get().toR(k, N, D, n, false) //
+			);
+		}
+		return pvalue;
 	}
 
 	@Override
@@ -357,6 +388,13 @@ public class SnpSiftCmdCaseControl extends SnpSift {
 	protected double pTrend(int nControl[], int nCase[]) {
 		// Null hypothesis of no association
 		double pvalue = CochranArmitageTest.get().p(nControl, nCase, CochranArmitageTest.WEIGHT_TREND);
+		if (debug) {
+			Gpr.debug("CochranArmitageTest.p(" //
+					+ Gpr.toString(nControl) //
+					+ ", " + Gpr.toString(nCase) //
+					+ ", " + Gpr.toString(CochranArmitageTest.WEIGHT_TREND) //
+					+ ") = " + pvalue);
+		}
 		// We use a two tail test, so we multiple by 2
 		return Math.min(2.0 * pvalue, 1.0);
 	}
@@ -431,7 +469,7 @@ public class SnpSiftCmdCaseControl extends SnpSift {
 		int altCount = 2 * nControl[2] + nControl[1] + 2 * nCase[2] + nCase[1];
 
 		if (refCount < altCount) {
-			if (debug) Gpr.debug("Swapping genotype counts");
+			if (debug) Gpr.debug("Swapping genotype counts:\trefCount=" + refCount + "\taltCount=" + altCount);
 			int tmp = nControl[0];
 			nControl[0] = nControl[2];
 			nControl[2] = tmp;
