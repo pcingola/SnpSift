@@ -11,7 +11,7 @@ import org.snpeff.vcf.VcfHeaderInfo;
 import org.snpeff.vcf.VcfInfoType;
 import org.snpsift.lang.expression.Expression;
 
-import net.sf.samtools.util.RuntimeEOFException;
+import htsjdk.samtools.util.RuntimeEOFException;
 
 /**
  * Annotate a field based on an operation (max, min, etc.) of other VCF fields
@@ -43,12 +43,14 @@ public class SnpSiftCmdVcfOperator extends SnpSift {
 	public boolean annotate(VcfEntry vcfEntry) {
 		List<Double> values = getValues(vcfEntry);
 		Double res = applyOp(values);
-		if (res != null) vcfEntry.addInfo(outField, "" + res);
+		if (res != null)
+			vcfEntry.addInfo(outField, "" + res);
 		return false;
 	}
 
 	public Double applyOp(List<Double> vals) {
-		if (vals.isEmpty()) return null;
+		if (vals.isEmpty())
+			return null;
 
 		double res = initialValue();
 		for (Double val : vals) {
@@ -70,7 +72,7 @@ public class SnpSiftCmdVcfOperator extends SnpSift {
 				break;
 
 			default:
-				throw new RuntimeEOFException("Unknown operator '" + operator + "'");
+				throw new RuntimeException("Unknown operator '" + operator + "'");
 			}
 
 		}
@@ -97,13 +99,15 @@ public class SnpSiftCmdVcfOperator extends SnpSift {
 	 */
 	public List<Double> getValues(VcfEntry vcfEntry, String field) {
 		String valsStr = vcfEntry.getInfo(field);
-		if (valsStr == null || valsStr.isEmpty()) return EMPTY_VALS;
+		if (valsStr == null || valsStr.isEmpty())
+			return EMPTY_VALS;
 
 		List<Double> vals = new LinkedList<>();
 
 		// Split by comma
 		for (String valStr : valsStr.split(",")) {
-			if (VcfEntry.isEmpty(valStr)) continue;
+			if (VcfEntry.isEmpty(valStr))
+				continue;
 
 			try {
 				double v = Double.parseDouble(valStr);
@@ -119,7 +123,8 @@ public class SnpSiftCmdVcfOperator extends SnpSift {
 	@Override
 	protected List<VcfHeaderEntry> headers() {
 		List<VcfHeaderEntry> headerInfos = super.headers();
-		headerInfos.add(new VcfHeaderInfo(outField, VcfInfoType.Float, "" + 1, "Operation '" + operator + "' applied to fileds '" + fields + "'"));
+		headerInfos.add(new VcfHeaderInfo(outField, VcfInfoType.Float, "" + 1,
+				"Operation '" + operator + "' applied to fileds '" + fields + "'"));
 		return headerInfos;
 	}
 
@@ -145,7 +150,8 @@ public class SnpSiftCmdVcfOperator extends SnpSift {
 	@Override
 	public void parseArgs(String[] args) {
 		this.args = args;
-		if (args == null || args.length < 1) usage(null);
+		if (args == null || args.length < 1)
+			usage(null);
 
 		new ArrayList<String>();
 		for (int i = 0; i < args.length; i++) {
@@ -156,16 +162,20 @@ public class SnpSiftCmdVcfOperator extends SnpSift {
 			if (isOpt(arg)) {
 				switch (arg.toLowerCase()) {
 				case "-fields":
-					if ((i + 1) < args.length) fields = args[++i];
-					else usage("Option '-fields' without argument");
+					if ((i + 1) < args.length)
+						fields = args[++i];
+					else
+						usage("Option '-fields' without argument");
 
 					infoFields = fields.split(",");
 					break;
 
 				case "-op":
 					String op = "";
-					if ((i + 1) < args.length) op = args[++i];
-					else usage("Option '-fields' without argument");
+					if ((i + 1) < args.length)
+						op = args[++i];
+					else
+						usage("Option '-fields' without argument");
 					try {
 						operator = Operator.valueOf(op.toUpperCase());
 					} catch (IllegalArgumentException e) {
@@ -174,25 +184,33 @@ public class SnpSiftCmdVcfOperator extends SnpSift {
 					break;
 
 				case "-outfield":
-					if ((i + 1) < args.length) outField = args[++i];
-					else usage("Option '-outField' without argument");
+					if ((i + 1) < args.length)
+						outField = args[++i];
+					else
+						usage("Option '-outField' without argument");
 					break;
 
 				default:
 					// Unrecognized option? may be it's command specific. Let command parse it
 					usage("Unknown command line option '" + arg + "'");
 				}
-			} else if (vcfInputFile == null || vcfInputFile.isEmpty()) vcfInputFile = arg;
-			else usage("Unused command line argument '" + arg + "'");
+			} else if (vcfInputFile == null || vcfInputFile.isEmpty())
+				vcfInputFile = arg;
+			else
+				usage("Unused command line argument '" + arg + "'");
 		}
 
 		// Show version and command
-		if (help) usage(null);
+		if (help)
+			usage(null);
 
 		// Sanity check
-		if (fields == null || fields.isEmpty()) usage("Missing '-fields' input field names");
-		if (outField == null || outField.isEmpty()) usage("Missing '-outfield' output field name");
-		if (operator == null) usage("Missing '-op' operator field");
+		if (fields == null || fields.isEmpty())
+			usage("Missing '-fields' input field names");
+		if (outField == null || outField.isEmpty())
+			usage("Missing '-outfield' output field name");
+		if (operator == null)
+			usage("Missing '-op' operator field");
 
 	}
 
@@ -207,12 +225,17 @@ public class SnpSiftCmdVcfOperator extends SnpSift {
 
 	/**
 	 * Run filter
-	 * @param createList : If true, create a list with the results. If false, show results on STDOUT
-	 * @return If 'createList' is true, return a list containing all vcfEntries that passed the filter. Otherwise return null.
+	 * 
+	 * @param createList
+	 *            : If true, create a list with the results. If false, show results
+	 *            on STDOUT
+	 * @return If 'createList' is true, return a list containing all vcfEntries that
+	 *         passed the filter. Otherwise return null.
 	 */
 	public List<VcfEntry> run(boolean createList) {
 		// Debug mode?
-		if (debug) Expression.debug = true;
+		if (debug)
+			Expression.debug = true;
 
 		// Initialize
 		LinkedList<VcfEntry> vcfEntries = (createList ? new LinkedList<VcfEntry>() : null);
@@ -227,8 +250,10 @@ public class SnpSiftCmdVcfOperator extends SnpSift {
 			// Annotate (evaluate expression)
 			annotate(vcfEntry);
 
-			if (vcfEntries != null) vcfEntries.add(vcfEntry); // Do not show. just add to the list (this is used for debugging and testing)
-			else System.out.println(vcfEntry);
+			if (vcfEntries != null)
+				vcfEntries.add(vcfEntry); // Do not show. just add to the list (this is used for debugging and testing)
+			else
+				System.out.println(vcfEntry);
 		}
 		annotateFinish(vcfFile);
 
