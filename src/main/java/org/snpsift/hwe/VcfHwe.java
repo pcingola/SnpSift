@@ -6,11 +6,11 @@ import org.snpeff.util.Gpr;
 import org.snpeff.vcf.VcfEntry;
 
 /**
- * Calculate Hardy-Weimberg equilibrium and goodness of fit.
+ * Calculate Hardy-Weinberg equilibrium and goodness of fit.
  *
  * References:
  * 			"Principles of population genetics", Hartl & Clark
- * 			"A Note on Exact test of Hardy Weinbeg Equilibrium", G. Abecasis et. al.
+ * 			"A Note on Exact test of Hardy Weinberg Equilibrium", G. Abecasis et. al.
  *
  * Note: This is only for two alleles in diploid individuals. We should
  *       extend this to more alleles and N-ploid species.
@@ -26,7 +26,7 @@ public class VcfHwe {
 	}
 
 	/**
-	 * Calculate Hardy-Weimberg equilibrium and add data to vcfEntry (INFO fields)
+	 * Calculate Hardy-Weinberg equilibrium and add data to vcfEntry (INFO fields)
 	 * @param addInfo : If true, 'HWE' and 'HWEP' INFO tags are added to this entry
 	 */
 	public double hwe(VcfEntry vcfEntry, boolean addInfo) {

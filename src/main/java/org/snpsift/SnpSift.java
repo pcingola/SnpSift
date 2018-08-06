@@ -719,7 +719,7 @@ public class SnpSift implements VcfAnnotator, CommandLine {
 				+ "\n\tgt            : Add Genotype to INFO fields and remove genotype fields when possible." //
 				+ "\n\tgtfilter      : Filter genotype using arbitrary expressions." //
 				+ "\n\tgwasCat       : Annotate using GWAS catalog" //
-				+ "\n\thwe           : Calculate Hardy-Weimberg parameters and perform a godness of fit test." //
+				+ "\n\thwe           : Calculate Hardy-Weinberg parameters and perform a godness of fit test." //
 				+ "\n\tintersect     : Intersect intervals (genomic regions)." //
 				+ "\n\tintervals     : Keep variants that intersect with intervals." //
 				+ "\n\tintIdx        : Keep variants that intersect with intervals. Index-based method: Used for large VCF file and a few intervals to retrieve" //
