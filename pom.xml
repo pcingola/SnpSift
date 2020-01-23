@@ -38,7 +38,7 @@
     
     <dependency>
       <groupId>org.antlr</groupId>
-      <artifactId>antlr</artifactId>
+      <artifactId>antlr4</artifactId>
       <version>4.5.1</version>
     </dependency>
     <dependency>
@@ -64,6 +64,15 @@
   </dependencies>
 
   <repositories>
+    <repository>
+      <id>maven</id>
+      <name>Maven Repository</name>
+      <url>https://repo1.maven.org/maven2/</url>
+      <layout>default</layout>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
+    </repository>
     <repository>
       <id>ncimvn-public</id>
       <name>Public NIH repository</name>
