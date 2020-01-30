@@ -33,7 +33,7 @@ public class TestCasesGwasCatalog extends TestCase {
 		Gpr.debug("Test");
 
 		// Load catalog
-		GwasCatalog gwasCatalog = new GwasCatalog("./gwasCatalog/gwascatalog.txt.gz");
+		GwasCatalog gwasCatalog = new GwasCatalog("test/gwasCatalog/gwascatalog.txt.gz");
 
 		// Search by chr:pos
 		List<GwasCatalogEntry> list = gwasCatalog.get("20", 1759590 - 1);
@@ -49,7 +49,7 @@ public class TestCasesGwasCatalog extends TestCase {
 
 		String args[] = { "gwasCat" //
 				, "-db" //
-				, "db/GRCh37/gwasCatalog/gwascatalog.tsv" //
+				, "test/gwasCatalog/gwascatalog.20130907.tsv" //
 				, "test/test_gwascat_02.vcf" //
 		};
 
