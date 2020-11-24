@@ -87,8 +87,10 @@ public class SnpSiftCmdSplit extends SnpSift {
 	BufferedWriter newFile(String baseName, String chr, int fileNumber) {
 		// File name
 		String outFileName = "";
-		if (numLines <= 0) outFileName = baseName + "." + chr + ".vcf"; // Splitting by chromosome
-		else outFileName = String.format("%s.%03d.vcf", baseName, fileNumber); // Splitting by number of lines
+		if (numLines <= 0) {
+			String chrSanitized = chr.replaceAll("[^a-zA-Z0-9\\._+\\-]+", "_");
+			outFileName = baseName + "." + chrSanitized + ".vcf"; // Splitting by chromosome
+		} else outFileName = String.format("%s.%03d.vcf", baseName, fileNumber); // Splitting by number of lines
 
 		// Update list of file names
 		fileNames.add(outFileName);
