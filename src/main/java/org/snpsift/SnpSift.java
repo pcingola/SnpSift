@@ -336,7 +336,7 @@ public class SnpSift implements VcfAnnotator, CommandLine {
 		// Download tabix index?
 		if (dbTabix) {
 			String indexUrl = config.getDatabaseRepository(dbType) + ".tbi";
-			Timer.showStdErr("Downlading index from " + indexUrl);
+			Timer.showStdErr("Downloading index from " + indexUrl);
 			download = new Download();
 			download.setVerbose(verbose);
 			download.setDebug(debug);
@@ -358,8 +358,8 @@ public class SnpSift implements VcfAnnotator, CommandLine {
 
 			// Still empty: Something is wrong!
 			if (dbFileName == null || dbFileName.isEmpty()) {
-				String confgiKey = config.getDatabaseLocalKey(dbType);
-				fatalError("Database file name not found. Missing '" + confgiKey + "' entry in SnpEff's config file?");
+				String configKey = config.getDatabaseLocalKey(dbType);
+				fatalError("Database file name not found. Missing '" + configKey + "' entry in SnpEff's config file?");
 			}
 		}
 
@@ -719,7 +719,7 @@ public class SnpSift implements VcfAnnotator, CommandLine {
 				+ "\n\tgt            : Add Genotype to INFO fields and remove genotype fields when possible." //
 				+ "\n\tgtfilter      : Filter genotype using arbitrary expressions." //
 				+ "\n\tgwasCat       : Annotate using GWAS catalog" //
-				+ "\n\thwe           : Calculate Hardy-Weimberg parameters and perform a godness of fit test." //
+				+ "\n\thwe           : Calculate Hardy-Weinberg parameters and perform a goodness of fit test." //
 				+ "\n\tintersect     : Intersect intervals (genomic regions)." //
 				+ "\n\tintervals     : Keep variants that intersect with intervals." //
 				+ "\n\tintIdx        : Keep variants that intersect with intervals. Index-based method: Used for large VCF file and a few intervals to retrieve" //
