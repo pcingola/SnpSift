@@ -7,6 +7,7 @@ import java.util.List;
 
 import org.snpeff.fileIterator.VcfFileIterator;
 import org.snpeff.util.Gpr;
+import org.snpeff.util.Log;
 import org.snpeff.vcf.EffFormatVersion;
 import org.snpeff.vcf.VcfEntry;
 import org.snpeff.vcf.VcfGenotype;
@@ -68,13 +69,13 @@ public class SnpSiftCmdFilterGt extends SnpSift {
 	 * Evaluate all genotypes for this entry
 	 */
 	boolean evaluate(VcfEntry vcfEntry) {
-		if (debug) Gpr.debug(vcfEntry.toStringNoGt());
+		if (debug) Log.debug(vcfEntry.toStringNoGt());
 
 		boolean ok = false;
 		for (VcfGenotype vgt : vcfEntry) {
 			boolean change = evaluate(vcfEntry, vgt);
 
-			if (debug) Gpr.debug("\t\tevaluate:" + change + "\t" + vgt);
+			if (debug) Log.debug("\t\tevaluate:" + change + "\t" + vgt);
 
 			if (change) {
 				ok = true;
@@ -82,7 +83,7 @@ public class SnpSiftCmdFilterGt extends SnpSift {
 			}
 		}
 
-		if (debug && ok) Gpr.debug("VCF entry changed:\t" + vcfEntry);
+		if (debug && ok) Log.debug("VCF entry changed:\t" + vcfEntry);
 		return ok;
 	}
 
@@ -95,24 +96,24 @@ public class SnpSiftCmdFilterGt extends SnpSift {
 
 		boolean all = true, any = false;
 
-		if (debug) Gpr.debug("VCF entry:" + vcfEntry.toStringNoGt() + "\t" + vcfGenotype);
+		if (debug) Log.debug("VCF entry:" + vcfEntry.toStringNoGt() + "\t" + vcfGenotype);
 
 		do {
 			Value eval = expr.eval(vcfGenotype);
-			if (debug) Gpr.debug("\tEval: " + eval + "\tFieldIterator: " + fieldIterator);
+			if (debug) Log.debug("\tEval: " + eval + "\tFieldIterator: " + fieldIterator);
 
 			all &= eval.asBool();
 			any |= eval.asBool();
 
 			if ((fieldIterator.getType() == Field.TYPE_ALL) && !all) {
 				boolean ret = inverse ^ all;
-				if (debug) Gpr.debug("\tResult [ALL]: " + ret);
+				if (debug) Log.debug("\tResult [ALL]: " + ret);
 				return ret;
 			}
 
 			if ((fieldIterator.getType() == Field.TYPE_ANY) && any) {
 				boolean ret = inverse ^ any;
-				if (debug) Gpr.debug("\tResult [ANY]: " + ret);
+				if (debug) Log.debug("\tResult [ANY]: " + ret);
 				return ret;
 			}
 
@@ -125,15 +126,15 @@ public class SnpSiftCmdFilterGt extends SnpSift {
 
 		if (fieldIterator.getType() == Field.TYPE_ALL) {
 			ret = all;
-			if (debug) Gpr.debug("\tResult [ALL]: " + ret);
+			if (debug) Log.debug("\tResult [ALL]: " + ret);
 		} else {
 			ret = any;
-			if (debug) Gpr.debug("\tResult [ANY]: " + ret);
+			if (debug) Log.debug("\tResult [ANY]: " + ret);
 		}
 
 		// Inverse result
 		ret = inverse ^ ret;
-		if (debug && inverse) Gpr.debug("\tResult [INV]: " + ret);
+		if (debug && inverse) Log.debug("\tResult [INV]: " + ret);
 
 		return ret;
 	}
@@ -249,7 +250,7 @@ public class SnpSiftCmdFilterGt extends SnpSift {
 	 * Parse expression
 	 */
 	public Expression parseExpression(String expression) throws Exception {
-		if (debug) Gpr.debug("Parse expression: \"" + expression + "\"");
+		if (debug) Log.debug("Parse expression: \"" + expression + "\"");
 
 		LangFactory lf = new LangFactory();
 		expr = lf.compile(expression);
@@ -259,7 +260,7 @@ public class SnpSiftCmdFilterGt extends SnpSift {
 			System.exit(-1);
 		}
 
-		if (debug) Gpr.debug("Expression: " + expr);
+		if (debug) Log.debug("Expression: " + expr);
 		return expr;
 	}
 

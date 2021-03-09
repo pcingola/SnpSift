@@ -26,7 +26,7 @@ public class PhastCons {
 	//		Timer.showStdErr("done");
 	//
 	//		//		for (int i = 0; i < 50; i++) {
-	//		//			Gpr.debug(i + "\tscore: " + phastCons.get("22", 16059389 + i));
+	//		//			Log.debug(i + "\tscore: " + phastCons.get("22", 16059389 + i));
 	//		//		}
 	//
 	//		String outfile = Gpr.HOME + "/phastCons.out";

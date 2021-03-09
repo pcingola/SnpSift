@@ -2,7 +2,7 @@ package org.snpsift.testCases;
 
 import java.util.List;
 
-import org.snpeff.util.Gpr;
+import org.snpeff.util.Log;
 import org.snpeff.vcf.VcfEntry;
 import org.snpsift.SnpSift;
 import org.snpsift.SnpSiftCmdIntervals;
@@ -22,7 +22,7 @@ public class TestCasesIntervals extends TestCase {
 	 * Filter VCF entries
 	 */
 	public void test_01() {
-		Gpr.debug("Test");
+		Log.debug("Test");
 
 		// Run command
 		String args[] = { //
@@ -46,7 +46,7 @@ public class TestCasesIntervals extends TestCase {
 	 * Filter VCF entries
 	 */
 	public void test_02() {
-		Gpr.debug("Test");
+		Log.debug("Test");
 
 		// Run command
 		String args[] = { //

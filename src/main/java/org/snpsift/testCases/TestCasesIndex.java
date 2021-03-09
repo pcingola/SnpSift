@@ -7,6 +7,7 @@ import org.snpeff.interval.Marker;
 import org.snpeff.interval.Markers;
 import org.snpeff.interval.Variant;
 import org.snpeff.util.Gpr;
+import org.snpeff.util.Log;
 import org.snpeff.vcf.VcfEntry;
 import org.snpsift.annotate.VcfIndex;
 
@@ -27,7 +28,7 @@ public class TestCasesIndex extends TestCase {
 	 * Index a VCF file and query all entries
 	 */
 	public void test_01() {
-		Gpr.debug("Test");
+		Log.debug("Test");
 		String dbFileName = "./test/db_test_index_01.vcf";
 
 		// Make sure index file is deleted
@@ -41,7 +42,7 @@ public class TestCasesIndex extends TestCase {
 		vcfIndex.index();
 
 		// Check that all entries can be found & retrieved
-		if (verbose) Gpr.debug("Checking");
+		if (verbose) Log.debug("Checking");
 		VcfFileIterator vcf = new VcfFileIterator(dbFileName);
 		for (VcfEntry ve : vcf) {
 			if (verbose) System.out.println(ve.toStr());
@@ -78,7 +79,7 @@ public class TestCasesIndex extends TestCase {
 	 * Index a VCF file and query all entries
 	 */
 	public void test_02() {
-		Gpr.debug("Test");
+		Log.debug("Test");
 		String dbFileName = "./test/db_test_index_02.vcf";
 
 		// Index VCF file
@@ -100,7 +101,7 @@ public class TestCasesIndex extends TestCase {
 		vcfIndex.index();
 
 		// Check that all entries can be found & retrieved
-		if (verbose) Gpr.debug("Checking");
+		if (verbose) Log.debug("Checking");
 		VcfFileIterator vcf = new VcfFileIterator(dbFileName);
 		for (VcfEntry ve : vcf) {
 			if (verbose) System.out.println(ve.toStr());

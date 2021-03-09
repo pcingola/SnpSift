@@ -8,6 +8,7 @@ import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.LexerNoViableAltException;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.snpeff.util.Gpr;
+import org.snpeff.util.Log;
 import org.snpeff.vcf.EffFormatVersion;
 import org.snpsift.antlr.SnpSiftLexer;
 import org.snpsift.antlr.SnpSiftParser;
@@ -100,7 +101,7 @@ public class LangFactory {
 	 * Use 'alreadyIncluded' to keep track of from 'include' statements
 	 */
 	public Expression compile(String expression) {
-		if (debug) Gpr.debug("Creating AST: " + expression);
+		if (debug) Log.debug("Creating AST: " + expression);
 
 		SnpSiftLexer lexer = null;
 		SnpSiftParser parser = null;
@@ -129,7 +130,7 @@ public class LangFactory {
 		}
 
 		// Done parsing tree. Create expression
-		if (debug) Gpr.debug("Tree: " + tree.toStringTree());
+		if (debug) Log.debug("Tree: " + tree.toStringTree());
 		return expressionFactory(tree);
 	}
 
@@ -142,7 +143,7 @@ public class LangFactory {
 		String leaveName = leaveClass.getSimpleName(); // tree.getText();
 
 		if (debug) {
-			Gpr.debug("\n\tLeaveClassName : " + leaveName //
+			Log.debug("\n\tLeaveClassName : " + leaveName //
 					+ "\n\tTxt            : " + tree.getText() //
 					+ "\n\tTree           : " + tree.toStringTree() //
 			);
@@ -158,7 +159,7 @@ public class LangFactory {
 			expression = expressionFactory(tree.getChild(1));
 		} else if (leaveClass == ExpressionLogicContext.class) { // Logical operators
 			String op = ((ExpressionLogicContext) tree).op.getText();
-			if (debug) Gpr.debug("Logic operator: '" + op + "'");
+			if (debug) Log.debug("Logic operator: '" + op + "'");
 
 			// Parse expressions
 			Expression l = expressionFactory(tree.getChild(0));
@@ -171,7 +172,7 @@ public class LangFactory {
 
 		} else if (leaveClass == ExpressionTimesContext.class) { // Multiplication operators
 			String op = ((ExpressionTimesContext) tree).op.getText();
-			if (debug) Gpr.debug("Multiplication operator: '" + op + "'");
+			if (debug) Log.debug("Multiplication operator: '" + op + "'");
 
 			Expression left = expressionFactory(tree.getChild(0));
 			Expression right = expressionFactory(tree.getChild(2));
@@ -183,7 +184,7 @@ public class LangFactory {
 
 		} else if (leaveClass == ExpressionPlusContext.class) { // Addition operators
 			String op = ((ExpressionPlusContext) tree).op.getText();
-			if (debug) Gpr.debug("Plus operator: '" + op + "'");
+			if (debug) Log.debug("Plus operator: '" + op + "'");
 
 			Expression left = expressionFactory(tree.getChild(0));
 			Expression right = expressionFactory(tree.getChild(2));
@@ -194,7 +195,7 @@ public class LangFactory {
 
 		} else if (leaveClass == ExpressionCompContext.class) { // Comparison operators
 			String op = ((ExpressionCompContext) tree).op.getText();
-			if (debug) Gpr.debug("Compare operator: '" + op + "'");
+			if (debug) Log.debug("Compare operator: '" + op + "'");
 
 			Expression left = expressionFactory(tree.getChild(0));
 			Expression right = expressionFactory(tree.getChild(2));
@@ -220,7 +221,7 @@ public class LangFactory {
 
 		} else if (leaveClass == ExpressionUnaryContext.class) { // Unary operators
 			String op = ((ExpressionUnaryContext) tree).op.getText();
-			if (debug) Gpr.debug("Unary operator: '" + op + "'");
+			if (debug) Log.debug("Unary operator: '" + op + "'");
 
 			Expression expr = expressionFactory(tree.getChild(1));
 
@@ -256,7 +257,7 @@ public class LangFactory {
 			expression = new Literal(txt);
 		} else throw new RuntimeException("Unknown expression '" + leaveName + "'");
 
-		if (debug) Gpr.debug("Expression: " + expression);
+		if (debug) Log.debug("Expression: " + expression);
 		return expression;
 	}
 
@@ -269,7 +270,7 @@ public class LangFactory {
 			Class leaveClass = tree.getClass();
 			String leaveName = leaveClass.getSimpleName(); // tree.getText();
 
-			Gpr.debug("\n\tLeaveClassName : " + leaveName //
+			Log.debug("\n\tLeaveClassName : " + leaveName //
 					+ "\n\tTxt            : " + tree.getText() //
 					+ "\n\tTree           : " + tree.toStringTree() //
 			);
@@ -297,7 +298,7 @@ public class LangFactory {
 		String leaveName = leaveClass.getSimpleName(); // tree.getText();
 
 		if (debug) {
-			Gpr.debug("\n\tLeaveClassName : " + leaveName //
+			Log.debug("\n\tLeaveClassName : " + leaveName //
 					+ "\n\tTxt            : " + tree.getText() //
 					+ "\n\tTree           : " + tree.toStringTree() //
 			);
@@ -353,7 +354,7 @@ public class LangFactory {
 		String leaveName = tree.getChild(0).getText();
 
 		if (debug) {
-			Gpr.debug("\n\tLeaveClassName : " + leaveName //
+			Log.debug("\n\tLeaveClassName : " + leaveName //
 					+ "\n\tTxt            : " + tree.getText() //
 					+ "\n\tTree           : " + tree.toStringTree() //
 			);
@@ -413,7 +414,7 @@ public class LangFactory {
 		String leaveName = tree.getChild(0).getText();
 
 		if (debug) {
-			Gpr.debug("\n\tLeaveClassName : " + leaveName //
+			Log.debug("\n\tLeaveClassName : " + leaveName //
 					+ "\n\tTxt            : " + tree.getText() //
 					+ "\n\tTree           : " + tree.toStringTree() //
 			);
@@ -433,7 +434,7 @@ public class LangFactory {
 			func = new CountVariant();
 		} else throw new RuntimeException("Unknown expression '" + leaveName + "'");
 
-		if (debug) Gpr.debug("vcfExpression: " + func);
+		if (debug) Log.debug("vcfExpression: " + func);
 		return func;
 	}
 

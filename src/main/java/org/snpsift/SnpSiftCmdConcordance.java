@@ -12,6 +12,7 @@ import org.snpeff.fileIterator.SeekableBufferedReader;
 import org.snpeff.fileIterator.VcfFileIterator;
 import org.snpeff.stats.CountByType;
 import org.snpeff.util.Gpr;
+import org.snpeff.util.Log;
 import org.snpeff.util.Timer;
 import org.snpeff.vcf.FileIndexChrPos;
 import org.snpeff.vcf.VcfEntry;
@@ -118,7 +119,7 @@ public class SnpSiftCmdConcordance extends SnpSift {
 		if (debug) {
 			String s1 = ve1 == null ? "null" : ve1.toStr();
 			String s2 = ve2 == null ? "null" : ve2.toStr();
-			Gpr.debug("Concordance: " + s1 + "\t" + s2 + "\tErr: " + err);
+			Log.debug("Concordance: " + s1 + "\t" + s2 + "\tErr: " + err);
 		}
 
 		// Compare all genotypes from ve2 to the corresponding genotype in ve1
@@ -141,10 +142,10 @@ public class SnpSiftCmdConcordance extends SnpSift {
 				} else {
 					key = "ERROR";
 				}
-				if (debug) Gpr.debug("Sample " + sampleNameIdx2[idx2] + "\tkey:" + key);
+				if (debug) Log.debug("Sample " + sampleNameIdx2[idx2] + "\tkey:" + key);
 
 				concordanceCount(key, count, countBySample);
-			} else if (debug) Gpr.debug("Unmatched sample '" + sampleNameIdx2[idx2] + "' (number " + idx2 + ") in file " + name2);
+			} else if (debug) Log.debug("Unmatched sample '" + sampleNameIdx2[idx2] + "' (number " + idx2 + ") in file " + name2);
 		}
 
 		// Show counts for this match
@@ -204,15 +205,15 @@ public class SnpSiftCmdConcordance extends SnpSift {
 		if (latestVcfEntry != null) {
 			// Sanity check
 			if (!latestVcfEntry.getChromosomeName().equals(chr)) {
-				if (debug) Gpr.debug("Find: Different chromosomes :\t" + latestVcfEntry.toStr() + "\t" + vcfEntry.toStr());
+				if (debug) Log.debug("Find: Different chromosomes :\t" + latestVcfEntry.toStr() + "\t" + vcfEntry.toStr());
 				return null;
 			}
 			if (vcfEntry.getStart() < latestVcfEntry.getStart()) {
-				if (debug) Gpr.debug("Find: Not there yet         :\t" + latestVcfEntry.toStr() + "\t" + vcfEntry.toStr());
+				if (debug) Log.debug("Find: Not there yet         :\t" + latestVcfEntry.toStr() + "\t" + vcfEntry.toStr());
 				return null; // Not there yet
 			}
 			if (vcfEntry.getStart() == latestVcfEntry.getStart()) {
-				if (debug) Gpr.debug("Find: Match!                :\t" + latestVcfEntry.toStr() + "\t" + vcfEntry.toStr());
+				if (debug) Log.debug("Find: Match!                :\t" + latestVcfEntry.toStr() + "\t" + vcfEntry.toStr());
 				VcfEntry ve = latestVcfEntry;
 				latestVcfEntry = null;
 				return ve; // Match!
@@ -229,7 +230,7 @@ public class SnpSiftCmdConcordance extends SnpSift {
 			countEntries++;
 
 			// Sanity check: Is VCF sorted?
-			if (latestVcfChr.equals(ve.getChromosomeName()) && latestVcfPos > ve.getStart()) fatalError("VCF file '" + vcfFileName2 + "' is not properly sorted. Position " + latestVcfChr + ":" + (latestVcfPos + 1) + " is after position " + latestVcfChr + ":" + (ve.getStart() + 1));
+			if (latestVcfChr.equals(ve.getChromosomeName()) && latestVcfPos > ve.getStart()) Log.fatalError("VCF file '" + vcfFileName2 + "' is not properly sorted. Position " + latestVcfChr + ":" + (latestVcfPos + 1) + " is after position " + latestVcfChr + ":" + (ve.getStart() + 1));
 
 			latestVcfEntry = ve;
 			latestVcfChr = ve.getChromosomeName();
@@ -246,7 +247,7 @@ public class SnpSiftCmdConcordance extends SnpSift {
 			concordance(latestVcfEntry, null);
 		}
 
-		if (debug) Gpr.debug("Find: No more entried in VCF_1    :\t\t" + vcfEntry.toStr());
+		if (debug) Log.debug("Find: No more entried in VCF_1    :\t\t" + vcfEntry.toStr());
 		return null;
 	}
 
@@ -289,7 +290,7 @@ public class SnpSiftCmdConcordance extends SnpSift {
 	 * Jump to next chromosome
 	 */
 	boolean jumpToChromo(VcfFileIterator vcfFile, String chr) throws IOException {
-		if (debug) Gpr.debug("Find: Looking for chromosome '" + chr + "'");
+		if (debug) Log.debug("Find: Looking for chromosome '" + chr + "'");
 
 		// Make sure we account for all 'missing' entries
 		readUntilChromosomeEnd(vcfFile, chrPrev);
@@ -299,7 +300,7 @@ public class SnpSiftCmdConcordance extends SnpSift {
 
 		// No such chromosome?
 		if (start < 0) {
-			warn("Chromosome '" + chr + "' not found in database.");
+			Log.warning("Chromosome '" + chr + "' not found in database.");
 			return false;
 		}
 
@@ -340,8 +341,8 @@ public class SnpSiftCmdConcordance extends SnpSift {
 		vcf2.readHeader();
 
 		// Sanity check
-		if (vcf1.getSampleNames() == null) fatalError("Unable to parse sample names from file '" + vcfFileName1 + "'. Missing header line?");
-		if (vcf2.getSampleNames() == null) fatalError("Unable to parse sample names from file '" + vcfFileName2 + "'. Missing header line?");
+		if (vcf1.getSampleNames() == null) Log.fatalError("Unable to parse sample names from file '" + vcfFileName1 + "'. Missing header line?");
+		if (vcf2.getSampleNames() == null) Log.fatalError("Unable to parse sample names from file '" + vcfFileName2 + "'. Missing header line?");
 
 		// Map sample names to sample number
 		HashMap<String, Integer> vcf1Name2Idx = new HashMap<>();
@@ -474,7 +475,7 @@ public class SnpSiftCmdConcordance extends SnpSift {
 			String latestChr = "";
 			for (VcfEntry ve2 : vcf2) {
 				// Sanity check: Is VCF sorted?
-				if (latestChr.equals(ve2.getChromosomeName()) && latestPos > ve2.getStart()) fatalError("VCF file '" + vcfFileName2 + "' is not properly sorted. Position " + latestChr + ":" + (latestPos + 1) + " is after position " + latestChr + ":" + (ve2.getStart() + 1));
+				if (latestChr.equals(ve2.getChromosomeName()) && latestPos > ve2.getStart()) Log.fatalError("VCF file '" + vcfFileName2 + "' is not properly sorted. Position " + latestChr + ":" + (latestPos + 1) + " is after position " + latestChr + ":" + (ve2.getStart() + 1));
 
 				VcfEntry ve1 = find(vcf1, ve2);
 				concordance(ve1, ve2);

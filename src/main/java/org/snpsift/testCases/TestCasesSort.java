@@ -2,7 +2,7 @@ package org.snpsift.testCases;
 
 import java.util.List;
 
-import org.snpeff.util.Gpr;
+import org.snpeff.util.Log;
 import org.snpeff.vcf.VcfEntry;
 import org.snpeff.vcf.VcfHeader;
 import org.snpsift.SnpSift;
@@ -25,7 +25,7 @@ public class TestCasesSort extends TestCase {
 	 * Vcf Header bug: FORMAT and INFO having the same ID
 	 */
 	public void test_01() {
-		Gpr.debug("Test");
+		Log.debug("Test");
 
 		String args[] = { "sort", "test/test_sort_01_1.vcf", "test/test_sort_01_2.vcf" };
 		SnpSift ss = new SnpSift(args);

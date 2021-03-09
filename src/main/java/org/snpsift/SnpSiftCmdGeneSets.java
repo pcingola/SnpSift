@@ -10,6 +10,7 @@ import org.snpeff.fileIterator.VcfFileIterator;
 import org.snpeff.geneSets.GeneSet;
 import org.snpeff.geneSets.GeneSets;
 import org.snpeff.stats.CountByType;
+import org.snpeff.util.Log;
 import org.snpeff.util.Timer;
 import org.snpeff.vcf.VcfEffect;
 import org.snpeff.vcf.VcfEntry;
@@ -102,7 +103,7 @@ public class SnpSiftCmdGeneSets extends SnpSift {
 	public boolean annotateInit(VcfFileIterator vcfFile) {
 		super.annotateInit(vcfFile);
 
-		if (msigdb == null || msigdb.isEmpty()) fatalError("Missing argument / config: MSigDb file name");
+		if (msigdb == null || msigdb.isEmpty()) Log.fatalError("Missing argument / config: MSigDb file name");
 
 		if (verbose) Timer.showStdErr("Reading MSigDb from file: '" + msigdb + "'");
 		geneSets = new GeneSets(msigdb);

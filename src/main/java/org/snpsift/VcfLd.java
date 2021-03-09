@@ -2,18 +2,18 @@ package org.snpsift;
 
 import java.util.Iterator;
 
-import org.snpeff.util.Gpr;
+import org.snpeff.util.Log;
 import org.snpeff.vcf.VcfEntry;
 import org.snpeff.vcf.VcfGenotype;
 
 /**
  * Calculate Linkage Disequilibrium
- * 
+ *
  * Reference: "Principles of population genetics (4th edition)" Hartl & Clark, pages 73 to 81
  * Note: I try to follow the same notation as the book.
- * 
+ *
  * WARNING: I assume that the organism is diploid (i.e. it has two chromosomes)
- * 
+ *
  * @author pablocingolani
  */
 public class VcfLd {
@@ -30,10 +30,10 @@ public class VcfLd {
 	public VcfLd() {
 	}
 
-	/** 
+	/**
 	 * Count genotypes
-	 * @param genotypeA : Genotype number at location 'A' ( either '0' or '1', representing 'A' or 'a' respectively) 
-	 * @param genotypeB : Genotype number at location 'B' ( either '0' or '1', representing 'B' or 'b' respectively) 
+	 * @param genotypeA : Genotype number at location 'A' ( either '0' or '1', representing 'A' or 'a' respectively)
+	 * @param genotypeB : Genotype number at location 'B' ( either '0' or '1', representing 'B' or 'b' respectively)
 	 */
 	void countGenotypes(int genotypeA, int genotypeB) {
 		if (genotypeA == 0) {
@@ -97,7 +97,7 @@ public class VcfLd {
 
 	/**
 	 * Calculate linkage disequilibrium parameters
-	 * 
+	 *
 	 * @return linkage disequilibrium between 'A' and 'B'
 	 */
 	public double ld() {
@@ -129,7 +129,7 @@ public class VcfLd {
 		// Calculate rSquare (see page 81)
 		Dprime = (D >= 0 ? D / Dmax : D / Dmin);
 
-		if (debug) Gpr.debug("\n\tD    : " + D //
+		if (debug) Log.debug("\n\tD    : " + D //
 				+ "\n\tDmin : " + Dmin //
 				+ "\n\tDmax : " + Dmax //
 				+ "\n\tD'   : " + Dprime //
@@ -152,10 +152,10 @@ public class VcfLd {
 
 	/**
 	 * Calculate linkage disequilibrium parameter
-	 * 
+	 *
 	 * @param vcfEntryA : Vcf entry at locus 'A'
 	 * @param vcfEntryB : Vcf entry at locus 'B'
-	 * 
+	 *
 	 * @return linkage disequilibrium between 'A' and 'B'
 	 */
 	public double ld(VcfEntry vcfEntryA, VcfEntry vcfEntryB) {
@@ -183,7 +183,7 @@ public class VcfLd {
 			int genB[] = gb.getGenotype();
 			countGenotypes(genA[0], genB[0]); // One strand (remember that the vcfEntries are phased)
 			countGenotypes(genA[1], genB[1]); // Another strand
-			Gpr.debug(ga + "\tgenA: " + genA[0] + " , " + genA[1] + "\tcountA: " + countA);
+			Log.debug(ga + "\tgenA: " + genA[0] + " , " + genA[1] + "\tcountA: " + countA);
 		}
 
 		// Calculate parameters

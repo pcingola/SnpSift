@@ -6,7 +6,7 @@ import java.util.List;
 import org.snpeff.interval.Marker;
 import org.snpeff.interval.Markers;
 import org.snpeff.interval.Variant;
-import org.snpeff.util.Gpr;
+import org.snpeff.util.Log;
 import org.snpeff.vcf.VariantVcfEntry;
 import org.snpeff.vcf.VcfEntry;
 
@@ -44,7 +44,7 @@ public class DbVcfSorted extends DbVcf {
 	 */
 	@Override
 	public void open() {
-		if (debug) Gpr.debug("Open database file:" + dbFileName);
+		if (debug) Log.debug("Open database file:" + dbFileName);
 
 		vcfIndex = new VcfIndex(dbFileName);
 		vcfIndex.setVerbose(verbose);

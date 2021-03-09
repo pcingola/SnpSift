@@ -10,6 +10,7 @@ import org.snpeff.fileIterator.VcfFileIterator;
 import org.snpeff.ped.PedPedigree;
 import org.snpeff.ped.TfamEntry;
 import org.snpeff.util.Gpr;
+import org.snpeff.util.Log;
 import org.snpeff.util.Timer;
 import org.snpeff.vcf.VcfEntry;
 import org.snpeff.vcf.VcfGenotype;
@@ -91,8 +92,8 @@ public class SnpSiftCmdVcf2Tped extends SnpSift {
 		if (outputFileName == null) usage("Missing paramter 'outputName'");
 
 		// Check input files
-		if (!Gpr.canRead(vcfFile)) fatalError("Cannot read file '" + vcfFile + "'");
-		if (!Gpr.canRead(tfamFile)) fatalError("Cannot read file '" + tfamFile + "'");
+		if (!Gpr.canRead(vcfFile)) Log.fatalError("Cannot read file '" + vcfFile + "'");
+		if (!Gpr.canRead(tfamFile)) Log.fatalError("Cannot read file '" + tfamFile + "'");
 
 	}
 
@@ -104,8 +105,8 @@ public class SnpSiftCmdVcf2Tped extends SnpSift {
 		// Create output file names
 		outTpedFile = outputFileName + ".tped";
 		outTfamFile = outputFileName + ".tfam";
-		if (!force && Gpr.canRead(outTpedFile)) fatalError("VCF file '" + outTpedFile + "' already exists.");
-		if (!force && Gpr.canRead(outTfamFile)) fatalError("TFAM file '" + outTfamFile + "' already exists.");
+		if (!force && Gpr.canRead(outTpedFile)) Log.fatalError("VCF file '" + outTpedFile + "' already exists.");
+		if (!force && Gpr.canRead(outTfamFile)) Log.fatalError("TFAM file '" + outTfamFile + "' already exists.");
 
 		// Convert from VCF to TPED
 		vcf2Tped(vcfFile, tfamFile, outTfamFile, outTpedFile);
@@ -275,7 +276,7 @@ public class SnpSiftCmdVcf2Tped extends SnpSift {
 					countVcf++;
 					if (verbose && (countVcf % 1000 == 0)) Timer.showStdErr("\tLine " + countVcf + "\t" + ve.getChromosomeName() + ":" + (ve.getStart() + 1));
 				} catch (Exception e) {
-					Gpr.debug("Exception processing VCF entry : " + ve);
+					Log.debug("Exception processing VCF entry : " + ve);
 					e.printStackTrace();
 				}
 

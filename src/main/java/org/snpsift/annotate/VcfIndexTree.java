@@ -18,7 +18,7 @@ import org.snpeff.interval.Marker;
 import org.snpeff.interval.Markers;
 import org.snpeff.interval.Variant;
 import org.snpeff.interval.tree.Itree;
-import org.snpeff.util.Gpr;
+import org.snpeff.util.Log;
 import org.snpeff.util.Timer;
 import org.snpeff.vcf.VcfEntry;
 
@@ -372,7 +372,7 @@ public class VcfIndexTree implements Itree {
 	@Override
 	public Markers query(Interval queryMarker) {
 		Markers results = new Markers();
-		if (debug) Gpr.debug("Query: " + queryMarker.getChromosomeName() + ":" + queryMarker.getStart() + "-" + queryMarker.getEnd() + "\t" + queryMarker);
+		if (debug) Log.debug("Query: " + queryMarker.getChromosomeName() + ":" + queryMarker.getStart() + "-" + queryMarker.getEnd() + "\t" + queryMarker);
 		query(queryMarker, 0, results);
 		return results;
 	}
@@ -385,7 +385,7 @@ public class VcfIndexTree implements Itree {
 		// Negative index? Nothing to do
 		if (idx < 0) return;
 
-		if (debug) Gpr.debug("Node: " + toString(idx) + (results.isEmpty() ? "" : "\n\tResults: " + results));
+		if (debug) Log.debug("Node: " + toString(idx) + (results.isEmpty() ? "" : "\n\tResults: " + results));
 
 		// Check all intervals intersecting
 		queryIntersects(queryMarker, idx, results);
@@ -406,7 +406,7 @@ public class VcfIndexTree implements Itree {
 	 */
 	protected void queryIntersects(Interval queryMarker, int idx, Markers results) {
 		if (intersectFilePosStart[idx] == null) return;
-		if (debug) Gpr.debug("queryIntersects\tidx: " + idx);
+		if (debug) Log.debug("queryIntersects\tidx: " + idx);
 
 		// Read entries from disk
 		List<VcfEntry> vcfEntries = readEntries(idx);
@@ -417,7 +417,7 @@ public class VcfIndexTree implements Itree {
 			// marker, we store this VCF entry as a result
 			for (Variant var : ve.variants()) {
 				if (var.intersects(queryMarker)) {
-					if (debug) Gpr.debug("\tAdding matching result: " + ve);
+					if (debug) Log.debug("\tAdding matching result: " + ve);
 					results.add(ve);
 					break; // Store this entry only once
 				}
@@ -442,7 +442,7 @@ public class VcfIndexTree implements Itree {
 			vcfEntries = new ArrayList<VcfEntry>();
 			Set<VcfEntry> added = new HashSet<>();
 			for (int i = 0; i < len; i++) {
-				if (debug) Gpr.debug("\tintersect[" + idx + "][" + i + "]:\t[" + intersectFilePosStart[idx][i] + " , " + intersectFilePosEnd[idx][i] + " ]");
+				if (debug) Log.debug("\tintersect[" + idx + "][" + i + "]:\t[" + intersectFilePosStart[idx][i] + " , " + intersectFilePosEnd[idx][i] + " ]");
 
 				long startPos = intersectFilePosStart[idx][i];
 				long endPos = intersectFilePosEnd[idx][i];
@@ -454,7 +454,7 @@ public class VcfIndexTree implements Itree {
 				for (VcfEntry ve : vcf) {
 					if (added.add(ve)) { // Make sure we add entries only once
 						vcfEntries.add(ve);
-						if (debug) Gpr.debug("\tParsing VcfEntry [" + vcf.getFilePointer() + "]: " + ve);
+						if (debug) Log.debug("\tParsing VcfEntry [" + vcf.getFilePointer() + "]: " + ve);
 					}
 
 					// Finished reading?
@@ -575,7 +575,7 @@ public class VcfIndexTree implements Itree {
 		return "Chromosome: " + chromosome //
 				+ ", size: " + size //
 				+ ", capacity: " + capacity() //
-				;
+		;
 	}
 
 	public String toString(int idx) {

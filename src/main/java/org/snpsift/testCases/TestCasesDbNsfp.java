@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.junit.Assert;
-import org.snpeff.util.Gpr;
+import org.snpeff.util.Log;
 import org.snpeff.vcf.VcfEntry;
 import org.snpsift.SnpSift;
 import org.snpsift.SnpSiftCmdDbNsfp;
@@ -16,8 +16,8 @@ import junit.framework.TestCase;
 
 /**
  * Test cases for dbNSFP database annotations
- * Note: This class tries to use 'data type cache' files 
- * 
+ * Note: This class tries to use 'data type cache' files
+ *
  * @author pcingola
  */
 public class TestCasesDbNsfp extends TestCase {
@@ -103,13 +103,13 @@ public class TestCasesDbNsfp extends TestCase {
 			String dtcFileName = dbFileName + DbNsfp.DATA_TYPES_CACHE_EXT;
 			File dtc = new File(dtcFileName);
 			if (dtc.delete()) {
-				if (verbose) Gpr.debug("Removing data types cache file: " + dtcFileName);
+				if (verbose) Log.debug("Removing data types cache file: " + dtcFileName);
 			}
 		}
 	}
 
 	public void test_01() {
-		Gpr.debug("Test");
+		Log.debug("Test");
 		String vcfFileName = "test/test_dbNSFP_chr1_69134.vcf";
 		String dbFileName = "test/dbNSFP2.0b3.chr1_69134.txt.gz";
 		String args[] = { "-collapse", "-f", "GERP++_RS,GERP++_NR,ESP6500_AA_AF,29way_logOdds,Polyphen2_HVAR_pred,SIFT_score,Uniprot_acc,Ensembl_transcriptid" };
@@ -133,7 +133,7 @@ public class TestCasesDbNsfp extends TestCase {
 	 * Test dbnsfp having multiple lines per variant
 	 */
 	public void test_02() {
-		Gpr.debug("Test");
+		Log.debug("Test");
 		String vcfFileName = "test/test_dbnsfp_multiple.vcf";
 		String dbFileName = "test/test_dbnsfp_multiple_lines.txt.gz";
 		String fields = "genename,Ensembl_geneid,Ensembl_transcriptid,aaref,aaalt";
@@ -154,7 +154,7 @@ public class TestCasesDbNsfp extends TestCase {
 	 * Test dbnsfp having multiple lines per variant, without collapsing
 	 */
 	public void test_03() {
-		Gpr.debug("Test");
+		Log.debug("Test");
 		String vcfFileName = "test/test_dbnsfp_multiple_noCollapse.vcf";
 		String dbFileName = "test/test_dbnsfp_multiple_noCollapse.txt.gz";
 		String fields = "aaalt,Ensembl_transcriptid,Polyphen2_HDIV_score,Polyphen2_HVAR_pred";
@@ -172,7 +172,7 @@ public class TestCasesDbNsfp extends TestCase {
 	}
 
 	public void test_04() {
-		Gpr.debug("Test");
+		Log.debug("Test");
 		// We annotate something trivial: position
 		String vcfFileName = "test/test_dbNSFP_04.vcf";
 		String dbFileName = "test/dbNSFP2.3.test.txt.gz";
@@ -192,7 +192,7 @@ public class TestCasesDbNsfp extends TestCase {
 	}
 
 	public void test_05() {
-		Gpr.debug("Test");
+		Log.debug("Test");
 		// We annotate something trivial: position
 		String vcfFileName = "test/test_dbNSFP_05.vcf";
 		String dbFileName = "test/dbNSFP2.3.test.txt.gz";
@@ -204,7 +204,7 @@ public class TestCasesDbNsfp extends TestCase {
 			// Check that position (annotated from dbNSFP) actually matches
 			String posDb = vcfEntry.getInfo("dbNSFP_pos_1_coor_"); // Get INFO field annotated from dbNSFP
 			int pos = vcfEntry.getStart() + 1; // Get position
-			if (debug) Gpr.debug(vcfEntry.getChromosomeName() + ":" + pos + "\t" + posDb);
+			if (debug) Log.debug(vcfEntry.getChromosomeName() + ":" + pos + "\t" + posDb);
 
 			// Check
 			if (pos != 249213000) Assert.assertEquals("" + pos, posDb);
@@ -214,7 +214,7 @@ public class TestCasesDbNsfp extends TestCase {
 	}
 
 	public void test_06() {
-		Gpr.debug("Test");
+		Log.debug("Test");
 		// We annotate something trivial: position
 		String vcfFileName = "test/test_dbNSFP_06.vcf";
 		String dbFileName = "test/dbNSFP2.3.test.txt.gz";

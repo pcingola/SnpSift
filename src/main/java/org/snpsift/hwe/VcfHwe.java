@@ -2,7 +2,7 @@ package org.snpsift.hwe;
 
 import org.apache.commons.math3.distribution.ChiSquaredDistribution;
 import org.apache.commons.math3.util.ArithmeticUtils;
-import org.snpeff.util.Gpr;
+import org.snpeff.util.Log;
 import org.snpeff.vcf.VcfEntry;
 
 /**
@@ -118,7 +118,7 @@ public class VcfHwe {
 		double logp = num - den + n12 * LOG2;
 		double p = Math.exp(logp);
 
-		if (debug) Gpr.debug("\n\tn11: " + n11 + "\n\tn12: " + n12 + "\n\tn22: " + n22 + "\n\tn: " + n + "\n\tn1: " + n1 + "\n\tn2: " + n2 + "\n\tlogP: " + logp + "\n\tp: " + p //
+		if (debug) Log.debug("\n\tn11: " + n11 + "\n\tn12: " + n12 + "\n\tn22: " + n22 + "\n\tn: " + n + "\n\tn1: " + n1 + "\n\tn2: " + n2 + "\n\tlogP: " + logp + "\n\tp: " + p //
 				+ "\n\tnum : " + num + " [" + Math.exp(num) + "]" //
 				+ "\n\tden : " + den + " [" + Math.exp(den) + "]" //
 		);

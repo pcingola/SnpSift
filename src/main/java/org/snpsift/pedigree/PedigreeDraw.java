@@ -15,10 +15,11 @@ import org.snpeff.ped.PedPedigree;
 import org.snpeff.ped.Sex;
 import org.snpeff.ped.TfamEntry;
 import org.snpeff.util.Gpr;
+import org.snpeff.util.Log;
 
 /**
  * Draws a pedigree using SVG
- * 
+ *
  * @author pablocingolani
  */
 public class PedigreeDraw {
@@ -103,7 +104,7 @@ public class PedigreeDraw {
 		ind.getPosition().x = max;
 		assignedPos.add(max + "\t" + ind.getDepth());
 
-		if (debug) Gpr.debug(Gpr.tabs(ind.getDepth()) + ind.getId() + "\t" + ind.getDepth() + " , " + ind.getPosition().x);
+		if (debug) Log.debug(Gpr.tabs(ind.getDepth()) + ind.getId() + "\t" + ind.getDepth() + " , " + ind.getPosition().x);
 
 		return max;
 	}
@@ -121,7 +122,7 @@ public class PedigreeDraw {
 	}
 
 	/**
-	 * Assign X position. 
+	 * Assign X position.
 	 */
 	int assignXpos() {
 		// Sort individuals by number pf descendants
@@ -197,7 +198,7 @@ public class PedigreeDraw {
 	}
 
 	/**
-	 * Assign Y position. 
+	 * Assign Y position.
 	 * This is fairly easy, since it only depends on the 'generation' (or graph depth)
 	 */
 	void assignYpos() {
@@ -304,9 +305,9 @@ public class PedigreeDraw {
 				+ -w2 + " " + -h2 //
 				+ -w2 + " " + h2 //
 				+ "\"" //
-				+ "stroke=\"" + strokeColor + "\"" // 
-				+ "stroke-width=\"" + strokeWidth + "\"" // 
-				+ (fillColor != null ? " fill=\"" + fillColor + "\"" : "") // 
+				+ "stroke=\"" + strokeColor + "\"" //
+				+ "stroke-width=\"" + strokeWidth + "\"" //
+				+ (fillColor != null ? " fill=\"" + fillColor + "\"" : "") //
 				+ "/>");
 	}
 
@@ -353,7 +354,7 @@ public class PedigreeDraw {
 			label(new Point(LABEL_DELTA_X, y), "Gen_" + (i + 1));
 		}
 
-		// Create SVG document 
+		// Create SVG document
 		StringBuffer out = new StringBuffer();
 		out.insert(0, "<?xml version=\"1.0\" standalone=\"no\"?>\n" //
 				+ "<!DOCTYPE svg PUBLIC \"-//W3C//DTD SVG 1.1//EN\" \"http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd\">\n" //
@@ -378,7 +379,7 @@ public class PedigreeDraw {
 	 */
 	void drawSvg(Individual ind) {
 		if (!ind.hasPosition()) {
-			Gpr.debug("Skipping individual " + ind);
+			Log.debug("Skipping individual " + ind);
 			return;
 		}
 
@@ -456,7 +457,7 @@ public class PedigreeDraw {
 		for (Individual ind2 : individuals)
 			if ((ind != ind2) && ind.isSpouse(ind2)) spouses.add(ind2);
 
-		//Gpr.debug("Ind: " + ind.getId() + "\tNum spouses: " + spouses.size());
+		//Log.debug("Ind: " + ind.getId() + "\tNum spouses: " + spouses.size());
 		return spouses;
 	}
 
@@ -483,7 +484,7 @@ public class PedigreeDraw {
 		individualsById = new HashMap<String, Individual>();
 		individuals = new ArrayList<Individual>();
 
-		// Create 'individuals' 
+		// Create 'individuals'
 		for (TfamEntry tf : pedigree) {
 			Individual ind = new Individual(tf);
 			individuals.add(ind);
@@ -615,7 +616,7 @@ public class PedigreeDraw {
 		for (Individual ind : individuals) {
 			if (ind.hasPosition() && (ind.getPosition().x <= posX) && (!except.contains(ind))) {
 				ind.getPosition().x += deltaX;
-				Gpr.debug("Moved Left: " + ind);
+				Log.debug("Moved Left: " + ind);
 			}
 		}
 	}
@@ -629,7 +630,7 @@ public class PedigreeDraw {
 		for (Individual ind : individuals) {
 			if (ind.hasPosition() && (ind.getPosition().x >= posX) && (!except.contains(ind))) {
 				ind.getPosition().x += deltaX;
-				Gpr.debug("Moved right: " + ind);
+				Log.debug("Moved right: " + ind);
 			}
 		}
 	}

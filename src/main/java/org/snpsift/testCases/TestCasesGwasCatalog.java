@@ -3,7 +3,7 @@ package org.snpsift.testCases;
 import java.util.List;
 
 import org.junit.Assert;
-import org.snpeff.util.Gpr;
+import org.snpeff.util.Log;
 import org.snpeff.vcf.VcfEntry;
 import org.snpsift.SnpSift;
 import org.snpsift.SnpSiftCmdGwasCatalog;
@@ -30,7 +30,7 @@ public class TestCasesGwasCatalog extends TestCase {
 	}
 
 	public void test_01() {
-		Gpr.debug("Test");
+		Log.debug("Test");
 
 		// Load catalog
 		GwasCatalog gwasCatalog = new GwasCatalog("test/gwasCatalog/gwascatalog.txt.gz");
@@ -45,7 +45,7 @@ public class TestCasesGwasCatalog extends TestCase {
 	}
 
 	public void test_02() {
-		Gpr.debug("Test");
+		Log.debug("Test");
 
 		String args[] = { "gwasCat" //
 				, "-db" //
@@ -57,7 +57,7 @@ public class TestCasesGwasCatalog extends TestCase {
 
 		int countOk = 0;
 		for (VcfEntry ve : vcfEntries) {
-			if (verbose) Gpr.debug(ve);
+			if (verbose) Log.debug(ve);
 
 			if (ve.getInfo("GWC").equals("Y") // We added this INFO fields for VCF entries in the test case that matching GWACAT database
 					&& ve.getInfo("GWASCAT_TRAIT") != null) {

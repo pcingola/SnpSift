@@ -14,6 +14,7 @@ import java.util.Set;
 import org.snpeff.fileIterator.VcfFileIterator;
 import org.snpeff.interval.Variant;
 import org.snpeff.util.Gpr;
+import org.snpeff.util.Log;
 import org.snpeff.util.Timer;
 import org.snpeff.vcf.VcfEntry;
 import org.snpeff.vcf.VcfInfoType;
@@ -151,7 +152,7 @@ public class SnpSiftCmdDbNsfp extends SnpSift {
 
 				// Check if file is sorted
 				if (vcfEntry.getChromosomeName().equals(chr) && vcfEntry.getStart() < pos) {
-					fatalError("Your VCF file should be sorted!" //
+					Log.fatalError("Your VCF file should be sorted!" //
 							+ "\n\tPrevious entry " + chr + ":" + pos//
 							+ "\n\tCurrent entry  " + vcfEntry.getChromosomeName() + ":" + (vcfEntry.getStart() + 1)//
 					);
@@ -230,7 +231,7 @@ public class SnpSiftCmdDbNsfp extends SnpSift {
 		// Show progress
 		if (annotated) {
 			countAnnotated++;
-			if (debug) Gpr.debug("Annotated: " + variant.toStr());
+			if (debug) Log.debug("Annotated: " + variant.toStr());
 		}
 
 		return annotated;
@@ -385,7 +386,7 @@ public class SnpSiftCmdDbNsfp extends SnpSift {
 
 		// Check that all "field to add" are in the database
 		for (String fieldKey : fieldsToAdd.keySet())
-			if (!dbNsfp.hasField(fieldKey)) fatalError("dbNsfp does not have field '" + fieldKey + "' (file '" + dbFileName + "')");
+			if (!dbNsfp.hasField(fieldKey)) Log.fatalError("dbNsfp does not have field '" + fieldKey + "' (file '" + dbFileName + "')");
 	}
 
 	String collapseRepeated(String csvalues) {

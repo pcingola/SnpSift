@@ -3,6 +3,7 @@ package org.snpsift.testCases;
 import java.util.ArrayList;
 
 import org.snpeff.util.Gpr;
+import org.snpeff.util.Log;
 import org.snpsift.SnpSift;
 import org.snpsift.SnpSiftCmdGt;
 
@@ -22,7 +23,7 @@ public class TestCasesGt extends TestCase {
 	/**
 	 */
 	public void test_01() {
-		Gpr.debug("Test");
+		Log.debug("Test");
 
 		String file = "test/gt_test.01.vcf";
 		String fileGt = "test/gt_test.01.gt.vcf";

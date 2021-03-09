@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.Assert;
-import org.snpeff.util.Gpr;
+import org.snpeff.util.Log;
 import org.snpeff.vcf.VcfEntry;
 import org.snpsift.SnpSift;
 import org.snpsift.SnpSiftCmdAnnotate;
@@ -132,7 +132,7 @@ public class TestCasesZzz extends TestCase {
 		String indexFile = dbFileName + ".sidx";
 		File f = new File(indexFile);
 		if (f.delete()) {
-			if (verbose) Gpr.debug("Index file '" + indexFile + "' deleted before annotation test");
+			if (verbose) Log.debug("Index file '" + indexFile + "' deleted before annotation test");
 		}
 	}
 
@@ -140,7 +140,7 @@ public class TestCasesZzz extends TestCase {
 	 * Annotate GnomAd with multiple entries
 	 */
 	public void test_45() {
-		Gpr.debug("Test");
+		Log.debug("Test");
 		String dbFileName = "./test/ann/gnomad_db_multiple_entries.vcf";
 		String fileName = "./test/ann/annotate_45.vcf";
 		String fieldName = "AC_AMR";

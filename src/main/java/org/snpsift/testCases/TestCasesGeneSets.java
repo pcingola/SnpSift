@@ -2,7 +2,7 @@ package org.snpsift.testCases;
 
 import java.util.List;
 
-import org.snpeff.util.Gpr;
+import org.snpeff.util.Log;
 import org.snpeff.vcf.VcfEntry;
 import org.snpsift.SnpSift;
 import org.snpsift.SnpSiftCmdGeneSets;
@@ -21,7 +21,7 @@ public class TestCasesGeneSets extends TestCase {
 	public static boolean verbose = false;
 
 	public void test_01() {
-		Gpr.debug("Test");
+		Log.debug("Test");
 
 		String msigDb = "test/c1.all.v4.0.symbols.gmt.gz";
 		String vcf = "test/test_geneSets.vcf";

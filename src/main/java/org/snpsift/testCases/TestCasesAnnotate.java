@@ -8,7 +8,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import org.junit.Assert;
-import org.snpeff.util.Gpr;
+import org.snpeff.util.Log;
 import org.snpeff.vcf.VcfEntry;
 import org.snpsift.SnpSift;
 import org.snpsift.SnpSiftCmdAnnotate;
@@ -136,33 +136,33 @@ public class TestCasesAnnotate extends TestCase {
 		String indexFile = dbFileName + ".sidx";
 		File f = new File(indexFile);
 		if (f.delete()) {
-			if (verbose) Gpr.debug("Index file '" + indexFile + "' deleted before annotation test");
+			if (verbose) Log.debug("Index file '" + indexFile + "' deleted before annotation test");
 		}
 	}
 
 	public void test_01() {
-		Gpr.debug("Test");
+		Log.debug("Test");
 		String dbFileName = "./test/db_test_1.vcf";
 		String fileName = "./test/annotate_1.vcf";
 		annotateTest(dbFileName, fileName);
 	}
 
 	public void test_02() {
-		Gpr.debug("Test");
+		Log.debug("Test");
 		String dbFileName = "./test/db_test_10.vcf";
 		String fileName = "./test/annotate_10.vcf";
 		annotateTest(dbFileName, fileName);
 	}
 
 	public void test_03() {
-		Gpr.debug("Test");
+		Log.debug("Test");
 		String dbFileName = "./test/db_test_2.vcf";
 		String fileName = "./test/annotate_2.vcf";
 		annotateTest(dbFileName, fileName);
 	}
 
 	public void test_04() {
-		Gpr.debug("Test");
+		Log.debug("Test");
 		String dbFileName = "./test/db_test_large.vcf";
 		String fileName = "./test/annotate_large.vcf";
 		annotateTest(dbFileName, fileName);
@@ -173,7 +173,7 @@ public class TestCasesAnnotate extends TestCase {
 	 * This should work OK as well.
 	 */
 	public void test_05() {
-		Gpr.debug("Test");
+		Log.debug("Test");
 		String dbFileName = "./test/db_test_chr22.vcf";
 		String fileName = "./test/test_chr22.vcf";
 		annotateTest(dbFileName, fileName);
@@ -183,23 +183,22 @@ public class TestCasesAnnotate extends TestCase {
 	 * Annotate info fields
 	 */
 	public void test_06() {
-		Gpr.debug("Test");
+		Log.debug("Test");
 		String dbFileName = "./test/db_test_06.vcf";
 		String fileName = "./test/annotate_06.vcf";
 		List<VcfEntry> results = annotate(dbFileName, fileName, null);
 
 		// Check
-		Assert.assertEquals(
-				"PREVIOUS=annotation;TEST=yes" //
-						+ ";ABE=0.678" //
-						+ ";ABZ=47.762" //
-						+ ";AF=0.002" //
-						+ ";AN=488" //
-						+ ";AOI=-410.122" //
-						+ ";AOZ=-399.575" //
-						+ ";IOD=0.000" //
-						+ ";OBS=4,1,1636,2011,3,1,6780,9441" //
-						+ ";RSPOS=16346045" //
+		Assert.assertEquals("PREVIOUS=annotation;TEST=yes" //
+				+ ";ABE=0.678" //
+				+ ";ABZ=47.762" //
+				+ ";AF=0.002" //
+				+ ";AN=488" //
+				+ ";AOI=-410.122" //
+				+ ";AOZ=-399.575" //
+				+ ";IOD=0.000" //
+				+ ";OBS=4,1,1636,2011,3,1,6780,9441" //
+				+ ";RSPOS=16346045" //
 				, results.get(0).getInfoStr() //
 		);
 	}
@@ -208,7 +207,7 @@ public class TestCasesAnnotate extends TestCase {
 	 * Annotate only some info fields
 	 */
 	public void test_07() {
-		Gpr.debug("Test");
+		Log.debug("Test");
 		String dbFileName = "./test/db_test_06.vcf";
 		String fileName = "./test/annotate_06.vcf";
 		String extraArgs[] = { "-info", "AF,AN,ABE" };
@@ -222,7 +221,7 @@ public class TestCasesAnnotate extends TestCase {
 	 * Do not annotate ID column
 	 */
 	public void test_08() {
-		Gpr.debug("Test");
+		Log.debug("Test");
 		String dbFileName = "./test/db_test_06.vcf";
 		String fileName = "./test/annotate_06.vcf";
 		String extraArgs[] = { "-noId" };
@@ -234,7 +233,7 @@ public class TestCasesAnnotate extends TestCase {
 	 * Annotate only some info fields
 	 */
 	public void test_09() {
-		Gpr.debug("Test");
+		Log.debug("Test");
 		String dbFileName = "./test/db_test_09.vcf";
 		String fileName = "./test/annotate_09.vcf";
 		String extraArgs[] = { "-info", "GMAF,AC" };
@@ -260,7 +259,7 @@ public class TestCasesAnnotate extends TestCase {
 	 * @throws IOException
 	 */
 	public void test_11() {
-		Gpr.debug("Test");
+		Log.debug("Test");
 		String dbFileName = "./test/db_test_11.vcf";
 		String fileName = "./test/annotate_11.vcf";
 		String extraArgs[] = { "-info", "GMAF,AC" };
@@ -286,7 +285,7 @@ public class TestCasesAnnotate extends TestCase {
 	 * Annotate without REF/ALT fields
 	 */
 	public void test_12() {
-		Gpr.debug("Test");
+		Log.debug("Test");
 		String dbFileName = "./test/db_test_12.vcf";
 		String fileName = "./test/annotate_12.vcf";
 		String extraArgs[] = { "-noAlt" };
@@ -305,7 +304,7 @@ public class TestCasesAnnotate extends TestCase {
 	 * @throws IOException
 	 */
 	public void test_13() {
-		Gpr.debug("Test");
+		Log.debug("Test");
 		String dbFileName = "./test/db_test_13.vcf";
 		String fileName = "./test/annotate_13.vcf";
 		String extraArgs[] = { "-info", "AA" };
@@ -324,7 +323,7 @@ public class TestCasesAnnotate extends TestCase {
 	}
 
 	public void test_14() {
-		Gpr.debug("Test");
+		Log.debug("Test");
 		String dbFileName = "./test/annotate_multiple_allele.db.vcf";
 		String fileName = "./test/annotate_multiple_allele.1.vcf";
 
@@ -339,7 +338,7 @@ public class TestCasesAnnotate extends TestCase {
 	}
 
 	public void test_15() {
-		Gpr.debug("Test");
+		Log.debug("Test");
 		String dbFileName = "./test/annotate_multiple_allele_R.db.vcf";
 		String fileName = "./test/annotate_multiple_allele.2.vcf";
 
@@ -354,7 +353,7 @@ public class TestCasesAnnotate extends TestCase {
 	}
 
 	public void test_16() {
-		Gpr.debug("Test");
+		Log.debug("Test");
 		String dbFileName = "./test/db_test_16.vcf";
 		String fileName = "./test/annotate_16.vcf";
 		String infoName = "PREPEND_";
@@ -371,7 +370,7 @@ public class TestCasesAnnotate extends TestCase {
 	}
 
 	public void test_17() {
-		Gpr.debug("Test");
+		Log.debug("Test");
 		String dbFileName = "./test/annotate_oder_db.vcf";
 		String fileName = "./test/annotate_oder_snp.vcf";
 
@@ -395,7 +394,7 @@ public class TestCasesAnnotate extends TestCase {
 	}
 
 	public void test_18() {
-		Gpr.debug("Test");
+		Log.debug("Test");
 		String dbFileName = "./test/test_annotate_18_db.vcf";
 		String fileName = "./test/test_annotate_18.vcf";
 
@@ -407,7 +406,7 @@ public class TestCasesAnnotate extends TestCase {
 	}
 
 	public void test_19() {
-		Gpr.debug("Test");
+		Log.debug("Test");
 		String dbFileName = "./test/db_test_multiline.vcf";
 		String fileName = "./test/annotate_multiline.vcf";
 		annotateTest(dbFileName, fileName);
@@ -417,7 +416,7 @@ public class TestCasesAnnotate extends TestCase {
 	 * Annotate info fields
 	 */
 	public void test_20() {
-		Gpr.debug("Test");
+		Log.debug("Test");
 		String dbFileName = "./test/db_test_20.vcf";
 		String fileName = "./test/annotate_20.vcf";
 		List<VcfEntry> results = annotate(dbFileName, fileName, null);
@@ -430,7 +429,7 @@ public class TestCasesAnnotate extends TestCase {
 	 * Annotate two consecutive variants in the same position
 	 */
 	public void test_21() {
-		Gpr.debug("Test");
+		Log.debug("Test");
 		String dbFileName = "./test/db_test_21.vcf";
 		String fileName = "./test/annotate_21.vcf";
 		List<VcfEntry> results = annotate(dbFileName, fileName, null);
@@ -440,13 +439,13 @@ public class TestCasesAnnotate extends TestCase {
 		// Check third entry
 		VcfEntry ve = results.get(2);
 		String ann = ve.getInfo("clinvar_db");
-		if (debug) Gpr.debug("Annotation: '" + ann + "'");
+		if (debug) Log.debug("Annotation: '" + ann + "'");
 		Assert.assertNotNull(ann);
 
 		// Check second entry
 		ve = results.get(1);
 		ann = ve.getInfo("clinvar_db");
-		if (debug) Gpr.debug("Annotation: '" + ann + "'");
+		if (debug) Log.debug("Annotation: '" + ann + "'");
 		Assert.assertNotNull(ann);
 
 	}
@@ -455,7 +454,7 @@ public class TestCasesAnnotate extends TestCase {
 	 * Annotate first base in a chromosome
 	 */
 	public void test_22() {
-		Gpr.debug("Test");
+		Log.debug("Test");
 		String dbFileName = "./test/db_test_2.vcf";
 		String fileName = "./test/annotate_22.vcf";
 		annotate(dbFileName, fileName, null);
@@ -466,7 +465,7 @@ public class TestCasesAnnotate extends TestCase {
 	 * Database has one entry and VCF has multiple ALTs
 	 */
 	public void test_23_allele_specific_annotation_missing_R() {
-		Gpr.debug("Test");
+		Log.debug("Test");
 		String dbFileName = "./test/db_test_23.vcf";
 		String fileName = "./test/annotate_23.vcf";
 		List<VcfEntry> results = annotate(dbFileName, fileName, null);
@@ -483,7 +482,7 @@ public class TestCasesAnnotate extends TestCase {
 	 * Header should be added changing the ID accordingly
 	 */
 	public void test_24() {
-		Gpr.debug("Test");
+		Log.debug("Test");
 
 		String dbFileName = "./test/db_test_24.vcf";
 		String fileName = "./test/annotate_24.vcf";
@@ -512,7 +511,7 @@ public class TestCasesAnnotate extends TestCase {
 	 * Header should be added changing the ID accordingly
 	 */
 	public void test_25() {
-		Gpr.debug("Test");
+		Log.debug("Test");
 
 		String dbFileName = "./test/db_test_24.vcf";
 		String fileName = "./test/annotate_24.vcf";
@@ -540,7 +539,7 @@ public class TestCasesAnnotate extends TestCase {
 	 * Annotate ID using entries that are duplicated in db.vcf
 	 */
 	public void test_26_repeat_db_entry() {
-		Gpr.debug("Test");
+		Log.debug("Test");
 
 		String dbFileName = "./test/db_test_26.vcf";
 		String fileName = "./test/annotate_26.vcf";
@@ -551,7 +550,7 @@ public class TestCasesAnnotate extends TestCase {
 	 * Annotate INFO fields using entries that are duplicated in db.vcf
 	 */
 	public void test_27_repeat_db_entry() {
-		Gpr.debug("Test");
+		Log.debug("Test");
 
 		String dbFileName = "./test/db_test_27.vcf";
 		String fileName = "./test/annotate_27.vcf";
@@ -566,7 +565,7 @@ public class TestCasesAnnotate extends TestCase {
 	 * Annotate if a VCF entry exists in the database file
 	 */
 	public void test_28_exists() {
-		Gpr.debug("Test");
+		Log.debug("Test");
 
 		String dbFileName = "./test/db_test_28.vcf";
 		String fileName = "./test/annotate_28.vcf";
@@ -586,7 +585,7 @@ public class TestCasesAnnotate extends TestCase {
 	 * Annotate if a VCF entry's ID might have multiple repeated entries
 	 */
 	public void test_29_repeated_IDs() {
-		Gpr.debug("Test");
+		Log.debug("Test");
 
 		String dbFileName = "./test/db_test_29.vcf";
 		String fileName = "./test/annotate_29.vcf";
@@ -609,7 +608,7 @@ public class TestCasesAnnotate extends TestCase {
 	 * be converted into minimal representation
 	 */
 	public void test_31_annotate_minimal_representation_db() {
-		Gpr.debug("Test");
+		Log.debug("Test");
 		String dbFileName = "./test/db_test_31.vcf";
 		String fileName = "./test/annotate_31.vcf";
 		annotateTest(dbFileName, fileName);
@@ -620,7 +619,7 @@ public class TestCasesAnnotate extends TestCase {
 	 * be converted into minimal representation
 	 */
 	public void test_32_annotate_minimal_representation_input() {
-		Gpr.debug("Test");
+		Log.debug("Test");
 		String dbFileName = "./test/db_test_32.vcf";
 		String fileName = "./test/annotate_32.vcf";
 		annotateTest(dbFileName, fileName);
@@ -630,7 +629,7 @@ public class TestCasesAnnotate extends TestCase {
 	 * Empty database
 	 */
 	public void test_33_empty_db() {
-		Gpr.debug("Test");
+		Log.debug("Test");
 		String dbFileName = "./test/db_test_33.vcf";
 		String fileName = "./test/annotate_33.vcf";
 		annotateTest(dbFileName, fileName);
@@ -640,7 +639,7 @@ public class TestCasesAnnotate extends TestCase {
 	 * Database has one entry and VCF has multiple ALTs
 	 */
 	public void test_34_dbStartsOnDifferentChromo() {
-		Gpr.debug("Test");
+		Log.debug("Test");
 		String dbFileName = "./test/db_test_34.vcf";
 		String fileName = "./test/annotate_34.vcf";
 		List<VcfEntry> results = annotate(dbFileName, fileName, null);
@@ -656,7 +655,7 @@ public class TestCasesAnnotate extends TestCase {
 	 * Annotate flags without '=true'
 	 */
 	public void test_35() {
-		Gpr.debug("Test");
+		Log.debug("Test");
 		String dbFileName = "./test/db_test_35.vcf";
 		String fileName = "./test/annotate_35.vcf";
 		String extraArgs[] = { "-noId" };
@@ -673,7 +672,7 @@ public class TestCasesAnnotate extends TestCase {
 	 * Annotate multi-allelic
 	 */
 	public void test_36() {
-		Gpr.debug("Test");
+		Log.debug("Test");
 		String dbFileName = "./test/db_test_36.vcf";
 		String fileName = "./test/annotate_36.vcf";
 		String extraArgs[] = {};
@@ -693,7 +692,7 @@ public class TestCasesAnnotate extends TestCase {
 	 * Previously a bug it forced an infinite loop
 	 */
 	public void test_38() {
-		Gpr.debug("Test");
+		Log.debug("Test");
 		String dbFileName = "./test/db_test_38.vcf";
 		String fileName = "./test/annotate_38.vcf";
 		annotateTest(dbFileName, fileName);
@@ -703,7 +702,7 @@ public class TestCasesAnnotate extends TestCase {
 	 * Annotate issues with discovered info fields (when annotating ALL info fields)
 	 */
 	public void test_39() {
-		Gpr.debug("Test");
+		Log.debug("Test");
 		String dbFileName = "./test/db_test_39.vcf";
 		String fileName = "./test/annotate_39.vcf";
 		String extraArgs[] = {};
@@ -721,14 +720,14 @@ public class TestCasesAnnotate extends TestCase {
 	 * Problems when tabix database file has 'chr' in chromosome names and VCF file does not
 	 */
 	public void test_40() {
-		Gpr.debug("Test");
+		Log.debug("Test");
 		String dbFileName = "./test/db_test_40.vcf";
 		String fileName = "./test/annotate_40.vcf";
 		annotateTest(dbFileName, fileName);
 	}
 
 	public void test_41() {
-		Gpr.debug("Test");
+		Log.debug("Test");
 		String dbFileName = "./test/db_test_41.vcf";
 		String fileName = "./test/annotate_41.vcf";
 		annotateTest(dbFileName, fileName);
@@ -738,7 +737,7 @@ public class TestCasesAnnotate extends TestCase {
 	 * Test multiple CAF annotations
 	 */
 	public void test_42() {
-		Gpr.debug("Test");
+		Log.debug("Test");
 		String dbFileName = "./test/db_test_42.vcf";
 		String fileName = "./test/annotate_42.vcf";
 		String extraArgs[] = {};
@@ -765,7 +764,7 @@ public class TestCasesAnnotate extends TestCase {
 	 * Annotate empty
 	 */
 	public void test_43() {
-		Gpr.debug("Test");
+		Log.debug("Test");
 		String dbFileName = "./test/db_test_43.vcf";
 		String fileName = "./test/annotate_43.vcf";
 		String extraArgs[] = { "-a" };
@@ -790,7 +789,7 @@ public class TestCasesAnnotate extends TestCase {
 	 * Annotate GnomAd with multiple entries
 	 */
 	public void test_44() {
-		Gpr.debug("Test");
+		Log.debug("Test");
 		String dbFileName = "./test/ann/gnomad_db_multiple_entries.vcf";
 		String fileName = "./test/ann/annotate_44.vcf";
 		String extraArgs[] = { "-info", "AF_AFR" };
@@ -815,7 +814,7 @@ public class TestCasesAnnotate extends TestCase {
 	 * Annotate GnomAd with multiple entries
 	 */
 	public void test_45() {
-		Gpr.debug("Test");
+		Log.debug("Test");
 		String dbFileName = "./test/ann/gnomad_db_multiple_entries.vcf";
 		String fileName = "./test/ann/annotate_45.vcf";
 		String fieldName = "AC_AMR";

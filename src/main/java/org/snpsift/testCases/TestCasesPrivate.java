@@ -3,7 +3,7 @@ package org.snpsift.testCases;
 import java.util.List;
 
 import org.junit.Assert;
-import org.snpeff.util.Gpr;
+import org.snpeff.util.Log;
 import org.snpeff.vcf.VcfEntry;
 import org.snpsift.SnpSift;
 import org.snpsift.SnpSiftCmdPrivate;
@@ -42,7 +42,7 @@ public class TestCasesPrivate extends TestCase {
 	 * Non private
 	 */
 	public void test_01() {
-		Gpr.debug("Test");
+		Log.debug("Test");
 		String vcfFile = "test/test.private.01.vcf";
 		String tfamFile = "test/test.private.01.tfam";
 		checkPrivate(vcfFile, tfamFile, false);
@@ -52,7 +52,7 @@ public class TestCasesPrivate extends TestCase {
 	 * Non private
 	 */
 	public void test_02() {
-		Gpr.debug("Test");
+		Log.debug("Test");
 		String vcfFile = "test/test.private.02.vcf";
 		String tfamFile = "test/test.private.01.tfam";
 		checkPrivate(vcfFile, tfamFile, false);
@@ -62,7 +62,7 @@ public class TestCasesPrivate extends TestCase {
 	 * Private variant
 	 */
 	public void test_03() {
-		Gpr.debug("Test");
+		Log.debug("Test");
 		String vcfFile = "test/test.private.03.vcf";
 		String tfamFile = "test/test.private.01.tfam";
 		checkPrivate(vcfFile, tfamFile, true);
@@ -72,29 +72,29 @@ public class TestCasesPrivate extends TestCase {
 	 * Private variant
 	 */
 	public void test_04() {
-		Gpr.debug("Test");
+		Log.debug("Test");
 		String vcfFile = "test/test.private.04.vcf";
 		String tfamFile = "test/test.private.01.tfam";
 		checkPrivate(vcfFile, tfamFile, true);
 	}
 
 	public void test_05() {
-		Gpr.debug("Test");
+		Log.debug("Test");
 		checkPrivate("test/test.private.05.vcf", "test/test.private.05.tfam", false);
 	}
 
 	public void test_06() {
-		Gpr.debug("Test");
+		Log.debug("Test");
 		checkPrivate("test/test.private.06.vcf", "test/test.private.05.tfam", true);
 	}
 
 	public void test_07() {
-		Gpr.debug("Test");
+		Log.debug("Test");
 		checkPrivate("test/test.private.07.vcf", "test/test.private.05.tfam", true);
 	}
 
 	public void test_08() {
-		Gpr.debug("Test");
+		Log.debug("Test");
 		checkPrivate("test/test.private.08.vcf", "test/test.private.05.tfam", false);
 	}
 

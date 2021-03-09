@@ -5,6 +5,7 @@ import java.io.PrintStream;
 import java.util.List;
 
 import org.snpeff.util.Gpr;
+import org.snpeff.util.Log;
 import org.snpeff.vcf.VcfEffect;
 import org.snpeff.vcf.VcfEntry;
 import org.snpeff.vcf.VcfGenotype;
@@ -35,7 +36,7 @@ public class TestCasesFilter extends TestCase {
 	 * Filter by quality
 	 */
 	public void test_01() {
-		Gpr.debug("Test");
+		Log.debug("Test");
 
 		double minQ = 50;
 
@@ -58,7 +59,7 @@ public class TestCasesFilter extends TestCase {
 	 * Filter by chromosome
 	 */
 	public void test_02() {
-		Gpr.debug("Test");
+		Log.debug("Test");
 
 		// Filter data
 		SnpSiftCmdFilter snpsiftFilter = new SnpSiftCmdFilter();
@@ -79,7 +80,7 @@ public class TestCasesFilter extends TestCase {
 	 * Filter by position
 	 */
 	public void test_03() {
-		Gpr.debug("Test");
+		Log.debug("Test");
 
 		int minPos = 20175;
 
@@ -102,7 +103,7 @@ public class TestCasesFilter extends TestCase {
 	 * Filter by position
 	 */
 	public void test_04() {
-		Gpr.debug("Test");
+		Log.debug("Test");
 
 		int minPos = 20175;
 
@@ -125,7 +126,7 @@ public class TestCasesFilter extends TestCase {
 	 * Filter by position
 	 */
 	public void test_05() {
-		Gpr.debug("Test");
+		Log.debug("Test");
 
 		int maxPos = 20175;
 
@@ -148,7 +149,7 @@ public class TestCasesFilter extends TestCase {
 	 * Filter by position
 	 */
 	public void test_06() {
-		Gpr.debug("Test");
+		Log.debug("Test");
 
 		int maxPos = 20175;
 
@@ -171,7 +172,7 @@ public class TestCasesFilter extends TestCase {
 	 * Filter by position (AND test)
 	 */
 	public void test_07() {
-		Gpr.debug("Test");
+		Log.debug("Test");
 
 		int minPos = 20175;
 		int maxPos = 35549;
@@ -196,7 +197,7 @@ public class TestCasesFilter extends TestCase {
 	 * Filter by position (OR test)
 	 */
 	public void test_08() {
-		Gpr.debug("Test");
+		Log.debug("Test");
 
 		int minPos = 20175;
 		int maxPos = 35549;
@@ -223,7 +224,7 @@ public class TestCasesFilter extends TestCase {
 	 * Regexp test
 	 */
 	public void test_09() {
-		Gpr.debug("Test");
+		Log.debug("Test");
 
 		// Filter data
 		SnpSiftCmdFilter snpsiftFilter = new SnpSiftCmdFilter();
@@ -244,7 +245,7 @@ public class TestCasesFilter extends TestCase {
 	 * REF and ALT values
 	 */
 	public void test_10() {
-		Gpr.debug("Test");
+		Log.debug("Test");
 
 		// Filter data
 		SnpSiftCmdFilter snpsiftFilter = new SnpSiftCmdFilter();
@@ -266,7 +267,7 @@ public class TestCasesFilter extends TestCase {
 	 * Filter by coverage
 	 */
 	public void test_11() {
-		Gpr.debug("Test");
+		Log.debug("Test");
 
 		// Filter data
 		SnpSiftCmdFilter snpsiftFilter = new SnpSiftCmdFilter();
@@ -287,7 +288,7 @@ public class TestCasesFilter extends TestCase {
 	 * Filter by INDEL info tag
 	 */
 	public void test_12() {
-		Gpr.debug("Test");
+		Log.debug("Test");
 
 		// Filter data
 		SnpSiftCmdFilter snpsiftFilter = new SnpSiftCmdFilter();
@@ -309,7 +310,7 @@ public class TestCasesFilter extends TestCase {
 	 * Filter by INDEL info tag
 	 */
 	public void test_13() {
-		Gpr.debug("Test");
+		Log.debug("Test");
 
 		// Filter data
 		SnpSiftCmdFilter snpsiftFilter = new SnpSiftCmdFilter();
@@ -330,7 +331,7 @@ public class TestCasesFilter extends TestCase {
 	 * Filter by PL genottype tag
 	 */
 	public void test_14() {
-		Gpr.debug("Test");
+		Log.debug("Test");
 
 		// Filter data
 		SnpSiftCmdFilter snpsiftFilter = new SnpSiftCmdFilter();
@@ -362,7 +363,7 @@ public class TestCasesFilter extends TestCase {
 	 * Filter by GT genottype tag
 	 */
 	public void test_15() {
-		Gpr.debug("Test");
+		Log.debug("Test");
 
 		// Filter data
 		SnpSiftCmdFilter snpsiftFilter = new SnpSiftCmdFilter();
@@ -387,7 +388,7 @@ public class TestCasesFilter extends TestCase {
 	 * Filter by GT genottype functions
 	 */
 	public void test_16() {
-		Gpr.debug("Test");
+		Log.debug("Test");
 
 		// Filter data
 		SnpSiftCmdFilter snpsiftFilter = new SnpSiftCmdFilter();
@@ -414,7 +415,7 @@ public class TestCasesFilter extends TestCase {
 	 * Filter by GT genottype functions
 	 */
 	public void test_17() {
-		Gpr.debug("Test");
+		Log.debug("Test");
 
 		// Filter data
 		SnpSiftCmdFilter snpsiftFilter = new SnpSiftCmdFilter();
@@ -437,7 +438,7 @@ public class TestCasesFilter extends TestCase {
 	 * Filter by GT genottype functions
 	 */
 	public void test_18() {
-		Gpr.debug("Test");
+		Log.debug("Test");
 
 		// Filter data
 		SnpSiftCmdFilter snpsiftFilter = new SnpSiftCmdFilter();
@@ -460,7 +461,7 @@ public class TestCasesFilter extends TestCase {
 	 * Filter by GT genottype functions
 	 */
 	public void test_19() {
-		Gpr.debug("Test");
+		Log.debug("Test");
 
 		// Filter data
 		SnpSiftCmdFilter snpsiftFilter = new SnpSiftCmdFilter();
@@ -483,7 +484,7 @@ public class TestCasesFilter extends TestCase {
 	 * Filter by GT genottype functions
 	 */
 	public void test_20() {
-		Gpr.debug("Test");
+		Log.debug("Test");
 
 		// Filter data
 		SnpSiftCmdFilter snpsiftFilter = new SnpSiftCmdFilter();
@@ -507,7 +508,7 @@ public class TestCasesFilter extends TestCase {
 	 * Filter by GT genottype functions
 	 */
 	public void test_21() {
-		Gpr.debug("Test");
+		Log.debug("Test");
 
 		// Filter data
 		SnpSiftCmdFilter snpsiftFilter = new SnpSiftCmdFilter();
@@ -533,7 +534,7 @@ public class TestCasesFilter extends TestCase {
 	 * Filter by GT genottype functions
 	 */
 	public void test_22() {
-		Gpr.debug("Test");
+		Log.debug("Test");
 
 		// Filter data
 		SnpSiftCmdFilter snpsiftFilter = new SnpSiftCmdFilter();
@@ -562,7 +563,7 @@ public class TestCasesFilter extends TestCase {
 	 * Filter by GT genottype functions
 	 */
 	public void test_22_3() {
-		Gpr.debug("Test");
+		Log.debug("Test");
 
 		// Filter data
 		SnpSiftCmdFilter snpsiftFilter = new SnpSiftCmdFilter();
@@ -587,7 +588,7 @@ public class TestCasesFilter extends TestCase {
 	 * Filter by GT[*] (any genottype)
 	 */
 	public void test_23() {
-		Gpr.debug("Test");
+		Log.debug("Test");
 
 		// Filter data
 		SnpSiftCmdFilter snpsiftFilter = new SnpSiftCmdFilter();
@@ -613,7 +614,7 @@ public class TestCasesFilter extends TestCase {
 	 * Filter by GT[0].VV[*] (any sub field in a genottype)
 	 */
 	public void test_24() {
-		Gpr.debug("Test");
+		Log.debug("Test");
 
 		// Filter data
 		SnpSiftCmdFilter snpsiftFilter = new SnpSiftCmdFilter();
@@ -639,7 +640,7 @@ public class TestCasesFilter extends TestCase {
 	 * Filter by GT[*].VV[*] (any sub field in any genottype)
 	 */
 	public void test_25() {
-		Gpr.debug("Test");
+		Log.debug("Test");
 
 		// Filter data
 		SnpSiftCmdFilter snpsiftFilter = new SnpSiftCmdFilter();
@@ -666,7 +667,7 @@ public class TestCasesFilter extends TestCase {
 	 * Filter by EFF[0].EFFECT (effect)
 	 */
 	public void test_26() {
-		Gpr.debug("Test");
+		Log.debug("Test");
 
 		// Filter data
 		SnpSiftCmdFilter snpsiftFilter = new SnpSiftCmdFilter();
@@ -689,7 +690,7 @@ public class TestCasesFilter extends TestCase {
 	 * Filter by ANN[0].EFFECT (effect)
 	 */
 	public void test_26_ann() {
-		Gpr.debug("Test");
+		Log.debug("Test");
 
 		// Filter data
 		SnpSiftCmdFilter snpsiftFilter = new SnpSiftCmdFilter();
@@ -715,7 +716,7 @@ public class TestCasesFilter extends TestCase {
 	 * Filter by EFF[*].EFFECT (any effect)
 	 */
 	public void test_27() {
-		Gpr.debug("Test");
+		Log.debug("Test");
 
 		// Filter data
 		SnpSiftCmdFilter snpsiftFilter = new SnpSiftCmdFilter();
@@ -744,7 +745,7 @@ public class TestCasesFilter extends TestCase {
 	 * Filter by ANN[*].EFFECT (any effect)
 	 */
 	public void test_27_ann() {
-		Gpr.debug("Test");
+		Log.debug("Test");
 
 		// Filter data
 		SnpSiftCmdFilter snpsiftFilter = new SnpSiftCmdFilter();
@@ -777,7 +778,7 @@ public class TestCasesFilter extends TestCase {
 	 * Filter by ANN[*].EFFECT (any effect)
 	 */
 	public void test_27_ann2() {
-		Gpr.debug("Test");
+		Log.debug("Test");
 
 		// Filter data
 		SnpSiftCmdFilter snpsiftFilter = new SnpSiftCmdFilter();
@@ -810,7 +811,7 @@ public class TestCasesFilter extends TestCase {
 	 * Test countHom function
 	 */
 	public void test_28() {
-		Gpr.debug("Test");
+		Log.debug("Test");
 
 		// Filter data
 		SnpSiftCmdFilter snpsiftFilter = new SnpSiftCmdFilter();
@@ -838,7 +839,7 @@ public class TestCasesFilter extends TestCase {
 	 * Test countHet function
 	 */
 	public void test_29() {
-		Gpr.debug("Test");
+		Log.debug("Test");
 
 		// Filter data
 		SnpSiftCmdFilter snpsiftFilter = new SnpSiftCmdFilter();
@@ -865,7 +866,7 @@ public class TestCasesFilter extends TestCase {
 	 * Test countRef function
 	 */
 	public void test_30() {
-		Gpr.debug("Test");
+		Log.debug("Test");
 
 		// Filter data
 		SnpSiftCmdFilter snpsiftFilter = new SnpSiftCmdFilter();
@@ -893,7 +894,7 @@ public class TestCasesFilter extends TestCase {
 	 * Test countVariant function
 	 */
 	public void test_31() {
-		Gpr.debug("Test");
+		Log.debug("Test");
 
 		// Filter data
 		SnpSiftCmdFilter snpsiftFilter = new SnpSiftCmdFilter();
@@ -920,7 +921,7 @@ public class TestCasesFilter extends TestCase {
 	 * Filter by EFF[*].CODING
 	 */
 	public void test_32() {
-		Gpr.debug("Test");
+		Log.debug("Test");
 
 		// Filter data
 		SnpSiftCmdFilter snpsiftFilter = new SnpSiftCmdFilter();
@@ -947,7 +948,7 @@ public class TestCasesFilter extends TestCase {
 	 * Filter by ANN[*].CODING
 	 */
 	public void test_32_ann() {
-		Gpr.debug("Test");
+		Log.debug("Test");
 
 		// Filter data
 		SnpSiftCmdFilter snpsiftFilter = new SnpSiftCmdFilter();
@@ -979,7 +980,7 @@ public class TestCasesFilter extends TestCase {
 	 * Filter by EFF[*].CODING
 	 */
 	public void test_33() {
-		Gpr.debug("Test");
+		Log.debug("Test");
 
 		// Filter data
 		SnpSiftCmdFilter snpsiftFilter = new SnpSiftCmdFilter();
@@ -1006,7 +1007,7 @@ public class TestCasesFilter extends TestCase {
 	 * Filter by ANN[*].CODING
 	 */
 	public void test_33_ann() {
-		Gpr.debug("Test");
+		Log.debug("Test");
 
 		// Filter data
 		SnpSiftCmdFilter snpsiftFilter = new SnpSiftCmdFilter();
@@ -1037,7 +1038,7 @@ public class TestCasesFilter extends TestCase {
 	 * Filter by EFF[ALL].EFFECT
 	 */
 	public void test_34() {
-		Gpr.debug("Test");
+		Log.debug("Test");
 
 		// Filter data
 		SnpSiftCmdFilter snpsiftFilter = new SnpSiftCmdFilter();
@@ -1054,7 +1055,7 @@ public class TestCasesFilter extends TestCase {
 				all &= e.equals("DOWNSTREAM");
 			}
 
-			if (!all) Gpr.debug("Error: " + effStr);
+			if (!all) Log.debug("Error: " + effStr);
 			Assert.assertEquals(true, all);
 		}
 	}
@@ -1063,7 +1064,7 @@ public class TestCasesFilter extends TestCase {
 	 * Filter by ANN[ALL].EFFECT
 	 */
 	public void test_34_ann() {
-		Gpr.debug("Test");
+		Log.debug("Test");
 
 		// Filter data
 		SnpSiftCmdFilter snpsiftFilter = new SnpSiftCmdFilter();
@@ -1082,7 +1083,7 @@ public class TestCasesFilter extends TestCase {
 				all &= e.equals("downstream_gene_variant");
 			}
 
-			if (!all) Gpr.debug("Error: " + effStr);
+			if (!all) Log.debug("Error: " + effStr);
 			if (all) count++;
 			Assert.assertEquals(true, all); // Check that all lines match the expression
 		}
@@ -1094,7 +1095,7 @@ public class TestCasesFilter extends TestCase {
 	 * Filter by EFF[*].GENE
 	 */
 	public void test_35() {
-		Gpr.debug("Test");
+		Log.debug("Test");
 
 		// Filter data
 		SnpSiftCmdFilter snpsiftFilter = new SnpSiftCmdFilter();
@@ -1120,7 +1121,7 @@ public class TestCasesFilter extends TestCase {
 	 * Filter by EFF[*].GENE
 	 */
 	public void test_35_ann() {
-		Gpr.debug("Test");
+		Log.debug("Test");
 
 		// Filter data
 		SnpSiftCmdFilter snpsiftFilter = new SnpSiftCmdFilter();
@@ -1150,7 +1151,7 @@ public class TestCasesFilter extends TestCase {
 	 * Inverse of a filter
 	 */
 	public void test_36() {
-		Gpr.debug("Test");
+		Log.debug("Test");
 
 		double minQ = 50;
 
@@ -1173,7 +1174,7 @@ public class TestCasesFilter extends TestCase {
 	 * Use filter field (add 'PASS' if expression is true)
 	 */
 	public void test_37() {
-		Gpr.debug("Test");
+		Log.debug("Test");
 
 		double minQ = 50;
 
@@ -1197,7 +1198,7 @@ public class TestCasesFilter extends TestCase {
 	 * Add a string to FILTER if expression is true)
 	 */
 	public void test_38() {
-		Gpr.debug("Test");
+		Log.debug("Test");
 
 		double minQ = 50;
 
@@ -1221,7 +1222,7 @@ public class TestCasesFilter extends TestCase {
 	 * Remove FILTER strings
 	 */
 	public void test_39() {
-		Gpr.debug("Test");
+		Log.debug("Test");
 
 		// Filter data
 		String expression = "REF = 'A'";
@@ -1243,7 +1244,7 @@ public class TestCasesFilter extends TestCase {
 	 * Inverse FILTER strings
 	 */
 	public void test_40() {
-		Gpr.debug("Test");
+		Log.debug("Test");
 
 		// Filter data
 		String expression = "( EFF[*].EFFECT = 'SPLICE_SITE_ACCEPTOR' )";
@@ -1267,7 +1268,7 @@ public class TestCasesFilter extends TestCase {
 	 * Bug reported by Jim Johnson
 	 */
 	public void test_41() {
-		Gpr.debug("Test");
+		Log.debug("Test");
 
 		// Filter data
 		String expression = "( DP < 5 )";
@@ -1302,7 +1303,7 @@ public class TestCasesFilter extends TestCase {
 	 * Test compare to missing field
 	 */
 	public void test_42() {
-		Gpr.debug("Test");
+		Log.debug("Test");
 
 		// Filter data
 		SnpSiftCmdFilter snpsiftFilter = new SnpSiftCmdFilter();
@@ -1319,7 +1320,7 @@ public class TestCasesFilter extends TestCase {
 	 * Test compare to missing field
 	 */
 	public void test_43() {
-		Gpr.debug("Test");
+		Log.debug("Test");
 
 		// Filter data
 		SnpSiftCmdFilter snpsiftFilter = new SnpSiftCmdFilter();
@@ -1336,7 +1337,7 @@ public class TestCasesFilter extends TestCase {
 	 * Test compare to missing field
 	 */
 	public void test_44() {
-		Gpr.debug("Test");
+		Log.debug("Test");
 
 		// Filter data
 		SnpSiftCmdFilter snpsiftFilter = new SnpSiftCmdFilter();
@@ -1353,7 +1354,7 @@ public class TestCasesFilter extends TestCase {
 	 * LOF[*].PERC > 0.1
 	 */
 	public void test_45() {
-		Gpr.debug("Test");
+		Log.debug("Test");
 
 		// Filter data
 		SnpSiftCmdFilter snpSiftFilter = new SnpSiftCmdFilter();
@@ -1379,7 +1380,7 @@ public class TestCasesFilter extends TestCase {
 	}
 
 	public void test_46() {
-		Gpr.debug("Test");
+		Log.debug("Test");
 
 		String fileName = "./test/test46.vcf";
 		String args[] = { "filter", "-f", fileName, "exists dbNSFP_SIFT_pred" };
@@ -1389,7 +1390,7 @@ public class TestCasesFilter extends TestCase {
 	}
 
 	public void test_47() {
-		Gpr.debug("Test");
+		Log.debug("Test");
 		String fileName = "./test/test46.vcf";
 		String args[] = { "filter", "-f", fileName, "dbNSFP_SIFT_pred != 'D'" };
 		List<VcfEntry> ves = snpSiftFilter(args);
@@ -1399,7 +1400,7 @@ public class TestCasesFilter extends TestCase {
 	}
 
 	public void test_48() {
-		Gpr.debug("Test");
+		Log.debug("Test");
 
 		// Filter data
 		SnpSiftCmdFilter snpsiftFilter = new SnpSiftCmdFilter();
@@ -1414,7 +1415,7 @@ public class TestCasesFilter extends TestCase {
 	}
 
 	public void test_49() {
-		Gpr.debug("Test");
+		Log.debug("Test");
 
 		// Filter data
 		SnpSiftCmdFilter snpsiftFilter = new SnpSiftCmdFilter();
@@ -1432,7 +1433,7 @@ public class TestCasesFilter extends TestCase {
 	 * Filter by EFF[*] (whole field comparison)
 	 */
 	public void test_50() {
-		Gpr.debug("Test");
+		Log.debug("Test");
 
 		String effStr = "NON_SYNONYMOUS_CODING(MODERATE|MISSENSE|Cat/Tat|H52Y|AL669831.1|protein_coding|CODING|ENST00000358533|exon_1_721320_722513)";
 
@@ -1463,7 +1464,7 @@ public class TestCasesFilter extends TestCase {
 	 * LOF[*] : Whole field
 	 */
 	public void test_51() {
-		Gpr.debug("Test");
+		Log.debug("Test");
 
 		String lofStr = "(CAMTA1|ENSG00000171735|17|0.29)";
 
@@ -1496,7 +1497,7 @@ public class TestCasesFilter extends TestCase {
 	 * Bug in Field.getReturnType() was causing some trouble.
 	 */
 	public void test_52() {
-		Gpr.debug("Test");
+		Log.debug("Test");
 
 		// Filter data
 		SnpSiftCmdFilter snpsiftFilter = new SnpSiftCmdFilter();
@@ -1518,7 +1519,7 @@ public class TestCasesFilter extends TestCase {
 	 * Filter using 'has' operator
 	 */
 	public void test_53() {
-		Gpr.debug("Test");
+		Log.debug("Test");
 
 		// Filter data
 		SnpSiftCmdFilter snpsiftFilter = new SnpSiftCmdFilter();
@@ -1539,7 +1540,7 @@ public class TestCasesFilter extends TestCase {
 	 * Filter: Operator precedence issue
 	 */
 	public void test_54() {
-		Gpr.debug("Test");
+		Log.debug("Test");
 
 		// Filter data
 		SnpSiftCmdFilter snpsiftFilter = new SnpSiftCmdFilter();
@@ -1560,7 +1561,7 @@ public class TestCasesFilter extends TestCase {
 	 * Test compare a field having 'Number=A' INFO header
 	 */
 	public void test_55() {
-		Gpr.debug("Test");
+		Log.debug("Test");
 
 		// Filter data
 		SnpSiftCmdFilter snpsiftFilter = new SnpSiftCmdFilter();
@@ -1571,7 +1572,7 @@ public class TestCasesFilter extends TestCase {
 		if (verbose) System.out.println("Expression: '" + expression + "'");
 		Assert.assertNotNull(list);
 		Assert.assertEquals("Number of results expected does not match", 1, list.size());
-		if (verbose) Gpr.debug("Result: " + list.get(0));
+		if (verbose) Log.debug("Result: " + list.get(0));
 		Assert.assertEquals("Expected VCF entry does not match (checking POS)", 199, list.get(0).getStart());
 	}
 
@@ -1579,7 +1580,7 @@ public class TestCasesFilter extends TestCase {
 	 * Test compare a field having 'Number=A' INFO header
 	 */
 	public void test_55_2() {
-		Gpr.debug("Test");
+		Log.debug("Test");
 
 		// Filter data
 		SnpSiftCmdFilter snpsiftFilter = new SnpSiftCmdFilter();
@@ -1590,7 +1591,7 @@ public class TestCasesFilter extends TestCase {
 		if (verbose) System.out.println("Expression: '" + expression + "'");
 		Assert.assertNotNull(list);
 		Assert.assertEquals("Number of results expected does not match", 1, list.size());
-		if (verbose) Gpr.debug("Result: " + list.get(0));
+		if (verbose) Log.debug("Result: " + list.get(0));
 		Assert.assertEquals("Expected VCF entry does not match (checking POS)", 199, list.get(0).getStart());
 	}
 
@@ -1598,7 +1599,7 @@ public class TestCasesFilter extends TestCase {
 	 * Test compare a field having 'Number=A' INFO header
 	 */
 	public void test_55_3() {
-		Gpr.debug("Test");
+		Log.debug("Test");
 
 		// Filter data
 		SnpSiftCmdFilter snpsiftFilter = new SnpSiftCmdFilter();
@@ -1609,7 +1610,7 @@ public class TestCasesFilter extends TestCase {
 		if (verbose) System.out.println("Expression: '" + expression + "'");
 		Assert.assertNotNull(list);
 		Assert.assertEquals("Number of results expected does not match", 1, list.size());
-		if (verbose) Gpr.debug("Result: " + list.get(0));
+		if (verbose) Log.debug("Result: " + list.get(0));
 		Assert.assertEquals("Expected VCF entry does not match (checking POS)", 199, list.get(0).getStart());
 	}
 
@@ -1617,7 +1618,7 @@ public class TestCasesFilter extends TestCase {
 	 * If header is shown when input file is empty
 	 */
 	public void test_56_empty_vcf() {
-		Gpr.debug("Test");
+		Log.debug("Test");
 
 		// Capture STDOUT to check if header is present
 		PrintStream oldOut = System.out;
@@ -1653,7 +1654,7 @@ public class TestCasesFilter extends TestCase {
 	 * In AND operators, second expression should not be evaluated if first one is FALSE
 	 */
 	public void test_57_short_circuit_AND_OR_operators() {
-		Gpr.debug("Test");
+		Log.debug("Test");
 
 		// This will throw an exception (division by zero) if short circuit is not correctly implemented.
 		SnpSiftCmdFilter snpsiftFilter = new SnpSiftCmdFilter();
@@ -1675,7 +1676,7 @@ public class TestCasesFilter extends TestCase {
 	 * field 'FILTER_DELETED' is properly added
 	 */
 	public void test_58_rmFilter_info_field() {
-		Gpr.debug("Test");
+		Log.debug("Test");
 
 		// Filter data
 		String expression = "( DP < 5 )";

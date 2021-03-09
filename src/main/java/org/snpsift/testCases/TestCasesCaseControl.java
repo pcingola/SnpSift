@@ -3,7 +3,7 @@ package org.snpsift.testCases;
 import java.util.List;
 
 import org.junit.Assert;
-import org.snpeff.util.Gpr;
+import org.snpeff.util.Log;
 import org.snpeff.vcf.VcfEntry;
 import org.snpsift.SnpSift;
 import org.snpsift.SnpSiftCmdCaseControl;
@@ -47,77 +47,77 @@ public class TestCasesCaseControl extends TestCase {
 	}
 
 	public void test_01() {
-		Gpr.debug("Test");
+		Log.debug("Test");
 		checkCaseControlTfam("test/test.private.01.vcf", "test/test.private.01.tfam", "0,0,0", "0,0,0");
 	}
 
 	public void test_01_Str() {
-		Gpr.debug("Test");
+		Log.debug("Test");
 		checkCaseControlString("test/test.private.01.vcf", "--", "0,0,0", "0,0,0");
 	}
 
 	public void test_02() {
-		Gpr.debug("Test");
+		Log.debug("Test");
 		checkCaseControlTfam("test/test.private.02.vcf", "test/test.private.01.tfam", "0,0,0", "2,0,4");
 	}
 
 	public void test_02_Str() {
-		Gpr.debug("Test");
+		Log.debug("Test");
 		checkCaseControlString("test/test.private.02.vcf", "--", "0,0,0", "2,0,4");
 	}
 
 	public void test_02_Str2() {
-		Gpr.debug("Test");
+		Log.debug("Test");
 		checkCaseControlString("test/test.private.02.vcf", "-+", "1,0,2", "1,0,2");
 	}
 
 	public void test_03() {
-		Gpr.debug("Test");
+		Log.debug("Test");
 		checkCaseControlTfam("test/test.private.03.vcf", "test/test.private.01.tfam", "0,0,0", "0,1,1");
 	}
 
 	public void test_03_Str() {
-		Gpr.debug("Test");
+		Log.debug("Test");
 		checkCaseControlString("test/test.private.03.vcf", "--", "0,0,0", "0,1,1");
 	}
 
 	public void test_03_Str2() {
-		Gpr.debug("Test");
+		Log.debug("Test");
 		checkCaseControlString("test/test.private.03.vcf", "+-", "0,1,1", "0,0,0");
 	}
 
 	public void test_03_Str3() {
-		Gpr.debug("Test");
+		Log.debug("Test");
 		checkCaseControlString("test/test.private.03.vcf", "0+", "0,0,0", "0,0,0");
 	}
 
 	public void test_04() {
-		Gpr.debug("Test");
+		Log.debug("Test");
 		checkCaseControlTfam("test/test.private.04.vcf", "test/test.private.01.tfam", "0,0,0", "1,0,2");
 	}
 
 	public void test_04_Str() {
-		Gpr.debug("Test");
+		Log.debug("Test");
 		checkCaseControlString("test/test.private.04.vcf", "--", "0,0,0", "1,0,2");
 	}
 
 	public void test_05() {
-		Gpr.debug("Test");
+		Log.debug("Test");
 		checkCaseControlTfam("test/test.private.05.vcf", "test/test.private.05.tfam", "0,0,0", "0,0,0");
 	}
 
 	public void test_06() {
-		Gpr.debug("Test");
+		Log.debug("Test");
 		checkCaseControlTfam("test/test.private.06.vcf", "test/test.private.05.tfam", "0,1,1", "0,0,0");
 	}
 
 	public void test_07() {
-		Gpr.debug("Test");
+		Log.debug("Test");
 		checkCaseControlTfam("test/test.private.07.vcf", "test/test.private.05.tfam", "0,1,1", "0,1,1");
 	}
 
 	public void test_08() {
-		Gpr.debug("Test");
+		Log.debug("Test");
 		checkCaseControlTfam("test/test.private.08.vcf", "test/test.private.05.tfam", "0,2,2", "0,1,1");
 	}
 
@@ -125,7 +125,7 @@ public class TestCasesCaseControl extends TestCase {
 	 * Compare to results from PLINK using ChiSquare approximation
 	 */
 	public void test_09() {
-		Gpr.debug("Test");
+		Log.debug("Test");
 		String vcfFile = "test/caseContorlStudies.vcf";
 		String tfamFile = "test/caseContorlStudies.tfam";
 		double maxDiff = 0.01;
@@ -196,7 +196,7 @@ public class TestCasesCaseControl extends TestCase {
 	 *
 	 */
 	public void test_10() {
-		Gpr.debug("Test");
+		Log.debug("Test");
 		String vcfFile = "test/caseContorlStudies.vcf";
 		String tfamFile = "test/caseContorlStudies.tfam";
 

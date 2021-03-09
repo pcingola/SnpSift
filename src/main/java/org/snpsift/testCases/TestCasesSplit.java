@@ -3,6 +3,7 @@ package org.snpsift.testCases;
 import java.io.File;
 
 import org.snpeff.util.Gpr;
+import org.snpeff.util.Log;
 import org.snpsift.SnpSift;
 import org.snpsift.SnpSiftCmdSplit;
 
@@ -11,7 +12,7 @@ import junit.framework.TestCase;
 
 /**
  * SnpSift 'split' test cases
- * 
+ *
  * @author pcingola
  */
 public class TestCasesSplit extends TestCase {
@@ -23,7 +24,7 @@ public class TestCasesSplit extends TestCase {
 	 * Split by chromosome
 	 */
 	public void test_01() {
-		Gpr.debug("Test");
+		Log.debug("Test");
 		String file = "test/test_split_01.vcf";
 
 		// Delete old files
@@ -52,7 +53,7 @@ public class TestCasesSplit extends TestCase {
 	 * Split by number
 	 */
 	public void test_02() {
-		Gpr.debug("Test");
+		Log.debug("Test");
 
 		int numLines = 2;
 		String file = "test/test_split_01.vcf";
@@ -68,7 +69,7 @@ public class TestCasesSplit extends TestCase {
 		// Check output
 		for (String splitFile : cmd.getFileNames()) {
 			int n = Gpr.countLines(splitFile);
-			if (debug) Gpr.debug("Checking file '" + splitFile + "'\tnumber of lines: " + n);
+			if (debug) Log.debug("Checking file '" + splitFile + "'\tnumber of lines: " + n);
 			Assert.assertEquals(numLines + 1, n); // We expect 'numLines' + 1 header line
 		}
 	}
@@ -77,7 +78,7 @@ public class TestCasesSplit extends TestCase {
 	 * Split and join
 	 */
 	public void test_03() {
-		Gpr.debug("Test");
+		Log.debug("Test");
 
 		//---
 		// Split

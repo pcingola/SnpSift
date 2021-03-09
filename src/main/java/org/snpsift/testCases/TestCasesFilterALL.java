@@ -2,7 +2,7 @@ package org.snpsift.testCases;
 
 import java.util.List;
 
-import org.snpeff.util.Gpr;
+import org.snpeff.util.Log;
 import org.snpeff.vcf.VcfEntry;
 import org.snpsift.SnpSiftCmdFilter;
 
@@ -39,7 +39,7 @@ public class TestCasesFilterALL extends TestCase {
 				all &= e.equals("DOWNSTREAM");
 			}
 
-			if (!all) Gpr.debug("Error: " + effStr);
+			if (!all) Log.debug("Error: " + effStr);
 			Assert.assertEquals(true, all);
 		}
 

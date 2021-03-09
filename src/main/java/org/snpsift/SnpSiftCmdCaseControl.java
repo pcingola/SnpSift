@@ -10,6 +10,7 @@ import org.snpeff.ped.TfamEntry;
 import org.snpeff.probablility.CochranArmitageTest;
 import org.snpeff.probablility.FisherExactTest;
 import org.snpeff.util.Gpr;
+import org.snpeff.util.Log;
 import org.snpeff.util.Timer;
 import org.snpeff.vcf.VcfEntry;
 import org.snpeff.vcf.VcfGenotype;
@@ -62,7 +63,7 @@ public class SnpSiftCmdCaseControl extends SnpSift {
 
 		// Count genotypes
 		int idx = 0;
-		if (debug) Gpr.debug(vcfEntry.toStringNoGt());
+		if (debug) Log.debug(vcfEntry.toStringNoGt());
 		for (VcfGenotype gt : vcfEntry) {
 
 			int code = gt.getGenotypeCode();
@@ -79,14 +80,14 @@ public class SnpSiftCmdCaseControl extends SnpSift {
 				if (gt.isVariant()) {
 					if (caseControl[idx]) {
 						// Case sample
-						if (gt.isMissing()) ; // Missing? => Do not count
+						if (gt.isMissing()); // Missing? => Do not count
 						else if (gt.isHomozygous()) casesHom++;
 						else casesHet++;
 
 						cases += codeMissing;
 					} else {
 						//Control sample
-						if (gt.isMissing()) ; // Missing? => Do not count
+						if (gt.isMissing()); // Missing? => Do not count
 						else if (gt.isHomozygous()) ctrlHom++;
 						else ctrlHet++;
 
@@ -168,7 +169,7 @@ public class SnpSiftCmdCaseControl extends SnpSift {
 
 		double pvalue = Math.min(pup, pdown);
 		if (debug) {
-			Gpr.debug("pAllelic: " + pvalue //
+			Log.debug("pAllelic: " + pvalue //
 					+ "\tFisherExactTest.pValueDown(" + k + ", " + N + ", " + D + ", " + n + ", " + pvalueTh + "): " + pdown //
 					+ "\tR: " + FisherExactTest.get().toR(k, N, D, n, true) //
 					+ "\tFisherExactTest.pValueUp(" + k + ", " + N + ", " + D + ", " + n + ", " + pvalueTh + "): " + pup //
@@ -240,7 +241,7 @@ public class SnpSiftCmdCaseControl extends SnpSift {
 
 		double pvalue = Math.min(pup, pdown);
 		if (debug) {
-			Gpr.debug("pDominant: " + pvalue //
+			Log.debug("pDominant: " + pvalue //
 					+ "\tFisherExactTest.pValueDown(" + k + ", " + N + ", " + D + ", " + n + ", " + pvalueTh + "): " + pdown //
 					+ "\tR: " + FisherExactTest.get().toR(k, N, D, n, true) //
 					+ "\tFisherExactTest.pValueUp(" + k + ", " + N + ", " + D + ", " + n + ", " + pvalueTh + "): " + pup //
@@ -295,7 +296,7 @@ public class SnpSiftCmdCaseControl extends SnpSift {
 		// Degrees of freedom: 2
 		double oneMinusPvalue = new ChiSquaredDistribution(2).cumulativeProbability(chi2);
 		double pvalue = 1 - oneMinusPvalue;
-		if (debug) Gpr.debug("pGenotypic: " + pvalue + "\tChiSquaredDistribution(2).cumulativeProbability(chi2): " + oneMinusPvalue);
+		if (debug) Log.debug("pGenotypic: " + pvalue + "\tChiSquaredDistribution(2).cumulativeProbability(chi2): " + oneMinusPvalue);
 		return pvalue;
 	}
 
@@ -317,7 +318,7 @@ public class SnpSiftCmdCaseControl extends SnpSift {
 
 		double pvalue = Math.min(pup, pdown);
 		if (debug) {
-			Gpr.debug("pRecessive: " + pvalue //
+			Log.debug("pRecessive: " + pvalue //
 					+ "\tFisherExactTest.pValueDown(" + k + ", " + N + ", " + D + ", " + n + ", " + pvalueTh + "): " + pdown //
 					+ "\tR: " + FisherExactTest.get().toR(k, N, D, n, true) //
 					+ "\tFisherExactTest.pValueUp(" + k + ", " + N + ", " + D + ", " + n + ", " + pvalueTh + "): " + pup //
@@ -389,7 +390,7 @@ public class SnpSiftCmdCaseControl extends SnpSift {
 		// Null hypothesis of no association
 		double pvalue = CochranArmitageTest.get().p(nControl, nCase, CochranArmitageTest.WEIGHT_TREND);
 		if (debug) {
-			Gpr.debug("CochranArmitageTest.p(" //
+			Log.debug("CochranArmitageTest.p(" //
 					+ Gpr.toString(nControl) //
 					+ ", " + Gpr.toString(nCase) //
 					+ ", " + Gpr.toString(CochranArmitageTest.WEIGHT_TREND) //
@@ -469,7 +470,7 @@ public class SnpSiftCmdCaseControl extends SnpSift {
 		int altCount = 2 * nControl[2] + nControl[1] + 2 * nCase[2] + nCase[1];
 
 		if (refCount < altCount) {
-			if (debug) Gpr.debug("Swapping genotype counts:\trefCount=" + refCount + "\taltCount=" + altCount);
+			if (debug) Log.debug("Swapping genotype counts:\trefCount=" + refCount + "\taltCount=" + altCount);
 			int tmp = nControl[0];
 			nControl[0] = nControl[2];
 			nControl[2] = tmp;

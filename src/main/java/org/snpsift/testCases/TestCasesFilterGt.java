@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.junit.Assert;
 import org.snpeff.util.Gpr;
+import org.snpeff.util.Log;
 import org.snpeff.vcf.VcfEntry;
 import org.snpeff.vcf.VcfGenotype;
 import org.snpsift.SnpSiftCmdFilterGt;
@@ -23,7 +24,7 @@ public class TestCasesFilterGt extends TestCase {
 	 * Filter
 	 */
 	public void test_01() {
-		Gpr.debug("Test");
+		Log.debug("Test");
 		String expression = "(GQ < 50) | (DP < 20)";
 
 		SnpSiftCmdFilterGt gtfilter = new SnpSiftCmdFilterGt();
@@ -55,7 +56,7 @@ public class TestCasesFilterGt extends TestCase {
 	 * Filter
 	 */
 	public void test_02() {
-		Gpr.debug("Test");
+		Log.debug("Test");
 		String expression = "(GQ < 50) | (DP < 20)";
 
 		SnpSiftCmdFilterGt gtfilter = new SnpSiftCmdFilterGt();

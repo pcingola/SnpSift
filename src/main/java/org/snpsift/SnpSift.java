@@ -12,6 +12,7 @@ import org.snpeff.snpEffect.VcfAnnotator;
 import org.snpeff.snpEffect.commandLine.CommandLine;
 import org.snpeff.util.Download;
 import org.snpeff.util.Gpr;
+import org.snpeff.util.Log;
 import org.snpeff.util.Timer;
 import org.snpeff.vcf.VcfEntry;
 import org.snpeff.vcf.VcfHeaderEntry;
@@ -34,7 +35,6 @@ public class SnpSift implements VcfAnnotator, CommandLine {
 	public static final String VERSION_SHORT = VERSION_MAJOR + REVISION;
 	public static final String VERSION = VERSION_SHORT + " (build " + BUILD + "), by " + Pcingola.BY;
 	public static final String VERSION_NO_NAME = SOFTWARE_NAME + " " + VERSION;
-	public static final int MAX_ERRORS = 10; // Report an error no more than X times
 	public static int SHOW_EVERY_VCFLINES = 100; // Show a mark every N vcf lines processed
 	public static final String[] EMPTY_ARGS = new String[0];
 
@@ -323,7 +323,7 @@ public class SnpSift implements VcfAnnotator, CommandLine {
 		if (!download) return false;
 
 		String dbUrl = config.getDatabaseRepository(dbType);
-		if (dbUrl == null) fatalError("Database URL name is missing (missing entry in config file?).");
+		if (dbUrl == null) Log.fatalError("Database URL name is missing (missing entry in config file?).");
 
 		Timer.showStdErr("Downlading database from " + dbUrl);
 		Download download = new Download();
@@ -359,7 +359,7 @@ public class SnpSift implements VcfAnnotator, CommandLine {
 			// Still empty: Something is wrong!
 			if (dbFileName == null || dbFileName.isEmpty()) {
 				String confgiKey = config.getDatabaseLocalKey(dbType);
-				fatalError("Database file name not found. Missing '" + confgiKey + "' entry in SnpEff's config file?");
+				Log.fatalError("Database file name not found. Missing '" + confgiKey + "' entry in SnpEff's config file?");
 			}
 		}
 
@@ -372,14 +372,6 @@ public class SnpSift implements VcfAnnotator, CommandLine {
 	public void error(Throwable e, String message) {
 		if (verbose && (e != null)) e.printStackTrace();
 		if (!quiet) System.err.println(message);
-	}
-
-	/**
-	 * Show an error message and exit
-	 */
-	public void fatalError(String message) {
-		System.err.println("Fatal error: " + message);
-		System.exit(-1);
 	}
 
 	@Override
@@ -758,17 +750,4 @@ public class SnpSift implements VcfAnnotator, CommandLine {
 				+ "\t-v                   : Verbose.\n" //
 		);
 	}
-
-	/**
-	 * Show a warning message (up to MAX_ERRORS times)
-	 */
-	protected void warn(String warn) {
-		if (!errCount.containsKey(warn)) errCount.put(warn, 0);
-
-		int count = errCount.get(warn);
-		errCount.put(warn, count + 1);
-
-		if (count < MAX_ERRORS) System.err.println("WARNING: " + warn);
-	}
-
 }

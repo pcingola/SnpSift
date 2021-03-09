@@ -13,6 +13,7 @@ import org.snpeff.interval.Chromosome;
 import org.snpeff.interval.Genome;
 import org.snpeff.interval.Variant;
 import org.snpeff.util.Gpr;
+import org.snpeff.util.Log;
 import org.snpeff.util.Timer;
 import org.snpeff.vcf.VcfInfoType;
 import org.snpsift.annotate.DbMarker;
@@ -381,7 +382,7 @@ public class DbNsfp implements DbMarker<Variant, DbNsfpEntry> {
 				&& var.getEnd() == dbEntry.getEnd() //
 				&& var.getReference().equalsIgnoreCase(dbEntry.getReference()) //
 				&& var.getAlt().equalsIgnoreCase(dbEntry.getAlt()) //
-				;
+		;
 	}
 
 	@Override
@@ -455,7 +456,7 @@ public class DbNsfp implements DbMarker<Variant, DbNsfpEntry> {
 		for (String line : tabixIterator) {
 			// Parse
 			line = Gpr.removeBackslashR(line);
-			if (debug) Gpr.debug("Query: Parse line " + line);
+			if (debug) Log.debug("Query: Parse line " + line);
 			DbNsfpEntry de = new DbNsfpEntry(this, line);
 
 			// Add
@@ -464,7 +465,7 @@ public class DbNsfp implements DbMarker<Variant, DbNsfpEntry> {
 			numLines++;
 		}
 
-		if (debug) Gpr.debug("Query: " + variant.toStr() + "\tParsed lines: " + numLines);
+		if (debug) Log.debug("Query: " + variant.toStr() + "\tParsed lines: " + numLines);
 
 		return results;
 	}

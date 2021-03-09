@@ -7,6 +7,7 @@ import java.util.List;
 
 import org.snpeff.fileIterator.VcfFileIterator;
 import org.snpeff.util.Gpr;
+import org.snpeff.util.Log;
 import org.snpeff.vcf.EffFormatVersion;
 import org.snpeff.vcf.VcfEntry;
 import org.snpeff.vcf.VcfHeaderEntry;
@@ -101,7 +102,7 @@ public class SnpSiftCmdFilter extends SnpSift {
 			if (addFilterField != null) vcfEntry.addFilter(addFilterField); // Filter passed? Add to FILTER field
 			if (rmFilterField != null) {
 				// Filter passed? Delete string from FILTER field
-				if (vcfEntry.delFilter(rmFilterField)) { // Removed? 
+				if (vcfEntry.delFilter(rmFilterField)) { // Removed?
 					// Update 'FILTER_DELETED' info field
 					String filterDeleted = vcfEntry.getInfo(VCF_INFO_FILTER_DELETED);
 					filterDeleted = (filterDeleted == null ? rmFilterField : filterDeleted + "," + rmFilterField);
@@ -136,24 +137,24 @@ public class SnpSiftCmdFilter extends SnpSift {
 
 		boolean all = true, any = false;
 
-		if (debug) Gpr.debug("VCF entry:" + vcfEntry.toStringNoGt());
+		if (debug) Log.debug("VCF entry:" + vcfEntry.toStringNoGt());
 
 		do {
 			Value eval = expr.eval(vcfEntry);
-			if (debug) Gpr.debug("\tEval: " + eval + "\tFieldIterator: " + fieldIterator);
+			if (debug) Log.debug("\tEval: " + eval + "\tFieldIterator: " + fieldIterator);
 
 			all &= eval.asBool();
 			any |= eval.asBool();
 
 			if ((fieldIterator.getType() == Field.TYPE_ALL) && !all) {
 				boolean ret = inverse ^ all;
-				if (debug) Gpr.debug("\tResult [ALL]: " + ret);
+				if (debug) Log.debug("\tResult [ALL]: " + ret);
 				return ret;
 			}
 
 			if ((fieldIterator.getType() == Field.TYPE_ANY) && any) {
 				boolean ret = inverse ^ any;
-				if (debug) Gpr.debug("\tResult [ANY]: " + ret);
+				if (debug) Log.debug("\tResult [ANY]: " + ret);
 				return ret;
 			}
 
@@ -166,15 +167,15 @@ public class SnpSiftCmdFilter extends SnpSift {
 
 		if (fieldIterator.getType() == Field.TYPE_ALL) {
 			ret = all;
-			if (debug) Gpr.debug("\tResult [ALL]: " + ret);
+			if (debug) Log.debug("\tResult [ALL]: " + ret);
 		} else {
 			ret = any;
-			if (debug) Gpr.debug("\tResult [ANY]: " + ret);
+			if (debug) Log.debug("\tResult [ANY]: " + ret);
 		}
 
 		// Inverse result
 		ret = inverse ^ ret;
-		if (debug && inverse) Gpr.debug("\tResult [INV]: " + ret);
+		if (debug && inverse) Log.debug("\tResult [INV]: " + ret);
 
 		return ret;
 	}
@@ -309,7 +310,7 @@ public class SnpSiftCmdFilter extends SnpSift {
 	 * Parse expression
 	 */
 	public Expression parseExpression(String expression) throws Exception {
-		if (debug) Gpr.debug("Parse expression: \"" + expression + "\"");
+		if (debug) Log.debug("Parse expression: \"" + expression + "\"");
 
 		// Create a language factory
 		LangFactory langFactory = new LangFactory(sets, formatVersion, exceptionIfNotFound);
@@ -322,7 +323,7 @@ public class SnpSiftCmdFilter extends SnpSift {
 			System.exit(-1);
 		}
 
-		if (debug) Gpr.debug("Expression: " + expression);
+		if (debug) Log.debug("Expression: " + expression);
 		return expr;
 	}
 

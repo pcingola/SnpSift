@@ -14,6 +14,7 @@ import java.util.Set;
 import org.snpeff.fileIterator.VcfFileIterator;
 import org.snpeff.interval.Variant;
 import org.snpeff.util.Gpr;
+import org.snpeff.util.Log;
 import org.snpeff.vcf.VariantVcfEntry;
 import org.snpeff.vcf.VcfEntry;
 import org.snpeff.vcf.VcfHeaderInfo;
@@ -77,7 +78,7 @@ public abstract class AnnotateVcfDb {
 			// Add query and result
 			QueryResult qr = new QueryResult(var, results);
 			queryResults.add(qr);
-			if (debug) Gpr.debug("Adding QueryResult: " + qr);
+			if (debug) Log.debug("Adding QueryResult: " + qr);
 		}
 
 		// Try to find INFO fields that we might have not seen before
@@ -93,7 +94,7 @@ public abstract class AnnotateVcfDb {
 		// Annotate all fields
 		//---
 		for (QueryResult qr : queryResults) {
-			if (debug) Gpr.debug("Processing QueryResult: " + qr);
+			if (debug) Log.debug("Processing QueryResult: " + qr);
 
 			if (useId) findDbId(idSet, qr);
 			if (existsInfoField != null) exists |= findDbExists(qr);
@@ -269,14 +270,14 @@ public abstract class AnnotateVcfDb {
 	 * Find all non-empty INFO fields 'infoFieldName' in results
 	 */
 	protected String findDbInfo(String infoFieldName, QueryResult qr) {
-		if (debug) Gpr.debug("Finding DB data for INFO field: " + infoFieldName);
+		if (debug) Log.debug("Finding DB data for INFO field: " + infoFieldName);
 		StringBuilder sb = new StringBuilder();
 
 		for (VariantVcfEntry varVe : qr.results) {
 			if (varVe != null) {
 				String val = varVe.getVcfEntry().getInfo(infoFieldName);
 				if (!VcfEntry.isEmpty(val)) {
-					if (debug) Gpr.debug("\tFound: " + val);
+					if (debug) Log.debug("\tFound: " + val);
 					if (sb.length() > 0) sb.append(',');
 					sb.append(val);
 				}
@@ -291,7 +292,7 @@ public abstract class AnnotateVcfDb {
 	 */
 	void findDbInfoAddValue(Map<String, String> info, String infoFieldName, String newValue) {
 		if (newValue == null && !annotateEmpty) return;
-		if (debug) Gpr.debug("\tINFO:" + infoFieldName + "\tnewValue: " + newValue);
+		if (debug) Log.debug("\tINFO:" + infoFieldName + "\tnewValue: " + newValue);
 		String oldValue = info.get(infoFieldName);
 		String val = (oldValue == null ? "" : oldValue + ",") + (newValue != null ? newValue : ".");
 		info.put(infoFieldName, val);
@@ -420,15 +421,15 @@ public abstract class AnnotateVcfDb {
 		List<VariantVcfEntry> list = new LinkedList<>();
 		for (VariantVcfEntry dbEntry : results) {
 			if (match(variant, dbEntry)) {
-				if (debug) Gpr.debug("dbEntry matches query\n\tvariant: " + variant + "\n\tdbEntry: " + dbEntry);
+				if (debug) Log.debug("dbEntry matches query\n\tvariant: " + variant + "\n\tdbEntry: " + dbEntry);
 				list.add(dbEntry);
 			} else {
-				if (debug) Gpr.debug("dbEntry does NOT match query\n\tvariant: " + variant + "\n\tdbEntry: " + dbEntry);
+				if (debug) Log.debug("dbEntry does NOT match query\n\tvariant: " + variant + "\n\tdbEntry: " + dbEntry);
 			}
 
 		}
 
-		if (debug) Gpr.debug("Match query results: " + list.size());
+		if (debug) Log.debug("Match query results: " + list.size());
 		return list;
 	}
 

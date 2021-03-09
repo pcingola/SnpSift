@@ -1,7 +1,7 @@
 package org.snpsift.testCases;
 
 import org.snpeff.stats.CountByType;
-import org.snpeff.util.Gpr;
+import org.snpeff.util.Log;
 import org.snpsift.SnpSift;
 import org.snpsift.SnpSiftCmdConcordance;
 
@@ -63,17 +63,17 @@ public class TestCasesConcordance extends TestCase {
 	}
 
 	public void test_01() {
-		Gpr.debug("Test");
+		Log.debug("Test");
 		checkConcordance("test/concordance_ref_01.vcf", "test/concordance_test_01.vcf", "ALT_2/ALT_2", 1);
 	}
 
 	public void test_02() {
-		Gpr.debug("Test");
+		Log.debug("Test");
 		checkConcordance("test/concordance_ref_02.vcf", "test/concordance_test_02.vcf", "ALT_2/ALT_2", 2);
 	}
 
 	public void test_03() {
-		Gpr.debug("Test");
+		Log.debug("Test");
 		CountByType count = new CountByType();
 		count.inc("ALT_2/ALT_2", 1);
 		count.inc("ALT_2/REF", 1);
@@ -83,7 +83,7 @@ public class TestCasesConcordance extends TestCase {
 	}
 
 	public void test_04() {
-		Gpr.debug("Test");
+		Log.debug("Test");
 		CountByType count = new CountByType();
 		count.inc("ALT_2/ALT_2", 1);
 		count.inc("ALT_2/REF", 1);
@@ -93,7 +93,7 @@ public class TestCasesConcordance extends TestCase {
 	}
 
 	public void test_05() {
-		Gpr.debug("Test");
+		Log.debug("Test");
 
 		CountByType count = new CountByType();
 		count.inc("ALT_2/ALT_2", 3);
@@ -103,7 +103,7 @@ public class TestCasesConcordance extends TestCase {
 	}
 
 	public void test_06() {
-		Gpr.debug("Test");
+		Log.debug("Test");
 
 		CountByType count = new CountByType();
 		count.inc("ALT_2/ALT_2", 5);
@@ -114,12 +114,12 @@ public class TestCasesConcordance extends TestCase {
 	}
 
 	public void test_07() {
-		Gpr.debug("Test");
+		Log.debug("Test");
 		checkConcordance("test/concordance_ref_07.vcf", "test/concordance_test_07.vcf", "ALT_2/ALT_2", 1);
 	}
 
 	public void test_08() {
-		Gpr.debug("Test");
+		Log.debug("Test");
 
 		CountByType count = new CountByType();
 		count.inc("ALT_2/ALT_2", 10);
@@ -129,7 +129,7 @@ public class TestCasesConcordance extends TestCase {
 	}
 
 	public void test_09() {
-		Gpr.debug("Test");
+		Log.debug("Test");
 
 		CountByType count = new CountByType();
 		count.inc("ALT_2/ALT_2", 15);
@@ -139,7 +139,7 @@ public class TestCasesConcordance extends TestCase {
 	}
 
 	public void test_10() {
-		Gpr.debug("Test");
+		Log.debug("Test");
 
 		CountByType count = new CountByType();
 		count.inc("ALT_2/ALT_2", 15);
@@ -149,7 +149,7 @@ public class TestCasesConcordance extends TestCase {
 	}
 
 	public void test_11() {
-		Gpr.debug("Test");
+		Log.debug("Test");
 
 		CountByType count = new CountByType();
 		count.inc("ALT_1/ALT_1", 4);
@@ -165,7 +165,7 @@ public class TestCasesConcordance extends TestCase {
 	}
 
 	public void test_12() {
-		Gpr.debug("Test");
+		Log.debug("Test");
 
 		CountByType count = new CountByType();
 		count.inc("ERROR", 1);
