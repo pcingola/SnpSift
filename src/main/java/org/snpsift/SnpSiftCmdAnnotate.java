@@ -6,7 +6,7 @@ import java.util.List;
 
 import org.snpeff.fileIterator.VcfFileIterator;
 import org.snpeff.util.Gpr;
-import org.snpeff.util.Timer;
+import org.snpeff.util.Log;
 import org.snpeff.vcf.VcfEntry;
 import org.snpeff.vcf.VcfHeader;
 import org.snpeff.vcf.VcfHeaderEntry;
@@ -63,7 +63,7 @@ public class SnpSiftCmdAnnotate extends SnpSift {
 	 */
 	ArrayList<VcfEntry> annotate(boolean createList) {
 		ArrayList<VcfEntry> list = (createList ? new ArrayList<VcfEntry>() : null);
-		if (verbose) Timer.showStdErr("Annotating entries from: '" + vcfInputFile + "'");
+		if (verbose) Log.info("Annotating entries from: '" + vcfInputFile + "'");
 
 		vcfFile = openVcfInputFile(); // Open input VCF
 		try {
@@ -108,7 +108,7 @@ public class SnpSiftCmdAnnotate extends SnpSift {
 		// Show some statistics
 		if (verbose) {
 			double perc = (100.0 * countAnnotated) / count;
-			Timer.showStdErr("Done." //
+			Log.info("Done." //
 					+ "\n\tTotal annotated entries : " + countAnnotated //
 					+ "\n\tTotal entries           : " + count //
 					+ "\n\tPercent                 : " + String.format("%.2f%%", perc) //
@@ -152,12 +152,12 @@ public class SnpSiftCmdAnnotate extends SnpSift {
 		method = guessAnnotationMethod();
 
 		dbFileName = fixDbName();
-		if (verbose) Timer.showStdErr("Annotating:" //
+		if (verbose) Log.info("Annotating:" //
 				+ (vcfInputFile != null ? "\tInput file    : '" + vcfInputFile + "'" : "") //
 				+ "\tDatabase file : '" + dbFileName + "'" //
 		);
 
-		if (verbose) Timer.showStdErr("Annotating method: " + method);
+		if (verbose) Log.info("Annotating method: " + method);
 
 		// Create annotateDb object
 		switch (method) {

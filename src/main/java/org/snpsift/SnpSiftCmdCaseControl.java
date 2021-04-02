@@ -377,7 +377,7 @@ public class SnpSiftCmdCaseControl extends SnpSift {
 				else if (cc) countCase++;
 				else countCtrl++;
 			}
-			Timer.showStdErr("Total : " + caseControl.length + " entries. Cases: " + countCase + ", controls: " + countCtrl + ", ignored: " + countIgnored);
+			Log.info("Total : " + caseControl.length + " entries. Cases: " + countCase + ", controls: " + countCtrl + ", ignored: " + countIgnored);
 		}
 
 		return header;
@@ -405,7 +405,7 @@ public class SnpSiftCmdCaseControl extends SnpSift {
 	 */
 	String pValueStr(VcfEntry vcfEntry, double p) {
 		if (verbose && (p > 0) && (p < 1.0) && (p <= pValueMin)) //
-			Timer.showStdErr("Minimum p-value so far: " //
+			Log.info("Minimum p-value so far: " //
 					+ pValueMin //
 					+ "\tchr: " + vcfEntry.getChromosomeName() //
 					+ "\tpos: " + (vcfEntry.getStart() + 1) //
@@ -457,7 +457,7 @@ public class SnpSiftCmdCaseControl extends SnpSift {
 		}
 
 		if (verbose) {
-			Timer.showStdErr("Done.\n\tMinimum pValue: " + pValueMin + "\tVcf entry: " + posMin);
+			Log.info("Done.\n\tMinimum pValue: " + pValueMin + "\tVcf entry: " + posMin);
 		}
 		return list;
 	}

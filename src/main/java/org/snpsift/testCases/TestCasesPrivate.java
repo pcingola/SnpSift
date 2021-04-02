@@ -28,7 +28,7 @@ public class TestCasesPrivate extends TestCase {
 		int count = 0;
 		List<VcfEntry> vcfEntries = cmd.run(true);
 		for (VcfEntry ve : vcfEntries) {
-			if (verbose) System.out.println(ve);
+			if (verbose) Log.info(ve);
 
 			if (!isPrivate && (ve.getInfo(VcfEntry.VCF_INFO_PRIVATE) != null)) throw new RuntimeException("This should not be a 'private' variant!");
 			if (isPrivate && (ve.getInfo(VcfEntry.VCF_INFO_PRIVATE) == null)) throw new RuntimeException("This should be a 'private' variant!");

@@ -33,7 +33,7 @@ public class TestCasesDbNsfp extends TestCase {
 	}
 
 	public List<VcfEntry> annotate(String dbFileName, String fileName, String[] extraArgs) {
-		if (verbose) System.out.println("Annotate: " + dbFileName + "\t" + fileName);
+		if (verbose) Log.info("Annotate: " + dbFileName + "\t" + fileName);
 
 		removeDataTypesCache(dbFileName);
 
@@ -57,7 +57,7 @@ public class TestCasesDbNsfp extends TestCase {
 	}
 
 	public Map<String, String> annotateGetFiledTypes(String dbFileName, String fileName, String[] extraArgs) {
-		if (verbose) System.out.println("Annotate: " + dbFileName + "\t" + fileName);
+		if (verbose) Log.info("Annotate: " + dbFileName + "\t" + fileName);
 
 		removeDataTypesCache(dbFileName);
 

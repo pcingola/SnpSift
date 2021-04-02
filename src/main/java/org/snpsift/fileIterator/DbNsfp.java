@@ -213,7 +213,7 @@ public class DbNsfp implements DbMarker<Variant, DbNsfpEntry> {
 	 * Guess data types from file
 	 */
 	protected boolean guessDataTypes() {
-		if (verbose) Timer.showStdErr("Guessing data types for file '" + fileName + "'");
+		if (verbose) Log.info("Guessing data types for file '" + fileName + "'");
 
 		boolean header = true;
 		fieldNames = null;
@@ -303,7 +303,7 @@ public class DbNsfp implements DbMarker<Variant, DbNsfpEntry> {
 			if (!Gpr.exists(indexFile)) throw new RuntimeException("Cannot find tabix index file '" + indexFile + "'");
 
 			// Open tabix reader
-			if (verbose) Timer.showStdErr("Opening database file and loading index");
+			if (verbose) Log.info("Opening database file and loading index");
 			tabixReader = new TabixReader(fileName, debug);
 			tabixReader.setShowHeader(false); // Don't show header line in query results
 		} catch (IOException e) {
@@ -326,11 +326,11 @@ public class DbNsfp implements DbMarker<Variant, DbNsfpEntry> {
 	 * @return true on success
 	 */
 	boolean loadCachedDataTypes(String cacheFileName) {
-		if (verbose) Timer.showStdErr("Loading data types from file '" + cacheFileName + "'");
+		if (verbose) Log.info("Loading data types from file '" + cacheFileName + "'");
 
 		// File doesn't exist, cannot load
 		if (!Gpr.canRead(cacheFileName)) {
-			if (verbose) Timer.showStdErr("Data types cache file '" + cacheFileName + "' not found");
+			if (verbose) Log.info("Data types cache file '" + cacheFileName + "' not found");
 			return false;
 		}
 
@@ -338,7 +338,7 @@ public class DbNsfp implements DbMarker<Variant, DbNsfpEntry> {
 		File db = new File(fileName);
 		File cache = new File(cacheFileName);
 		if (db.lastModified() > cache.lastModified()) {
-			if (verbose) Timer.showStdErr("Data types cache file '" + cacheFileName + "' needs to be updated");
+			if (verbose) Log.info("Data types cache file '" + cacheFileName + "' needs to be updated");
 			return false;
 		}
 
@@ -474,7 +474,7 @@ public class DbNsfp implements DbMarker<Variant, DbNsfpEntry> {
 	 * Save data types to cache file
 	 */
 	protected void saveDataTypesCache(String cacheFileName) {
-		if (verbose) Timer.showStdErr("Saving data types to file '" + cacheFileName + "'");
+		if (verbose) Log.info("Saving data types to file '" + cacheFileName + "'");
 		StringBuilder sb = new StringBuilder();
 
 		for (int i = 0; i < fieldNames.length; i++)

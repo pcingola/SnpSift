@@ -137,7 +137,7 @@ public class SnpSiftCmdDbNsfp extends SnpSift {
 		}
 
 		// Annotate VCF file
-		if (verbose) Timer.showStdErr("Annotating file '" + vcfFileName + "'");
+		if (verbose) Log.info("Annotating file '" + vcfFileName + "'");
 		boolean showHeader = true;
 		int pos = -1;
 		String chr = "";
@@ -179,7 +179,7 @@ public class SnpSiftCmdDbNsfp extends SnpSift {
 		// Show some stats
 		if (verbose) {
 			double perc = (100.0 * countAnnotated) / count;
-			Timer.showStdErr("Done." //
+			Log.info("Done." //
 					+ "\n\tTotal annotated entries : " + countAnnotated //
 					+ "\n\tTotal entries           : " + count //
 					+ "\n\tPercent                 : " + String.format("%.2f%%", perc) //
@@ -305,7 +305,7 @@ public class SnpSiftCmdDbNsfp extends SnpSift {
 			String dbNsfpFields = config.getDbNsfpFields();
 			if (dbNsfpFields != null && !dbNsfpFields.isEmpty()) {
 				fieldsNamesToAdd = dbNsfpFields;
-				if (verbose) Timer.showStdErr("Using fields from config file: '" + fieldsNamesToAdd + "'");
+				if (verbose) Log.info("Using fields from config file: '" + fieldsNamesToAdd + "'");
 			}
 		}
 
@@ -314,12 +314,12 @@ public class SnpSiftCmdDbNsfp extends SnpSift {
 		//---
 		VcfInfoType types[] = dbNsfp.getTypes();
 		String fieldNames[] = dbNsfp.getFieldNamesSorted();
-		if (verbose) Timer.showStdErr("Database fields:");
+		if (verbose) Log.info("Database fields:");
 		for (int i = 0; i < fieldNames.length; i++) {
 			String type = (types[i] != null ? types[i].toString() : "String");
 			fieldsType.put(fieldNames[i], type);
 			fieldsDescription.put(fieldNames[i], "Field '" + fieldNames[i] + "' from dbNSFP");
-			if (verbose) System.err.println("\t\t\t'" + fieldNames[i] + "'");
+			if (verbose) Log.info("\t\t\t'" + fieldNames[i] + "'");
 		}
 
 		currentDbEntry = null;
@@ -356,7 +356,7 @@ public class SnpSiftCmdDbNsfp extends SnpSift {
 					// Field not found
 					if (fieldsNamesToAdd == DEFAULT_FIELDS_NAMES_TO_ADD) {
 						// Was it one of the default fields? => Ignore
-						if (verbose) Timer.showStdErr("Warning: Default field name '" + fn + "' not found, ignoring");
+						if (verbose) Log.info("Warning: Default field name '" + fn + "' not found, ignoring");
 					} else usage("Error: Field name '" + fn + "' not found");
 				} else fieldsToAdd.put(fn, fieldsDescription.get(fn)); // Add field
 			}
@@ -368,7 +368,7 @@ public class SnpSiftCmdDbNsfp extends SnpSift {
 			fieldsSort.addAll(fieldsToAdd.keySet());
 			Collections.sort(fieldsSort);
 
-			Timer.showStdErr("Fields to add:");
+			Log.info("Fields to add:");
 			for (String fn : fieldsSort)
 				System.err.println("\t\t\t'" + fn + "'");
 		}
@@ -525,7 +525,7 @@ public class SnpSiftCmdDbNsfp extends SnpSift {
 		// Find or download database
 		dbFileName = databaseFind();
 
-		if (verbose) Timer.showStdErr("Annotating:" //
+		if (verbose) Log.info("Annotating:" //
 				+ "\tInput file : '" + vcfFileName + "'" //
 				+ "\tDatabase file : '" + dbFileName + "'" //
 		);

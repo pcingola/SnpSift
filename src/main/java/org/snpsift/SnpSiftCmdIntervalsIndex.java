@@ -10,7 +10,7 @@ import org.snpeff.interval.Chromosome;
 import org.snpeff.interval.Genome;
 import org.snpeff.interval.Variant;
 import org.snpeff.util.Gpr;
-import org.snpeff.util.Timer;
+import org.snpeff.util.Log;
 import org.snpeff.vcf.FileIndexChrPos;
 
 /**
@@ -56,14 +56,14 @@ public class SnpSiftCmdIntervalsIndex extends SnpSift {
 	 */
 	public void loadIntervals() {
 		// Read filter interval file
-		if (verbose) Timer.showStdErr("Reading BED file '" + bedFile + "'");
+		if (verbose) Log.info("Reading BED file '" + bedFile + "'");
 
 		BedFileIterator bf = new BedFileIterator(bedFile, genome);
 		bf.setCreateChromos(true);
 
 		seqChanges = bf.load();
 		Collections.sort(seqChanges); // We want the result VCF file to be sorted
-		if (verbose) Timer.showStdErr("Total " + seqChanges.size() + " intervals added.");
+		if (verbose) Log.info("Total " + seqChanges.size() + " intervals added.");
 	}
 
 	/**
@@ -143,25 +143,25 @@ public class SnpSiftCmdIntervalsIndex extends SnpSift {
 		// VcfFileIndexIntervals vf = new VcfFileIndexIntervals(vcfFile);
 		FileIndexChrPos fileIndexChrPos = new FileIndexChrPos(vcfFile);
 
-		if (verbose) Timer.showStdErr("Indexing file '" + vcfFile + "'");
+		if (verbose) Log.info("Indexing file '" + vcfFile + "'");
 		fileIndexChrPos.setVerbose(verbose);
 		fileIndexChrPos.setDebug(debug);
 		fileIndexChrPos.open();
 		fileIndexChrPos.index();
-		if (verbose) Timer.showStdErr("Done");
+		if (verbose) Log.info("Done");
 
 		// Find all intervals
 		int scNum = 1;
 		for (Variant sc : seqChanges) {
 			try {
-				if (verbose) Timer.showStdErr(scNum + " / " + seqChanges.size() + "\t\tFinding interval: " + sc.getChromosomeName() + ":" + (sc.getStart() + 1) + "-" + (sc.getEnd() + 1));
+				if (verbose) Log.info(scNum + " / " + seqChanges.size() + "\t\tFinding interval: " + sc.getChromosomeName() + ":" + (sc.getStart() + 1) + "-" + (sc.getEnd() + 1));
 				fileIndexChrPos.dump(sc.getChromosomeName(), sc.getStart(), sc.getEnd(), false);
 				scNum++;
 			} catch (Throwable t) {
 				t.printStackTrace();
 			}
 		}
-		if (verbose) Timer.showStdErr("Done");
+		if (verbose) Log.info("Done");
 		return true;
 	}
 

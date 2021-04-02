@@ -38,7 +38,7 @@ public class TestCasesGeneSets extends TestCase {
 
 		// Check
 		for (VcfEntry ve : results) {
-			if (verbose) System.out.println(ve.toStr() + "\t" + ve.getInfo("MSigDb"));
+			if (verbose) Log.info(ve.toStr() + "\t" + ve.getInfo("MSigDb"));
 			Assert.assertEquals(ve.getInfo("MSigDb"), "chr1p36");
 		}
 	}

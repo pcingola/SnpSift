@@ -25,6 +25,7 @@ import org.snpeff.interval.Marker;
 import org.snpeff.interval.Markers;
 import org.snpeff.interval.Variant;
 import org.snpeff.util.Gpr;
+import org.snpeff.util.Log;
 import org.snpeff.util.Timer;
 import org.snpeff.vcf.VcfEntry;
 
@@ -103,7 +104,7 @@ public class VcfIndex {
 	 * Create interval forest
 	 */
 	void createIntervalForest() {
-		if (verbose) Timer.showStdErr("Creating interval forest:");
+		if (verbose) Log.info("Creating interval forest:");
 
 		forest = new HashMap<>();
 
@@ -113,12 +114,12 @@ public class VcfIndex {
 			VcfIndexTree vcfTree = new VcfIndexTree(vcf, vic);
 			vcfTree.setMaxBlockSize(maxBlockSize);
 			vcfTree.build();
-			if (verbose) System.err.println("\t" + vcfTree);
+			if (verbose) Log.info("\t" + vcfTree);
 
 			forest.put(chr, vcfTree);
 		}
 
-		if (verbose) Timer.showStdErr("Creating interval forest: Done");
+		if (verbose) Log.info("Creating interval forest: Done");
 	}
 
 	public Genome getGenome() {
@@ -172,7 +173,7 @@ public class VcfIndex {
 	public void index() {
 		// Load a pre-existing index file?
 		String indexFile = fileName + "." + INDEX_EXT;
-		if (verbose) Timer.showStdErr("Checking index file '" + indexFile + "'");
+		if (verbose) Log.info("Checking index file '" + indexFile + "'");
 		if (hasValidIndex(fileName, indexFile)) {
 			loadIndex(indexFile);
 			setVcfTree(vcf);
@@ -191,7 +192,7 @@ public class VcfIndex {
 	 * Load index form a file
 	 */
 	protected void loadIndex(String indexFile) {
-		if (verbose) Timer.showStdErr("Loading index file '" + indexFile + "'");
+		if (verbose) Log.info("Loading index file '" + indexFile + "'");
 
 		DataInputStream in = null;
 		forest = new HashMap<>();
@@ -228,7 +229,7 @@ public class VcfIndex {
 	 * Parse input VCF file and load intervals
 	 */
 	void loadIntervals() {
-		if (verbose) Timer.showStdErr("Create index: Reading variants from file '" + fileName + "'");
+		if (verbose) Log.info("Create index: Reading variants from file '" + fileName + "'");
 
 		try {
 			open(); // Open VCF file
@@ -284,7 +285,7 @@ public class VcfIndex {
 			throw new RuntimeException(e);
 		}
 
-		if (verbose) Timer.showStdErr("Loading intervals: Done\n" + this);
+		if (verbose) Log.info("Loading intervals: Done\n" + this);
 	}
 
 	/**
@@ -338,7 +339,7 @@ public class VcfIndex {
 	 * Save index file
 	 */
 	public void save(String indexFile) {
-		if (verbose) Timer.showStdErr("Saving index to file '" + indexFile + "'");
+		if (verbose) Log.info("Saving index to file '" + indexFile + "'");
 
 		DataOutputStream out = null;
 		try {
@@ -358,7 +359,7 @@ public class VcfIndex {
 			}
 		}
 
-		if (verbose) Timer.showStdErr("Saving index: Done.");
+		if (verbose) Log.info("Saving index: Done.");
 	}
 
 	public void setDebug(boolean debug) {

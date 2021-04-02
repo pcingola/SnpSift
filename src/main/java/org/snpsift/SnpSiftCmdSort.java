@@ -7,7 +7,7 @@ import java.util.List;
 
 import org.snpeff.fileIterator.LineFileIterator;
 import org.snpeff.fileIterator.VcfFileIterator;
-import org.snpeff.util.Timer;
+import org.snpeff.util.Log;
 import org.snpeff.vcf.LineChrPos;
 import org.snpeff.vcf.VcfEntry;
 import org.snpeff.vcf.VcfHeader;
@@ -59,7 +59,7 @@ public class SnpSiftCmdSort extends SnpSift {
 
 		// Iterate all files
 		for (String file : fileNames) {
-			if (verbose) Timer.showStdErr("Loading file '" + file + "'");
+			if (verbose) Log.info("Loading file '" + file + "'");
 			processHeader(file);
 
 			// Read the whole file

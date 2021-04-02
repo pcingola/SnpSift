@@ -13,7 +13,7 @@ import org.snpeff.interval.Chromosome;
 import org.snpeff.interval.Marker;
 import org.snpeff.interval.Variant;
 import org.snpeff.util.Gpr;
-import org.snpeff.util.Timer;
+import org.snpeff.util.Log;
 import org.snpeff.vcf.VcfEntry;
 
 /**
@@ -141,7 +141,7 @@ public class SnpSiftCmdPhastCons extends SnpSift {
 			// Do nothing
 		}
 
-		Timer.showStdErr("Cannot find any file in directory '" + dirName + "' matching regular expression '" + regex + "'");
+		Log.info("Cannot find any file in directory '" + dirName + "' matching regular expression '" + regex + "'");
 		return null;
 	}
 
@@ -164,11 +164,11 @@ public class SnpSiftCmdPhastCons extends SnpSift {
 		// Find a file that matches a phastCons name
 		String wigFile = findPhastConsFile(phastConsDir, ".*/chr" + chromo + "\\..*wigFix.*");
 		if ((wigFile == null) || !Gpr.exists(wigFile)) {
-			if (wigFile != null) Timer.showStdErr("Cannot open PhastCons file '" + wigFile + "' for chromosome '" + chromo + "'\n\tEntry:\t" + marker);
+			if (wigFile != null) Log.info("Cannot open PhastCons file '" + wigFile + "' for chromosome '" + chromo + "'\n\tEntry:\t" + marker);
 			return false;
 		}
 
-		if (verbose) Timer.showStdErr("Loading phastCons data for chromosome '" + chromo + "', file '" + wigFile + "'");
+		if (verbose) Log.info("Loading phastCons data for chromosome '" + chromo + "', file '" + wigFile + "'");
 
 		// Initialize
 		int chrSize = chromoSize(chromo) + 1;
@@ -193,7 +193,7 @@ public class SnpSiftCmdPhastCons extends SnpSift {
 				}
 			} else if (index >= score.length) {
 				// Out of chromosome?
-				Timer.showStdErr("PhastCons index out of chromosome boundaries." //
+				Log.info("PhastCons index out of chromosome boundaries." //
 						+ "\n\tIndex             : " + index //
 						+ "\n\tChromosome length : " + score.length //
 				);
@@ -212,7 +212,7 @@ public class SnpSiftCmdPhastCons extends SnpSift {
 
 			double perc = (100.0 * countNonZero) / score.length;
 			System.err.println("");
-			Timer.showStdErr(String.format("Total non-zero scores: %d / %d [%.2f%%]", countNonZero, score.length, perc));
+			Log.info(String.format("Total non-zero scores: %d / %d [%.2f%%]", countNonZero, score.length, perc));
 		}
 
 		return index > 0;

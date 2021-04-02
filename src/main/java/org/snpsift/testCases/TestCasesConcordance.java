@@ -19,7 +19,7 @@ public class TestCasesConcordance extends TestCase {
 	public static boolean verbose = false || debug;
 
 	SnpSiftCmdConcordance checkConcordance(String refVcfFile, String vcfFile) {
-		if (verbose) System.err.println("\n\nConcordance between: " + refVcfFile + "\t" + vcfFile);
+		if (verbose) Log.info("\n\nConcordance between: " + refVcfFile + "\t" + vcfFile);
 		String args[] = { "concordance", refVcfFile, vcfFile };
 
 		SnpSift snpSift = new SnpSift(args);
@@ -33,7 +33,7 @@ public class TestCasesConcordance extends TestCase {
 		ssconc.run();
 
 		CountByType concordance = ssconc.getConcordance();
-		if (verbose) System.out.println("\n\nConcordance:\n" + concordance);
+		if (verbose) Log.info("\n\nConcordance:\n" + concordance);
 
 		return ssconc;
 	}
@@ -46,7 +46,7 @@ public class TestCasesConcordance extends TestCase {
 		CountByType concordance = ssconc.getConcordance();
 
 		for (String key : count.keysSorted()) {
-			if (verbose) System.out.println("Checking\t'" + key + "'\tExpected: " + count.get(key) + "\tActual: " + concordance.get(key));
+			if (verbose) Log.info("Checking\t'" + key + "'\tExpected: " + count.get(key) + "\tActual: " + concordance.get(key));
 			Assert.assertEquals(count.get(key), concordance.get(key));
 		}
 	}
@@ -58,7 +58,7 @@ public class TestCasesConcordance extends TestCase {
 		SnpSiftCmdConcordance ssconc = checkConcordance(refVcfFile, vcfFile);
 		CountByType concordance = ssconc.getConcordance();
 
-		if (verbose) System.out.println("Checking\t'" + key + "'\tExpected: " + value + "\tActual: " + concordance.get(key));
+		if (verbose) Log.info("Checking\t'" + key + "'\tExpected: " + value + "\tActual: " + concordance.get(key));
 		Assert.assertEquals(value, concordance.get(key));
 	}
 

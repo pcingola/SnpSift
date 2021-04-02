@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import org.snpeff.fileIterator.LineFileIterator;
 import org.snpeff.fileIterator.VcfFileIterator;
 import org.snpeff.util.Gpr;
-import org.snpeff.util.Timer;
+import org.snpeff.util.Log;
 
 /**
  * Split a large VCF file by chromosome or bby number of lines
@@ -97,7 +97,7 @@ public class SnpSiftCmdSplit extends SnpSift {
 
 		if (verbose) {
 			System.err.println("");
-			Timer.showStdErr("Creating new file '" + outFileName + "'");
+			Log.info("Creating new file '" + outFileName + "'");
 		}
 
 		try {
@@ -157,7 +157,7 @@ public class SnpSiftCmdSplit extends SnpSift {
 	 * Split file
 	 */
 	void split() {
-		if (verbose) Timer.showStdErr("Splitting file '" + vcfFile + "'");
+		if (verbose) Log.info("Splitting file '" + vcfFile + "'");
 
 		// Base file name
 		String baseName = Gpr.removeExt(vcfFile, exts);

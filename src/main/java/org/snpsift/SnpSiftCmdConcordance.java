@@ -184,7 +184,7 @@ public class SnpSiftCmdConcordance extends SnpSift {
 	 */
 	void errors(VcfEntry ve1, VcfEntry ve2, String message) {
 		errors.inc(message);
-		if (verbose) System.err.println("ERROR: " + message + "\n\tVCF entry " + name1 + "\t" + ve1 + "\n\tVCF entry " + name2 + "\t" + ve2);
+		if (verbose) Log.info("ERROR: " + message + "\n\tVCF entry " + name1 + "\t" + ve1 + "\n\tVCF entry " + name2 + "\t" + ve2);
 	}
 
 	/**
@@ -307,7 +307,7 @@ public class SnpSiftCmdConcordance extends SnpSift {
 		// Seek
 		vcfFile.seek(start);
 		latestVcfEntry = null;
-		if (verbose) Timer.showStdErr("Chromosome: '" + chr + "'");
+		if (verbose) Log.info("Chromosome: '" + chr + "'");
 
 		return true;
 	}
@@ -400,7 +400,7 @@ public class SnpSiftCmdConcordance extends SnpSift {
 			// Show progress
 			if (verbose && (countEntries >= SHOW_EVERY)) {
 				countEntries = 0;
-				Timer.showStdErr("\t" + (latestVcfEntry != null ? latestVcfEntry.getChromosomeName() + ":" + (latestVcfEntry.getStart() + 1) : "") + "\t" + ve.getChromosomeName() + ":" + (ve.getStart() + 1));
+				Log.info("\t" + (latestVcfEntry != null ? latestVcfEntry.getChromosomeName() + ":" + (latestVcfEntry.getStart() + 1) : "") + "\t" + ve.getChromosomeName() + ":" + (ve.getStart() + 1));
 			}
 			countEntries++;
 		}
@@ -422,7 +422,7 @@ public class SnpSiftCmdConcordance extends SnpSift {
 		//---
 		// Index vcf1:  it is assumed to be the smaller of the two
 		//---
-		if (verbose) Timer.showStdErr("Indexing file '" + vcfFileName1 + "'");
+		if (verbose) Log.info("Indexing file '" + vcfFileName1 + "'");
 		indexVcf = new FileIndexChrPos(vcfFileName1);
 		indexVcf.setVerbose(verbose);
 		indexVcf.setDebug(debug);
@@ -435,11 +435,11 @@ public class SnpSiftCmdConcordance extends SnpSift {
 		//---
 		VcfFileIterator vcf1, vcf2;
 		try {
-			if (verbose) Timer.showStdErr("Open VCF file '" + vcfFileName1 + "'");
+			if (verbose) Log.info("Open VCF file '" + vcfFileName1 + "'");
 			vcf1 = new VcfFileIterator(new SeekableBufferedReader(vcfFileName1));
 			vcf1.setDebug(debug);
 
-			if (verbose) Timer.showStdErr("Open VCF file '" + vcfFileName2 + "'");
+			if (verbose) Log.info("Open VCF file '" + vcfFileName2 + "'");
 			vcf2 = new VcfFileIterator(vcfFileName2);
 			vcf2.setDebug(debug);
 
@@ -483,7 +483,7 @@ public class SnpSiftCmdConcordance extends SnpSift {
 				// Show progress
 				if (verbose && (countEntries >= SHOW_EVERY)) {
 					countEntries = 0;
-					Timer.showStdErr("\t" + (latestVcfEntry != null ? latestVcfEntry.getChromosomeName() + ":" + (latestVcfEntry.getStart() + 1) : "") + "\t" + ve2.getChromosomeName() + ":" + (ve2.getStart() + 1));
+					Log.info("\t" + (latestVcfEntry != null ? latestVcfEntry.getChromosomeName() + ":" + (latestVcfEntry.getStart() + 1) : "") + "\t" + ve2.getChromosomeName() + ":" + (ve2.getStart() + 1));
 				}
 
 				countEntries++;
@@ -539,7 +539,7 @@ public class SnpSiftCmdConcordance extends SnpSift {
 		// Write 'by sample' file
 		if (writeBySampleFile) {
 			String bySampleFile = "concordance_" + name1 + "_" + name2 + ".by_sample.txt"; // Write to file
-			Timer.showStdErr("Writing concordance by sample to file '" + bySampleFile + "'");
+			Log.info("Writing concordance by sample to file '" + bySampleFile + "'");
 
 			StringBuilder bySample = new StringBuilder();
 			bySample.append(titleBySample + "\n"); // Add title
@@ -555,7 +555,7 @@ public class SnpSiftCmdConcordance extends SnpSift {
 		// Write summary file
 		if (writeSummaryFile) {
 			String summaryFile = "concordance_" + name1 + "_" + name2 + ".summary.txt"; // Write to file
-			Timer.showStdErr("Writing summary file '" + summaryFile + "'");
+			Log.info("Writing summary file '" + summaryFile + "'");
 
 			if (!errors.isEmpty()) { // Add errors (if any)
 				summary("\n# Errors:");
@@ -572,7 +572,7 @@ public class SnpSiftCmdConcordance extends SnpSift {
 	 */
 	void summary(String message) {
 		summary.append(message + "\n");
-		if (verbose) System.err.println(message);
+		if (verbose) Log.info(message);
 	}
 
 	/**

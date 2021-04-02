@@ -46,11 +46,11 @@ public class TestCasesFilter extends TestCase {
 		List<VcfEntry> list = snpsiftFilter.filter("test/test01.vcf", expression, true);
 
 		// Check that it satisfies the condition
-		if (verbose) System.out.println("Expression: '" + expression + "'");
+		if (verbose) Log.info("Expression: '" + expression + "'");
 		Assert.assertNotNull(list);
 		Assert.assertTrue(list.size() > 0);
 		for (VcfEntry vcfEntry : list) {
-			if (verbose) System.out.println("\t" + vcfEntry);
+			if (verbose) Log.info("\t" + vcfEntry);
 			Assert.assertTrue(vcfEntry.getQuality() >= minQ);
 		}
 	}
@@ -67,11 +67,11 @@ public class TestCasesFilter extends TestCase {
 		List<VcfEntry> list = snpsiftFilter.filter("test/test01.vcf", expression, true);
 
 		// Check that it satisfies the condition
-		if (verbose) System.out.println("Expression: '" + expression + "'");
+		if (verbose) Log.info("Expression: '" + expression + "'");
 		Assert.assertNotNull(list);
 		Assert.assertTrue(list.size() > 0);
 		for (VcfEntry vcfEntry : list) {
-			if (verbose) System.out.println("\t" + vcfEntry);
+			if (verbose) Log.info("\t" + vcfEntry);
 			Assert.assertTrue(vcfEntry.getChromosomeName().equals("19"));
 		}
 	}
@@ -90,11 +90,11 @@ public class TestCasesFilter extends TestCase {
 		List<VcfEntry> list = snpsiftFilter.filter("test/test01.vcf", expression, true);
 
 		// Check that it satisfies the condition
-		if (verbose) System.out.println("Expression: '" + expression + "'");
+		if (verbose) Log.info("Expression: '" + expression + "'");
 		Assert.assertNotNull(list);
 		Assert.assertTrue(list.size() > 0);
 		for (VcfEntry vcfEntry : list) {
-			if (verbose) System.out.println("\t" + vcfEntry.getStart() + "\t" + vcfEntry);
+			if (verbose) Log.info("\t" + vcfEntry.getStart() + "\t" + vcfEntry);
 			Assert.assertTrue(vcfEntry.getStart() > (minPos - 1));
 		}
 	}
@@ -113,11 +113,11 @@ public class TestCasesFilter extends TestCase {
 		List<VcfEntry> list = snpsiftFilter.filter("test/test01.vcf", expression, true);
 
 		// Check that it satisfies the condition
-		if (verbose) System.out.println("Expression: '" + expression + "'");
+		if (verbose) Log.info("Expression: '" + expression + "'");
 		Assert.assertNotNull(list);
 		Assert.assertTrue(list.size() > 0);
 		for (VcfEntry vcfEntry : list) {
-			if (verbose) System.out.println("\t" + vcfEntry.getStart() + "\t" + vcfEntry);
+			if (verbose) Log.info("\t" + vcfEntry.getStart() + "\t" + vcfEntry);
 			Assert.assertTrue(vcfEntry.getStart() >= (20175 - 1));
 		}
 	}
@@ -136,11 +136,11 @@ public class TestCasesFilter extends TestCase {
 		List<VcfEntry> list = snpsiftFilter.filter("test/test01.vcf", expression, true);
 
 		// Check that it satisfies the condition
-		if (verbose) System.out.println("Expression: '" + expression + "'");
+		if (verbose) Log.info("Expression: '" + expression + "'");
 		Assert.assertNotNull(list);
 		Assert.assertTrue(list.size() > 0);
 		for (VcfEntry vcfEntry : list) {
-			if (verbose) System.out.println("\t" + vcfEntry);
+			if (verbose) Log.info("\t" + vcfEntry);
 			Assert.assertTrue(vcfEntry.getStart() < (maxPos - 1));
 		}
 	}
@@ -159,11 +159,11 @@ public class TestCasesFilter extends TestCase {
 		List<VcfEntry> list = snpsiftFilter.filter("test/test01.vcf", expression, true);
 
 		// Check that it satisfies the condition
-		if (verbose) System.out.println("Expression: '" + expression + "'");
+		if (verbose) Log.info("Expression: '" + expression + "'");
 		Assert.assertNotNull(list);
 		Assert.assertTrue(list.size() > 0);
 		for (VcfEntry vcfEntry : list) {
-			if (verbose) System.out.println("\t" + vcfEntry);
+			if (verbose) Log.info("\t" + vcfEntry);
 			Assert.assertTrue(vcfEntry.getStart() <= (maxPos - 1));
 		}
 	}
@@ -183,11 +183,11 @@ public class TestCasesFilter extends TestCase {
 		List<VcfEntry> list = snpsiftFilter.filter("test/test01.vcf", expression, true);
 
 		// Check that it satisfies the condition
-		if (verbose) System.out.println("Expression: '" + expression + "'");
+		if (verbose) Log.info("Expression: '" + expression + "'");
 		Assert.assertNotNull(list);
 		Assert.assertTrue(list.size() > 0);
 		for (VcfEntry vcfEntry : list) {
-			if (verbose) System.out.println("\t" + vcfEntry);
+			if (verbose) Log.info("\t" + vcfEntry);
 			Assert.assertTrue(vcfEntry.getStart() >= (minPos - 1));
 			Assert.assertTrue(vcfEntry.getStart() <= (maxPos - 1));
 		}
@@ -208,11 +208,11 @@ public class TestCasesFilter extends TestCase {
 		List<VcfEntry> list = snpsiftFilter.filter("test/test01.vcf", expression, true);
 
 		// Check that it satisfies the condition
-		if (verbose) System.out.println("Expression: '" + expression + "'");
+		if (verbose) Log.info("Expression: '" + expression + "'");
 		Assert.assertNotNull(list);
 		Assert.assertTrue(list.size() > 0);
 		for (VcfEntry vcfEntry : list) {
-			if (verbose) System.out.println("\t" + vcfEntry);
+			if (verbose) Log.info("\t" + vcfEntry);
 			Assert.assertTrue( //
 					(vcfEntry.getStart() >= (minPos - 1)) //
 							|| (vcfEntry.getStart() <= (maxPos - 1)) //
@@ -232,11 +232,11 @@ public class TestCasesFilter extends TestCase {
 		List<VcfEntry> list = snpsiftFilter.filter("test/test01.vcf", expression, true);
 
 		// Check that it satisfies the condition
-		if (verbose) System.out.println("Expression: '" + expression + "'");
+		if (verbose) Log.info("Expression: '" + expression + "'");
 		Assert.assertNotNull(list);
 		Assert.assertTrue(list.size() > 0);
 		for (VcfEntry vcfEntry : list) {
-			if (verbose) System.out.println("\t" + vcfEntry);
+			if (verbose) Log.info("\t" + vcfEntry);
 			Assert.assertTrue(vcfEntry.getChromosomeName().startsWith("NT_"));
 		}
 	}
@@ -253,11 +253,11 @@ public class TestCasesFilter extends TestCase {
 		List<VcfEntry> list = snpsiftFilter.filter("test/test01.vcf", expression, true);
 
 		// Check that it satisfies the condition
-		if (verbose) System.out.println("Expression: '" + expression + "'");
+		if (verbose) Log.info("Expression: '" + expression + "'");
 		Assert.assertNotNull(list);
 		Assert.assertTrue(list.size() > 0);
 		for (VcfEntry vcfEntry : list) {
-			if (verbose) System.out.println("\t" + vcfEntry);
+			if (verbose) Log.info("\t" + vcfEntry);
 			Assert.assertTrue(vcfEntry.getRef().equals("C"));
 			Assert.assertTrue(vcfEntry.getAltsStr().equals("T"));
 		}
@@ -275,11 +275,11 @@ public class TestCasesFilter extends TestCase {
 		List<VcfEntry> list = snpsiftFilter.filter("test/test01.vcf", expression, true);
 
 		// Check that it satisfies the condition
-		if (verbose) System.out.println("Expression: '" + expression + "'");
+		if (verbose) Log.info("Expression: '" + expression + "'");
 		Assert.assertNotNull(list);
 		Assert.assertTrue(list.size() > 0);
 		for (VcfEntry vcfEntry : list) {
-			if (verbose) System.out.println("\t" + vcfEntry);
+			if (verbose) Log.info("\t" + vcfEntry);
 			Assert.assertTrue(Gpr.parseIntSafe(vcfEntry.getInfo("DP")) >= 5);
 		}
 	}
@@ -297,11 +297,11 @@ public class TestCasesFilter extends TestCase {
 		List<VcfEntry> list = snpsiftFilter.filter("test/test01.vcf", expression, true);
 
 		// Check that it satisfies the condition
-		if (verbose) System.out.println("Expression: '" + expression + "'");
+		if (verbose) Log.info("Expression: '" + expression + "'");
 		Assert.assertNotNull(list);
 		Assert.assertEquals(182, list.size());
 		for (VcfEntry vcfEntry : list) {
-			if (verbose) System.out.println("\t" + vcfEntry);
+			if (verbose) Log.info("\t" + vcfEntry);
 			Assert.assertNotNull(vcfEntry.getInfo("INDEL"));
 		}
 	}
@@ -318,11 +318,11 @@ public class TestCasesFilter extends TestCase {
 		List<VcfEntry> list = snpsiftFilter.filter("test/test01.vcf", expression, true);
 
 		// Check that it satisfies the condition
-		if (verbose) System.out.println("Expression: '" + expression + "'");
+		if (verbose) Log.info("Expression: '" + expression + "'");
 		Assert.assertNotNull(list);
 		Assert.assertTrue(list.size() > 0);
 		for (VcfEntry vcfEntry : list) {
-			if (verbose) System.out.println("\t" + vcfEntry);
+			if (verbose) Log.info("\t" + vcfEntry);
 			Assert.assertNotNull(vcfEntry.getInfo("INDEL"));
 		}
 	}
@@ -339,13 +339,13 @@ public class TestCasesFilter extends TestCase {
 		List<VcfEntry> list = snpsiftFilter.filter("test/test01.vcf", expression, true);
 
 		// Check that it satisfies the condition
-		if (verbose) System.out.println("Expression: '" + expression + "'");
+		if (verbose) Log.info("Expression: '" + expression + "'");
 		Assert.assertNotNull(list);
 		Assert.assertTrue(list.size() > 0);
 
 		int count = 0;
 		for (VcfEntry vcfEntry : list) {
-			if (verbose) System.out.println("\t" + vcfEntry);
+			if (verbose) Log.info("\t" + vcfEntry);
 
 			VcfGenotype vcfGenotype = vcfEntry.getVcfGenotype(0);
 			String pl = vcfGenotype.get("PL");
@@ -371,11 +371,11 @@ public class TestCasesFilter extends TestCase {
 		List<VcfEntry> list = snpsiftFilter.filter("test/test01.vcf", expression, true);
 
 		// Check that it satisfies the condition
-		if (verbose) System.out.println("Expression: '" + expression + "'");
+		if (verbose) Log.info("Expression: '" + expression + "'");
 		Assert.assertNotNull(list);
 		Assert.assertTrue(list.size() > 0);
 		for (VcfEntry vcfEntry : list) {
-			if (verbose) System.out.println("\t" + vcfEntry);
+			if (verbose) Log.info("\t" + vcfEntry);
 
 			VcfGenotype vcfGenotype = vcfEntry.getVcfGenotype(0);
 			String gt = vcfGenotype.get("GT");
@@ -396,12 +396,12 @@ public class TestCasesFilter extends TestCase {
 		List<VcfEntry> list = snpsiftFilter.filter("test/test02.vcf", expression, true);
 
 		// Check that it satisfies the condition
-		if (verbose) System.out.println("Expression: '" + expression + "'");
+		if (verbose) Log.info("Expression: '" + expression + "'");
 		Assert.assertNotNull(list);
 		Assert.assertTrue(list.size() > 0);
 		int count = 0;
 		for (VcfEntry vcfEntry : list) {
-			if (verbose) System.out.println("\t" + vcfEntry);
+			if (verbose) Log.info("\t" + vcfEntry);
 
 			VcfGenotype vcfGenotype = vcfEntry.getVcfGenotype(0);
 			Assert.assertTrue(vcfGenotype.isHomozygous());
@@ -423,11 +423,11 @@ public class TestCasesFilter extends TestCase {
 		List<VcfEntry> list = snpsiftFilter.filter("test/test02.vcf", expression, true);
 
 		// Check that it satisfies the condition
-		if (verbose) System.out.println("Expression: '" + expression + "'");
+		if (verbose) Log.info("Expression: '" + expression + "'");
 		Assert.assertNotNull(list);
 		Assert.assertTrue(list.size() > 0);
 		for (VcfEntry vcfEntry : list) {
-			if (verbose) System.out.println("\t" + vcfEntry);
+			if (verbose) Log.info("\t" + vcfEntry);
 
 			VcfGenotype vcfGenotype = vcfEntry.getVcfGenotype(0);
 			Assert.assertTrue(vcfGenotype.isHeterozygous());
@@ -446,11 +446,11 @@ public class TestCasesFilter extends TestCase {
 		List<VcfEntry> list = snpsiftFilter.filter("test/test02.vcf", expression, true);
 
 		// Check that it satisfies the condition
-		if (verbose) System.out.println("Expression: '" + expression + "'");
+		if (verbose) Log.info("Expression: '" + expression + "'");
 		Assert.assertNotNull(list);
 		Assert.assertTrue(list.size() > 0);
 		for (VcfEntry vcfEntry : list) {
-			if (verbose) System.out.println("\t" + vcfEntry);
+			if (verbose) Log.info("\t" + vcfEntry);
 
 			VcfGenotype vcfGenotype = vcfEntry.getVcfGenotype(0);
 			Assert.assertTrue(!vcfGenotype.isVariant());
@@ -469,11 +469,11 @@ public class TestCasesFilter extends TestCase {
 		List<VcfEntry> list = snpsiftFilter.filter("test/test02.vcf", expression, true);
 
 		// Check that it satisfies the condition
-		if (verbose) System.out.println("Expression: '" + expression + "'");
+		if (verbose) Log.info("Expression: '" + expression + "'");
 		Assert.assertNotNull(list);
 		Assert.assertTrue(list.size() > 0);
 		for (VcfEntry vcfEntry : list) {
-			if (verbose) System.out.println("\t" + vcfEntry);
+			if (verbose) Log.info("\t" + vcfEntry);
 
 			VcfGenotype vcfGenotype = vcfEntry.getVcfGenotype(0);
 			Assert.assertTrue(vcfGenotype.isVariant());
@@ -492,11 +492,11 @@ public class TestCasesFilter extends TestCase {
 		List<VcfEntry> list = snpsiftFilter.filter("test/test02.vcf", expression, true);
 
 		// Check that it satisfies the condition
-		if (verbose) System.out.println("Expression: '" + expression + "'");
+		if (verbose) Log.info("Expression: '" + expression + "'");
 		Assert.assertNotNull(list);
 		Assert.assertTrue(list.size() > 0);
 		for (VcfEntry vcfEntry : list) {
-			if (verbose) System.out.println("\t" + vcfEntry);
+			if (verbose) Log.info("\t" + vcfEntry);
 
 			VcfGenotype vcfGenotype = vcfEntry.getVcfGenotype(0);
 			String gt = vcfGenotype.get("GT");
@@ -516,11 +516,11 @@ public class TestCasesFilter extends TestCase {
 		List<VcfEntry> list = snpsiftFilter.filter("test/test02.vcf", expression, true);
 
 		// Check that it satisfies the condition
-		if (verbose) System.out.println("Expression: '" + expression + "'");
+		if (verbose) Log.info("Expression: '" + expression + "'");
 		Assert.assertNotNull(list);
 		Assert.assertTrue(list.size() > 0);
 		for (VcfEntry vcfEntry : list) {
-			if (verbose) System.out.println("\t" + vcfEntry);
+			if (verbose) Log.info("\t" + vcfEntry);
 
 			String gt = vcfEntry.getVcfGenotype(1).get("GT");
 			Assert.assertEquals("1|1", gt);
@@ -544,11 +544,11 @@ public class TestCasesFilter extends TestCase {
 		List<VcfEntry> list = snpsiftFilter.filter("test/test02.vcf", expression, true);
 
 		// Check that it satisfies the condition
-		if (verbose) System.out.println("Expression: '" + expression + "'");
+		if (verbose) Log.info("Expression: '" + expression + "'");
 		Assert.assertNotNull(list);
 
 		for (VcfEntry vcfEntry : list) {
-			if (verbose) System.out.println("\t" + vcfEntry);
+			if (verbose) Log.info("\t" + vcfEntry);
 
 			String id = vcfEntry.getId();
 			Assert.assertTrue(id.equals("rs58108140") //
@@ -574,11 +574,11 @@ public class TestCasesFilter extends TestCase {
 		List<VcfEntry> list = snpsiftFilter.filter("test/test02.vcf", expression, true);
 
 		// Check that it satisfies the condition
-		if (verbose) System.out.println("Expression: '" + expression + "'");
+		if (verbose) Log.info("Expression: '" + expression + "'");
 		Assert.assertNotNull(list);
 
 		for (VcfEntry vcfEntry : list) {
-			if (verbose) System.out.println("\t" + vcfEntry);
+			if (verbose) Log.info("\t" + vcfEntry);
 		}
 
 		Assert.assertEquals(67, list.size());
@@ -596,9 +596,9 @@ public class TestCasesFilter extends TestCase {
 		List<VcfEntry> list = snpsiftFilter.filter("test/test02.vcf", expression, true);
 
 		// Check that it satisfies the condition
-		if (verbose) System.out.println("Expression: '" + expression + "'");
+		if (verbose) Log.info("Expression: '" + expression + "'");
 		for (VcfEntry vcfEntry : list) {
-			if (verbose) System.out.println("\t" + vcfEntry);
+			if (verbose) Log.info("\t" + vcfEntry);
 
 			boolean any = false;
 			for (VcfGenotype gen : vcfEntry)
@@ -622,9 +622,9 @@ public class TestCasesFilter extends TestCase {
 		List<VcfEntry> list = snpsiftFilter.filter("test/test02.vcf", expression, true);
 
 		// Check that it satisfies the condition
-		if (verbose) System.out.println("Expression: '" + expression + "'");
+		if (verbose) Log.info("Expression: '" + expression + "'");
 		for (VcfEntry vcfEntry : list) {
-			if (verbose) System.out.println("\t" + vcfEntry);
+			if (verbose) Log.info("\t" + vcfEntry);
 
 			boolean any = false;
 
@@ -648,9 +648,9 @@ public class TestCasesFilter extends TestCase {
 		List<VcfEntry> list = snpsiftFilter.filter("test/test02.vcf", expression, true);
 
 		// Check that it satisfies the condition
-		if (verbose) System.out.println("Expression: '" + expression + "'");
+		if (verbose) Log.info("Expression: '" + expression + "'");
 		for (VcfEntry vcfEntry : list) {
-			if (verbose) System.out.println("\t" + vcfEntry);
+			if (verbose) Log.info("\t" + vcfEntry);
 
 			boolean any = false;
 
@@ -675,9 +675,9 @@ public class TestCasesFilter extends TestCase {
 		List<VcfEntry> list = snpsiftFilter.filter("test/test03.vcf", expression, true);
 
 		// Check that it satisfies the condition
-		if (verbose) System.out.println("Expression: '" + expression + "'");
+		if (verbose) Log.info("Expression: '" + expression + "'");
 		for (VcfEntry vcfEntry : list) {
-			if (verbose) System.out.println("\t" + vcfEntry);
+			if (verbose) Log.info("\t" + vcfEntry);
 
 			String eff = vcfEntry.getInfo("EFF").split("\\(")[0];
 			Assert.assertEquals(eff, "SYNONYMOUS_CODING");
@@ -699,9 +699,9 @@ public class TestCasesFilter extends TestCase {
 
 		// Check that it satisfies the condition
 		int count = 0;
-		if (verbose) System.out.println("Expression: '" + expression + "'");
+		if (verbose) Log.info("Expression: '" + expression + "'");
 		for (VcfEntry vcfEntry : list) {
-			if (verbose) System.out.println("\t" + vcfEntry);
+			if (verbose) Log.info("\t" + vcfEntry);
 
 			String eff = vcfEntry.getInfo("ANN").split("\\|")[1];
 
@@ -724,9 +724,9 @@ public class TestCasesFilter extends TestCase {
 		List<VcfEntry> list = snpsiftFilter.filter("test/test03.vcf", expression, true);
 
 		// Check that it satisfies the condition
-		if (verbose) System.out.println("Expression: '" + expression + "'");
+		if (verbose) Log.info("Expression: '" + expression + "'");
 		for (VcfEntry vcfEntry : list) {
-			if (verbose) System.out.println("\t" + vcfEntry);
+			if (verbose) Log.info("\t" + vcfEntry);
 
 			boolean any = false;
 			String effStr = vcfEntry.getInfo("EFF");
@@ -753,10 +753,10 @@ public class TestCasesFilter extends TestCase {
 		List<VcfEntry> list = snpsiftFilter.filter("test/test03.ann.vcf", expression, true);
 
 		// Check that it satisfies the condition
-		if (verbose) System.out.println("Expression: '" + expression + "'");
+		if (verbose) Log.info("Expression: '" + expression + "'");
 		int count = 0;
 		for (VcfEntry vcfEntry : list) {
-			if (verbose) System.out.println("\t" + vcfEntry);
+			if (verbose) Log.info("\t" + vcfEntry);
 
 			String effStr = vcfEntry.getInfo("ANN");
 			boolean any = false;
@@ -786,10 +786,10 @@ public class TestCasesFilter extends TestCase {
 		List<VcfEntry> list = snpsiftFilter.filter("test/test03.ann.vcf", expression, true);
 
 		// Check that it satisfies the condition
-		if (verbose) System.out.println("Expression: '" + expression + "'");
+		if (verbose) Log.info("Expression: '" + expression + "'");
 		int count = 0;
 		for (VcfEntry vcfEntry : list) {
-			if (verbose) System.out.println("\t" + vcfEntry);
+			if (verbose) Log.info("\t" + vcfEntry);
 
 			String effStr = vcfEntry.getInfo("ANN");
 			boolean any = false;
@@ -819,10 +819,10 @@ public class TestCasesFilter extends TestCase {
 		List<VcfEntry> list = snpsiftFilter.filter("test/test02.vcf", expression, true);
 
 		// Check that it satisfies the condition
-		if (verbose) System.out.println("Expression: '" + expression + "'");
+		if (verbose) Log.info("Expression: '" + expression + "'");
 		Assert.assertNotNull(list);
 		for (VcfEntry vcfEntry : list) {
-			if (verbose) System.out.println("\t" + vcfEntry);
+			if (verbose) Log.info("\t" + vcfEntry);
 
 			int count = 0;
 			for (VcfGenotype gen : vcfEntry) {
@@ -847,11 +847,11 @@ public class TestCasesFilter extends TestCase {
 		List<VcfEntry> list = snpsiftFilter.filter("test/test02.vcf", expression, true);
 
 		// Check that it satisfies the condition
-		if (verbose) System.out.println("Expression: '" + expression + "'");
+		if (verbose) Log.info("Expression: '" + expression + "'");
 		Assert.assertNotNull(list);
 		Assert.assertTrue(list.size() > 0);
 		for (VcfEntry vcfEntry : list) {
-			if (verbose) System.out.println("\t" + vcfEntry);
+			if (verbose) Log.info("\t" + vcfEntry);
 
 			int count = 0;
 			for (VcfGenotype gen : vcfEntry) {
@@ -874,11 +874,11 @@ public class TestCasesFilter extends TestCase {
 		List<VcfEntry> list = snpsiftFilter.filter("test/test02.vcf", expression, true);
 
 		// Check that it satisfies the condition
-		if (verbose) System.out.println("Expression: '" + expression + "'");
+		if (verbose) Log.info("Expression: '" + expression + "'");
 		Assert.assertNotNull(list);
 		Assert.assertTrue(list.size() > 0);
 		for (VcfEntry vcfEntry : list) {
-			if (verbose) System.out.println("\t" + vcfEntry);
+			if (verbose) Log.info("\t" + vcfEntry);
 
 			int count = 0;
 			for (VcfGenotype gen : vcfEntry) {
@@ -902,11 +902,11 @@ public class TestCasesFilter extends TestCase {
 		List<VcfEntry> list = snpsiftFilter.filter("test/test02.vcf", expression, true);
 
 		// Check that it satisfies the condition
-		if (verbose) System.out.println("Expression: '" + expression + "'");
+		if (verbose) Log.info("Expression: '" + expression + "'");
 		Assert.assertNotNull(list);
 		Assert.assertTrue(list.size() > 0);
 		for (VcfEntry vcfEntry : list) {
-			if (verbose) System.out.println("\t" + vcfEntry);
+			if (verbose) Log.info("\t" + vcfEntry);
 
 			int count = 0;
 			for (VcfGenotype gen : vcfEntry) {
@@ -929,9 +929,9 @@ public class TestCasesFilter extends TestCase {
 		List<VcfEntry> list = snpsiftFilter.filter("test/test03.vcf", expression, true);
 
 		// Check that it satisfies the condition
-		if (verbose) System.out.println("Expression: '" + expression + "'");
+		if (verbose) Log.info("Expression: '" + expression + "'");
 		for (VcfEntry vcfEntry : list) {
-			if (verbose) System.out.println("\t" + vcfEntry);
+			if (verbose) Log.info("\t" + vcfEntry);
 
 			boolean any = false;
 			String effStr = vcfEntry.getInfo("EFF");
@@ -956,10 +956,10 @@ public class TestCasesFilter extends TestCase {
 		List<VcfEntry> list = snpsiftFilter.filter("test/test03.ann.vcf", expression, true);
 
 		// Check that it satisfies the condition
-		if (verbose) System.out.println("Expression: '" + expression + "'");
+		if (verbose) Log.info("Expression: '" + expression + "'");
 		int count = 0;
 		for (VcfEntry vcfEntry : list) {
-			if (verbose) System.out.println("\t" + vcfEntry);
+			if (verbose) Log.info("\t" + vcfEntry);
 
 			boolean any = false;
 			String effStr = vcfEntry.getInfo("ANN");
@@ -988,9 +988,9 @@ public class TestCasesFilter extends TestCase {
 		List<VcfEntry> list = snpsiftFilter.filter("test/test03.vcf", expression, true);
 
 		// Check that it satisfies the condition
-		if (verbose) System.out.println("Expression: '" + expression + "'");
+		if (verbose) Log.info("Expression: '" + expression + "'");
 		for (VcfEntry vcfEntry : list) {
-			if (verbose) System.out.println("\t" + vcfEntry);
+			if (verbose) Log.info("\t" + vcfEntry);
 
 			boolean any = false;
 			String effStr = vcfEntry.getInfo("EFF");
@@ -1015,10 +1015,10 @@ public class TestCasesFilter extends TestCase {
 		List<VcfEntry> list = snpsiftFilter.filter("test/test03.ann.vcf", expression, true);
 
 		// Check that it satisfies the condition
-		if (verbose) System.out.println("Expression: '" + expression + "'");
+		if (verbose) Log.info("Expression: '" + expression + "'");
 		int count = 0;
 		for (VcfEntry vcfEntry : list) {
-			if (verbose) System.out.println("\t" + vcfEntry);
+			if (verbose) Log.info("\t" + vcfEntry);
 
 			boolean any = false;
 			String effStr = vcfEntry.getInfo("ANN");
@@ -1046,7 +1046,7 @@ public class TestCasesFilter extends TestCase {
 		List<VcfEntry> list = snpsiftFilter.filter("test/downstream.vcf", expression, true);
 
 		// Check that it satisfies the condition
-		if (verbose) System.out.println("Expression: '" + expression + "'");
+		if (verbose) Log.info("Expression: '" + expression + "'");
 		for (VcfEntry vcfEntry : list) {
 			boolean all = true;
 			String effStr = vcfEntry.getInfo("EFF");
@@ -1072,10 +1072,10 @@ public class TestCasesFilter extends TestCase {
 		List<VcfEntry> list = snpsiftFilter.filter("test/downstream.ann.vcf", expression, true);
 
 		// Check that it satisfies the condition
-		if (verbose) System.out.println("Expression: '" + expression + "'");
+		if (verbose) Log.info("Expression: '" + expression + "'");
 		int count = 0;
 		for (VcfEntry vcfEntry : list) {
-			if (verbose) System.out.println("\t" + vcfEntry);
+			if (verbose) Log.info("\t" + vcfEntry);
 			boolean all = true;
 			String effStr = vcfEntry.getInfo("ANN");
 			for (String eff : effStr.split(",")) {
@@ -1103,9 +1103,9 @@ public class TestCasesFilter extends TestCase {
 		List<VcfEntry> list = snpsiftFilter.filter("test/test_gene.vcf", expression, true);
 
 		// Check that it satisfies the condition
-		if (verbose) System.out.println("Expression: '" + expression + "'");
+		if (verbose) Log.info("Expression: '" + expression + "'");
 		for (VcfEntry vcfEntry : list) {
-			if (verbose) System.out.println("\t" + vcfEntry);
+			if (verbose) Log.info("\t" + vcfEntry);
 
 			boolean any = false;
 			for (VcfEffect eff : vcfEntry.getVcfEffects(null)) {
@@ -1129,10 +1129,10 @@ public class TestCasesFilter extends TestCase {
 		List<VcfEntry> list = snpsiftFilter.filter("test/test_gene.ann.vcf", expression, true);
 
 		// Check that it satisfies the condition
-		if (verbose) System.out.println("Expression: '" + expression + "'");
+		if (verbose) Log.info("Expression: '" + expression + "'");
 		int count = 0;
 		for (VcfEntry vcfEntry : list) {
-			if (verbose) System.out.println("\t" + vcfEntry);
+			if (verbose) Log.info("\t" + vcfEntry);
 
 			boolean any = false;
 			for (VcfEffect eff : vcfEntry.getVcfEffects(null)) {
@@ -1161,11 +1161,11 @@ public class TestCasesFilter extends TestCase {
 		List<VcfEntry> list = snpSiftFilter(args);
 
 		// Check that it satisfies the condition
-		if (verbose) System.out.println("Expression: '" + expression + "'");
+		if (verbose) Log.info("Expression: '" + expression + "'");
 		Assert.assertNotNull(list);
 		Assert.assertTrue(list.size() > 0);
 		for (VcfEntry vcfEntry : list) {
-			if (verbose) System.out.println("\t" + vcfEntry);
+			if (verbose) Log.info("\t" + vcfEntry);
 			Assert.assertTrue(vcfEntry.getQuality() < minQ);
 		}
 	}
@@ -1184,11 +1184,11 @@ public class TestCasesFilter extends TestCase {
 		List<VcfEntry> list = snpSiftFilter(args);
 
 		// Check that it satisfies the condition
-		if (verbose) System.out.println("Expression: '" + expression + "'");
+		if (verbose) Log.info("Expression: '" + expression + "'");
 		Assert.assertNotNull(list);
 		Assert.assertTrue(list.size() > 0);
 		for (VcfEntry vcfEntry : list) {
-			if (verbose) System.out.println(vcfEntry.getFilter() + "\t" + vcfEntry);
+			if (verbose) Log.info(vcfEntry.getFilter() + "\t" + vcfEntry);
 			if (vcfEntry.getFilter().equals("PASS")) Assert.assertTrue(vcfEntry.getQuality() >= minQ);
 			else Assert.assertTrue(vcfEntry.getQuality() < minQ);
 		}
@@ -1208,11 +1208,11 @@ public class TestCasesFilter extends TestCase {
 		List<VcfEntry> list = snpSiftFilter(args);
 
 		// Check that it satisfies the condition
-		if (verbose) System.out.println("Expression: '" + expression + "'");
+		if (verbose) Log.info("Expression: '" + expression + "'");
 		Assert.assertNotNull(list);
 		Assert.assertTrue(list.size() > 0);
 		for (VcfEntry vcfEntry : list) {
-			if (verbose) System.out.println(vcfEntry.getFilter() + "\t" + vcfEntry);
+			if (verbose) Log.info(vcfEntry.getFilter() + "\t" + vcfEntry);
 			if (vcfEntry.getFilter().equals("ADD")) Assert.assertTrue(vcfEntry.getQuality() >= minQ);
 			else Assert.assertTrue(vcfEntry.getQuality() < minQ);
 		}
@@ -1231,11 +1231,11 @@ public class TestCasesFilter extends TestCase {
 		List<VcfEntry> list = snpSiftFilter(args);
 
 		// Check that it satisfies the condition
-		if (verbose) System.out.println("Expression: '" + expression + "'");
+		if (verbose) Log.info("Expression: '" + expression + "'");
 		Assert.assertNotNull(list);
 		Assert.assertTrue(list.size() > 0);
 		for (VcfEntry vcfEntry : list) {
-			if (verbose) System.out.println(vcfEntry.getFilter() + "\t" + vcfEntry);
+			if (verbose) Log.info(vcfEntry.getFilter() + "\t" + vcfEntry);
 			if (vcfEntry.getFilter().equals("SVM")) Assert.assertTrue(!vcfEntry.getRef().equals("A"));
 		}
 	}
@@ -1253,13 +1253,13 @@ public class TestCasesFilter extends TestCase {
 		List<VcfEntry> list = snpSiftFilter(args);
 
 		// Check that it satisfies the condition
-		if (verbose) System.out.println("Expression: '" + expression + "'");
+		if (verbose) Log.info("Expression: '" + expression + "'");
 		Assert.assertNotNull(list);
 		Assert.assertTrue(list.size() == 1);
 
 		// Check result (hould be only one entry)
 		VcfEntry vcfEntry = list.get(0);
-		if (verbose) System.out.println(vcfEntry.getFilter() + "\t" + vcfEntry);
+		if (verbose) Log.info(vcfEntry.getFilter() + "\t" + vcfEntry);
 		Assert.assertEquals(219134272, vcfEntry.getStart());
 	}
 
@@ -1277,14 +1277,14 @@ public class TestCasesFilter extends TestCase {
 		List<VcfEntry> list = snpSiftFilter(args);
 
 		// Check that it satisfies the condition
-		if (verbose) System.out.println("Expression: '" + expression + "'");
+		if (verbose) Log.info("Expression: '" + expression + "'");
 		Assert.assertNotNull(list);
 		Assert.assertTrue(list.size() == 3);
 
 		// Check result
 		int countOk = 0;
 		for (VcfEntry vcfEntry : list) {
-			if (verbose) System.out.println(vcfEntry.getFilter() + "\t" + vcfEntry);
+			if (verbose) Log.info(vcfEntry.getFilter() + "\t" + vcfEntry);
 
 			if (vcfEntry.getStart() == 219134261) {
 				Assert.assertEquals("OTHER", vcfEntry.getFilter());
@@ -1311,7 +1311,7 @@ public class TestCasesFilter extends TestCase {
 		List<VcfEntry> list = snpsiftFilter.filter("test/test42.vcf", expression, true);
 
 		// Check that it satisfies the condition
-		if (verbose) System.out.println("Expression: '" + expression + "'");
+		if (verbose) Log.info("Expression: '" + expression + "'");
 		Assert.assertNotNull(list);
 		Assert.assertTrue(list.size() == 0);
 	}
@@ -1328,7 +1328,7 @@ public class TestCasesFilter extends TestCase {
 		List<VcfEntry> list = snpsiftFilter.filter("test/test42.vcf", expression, true);
 
 		// Check that it satisfies the condition
-		if (verbose) System.out.println("Expression: '" + expression + "'");
+		if (verbose) Log.info("Expression: '" + expression + "'");
 		Assert.assertNotNull(list);
 		Assert.assertEquals(0, list.size());
 	}
@@ -1345,7 +1345,7 @@ public class TestCasesFilter extends TestCase {
 		List<VcfEntry> list = snpsiftFilter.filter("test/test42.vcf", expression, true);
 
 		// Check that it satisfies the condition
-		if (verbose) System.out.println("Expression: '" + expression + "'");
+		if (verbose) Log.info("Expression: '" + expression + "'");
 		Assert.assertNotNull(list);
 		Assert.assertEquals(0, list.size());
 	}
@@ -1362,15 +1362,15 @@ public class TestCasesFilter extends TestCase {
 		List<VcfEntry> list = snpSiftFilter.filter("test/test45.vcf", expression, true);
 
 		// Check that it satisfies the condition
-		if (verbose) System.out.println("Expression: '" + expression + "'");
+		if (verbose) Log.info("Expression: '" + expression + "'");
 		Assert.assertNotNull(list);
 
 		int count = 0;
 		for (VcfEntry ve : list) {
-			if (verbose) System.out.println(ve);
+			if (verbose) Log.info(ve);
 
 			for (VcfLof lof : ve.parseLof()) {
-				if (verbose) System.out.println("\t" + lof);
+				if (verbose) Log.info("\t" + lof);
 				Assert.assertTrue(lof.getPercentAffected() >= 0.1);
 				count++;
 			}
@@ -1408,7 +1408,7 @@ public class TestCasesFilter extends TestCase {
 		List<VcfEntry> list = snpsiftFilter.filter("test/test48.vcf", expression, true);
 
 		// Check that it satisfies the condition
-		if (verbose) System.out.println("Expression: '" + expression + "'");
+		if (verbose) Log.info("Expression: '" + expression + "'");
 		Assert.assertNotNull(list);
 		Assert.assertTrue(list.size() == 1);
 		Assert.assertEquals(list.get(0).getInfo("ZZZ"), "NaN");
@@ -1423,7 +1423,7 @@ public class TestCasesFilter extends TestCase {
 		List<VcfEntry> list = snpsiftFilter.filter("test/test49.vcf", expression, true);
 
 		// Check that it satisfies the condition
-		if (verbose) System.out.println("Expression: '" + expression + "'");
+		if (verbose) Log.info("Expression: '" + expression + "'");
 		Assert.assertNotNull(list);
 		Assert.assertTrue(list.size() == 1);
 		Assert.assertEquals("4", list.get(0).getInfo("AC"));
@@ -1443,15 +1443,15 @@ public class TestCasesFilter extends TestCase {
 		List<VcfEntry> list = snpsiftFilter.filter("test/test03.vcf", expression, true);
 
 		// Check that it satisfies the condition
-		if (verbose) System.out.println("Expression: '" + expression + "'");
+		if (verbose) Log.info("Expression: '" + expression + "'");
 		for (VcfEntry vcfEntry : list) {
-			if (verbose) System.out.println("\t" + vcfEntry);
+			if (verbose) Log.info("\t" + vcfEntry);
 
 			boolean ok = false;
-			if (verbose) System.out.println(vcfEntry);
+			if (verbose) Log.info(vcfEntry);
 			for (String eff : vcfEntry.getInfo("EFF").split(",")) {
 				ok |= eff.equals(effStr);
-				if (verbose) System.out.println("\t" + eff);
+				if (verbose) Log.info("\t" + eff);
 			}
 
 			Assert.assertEquals(true, ok);
@@ -1474,15 +1474,15 @@ public class TestCasesFilter extends TestCase {
 		List<VcfEntry> list = snpSiftFilter.filter("test/test45.vcf", expression, true);
 
 		// Check that it satisfies the condition
-		if (verbose) System.out.println("Expression: '" + expression + "'");
+		if (verbose) Log.info("Expression: '" + expression + "'");
 		Assert.assertNotNull(list);
 
 		for (VcfEntry ve : list) {
-			if (verbose) System.out.println(ve);
+			if (verbose) Log.info(ve);
 
 			boolean ok = false;
 			for (String lof : ve.getInfo("LOF").split(",")) {
-				if (verbose) System.out.println("\t" + lof);
+				if (verbose) Log.info("\t" + lof);
 				ok |= lof.equals(lofStr);
 			}
 
@@ -1529,7 +1529,7 @@ public class TestCasesFilter extends TestCase {
 		if (verbose) {
 			System.out.println("Expression: '" + expression + "'");
 			for (VcfEntry vcfEntry : list)
-				if (verbose) System.out.println("VCF entry:\t" + vcfEntry);
+				if (verbose) Log.info("VCF entry:\t" + vcfEntry);
 		}
 
 		// Check that one line satisfies the condition
@@ -1550,7 +1550,7 @@ public class TestCasesFilter extends TestCase {
 		if (verbose) {
 			System.out.println("Expression: '" + expression + "'");
 			for (VcfEntry vcfEntry : list)
-				if (verbose) System.out.println("VCF entry:\t" + vcfEntry);
+				if (verbose) Log.info("VCF entry:\t" + vcfEntry);
 		}
 
 		// Check that all lines satisfy the condition
@@ -1569,7 +1569,7 @@ public class TestCasesFilter extends TestCase {
 		List<VcfEntry> list = snpsiftFilter.filter("test/test55.vcf", expression, true);
 
 		// Check that it satisfies the condition
-		if (verbose) System.out.println("Expression: '" + expression + "'");
+		if (verbose) Log.info("Expression: '" + expression + "'");
 		Assert.assertNotNull(list);
 		Assert.assertEquals("Number of results expected does not match", 1, list.size());
 		if (verbose) Log.debug("Result: " + list.get(0));
@@ -1588,7 +1588,7 @@ public class TestCasesFilter extends TestCase {
 		List<VcfEntry> list = snpsiftFilter.filter("test/test55.vcf", expression, true);
 
 		// Check that it satisfies the condition
-		if (verbose) System.out.println("Expression: '" + expression + "'");
+		if (verbose) Log.info("Expression: '" + expression + "'");
 		Assert.assertNotNull(list);
 		Assert.assertEquals("Number of results expected does not match", 1, list.size());
 		if (verbose) Log.debug("Result: " + list.get(0));
@@ -1607,7 +1607,7 @@ public class TestCasesFilter extends TestCase {
 		List<VcfEntry> list = snpsiftFilter.filter("test/test55.vcf", expression, true);
 
 		// Check that it satisfies the condition
-		if (verbose) System.out.println("Expression: '" + expression + "'");
+		if (verbose) Log.info("Expression: '" + expression + "'");
 		Assert.assertNotNull(list);
 		Assert.assertEquals("Number of results expected does not match", 1, list.size());
 		if (verbose) Log.debug("Result: " + list.get(0));
@@ -1644,7 +1644,7 @@ public class TestCasesFilter extends TestCase {
 		}
 
 		// Is headeer shown?
-		if (verbose) System.out.println("STDOUT:\n----------\n" + standardOutput + "\n----------");
+		if (verbose) Log.info("STDOUT:\n----------\n" + standardOutput + "\n----------");
 		Assert.assertNotNull(standardOutput);
 		Assert.assertFalse(standardOutput.isEmpty());
 		Assert.assertTrue(standardOutput.contains("#CHROM\tPOS\tID\tREF\tALT"));
@@ -1662,11 +1662,11 @@ public class TestCasesFilter extends TestCase {
 		List<VcfEntry> list = snpsiftFilter.filter("test/test57.vcf", expression, true);
 
 		// Check that it satisfies the condition
-		if (verbose) System.out.println("Expression: '" + expression + "'");
+		if (verbose) Log.info("Expression: '" + expression + "'");
 		Assert.assertNotNull(list);
 		Assert.assertTrue(list.size() > 0);
 		for (VcfEntry vcfEntry : list) {
-			if (verbose) System.out.println("\t" + vcfEntry);
+			if (verbose) Log.info("\t" + vcfEntry);
 		}
 		Assert.assertEquals("Filter results doesn't match the number of expected lines", 29, list.size());
 	}
@@ -1685,14 +1685,14 @@ public class TestCasesFilter extends TestCase {
 		List<VcfEntry> list = snpSiftFilter(args);
 
 		// Check that it satisfies the condition
-		if (verbose) System.out.println("Expression: '" + expression + "'");
+		if (verbose) Log.info("Expression: '" + expression + "'");
 		Assert.assertNotNull(list);
 		Assert.assertTrue("List size does not matched expected", list.size() == 4);
 
 		// Check result
 		int countOk = 0;
 		for (VcfEntry vcfEntry : list) {
-			if (verbose) System.out.println(vcfEntry.getFilter() + "\t" + vcfEntry);
+			if (verbose) Log.info(vcfEntry.getFilter() + "\t" + vcfEntry);
 
 			// Filter deleted
 			if (vcfEntry.getStart() == 219134261) {

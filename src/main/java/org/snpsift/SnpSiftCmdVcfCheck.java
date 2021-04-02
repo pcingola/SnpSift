@@ -2,7 +2,7 @@ package org.snpsift;
 
 import org.snpeff.fileIterator.VcfFileIterator;
 import org.snpeff.util.Gpr;
-import org.snpeff.util.Timer;
+import org.snpeff.util.Log;
 import org.snpeff.vcf.VcfEntry;
 
 /**
@@ -26,7 +26,7 @@ public class SnpSiftCmdVcfCheck extends SnpSift {
 	 * Check this VCF file (just iterate over it using 'debug' mode
 	 */
 	void check(String vcfFile) {
-		if (verbose) Timer.showStdErr("Processing file '" + vcfFile + "'");
+		if (verbose) Log.info("Processing file '" + vcfFile + "'");
 
 		// Create an input file iterator
 		VcfFileIterator vcf = new VcfFileIterator(vcfFile);
@@ -38,7 +38,7 @@ public class SnpSiftCmdVcfCheck extends SnpSift {
 			Gpr.showMark(count++, 1000);
 		} ;
 
-		if (verbose) Timer.showStdErr("Finished file '" + vcfFile + "'");
+		if (verbose) Log.info("Finished file '" + vcfFile + "'");
 	}
 
 	/**

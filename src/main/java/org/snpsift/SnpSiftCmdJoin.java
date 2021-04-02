@@ -11,11 +11,11 @@ import org.snpeff.interval.Marker;
 import org.snpeff.interval.Markers;
 import org.snpeff.snpEffect.SnpEffectPredictor;
 import org.snpeff.util.Gpr;
-import org.snpeff.util.Timer;
+import org.snpeff.util.Log;
 
 /**
  * Annotate a VCF file with ID from another VCF file (database)
- * 
+ *
  * @author pablocingolani
  */
 public class SnpSiftCmdJoin extends SnpSift {
@@ -35,16 +35,16 @@ public class SnpSiftCmdJoin extends SnpSift {
 		super(args);
 	}
 
-	/** 		 
+	/**
 	 * Create SnpEffect predictor and add all peaks
 	 */
 	void build(List<GenericMarker> list) {
-		if (verbose) Timer.showStdErr("Creating interval forest");
+		if (verbose) Log.info("Creating interval forest");
 		for (Marker m : list)
 			snpEffectPredictor.add(m);
 
 		// Build interval forest
-		if (verbose) Timer.showStdErr("Building interval forest");
+		if (verbose) Log.info("Building interval forest");
 		snpEffectPredictor.setUseChromosomes(false); // We don't want to intersect with chromosome markers
 		snpEffectPredictor.buildForest();
 	}
@@ -173,16 +173,16 @@ public class SnpSiftCmdJoin extends SnpSift {
 		}
 	}
 
-	/** 
+	/**
 	 * Read both files
-	 * 
+	 *
 	 */
 	void readFiles() {
 		for (int i = 0; i < 2; i++) {
-			if (verbose) Timer.showStdErr("Reading file '" + file[i] + "'");
+			if (verbose) Log.info("Reading file '" + file[i] + "'");
 			list[i] = readMarkers(i);
 			updateChromos(list[i]);
-			if (verbose) Timer.showStdErr("Done, " + list[i].size());
+			if (verbose) Log.info("Done, " + list[i].size());
 		}
 	}
 
@@ -239,7 +239,7 @@ public class SnpSiftCmdJoin extends SnpSift {
 
 		if (verbose) {
 			double perc = 100.0 * countIntersect / list[0].size();
-			Timer.showStdErr("Done.\n\tTotal intervals: " + list[0].size() + "\n\tTotal intersected: " + countIntersect + " " + String.format("(%.2f%%)", perc));
+			Log.info("Done.\n\tTotal intervals: " + list[0].size() + "\n\tTotal intersected: " + countIntersect + " " + String.format("(%.2f%%)", perc));
 		}
 		return true;
 	}

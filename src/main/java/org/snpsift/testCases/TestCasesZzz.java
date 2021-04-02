@@ -33,7 +33,7 @@ public class TestCasesZzz extends TestCase {
 	 * Annotate
 	 */
 	public List<VcfEntry> annotate(String dbFileName, String fileName, String[] extraArgs) {
-		if (verbose) System.out.println("Annotate: " + dbFileName + "\t" + fileName);
+		if (verbose) Log.info("Annotate: " + dbFileName + "\t" + fileName);
 
 		if (deleteIndexFile) deleteIndexFile(dbFileName);
 
@@ -59,7 +59,7 @@ public class TestCasesZzz extends TestCase {
 	 * Annotate and return STDOUT as a string
 	 */
 	public String annotateOut(String dbFileName, String fileName, String[] extraArgs) {
-		if (verbose) System.out.println("Annotate: " + dbFileName + "\t" + fileName);
+		if (verbose) Log.info("Annotate: " + dbFileName + "\t" + fileName);
 
 		if (deleteIndexFile) deleteIndexFile(dbFileName);
 
@@ -149,7 +149,7 @@ public class TestCasesZzz extends TestCase {
 
 		// Get first entry
 		VcfEntry ve = results.get(0);
-		if (verbose) System.out.println(ve);
+		if (verbose) Log.info(ve);
 		String infoStr = ve.getInfoStr();
 
 		// Check that annotation is added

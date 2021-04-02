@@ -105,9 +105,9 @@ public class SnpSiftCmdGeneSets extends SnpSift {
 
 		if (msigdb == null || msigdb.isEmpty()) Log.fatalError("Missing argument / config: MSigDb file name");
 
-		if (verbose) Timer.showStdErr("Reading MSigDb from file: '" + msigdb + "'");
+		if (verbose) Log.info("Reading MSigDb from file: '" + msigdb + "'");
 		geneSets = new GeneSets(msigdb);
-		if (verbose) Timer.showStdErr("Done. Total:\n\t" + geneSets.getGeneSetCount() + " gene sets\n\t" + geneSets.getGeneCount() + " genes");
+		if (verbose) Log.info("Done. Total:\n\t" + geneSets.getGeneSetCount() + " gene sets\n\t" + geneSets.getGeneCount() + " genes");
 
 		return true;
 	}
@@ -148,7 +148,7 @@ public class SnpSiftCmdGeneSets extends SnpSift {
 	public List<VcfEntry> run(boolean createList) {
 		LinkedList<VcfEntry> results = new LinkedList<>();
 
-		if (verbose) Timer.showStdErr("Annotating variants from: '" + vcfInputFile + "'");
+		if (verbose) Log.info("Annotating variants from: '" + vcfInputFile + "'");
 		VcfFileIterator vcf = new VcfFileIterator(vcfInputFile);
 		vcf.setDebug(debug);
 
@@ -169,7 +169,7 @@ public class SnpSiftCmdGeneSets extends SnpSift {
 		}
 
 		if (verbose) {
-			Timer.showStdErr("Done.");
+			Log.info("Done.");
 			System.err.println("# Summary");
 			System.err.println("#\tgene_set\tgene_set_size\tvariants");
 			for (String gs : countByGeneSet.keysSorted())

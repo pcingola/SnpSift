@@ -8,7 +8,7 @@ import org.snpeff.fileIterator.LineFileIterator;
 import org.snpeff.fileIterator.VcfFileIterator;
 import org.snpeff.interval.Chromosome;
 import org.snpeff.util.Gpr;
-import org.snpeff.util.Timer;
+import org.snpeff.util.Log;
 import org.snpeff.vcf.VcfEntry;
 
 import gnu.trove.set.hash.TIntHashSet;
@@ -56,7 +56,7 @@ public class SnpSiftCmdFilterChrPos extends SnpSift {
 	 * Load cho:pos set
 	 */
 	void loadChrPos() {
-		if (verbose) Timer.showStdErr("Reading 'chr:pos' from file '" + chrPosFile + "'.");
+		if (verbose) Log.info("Reading 'chr:pos' from file '" + chrPosFile + "'.");
 		LineFileIterator lfi = new LineFileIterator(chrPosFile);
 
 		for (String line : lfi) {
@@ -75,7 +75,7 @@ public class SnpSiftCmdFilterChrPos extends SnpSift {
 			if (chrpos.getOrCreate(chr).add(pos)) countChrPosAdded++;
 		}
 
-		if (verbose) Timer.showStdErr("Done.\n\t\tLines         : " + countChrPosLines + "\n\t\tEntries added : " + countChrPosAdded);
+		if (verbose) Log.info("Done.\n\t\tLines         : " + countChrPosLines + "\n\t\tEntries added : " + countChrPosAdded);
 	}
 
 	/**
@@ -136,7 +136,7 @@ public class SnpSiftCmdFilterChrPos extends SnpSift {
 
 		annotateFinish(vcfFile);
 
-		if (verbose) Timer.showStdErr("Done filtering." //
+		if (verbose) Log.info("Done filtering." //
 				+ "\n\t\tVCF lines                : " + countVcfLines //
 				+ "\n\t\tVCF lines passing filter : " + countVcfFiltered //
 				+ "\n\t\tChrPos lines             : " + countChrPosLines //

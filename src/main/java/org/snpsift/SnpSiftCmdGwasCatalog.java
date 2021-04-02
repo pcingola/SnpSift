@@ -12,7 +12,7 @@ import org.snpeff.interval.Markers;
 import org.snpeff.interval.Variant;
 import org.snpeff.interval.tree.IntervalForest;
 import org.snpeff.util.Gpr;
-import org.snpeff.util.Timer;
+import org.snpeff.util.Log;
 import org.snpeff.vcf.VcfEntry;
 import org.snpeff.vcf.VcfHeaderEntry;
 import org.snpeff.vcf.VcfHeaderInfo;
@@ -83,7 +83,7 @@ public class SnpSiftCmdGwasCatalog extends SnpSift {
 		annotateFinish(vcf);
 
 		double perc = (100.0 * countAnnotated) / count;
-		if (verbose) Timer.showStdErr("Done." //
+		if (verbose) Log.info("Done." //
 				+ "\n\tTotal annotated entries : " + countAnnotated //
 				+ "\n\tTotal entries           : " + count //
 				+ "\n\tPercent                 : " + String.format("%.2f%%", perc) //
@@ -166,7 +166,7 @@ public class SnpSiftCmdGwasCatalog extends SnpSift {
 		}
 
 		// Create tree
-		if (verbose) Timer.showStdErr("Creating interval tree for GWAS catalog");
+		if (verbose) Log.info("Creating interval tree for GWAS catalog");
 		intervalForest = new IntervalForest(markers);
 		intervalForest.build();
 	}
@@ -218,7 +218,7 @@ public class SnpSiftCmdGwasCatalog extends SnpSift {
 	 * Read database
 	 */
 	public void readDb() {
-		if (verbose) Timer.showStdErr("Loading database: '" + dbFileName + "'");
+		if (verbose) Log.info("Loading database: '" + dbFileName + "'");
 		gwasCatalog = new GwasCatalog(dbFileName);
 	}
 
@@ -238,7 +238,7 @@ public class SnpSiftCmdGwasCatalog extends SnpSift {
 		// Find or download database
 		dbFileName = databaseFind();
 
-		if (verbose) Timer.showStdErr("Annotating:" //
+		if (verbose) Log.info("Annotating:" //
 				+ "\tInput file : '" + (vcfInputFile != null ? vcfInputFile : "STDIN") + "'" //
 				+ "\tDatabase file : '" + dbFileName + "'" //
 		);

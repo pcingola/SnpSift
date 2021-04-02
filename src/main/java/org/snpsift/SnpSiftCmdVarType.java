@@ -6,7 +6,7 @@ import java.util.List;
 import org.snpeff.fileIterator.VcfFileIterator;
 import org.snpeff.interval.Variant;
 import org.snpeff.interval.Variant.VariantType;
-import org.snpeff.util.Timer;
+import org.snpeff.util.Log;
 import org.snpeff.vcf.VcfEntry;
 import org.snpeff.vcf.VcfHeaderEntry;
 import org.snpeff.vcf.VcfHeaderInfo;
@@ -111,7 +111,7 @@ public class SnpSiftCmdVarType extends SnpSift {
 	 */
 	@Override
 	public boolean run() {
-		if (verbose) Timer.showStdErr("Annotating variants type entries from: '" + vcfFile + "'");
+		if (verbose) Log.info("Annotating variants type entries from: '" + vcfFile + "'");
 
 		VcfFileIterator vcf = new VcfFileIterator(vcfFile);
 		vcf.setDebug(debug);

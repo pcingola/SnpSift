@@ -138,8 +138,8 @@ public class SnpSift implements VcfAnnotator, CommandLine {
 
 		// Show version and command
 		if ((verbose || debug) && showVersion) {
-			Timer.showStdErr("SnpSift version " + VERSION);
-			Timer.showStdErr("Command: '" + command + "'");
+			Log.info("SnpSift version " + VERSION);
+			Log.info("Command: '" + command + "'");
 		}
 
 		// Parse command specific arguments
@@ -325,7 +325,7 @@ public class SnpSift implements VcfAnnotator, CommandLine {
 		String dbUrl = config.getDatabaseRepository(dbType);
 		if (dbUrl == null) Log.fatalError("Database URL name is missing (missing entry in config file?).");
 
-		Timer.showStdErr("Downlading database from " + dbUrl);
+		Log.info("Downlading database from " + dbUrl);
 		Download download = new Download();
 		download.setVerbose(verbose);
 		download.setDebug(debug);
@@ -336,7 +336,7 @@ public class SnpSift implements VcfAnnotator, CommandLine {
 		// Download tabix index?
 		if (dbTabix) {
 			String indexUrl = config.getDatabaseRepository(dbType) + ".tbi";
-			Timer.showStdErr("Downlading index from " + indexUrl);
+			Log.info("Downlading index from " + indexUrl);
 			download = new Download();
 			download.setVerbose(verbose);
 			download.setDebug(debug);
@@ -428,10 +428,10 @@ public class SnpSift implements VcfAnnotator, CommandLine {
 		// Read config file
 		if (configFile == null || configFile.isEmpty()) configFile = Config.DEFAULT_CONFIG_FILE; // Default config file
 
-		if (verbose) Timer.showStdErr("Reading configuration file '" + configFile + "'");
+		if (verbose) Log.info("Reading configuration file '" + configFile + "'");
 
 		config = new Config(genomeVersion, configFile, dataDir, null); // Read configuration
-		if (verbose) Timer.showStdErr("done");
+		if (verbose) Log.info("done");
 
 		// Set some parameters
 		config.setDebug(debug);
@@ -443,7 +443,7 @@ public class SnpSift implements VcfAnnotator, CommandLine {
 	 */
 	protected VcfFileIterator openVcfInputFile() {
 		if (vcfInputFile == null || vcfInputFile.isEmpty() || vcfInputFile.equals("-")) vcfInputFile = "-";
-		if (verbose) Timer.showStdErr("Opening VCF input '" + (vcfInputFile.equals("-") ? "STDIN" : vcfInputFile) + "'");
+		if (verbose) Log.info("Opening VCF input '" + (vcfInputFile.equals("-") ? "STDIN" : vcfInputFile) + "'");
 		VcfFileIterator vcf = new VcfFileIterator(vcfInputFile);
 		vcf.setDebug(debug);
 		return vcf;

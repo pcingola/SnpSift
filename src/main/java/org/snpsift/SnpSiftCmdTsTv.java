@@ -6,7 +6,7 @@ import org.snpeff.stats.HomHetStats;
 import org.snpeff.stats.TsTvStats;
 import org.snpeff.stats.VariantTypeStats;
 import org.snpeff.util.Gpr;
-import org.snpeff.util.Timer;
+import org.snpeff.util.Log;
 import org.snpeff.vcf.VcfEntry;
 
 /**
@@ -57,7 +57,7 @@ public class SnpSiftCmdTsTv extends SnpSift {
 	 */
 	@Override
 	public boolean run() {
-		Timer.showStdErr("Analysing '" + vcfFileName + "'");
+		Log.info("Analysing '" + vcfFileName + "'");
 
 		// Create stats objects
 		tsTvStats = new TsTvStats();
@@ -102,7 +102,7 @@ public class SnpSiftCmdTsTv extends SnpSift {
 		System.out.println("\nAllele count stats:");
 		System.out.println(alleleCountStats);
 
-		Timer.showStdErr("Done");
+		Log.info("Done");
 		return true;
 	}
 

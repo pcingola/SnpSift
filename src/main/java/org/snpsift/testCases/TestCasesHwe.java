@@ -1,9 +1,10 @@
 package org.snpsift.testCases;
 
-import junit.framework.TestCase;
-
 import org.junit.Assert;
+import org.snpeff.util.Log;
 import org.snpsift.hwe.VcfHwe;
+
+import junit.framework.TestCase;
 
 /**
  * HWE test cases
@@ -40,7 +41,7 @@ public class TestCasesHwe extends TestCase {
 	 * Calculate "P[ n12 | n1, n2]" according to Table 1 in the paper "A Note on Exact test of Hardy Weinberg Equilibrium", G. Abecasis et. al.
 	 */
 	public void test_02_table_1() {
-		if (verbose) System.out.println(" Calculate P[ n12 | n1, n2] according to Table 1 in the paper 'A Note on Exact test of Hardy Weinberg Equilibrium', G. Abecasis et. al.");
+		if (verbose) Log.info(" Calculate P[ n12 | n1, n2] according to Table 1 in the paper 'A Note on Exact test of Hardy Weinberg Equilibrium', G. Abecasis et. al.");
 
 		VcfHwe vcfHwe = new VcfHwe();
 
@@ -53,7 +54,7 @@ public class TestCasesHwe extends TestCase {
 
 		for (int i = 0; i < nabs.length; i++) {
 			double p = vcfHwe.hwePn12(na, nb, nabs[i]);
-			if (verbose) System.out.println("\tnab: " + nabs[i] + "\t\tP[ n12 | n1, n2] : " + p);
+			if (verbose) Log.info("\tnab: " + nabs[i] + "\t\tP[ n12 | n1, n2] : " + p);
 			Assert.assertEquals(ps[i], p, 0.0000000001);
 		}
 	}
@@ -62,7 +63,7 @@ public class TestCasesHwe extends TestCase {
 	 * Calculate "P[ n12 | n1, n2]" according to Page 59 in the "Principles of population genetics"
 	 */
 	public void test_03_page_59() {
-		if (verbose) System.out.println("Calculate P[ n12 | n1, n2] according to Page 59 in the 'Principles of population genetics'");
+		if (verbose) Log.info("Calculate P[ n12 | n1, n2] according to Page 59 in the 'Principles of population genetics'");
 
 		VcfHwe vcfHwe = new VcfHwe();
 
@@ -75,7 +76,7 @@ public class TestCasesHwe extends TestCase {
 
 		for (int i = 0; i < nabs.length; i++) {
 			double p = vcfHwe.hwePn12(na, nb, nabs[i]);
-			if (verbose) System.out.println("\tnab: " + nabs[i] + "\t\tP[ n12 | n1, n2] : " + p);
+			if (verbose) Log.info("\tnab: " + nabs[i] + "\t\tP[ n12 | n1, n2] : " + p);
 			Assert.assertEquals(ps[i], p, 0.0000000001);
 		}
 	}
@@ -86,7 +87,7 @@ public class TestCasesHwe extends TestCase {
 	 *
 	 */
 	public void test_04_pChi2_table_1() {
-		if (verbose) System.out.println("Calculate P_{HWE} using Chi-square approximation");
+		if (verbose) Log.info("Calculate P_{HWE} using Chi-square approximation");
 
 		VcfHwe vcfHwe = new VcfHwe();
 
@@ -99,7 +100,7 @@ public class TestCasesHwe extends TestCase {
 
 		for (int i = 0; i < nabs.length; i++) {
 			double p = vcfHwe.hwePchi2(na, nb, nabs[i]);
-			if (verbose) System.out.println("\tnab: " + nabs[i] + "\t\tP_{HWE} : " + p);
+			if (verbose) Log.info("\tnab: " + nabs[i] + "\t\tP_{HWE} : " + p);
 			Assert.assertEquals(ps[i], p, 0.0000000001);
 		}
 	}
@@ -110,7 +111,7 @@ public class TestCasesHwe extends TestCase {
 	 * WARNING: The formula P_{HWE} in page 2 of the paper, seems to have two mistakes (probably typos?)
 	 */
 	public void test_04_pHwe_table_1() {
-		if (verbose) System.out.println("Calculate P_{HWE} according to a corrected formula from 'A Note on Exact test of Hardy Weinberg Equilibrium'");
+		if (verbose) Log.info("Calculate P_{HWE} according to a corrected formula from 'A Note on Exact test of Hardy Weinberg Equilibrium'");
 
 		VcfHwe vcfHwe = new VcfHwe();
 
@@ -123,7 +124,7 @@ public class TestCasesHwe extends TestCase {
 
 		for (int i = 0; i < nabs.length; i++) {
 			double p = vcfHwe.hweP(na, nb, nabs[i]);
-			if (verbose) System.out.println("\tnab: " + nabs[i] + "\t\tP_{HWE} : " + p);
+			if (verbose) Log.info("\tnab: " + nabs[i] + "\t\tP_{HWE} : " + p);
 			Assert.assertEquals(ps[i], p, 0.0000000001);
 		}
 	}

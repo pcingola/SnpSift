@@ -27,7 +27,7 @@ public class TestCasesCaseControl extends TestCase {
 
 		List<VcfEntry> vcfEntries = cmd.run(true);
 		for (VcfEntry ve : vcfEntries) {
-			if (verbose) System.out.println(ve);
+			if (verbose) Log.info(ve);
 			Assert.assertEquals(casesStr, ve.getInfo(SnpSiftCmdCaseControl.VCF_INFO_CASE));
 			Assert.assertEquals(controlStr, ve.getInfo(SnpSiftCmdCaseControl.VCF_INFO_CONTROL));
 		}
@@ -40,7 +40,7 @@ public class TestCasesCaseControl extends TestCase {
 
 		List<VcfEntry> vcfEntries = cmd.run(true);
 		for (VcfEntry ve : vcfEntries) {
-			if (verbose) System.out.println(ve);
+			if (verbose) Log.info(ve);
 			Assert.assertEquals(casesStr, ve.getInfo(SnpSiftCmdCaseControl.VCF_INFO_CASE));
 			Assert.assertEquals(controlStr, ve.getInfo(SnpSiftCmdCaseControl.VCF_INFO_CONTROL));
 		}
@@ -136,7 +136,7 @@ public class TestCasesCaseControl extends TestCase {
 
 		List<VcfEntry> vcfEntries = cmd.run(true);
 		for (VcfEntry ve : vcfEntries) {
-			if (verbose) System.out.println(ve.toStringNoGt());
+			if (verbose) Log.info(ve.toStringNoGt());
 
 			// PLINK's value
 			double pDom = ve.getInfoFloat("P_DOM");
@@ -154,35 +154,35 @@ public class TestCasesCaseControl extends TestCase {
 
 			if (pAllelic > 0) {
 				double ratio = pAllelic / pAllelicCc;
-				if (verbose) System.out.println("\tAllelic \tRatio: " + ratio + "\tPLINK: " + pAllelic + "\tCalculated: " + pAllelicCc + "\t");
+				if (verbose) Log.info("\tAllelic \tRatio: " + ratio + "\tPLINK: " + pAllelic + "\tCalculated: " + pAllelicCc + "\t");
 				Assert.assertEquals(1.0, ratio, maxDiff);
 			}
 
 			if (pDom > 0) {
 				double ratio = pDom / pDomCc;
-				if (verbose) System.out.println("\tDominant\tRatio: " + ratio + "\tPLINK: " + pDom + "\tCalculated: " + pDomCc + "\t");
+				if (verbose) Log.info("\tDominant\tRatio: " + ratio + "\tPLINK: " + pDom + "\tCalculated: " + pDomCc + "\t");
 				Assert.assertEquals(1.0, ratio, maxDiff);
 			}
 
 			if (pRec > 0) {
 				double ratio = pRec / pRecCc;
-				if (verbose) System.out.println("\tRecessive\tRatio: " + ratio + "\tPLINK: " + pRec + "\tCalculated: " + pRecCc + "\t");
+				if (verbose) Log.info("\tRecessive\tRatio: " + ratio + "\tPLINK: " + pRec + "\tCalculated: " + pRecCc + "\t");
 				Assert.assertEquals(1.0, ratio, maxDiff);
 			}
 
 			if (pTrend > 0) {
 				double ratio = pTrend / pTrendCc;
-				if (verbose) System.out.println("\tTrend    \tRatio: " + ratio + "\tPLINK: " + pTrend + "\tCalculated: " + pTrendCc + "\t");
+				if (verbose) Log.info("\tTrend    \tRatio: " + ratio + "\tPLINK: " + pTrend + "\tCalculated: " + pTrendCc + "\t");
 				Assert.assertEquals(1.0, ratio, maxDiff);
 			}
 
 			if (pGeno > 0) {
 				double ratio = pGeno / pGenoCc;
-				if (verbose) System.out.println("\tGenotypic\tRatio: " + ratio + "\tPLINK: " + pGeno + "\tCalculated: " + pGenoCc + "\t");
+				if (verbose) Log.info("\tGenotypic\tRatio: " + ratio + "\tPLINK: " + pGeno + "\tCalculated: " + pGenoCc + "\t");
 				Assert.assertEquals(1.0, ratio, maxDiff);
 			}
 
-			if (verbose) System.out.println("");
+			if (verbose) Log.info("");
 		}
 	}
 
@@ -206,7 +206,7 @@ public class TestCasesCaseControl extends TestCase {
 
 		List<VcfEntry> vcfEntries = cmd.run(true);
 		for (VcfEntry ve : vcfEntries) {
-			if (verbose) System.out.println(ve.toStringNoGt());
+			if (verbose) Log.info(ve.toStringNoGt());
 
 			// PLINK's value
 			double pDom = ve.getInfoFloat("P_DOM");
@@ -220,26 +220,26 @@ public class TestCasesCaseControl extends TestCase {
 
 			if (pAllelic > 0) {
 				double ratio = pAllelic / pAllelicCc;
-				if (verbose) System.out.println("\tAllelic \tRatio: " + ratio + "\tPLINK: " + pAllelic + "\tCalculated: " + pAllelicCc + "\t");
+				if (verbose) Log.info("\tAllelic \tRatio: " + ratio + "\tPLINK: " + pAllelic + "\tCalculated: " + pAllelicCc + "\t");
 				Assert.assertTrue(ratio < 2.0);
 				Assert.assertTrue(ratio >= 1.0);
 			}
 
 			if (pDom > 0) {
 				double ratio = pDom / pDomCc;
-				if (verbose) System.out.println("\tDominant\tRatio: " + ratio + "\tPLINK: " + pDom + "\tCalculated: " + pDomCc + "\t");
+				if (verbose) Log.info("\tDominant\tRatio: " + ratio + "\tPLINK: " + pDom + "\tCalculated: " + pDomCc + "\t");
 				Assert.assertTrue(ratio < 2.0);
 				Assert.assertTrue(ratio >= 1.0);
 			}
 
 			if (pRec > 0) {
 				double ratio = pRec / pRecCc;
-				if (verbose) System.out.println("\tRecessive\tRatio: " + ratio + "\tPLINK: " + pRec + "\tCalculated: " + pRecCc + "\t");
+				if (verbose) Log.info("\tRecessive\tRatio: " + ratio + "\tPLINK: " + pRec + "\tCalculated: " + pRecCc + "\t");
 				Assert.assertTrue(ratio < 2.0);
 				Assert.assertTrue(ratio >= 1.0);
 			}
 
-			if (verbose) System.out.println("");
+			if (verbose) Log.info("");
 		}
 	}
 }

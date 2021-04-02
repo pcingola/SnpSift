@@ -3,16 +3,16 @@ package org.snpsift;
 import org.snpeff.fileIterator.MatrixEntry;
 import org.snpeff.fileIterator.MatrixEntryFileIterator;
 import org.snpeff.util.Gpr;
-import org.snpeff.util.Timer;
+import org.snpeff.util.Log;
 
 /**
  * Convert allele 'matrix' file into Covariance matrix
- * 
+ *
  * Note: Only variants with two possible alleles. I.e. the matrix has three possible values in each cell:
  * 		- 0, for allele 0/0
  * 		- 1, for allele 0/1 or 1/0
  * 		- 2, for allele 1/1
- * 
+ *
  * @author pcingola
  */
 public class SnpSiftCmdCovarianceMatrix extends SnpSift {
@@ -122,14 +122,14 @@ public class SnpSiftCmdCovarianceMatrix extends SnpSift {
 	 */
 	@Override
 	public boolean run() {
-		Timer.showStdErr("Pass1: Processing file '" + matrixFile + "'");
+		Log.info("Pass1: Processing file '" + matrixFile + "'");
 		mean();
 
-		Timer.showStdErr("Pass2: Processing file '" + matrixFile + "'");
+		Log.info("Pass2: Processing file '" + matrixFile + "'");
 		covariance();
 
 		System.out.println(this);
-		Timer.showStdErr("Done");
+		Log.info("Done");
 		return true;
 	}
 

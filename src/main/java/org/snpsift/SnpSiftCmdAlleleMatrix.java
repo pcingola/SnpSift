@@ -2,7 +2,7 @@ package org.snpsift;
 
 import org.snpeff.fileIterator.VcfFileIterator;
 import org.snpeff.util.Gpr;
-import org.snpeff.util.Timer;
+import org.snpeff.util.Log;
 import org.snpeff.vcf.VcfEntry;
 import org.snpeff.vcf.VcfGenotype;
 
@@ -98,7 +98,7 @@ public class SnpSiftCmdAlleleMatrix extends SnpSift {
 			if (verbose) Gpr.showMark(i++, SHOW_EVERY);
 		}
 
-		if (verbose) Timer.showStdErr("Done");
+		if (verbose) Log.info("Done");
 		return true;
 	}
 

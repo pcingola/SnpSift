@@ -84,7 +84,7 @@ public class SnpSiftCmdFilter extends SnpSift {
 
 		// Add set to array
 		sets.add(set);
-		if (verbose) System.err.println("Adding set '" + fileName + "', " + set.size() + " elements.");
+		if (verbose) Log.info("Adding set '" + fileName + "', " + set.size() + " elements.");
 	}
 
 	@Override
@@ -291,7 +291,7 @@ public class SnpSiftCmdFilter extends SnpSift {
 				case "-e":
 				case "--exprfile":
 					String exprFile = args[++i];
-					if (verbose) System.err.println("Reading expression from file '" + exprFile + "'");
+					if (verbose) Log.info("Reading expression from file '" + exprFile + "'");
 					expression = Gpr.readFile(exprFile);
 					break;
 

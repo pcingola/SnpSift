@@ -7,7 +7,7 @@ import org.snpeff.fileIterator.VcfFileIterator;
 import org.snpeff.ped.PedPedigree;
 import org.snpeff.ped.TfamEntry;
 import org.snpeff.stats.CountByType;
-import org.snpeff.util.Timer;
+import org.snpeff.util.Log;
 import org.snpeff.vcf.VcfEntry;
 import org.snpeff.vcf.VcfGenotype;
 
@@ -64,7 +64,7 @@ public class SnpSiftCmdPrivate extends SnpSift {
 	 * Load all data
 	 */
 	void loadTfam() {
-		if (verbose) Timer.showStdErr("Loading TFAM file '" + tfamFile + "'");
+		if (verbose) Log.info("Loading TFAM file '" + tfamFile + "'");
 		pedigree = new PedPedigree();
 		pedigree.loadTfam(tfamFile);
 	}
@@ -112,7 +112,7 @@ public class SnpSiftCmdPrivate extends SnpSift {
 		if (missing == sampleIds.size()) throw new RuntimeException("All samples are missing in TFAM file!");
 
 		// Show counts by group
-		if (verbose) System.err.println("Counts by group:\nGroup\tCount\n" + countByGroup);
+		if (verbose) Log.info("Counts by group:\nGroup\tCount\n" + countByGroup);
 
 		return sampleIds;
 	}
@@ -183,7 +183,7 @@ public class SnpSiftCmdPrivate extends SnpSift {
 			else System.out.println(ve);
 		}
 
-		if (verbose) Timer.showStdErr("Done.\n\tVCF entries: " + countLines + "\n\tVCF entries annotated: " + countAnnotated);
+		if (verbose) Log.info("Done.\n\tVCF entries: " + countLines + "\n\tVCF entries annotated: " + countAnnotated);
 
 		annotateFinish(vcf);
 

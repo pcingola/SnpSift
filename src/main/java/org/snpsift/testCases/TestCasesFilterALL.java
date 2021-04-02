@@ -28,9 +28,9 @@ public class TestCasesFilterALL extends TestCase {
 		List<VcfEntry> list = vcfFilter.filter("test/downstream.vcf", expression, true);
 
 		// Check that it satisfies the condition
-		if (verbose) System.out.println("Expression: '" + expression + "'");
+		if (verbose) Log.info("Expression: '" + expression + "'");
 		for (VcfEntry vcfEntry : list) {
-			if (verbose) System.out.println("\t" + vcfEntry);
+			if (verbose) Log.info("\t" + vcfEntry);
 
 			boolean all = true;
 			String effStr = vcfEntry.getInfo("EFF");

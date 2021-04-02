@@ -17,7 +17,7 @@ import org.snpeff.ped.PedPedigree;
 import org.snpeff.ped.TfamEntry;
 import org.snpeff.snpEffect.VariantEffect;
 import org.snpeff.stats.CountByType;
-import org.snpeff.util.Timer;
+import org.snpeff.util.Log;
 import org.snpeff.vcf.EffFormatVersion;
 import org.snpeff.vcf.VcfEffect;
 import org.snpeff.vcf.VcfEntry;
@@ -66,7 +66,7 @@ public class SnpSiftCmdCaseControlSummary extends SnpSift {
 		 * Read cases & controls file
 		 * Format:	"id\tphenotype\n"
 		 */
-		Timer.showStdErr("Reading cases & controls from " + tfamFile);
+		Log.info("Reading cases & controls from " + tfamFile);
 		pedPedigree = new PedPedigree(tfamFile);
 
 		int countCase = 0, countCtrl = 0, countMissing = 0;
@@ -78,7 +78,7 @@ public class SnpSiftCmdCaseControlSummary extends SnpSift {
 			else if (te.isControl()) countCtrl++;
 			else countMissing++;
 		}
-		Timer.showStdErr("Total : " + caseControls.size() + " entries. Cases: " + countCase + ", controls: " + countCtrl + ", missing: " + countMissing);
+		Log.info("Total : " + caseControls.size() + " entries. Cases: " + countCase + ", controls: " + countCtrl + ", missing: " + countMissing);
 
 		//---
 		// Parse groups (families)
@@ -96,7 +96,7 @@ public class SnpSiftCmdCaseControlSummary extends SnpSift {
 				countByType.inc(group);
 			}
 		}
-		Timer.showStdErr("Total : " + groups.size() + " entries.\n" + countByType);
+		Log.info("Total : " + groups.size() + " entries.\n" + countByType);
 
 		// Sort group names
 		groupNamesSorted = new ArrayList<String>();
@@ -106,17 +106,17 @@ public class SnpSiftCmdCaseControlSummary extends SnpSift {
 		//---
 		// Load intervals
 		//---
-		Timer.showStdErr("Loading intervals from " + bedFile);
+		Log.info("Loading intervals from " + bedFile);
 		BedFileIterator bed = new BedFileIterator(bedFile);
 		intervals = bed.load();
-		Timer.showStdErr("Done. Number of intervals: " + intervals.size());
+		Log.info("Done. Number of intervals: " + intervals.size());
 		if (intervals.size() <= 0) {
 			System.err.println("Fatal error: No intervals!");
 			System.exit(1);
 		}
 
 		// Create interval forest
-		Timer.showStdErr("Building interval forest.");
+		Log.info("Building interval forest.");
 		intForest = new IntervalForest();
 		for (Variant sc : intervals)
 			intForest.add(sc);
@@ -191,12 +191,12 @@ public class SnpSiftCmdCaseControlSummary extends SnpSift {
 			if (!groups.containsKey(id)) missingGroups++;
 		}
 
-		Timer.showStdErr("Samples missing case/control info : " + missingCc);
-		Timer.showStdErr("Samples missing groups info       : " + missingGroups);
+		Log.info("Samples missing case/control info : " + missingCc);
+		Log.info("Samples missing groups info       : " + missingGroups);
 
 		// Too many missing IDs? Error
 		if (((1.0 * missingCc) / sampleIds.size() > 0.5) || ((1.0 * missingCc) / sampleIds.size() > 0.5)) {
-			Timer.showStdErr("Fatal error: Too much missing data!");
+			Log.info("Fatal error: Too much missing data!");
 			System.exit(1);
 		}
 

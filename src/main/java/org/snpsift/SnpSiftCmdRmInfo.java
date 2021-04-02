@@ -3,7 +3,7 @@ package org.snpsift;
 import java.util.HashSet;
 
 import org.snpeff.fileIterator.VcfFileIterator;
-import org.snpeff.util.Timer;
+import org.snpeff.util.Log;
 import org.snpeff.vcf.VcfEntry;
 
 /**
@@ -49,7 +49,7 @@ public class SnpSiftCmdRmInfo extends SnpSift {
 	 */
 	@Override
 	public boolean run() {
-		Timer.showStdErr("Reading STDIN");
+		Log.info("Reading STDIN");
 		VcfFileIterator vcfFile = new VcfFileIterator(vcfFileName);
 		vcfFile.setDebug(debug);
 
@@ -72,7 +72,7 @@ public class SnpSiftCmdRmInfo extends SnpSift {
 			entryNum++;
 		}
 
-		Timer.showStdErr("Done");
+		Log.info("Done");
 		return true;
 	}
 

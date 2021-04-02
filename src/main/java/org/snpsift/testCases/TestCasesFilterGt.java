@@ -31,7 +31,7 @@ public class TestCasesFilterGt extends TestCase {
 		List<VcfEntry> list = gtfilter.filter("test/testGtFilter01.vcf", expression, true);
 
 		for (VcfEntry ve : list) {
-			if (verbose) System.out.println(ve);
+			if (verbose) Log.info(ve);
 
 			for (VcfGenotype gt : ve.getVcfGenotypes()) {
 				String gtStr = gt.get("GT");
@@ -47,7 +47,7 @@ public class TestCasesFilterGt extends TestCase {
 					Assert.assertEquals("./.", gtStr);
 				}
 
-				if (verbose) System.out.println("\tGT: " + gtStr + " " + filtered + "\tGQ: " + gqStr + "\tDP: " + dpStr + "\t" + gt);
+				if (verbose) Log.info("\tGT: " + gtStr + " " + filtered + "\tGQ: " + gqStr + "\tDP: " + dpStr + "\t" + gt);
 			}
 		}
 	}
@@ -63,7 +63,7 @@ public class TestCasesFilterGt extends TestCase {
 		List<VcfEntry> list = gtfilter.filter("test/testGtFilter02.vcf", expression, true);
 
 		for (VcfEntry ve : list) {
-			if (verbose) System.out.println(ve);
+			if (verbose) Log.info(ve);
 
 			for (VcfGenotype gt : ve.getVcfGenotypes()) {
 				String gtStr = gt.get("GT");
@@ -79,7 +79,7 @@ public class TestCasesFilterGt extends TestCase {
 					Assert.assertEquals("./././.", gtStr);
 				}
 
-				if (verbose) System.out.println("\tGT: " + gtStr + " " + filtered + "\tGQ: " + gqStr + "\tDP: " + dpStr + "\t" + gt);
+				if (verbose) Log.info("\tGT: " + gtStr + " " + filtered + "\tGQ: " + gqStr + "\tDP: " + dpStr + "\t" + gt);
 			}
 		}
 	}

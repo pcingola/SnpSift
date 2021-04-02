@@ -10,7 +10,7 @@ import org.snpeff.interval.Genome;
 import org.snpeff.interval.Markers;
 import org.snpeff.interval.Variant;
 import org.snpeff.interval.tree.IntervalForest;
-import org.snpeff.util.Timer;
+import org.snpeff.util.Log;
 import org.snpeff.vcf.VcfEntry;
 
 /**
@@ -55,7 +55,7 @@ public class SnpSiftCmdIntervals extends SnpSift {
 
 		// Read filter interval files
 		for (String bedFileName : bedFiles) {
-			if (verbose) Timer.showStdErr("Reading filter interval file '" + bedFileName + "'");
+			if (verbose) Log.info("Reading filter interval file '" + bedFileName + "'");
 
 			BedFileIterator bedFile = new BedFileIterator(bedFileName, genome);
 			bedFile.setCreateChromos(true);
@@ -64,14 +64,14 @@ public class SnpSiftCmdIntervals extends SnpSift {
 			seqChangesAll.addAll(seqChanges);
 		}
 
-		if (verbose) Timer.showStdErr("Total " + seqChangesAll.size() + " intervals added.");
+		if (verbose) Log.info("Total " + seqChangesAll.size() + " intervals added.");
 
 		// Filter only variants that match these intervals
-		if (verbose) Timer.showStdErr("Building interval forest.");
+		if (verbose) Log.info("Building interval forest.");
 		intervalForest = new IntervalForest();
 		intervalForest.add(seqChangesAll);
 		intervalForest.build();
-		if (verbose) Timer.showStdErr("Done.");
+		if (verbose) Log.info("Done.");
 	}
 
 	@Override
@@ -102,7 +102,7 @@ public class SnpSiftCmdIntervals extends SnpSift {
 	 */
 	public List<VcfEntry> run(boolean createList) {
 		loadIntervals();
-		if (verbose) Timer.showStdErr("FileName: '" + vcfFileName + "'\n\t\t\tIntervals: " + bedFiles + "\n\t\t\tExclude : " + exclude);
+		if (verbose) Log.info("FileName: '" + vcfFileName + "'\n\t\t\tIntervals: " + bedFiles + "\n\t\t\tExclude : " + exclude);
 		List<VcfEntry> results = new ArrayList<>();
 
 		// Read all vcfEntries

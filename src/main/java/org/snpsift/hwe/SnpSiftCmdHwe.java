@@ -4,7 +4,7 @@ import java.util.List;
 
 import org.snpeff.fileIterator.VcfFileIterator;
 import org.snpeff.util.Gpr;
-import org.snpeff.util.Timer;
+import org.snpeff.util.Log;
 import org.snpeff.vcf.VcfEntry;
 import org.snpeff.vcf.VcfHeaderEntry;
 import org.snpeff.vcf.VcfHeaderInfo;
@@ -74,7 +74,7 @@ public class SnpSiftCmdHwe extends SnpSift {
 	 */
 	@Override
 	public boolean run() {
-		Timer.showStdErr("Reading '" + vcfInputFile + "'. Running single threaded mode.");
+		Log.info("Reading '" + vcfInputFile + "'. Running single threaded mode.");
 
 		VcfFileIterator vcfFile = new VcfFileIterator(vcfInputFile);
 		vcfFile.setDebug(debug);
@@ -99,7 +99,7 @@ public class SnpSiftCmdHwe extends SnpSift {
 			Gpr.showMark(entryNum++, SHOW_EVERY);
 		}
 
-		Timer.showStdErr("Done: " + entryNum + " entries processed.");
+		Log.info("Done: " + entryNum + " entries processed.");
 		return true;
 	}
 

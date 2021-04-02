@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.snpeff.fileIterator.VcfFileIterator;
-import org.snpeff.util.Timer;
+import org.snpeff.util.Log;
 import org.snpeff.vcf.VcfEntry;
 import org.snpeff.vcf.VcfGenotype;
 import org.snpsift.pedigree.Individual;
@@ -68,12 +68,12 @@ public class SnpSiftCmdPedShow extends SnpSift {
 	void draw(PedigreeDraw pedigree, VcfEntry vcfEntry, String outDir) {
 		// Create output dir
 		String dir = outDir + "/" + vcfEntry.getChromosomeName() + "_" + (vcfEntry.getStart() + 1);
-		if (verbose) System.err.println("Creating dir '" + dir + "'");
+		if (verbose) Log.info("Creating dir '" + dir + "'");
 		new File(dir).mkdir();
 
 		// Draw
 		String chrPosStr = vcfEntry.getChromosomeName() + ":" + (vcfEntry.getStart() + 1);
-		Timer.showStdErr("Drawing pedigree for '" + chrPosStr + "', output dir: " + dir);
+		Log.info("Drawing pedigree for '" + chrPosStr + "', output dir: " + dir);
 		pedigree.drawSvgByFamily(dir, vcfEntry.toString());
 	}
 
@@ -121,7 +121,7 @@ public class SnpSiftCmdPedShow extends SnpSift {
 		//---
 		// Read VCF file
 		//---
-		Timer.showStdErr("Reading vcf file '" + vcfFileName + "'");
+		Log.info("Reading vcf file '" + vcfFileName + "'");
 		for (VcfEntry vcfEntry : vcfFile) {
 			if (sampleNames == null) sampleNames = vcfFile.getSampleNames(); // Get sampleNames
 
@@ -144,7 +144,7 @@ public class SnpSiftCmdPedShow extends SnpSift {
 			}
 		}
 		vcfFile.close();
-		Timer.showStdErr("Done");
+		Log.info("Done");
 
 		// Show missing entries
 		if (chrPos != null) {

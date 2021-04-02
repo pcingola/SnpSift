@@ -3,7 +3,7 @@ package org.snpsift;
 import java.util.List;
 
 import org.snpeff.fileIterator.VcfFileIterator;
-import org.snpeff.util.Timer;
+import org.snpeff.util.Log;
 import org.snpeff.vcf.VcfEntry;
 import org.snpeff.vcf.VcfGenotype;
 
@@ -40,7 +40,7 @@ public class SnpSiftCmdRemoveReferenceGenotypes extends SnpSift {
 	 */
 	@Override
 	public boolean run() {
-		Timer.showStdErr("Reading STDIN");
+		Log.info("Reading STDIN");
 		VcfFileIterator vcfFile = new VcfFileIterator(vcfFileName);
 		vcfFile.setDebug(debug);
 		vcfFile.setCreateChromos(true); // Create chromosomes when needed
@@ -80,7 +80,7 @@ public class SnpSiftCmdRemoveReferenceGenotypes extends SnpSift {
 			entryNum++;
 		}
 
-		Timer.showStdErr("Done");
+		Log.info("Done");
 		return true;
 	}
 

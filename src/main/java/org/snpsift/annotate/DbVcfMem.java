@@ -9,7 +9,7 @@ import org.snpeff.interval.Markers;
 import org.snpeff.interval.Variant;
 import org.snpeff.interval.tree.IntervalTreeArray;
 import org.snpeff.interval.tree.Itree;
-import org.snpeff.util.Timer;
+import org.snpeff.util.Log;
 import org.snpeff.vcf.VariantVcfEntry;
 import org.snpeff.vcf.VcfEntry;
 
@@ -43,7 +43,7 @@ public class DbVcfMem extends DbVcf {
 	 * Load the whole VCF 'database' file into memory
 	 */
 	void loadDatabase() {
-		if (verbose) Timer.showStdErr("Loading database: '" + dbFileName + "'");
+		if (verbose) Log.info("Loading database: '" + dbFileName + "'");
 		VcfFileIterator dbFile = new VcfFileIterator(dbFileName);
 		dbFile.setDebug(debug);
 
@@ -69,13 +69,13 @@ public class DbVcfMem extends DbVcf {
 		// Show time
 		if (verbose) {
 			System.err.println("");
-			Timer.showStdErr("Done. Added: " + itree.size());
+			Log.info("Done. Added: " + itree.size());
 		}
 
 		// Build interval tree
-		if (verbose) Timer.showStdErr("Building interval tree");
+		if (verbose) Log.info("Building interval tree");
 		itree.build();
-		if (verbose) Timer.showStdErr("Done");
+		if (verbose) Log.info("Done");
 	}
 
 	/**

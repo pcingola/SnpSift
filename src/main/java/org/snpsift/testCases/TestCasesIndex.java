@@ -45,7 +45,7 @@ public class TestCasesIndex extends TestCase {
 		if (verbose) Log.debug("Checking");
 		VcfFileIterator vcf = new VcfFileIterator(dbFileName);
 		for (VcfEntry ve : vcf) {
-			if (verbose) System.out.println(ve.toStr());
+			if (verbose) Log.info(ve.toStr());
 
 			// Query database
 			for (Variant var : ve.variants()) {
@@ -57,7 +57,7 @@ public class TestCasesIndex extends TestCase {
 				// Check each result
 				for (Marker res : results) {
 					VcfEntry veIdx = (VcfEntry) res;
-					if (verbose) System.out.println("\t" + res + "\t" + veIdx);
+					if (verbose) Log.info("\t" + res + "\t" + veIdx);
 
 					// Check that result does intersect query
 					Assert.assertTrue("Selected interval does not intersect marker form file!" //
@@ -104,7 +104,7 @@ public class TestCasesIndex extends TestCase {
 		if (verbose) Log.debug("Checking");
 		VcfFileIterator vcf = new VcfFileIterator(dbFileName);
 		for (VcfEntry ve : vcf) {
-			if (verbose) System.out.println(ve.toStr());
+			if (verbose) Log.info(ve.toStr());
 
 			// Query database
 			for (Variant var : ve.variants()) {
@@ -116,7 +116,7 @@ public class TestCasesIndex extends TestCase {
 				// Check each result
 				for (Marker res : results) {
 					VcfEntry veIdx = (VcfEntry) res;
-					if (verbose) System.out.println("\t" + res + "\t" + veIdx);
+					if (verbose) Log.info("\t" + res + "\t" + veIdx);
 
 					// Check that result does intersect query
 					Assert.assertTrue("Selected interval does not intersect marker form file!" //

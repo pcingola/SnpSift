@@ -1,6 +1,7 @@
 package org.snpsift.testCases;
 
 import org.snpeff.fileIterator.VcfFileIterator;
+import org.snpeff.util.Log;
 import org.snpeff.vcf.VcfEntry;
 import org.snpsift.SnpSiftCmdVarType;
 
@@ -9,7 +10,7 @@ import junit.framework.TestCase;
 
 /**
  * VarType test cases
- * 
+ *
  * @author pcingola
  */
 public class TestCasesVarType extends TestCase {
@@ -30,7 +31,7 @@ public class TestCasesVarType extends TestCase {
 			varType.annotate(ve);
 
 			// Check that all variants are the ones expected
-			if (verbose) System.out.println(ve //
+			if (verbose) Log.info(ve //
 					+ "\n\tvarTypeExpected: " + varTypeExpected //
 					+ "\n\tINFO flag      : " + ve.getInfoFlag(varTypeExpected) //
 			);

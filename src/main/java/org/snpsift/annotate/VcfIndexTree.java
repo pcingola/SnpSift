@@ -289,7 +289,7 @@ public class VcfIndexTree implements Itree {
 		try {
 			chromosome = in.readUTF();
 			size = in.readInt();
-			if (verbose) Timer.showStdErr("\tReading index for chromosome '" + chromosome + "' (index size: " + size + " )");
+			if (verbose) Log.info("\tReading index for chromosome '" + chromosome + "' (index size: " + size + " )");
 
 			// Sanity cgheck
 			if (size < 0) return false;

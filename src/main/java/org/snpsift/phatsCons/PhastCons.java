@@ -21,23 +21,23 @@ public class PhastCons {
 	//		Genome genome = new Genome("test");
 	//		PhastCons phastCons = new PhastCons(genome);
 	//
-	//		Timer.showStdErr("Loading data from file: " + fileName);
+	//		Log.info("Loading data from file: " + fileName);
 	//		phastCons.readWigFile(fileName);
-	//		Timer.showStdErr("done");
+	//		Log.info("done");
 	//
 	//		//		for (int i = 0; i < 50; i++) {
 	//		//			Log.debug(i + "\tscore: " + phastCons.get("22", 16059389 + i));
 	//		//		}
 	//
 	//		String outfile = Gpr.HOME + "/phastCons.out";
-	//		Timer.showStdErr("Writing to file: " + outfile);
+	//		Log.info("Writing to file: " + outfile);
 	//		phastCons.writeTxt(outfile);
-	//		Timer.showStdErr("Done!");
+	//		Log.info("Done!");
 	//
-	//		Timer.showStdErr("Reading to file: " + outfile);
+	//		Log.info("Reading to file: " + outfile);
 	//		phastCons = new PhastCons(genome);
 	//		phastCons.readTxt(outfile);
-	//		Timer.showStdErr("Done!");
+	//		Log.info("Done!");
 	//
 	//	}
 	//
@@ -124,7 +124,7 @@ public class PhastCons {
 	//				// Add old list
 	//				if (!chrom.isEmpty()) {
 	//					add(chrom, start, cons);
-	//					if (verbose) Timer.showStdErr("Added: " + chrom + ":" + start + "\t" + cons.size() + " scores.");
+	//					if (verbose) Log.info("Added: " + chrom + ":" + start + "\t" + cons.size() + " scores.");
 	//				}
 	//
 	//				// Parse line

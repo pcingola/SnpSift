@@ -8,11 +8,11 @@ import org.snpeff.interval.Marker;
 import org.snpeff.interval.Markers;
 import org.snpeff.interval.tree.IntervalForest;
 import org.snpeff.util.Gpr;
-import org.snpeff.util.Timer;
+import org.snpeff.util.Log;
 
 /**
  * Intersect intervals
- *  
+ *
  * @author pcingola
  */
 public class SnpSiftCmdIntersect extends SnpSift {
@@ -136,21 +136,21 @@ public class SnpSiftCmdIntersect extends SnpSift {
 		forests = new ArrayList<IntervalForest>();
 		for (String fileName : fileNames) {
 			// Load file
-			if (verbose) Timer.showStdErr("Loading file '" + fileName + "'");
+			if (verbose) Log.info("Loading file '" + fileName + "'");
 			Markers markers = Markers.readMarkers(fileName);
-			if (verbose) Timer.showStdErr("Done. Markers in file : " + markers.size());
+			if (verbose) Log.info("Done. Markers in file : " + markers.size());
 
 			// Create forest
 			IntervalForest ifor = new IntervalForest();
 			ifor.add(markers);
 			ifor.build();
 			forests.add(ifor);
-			if (verbose) Timer.showStdErr("Interval forest added.");
+			if (verbose) Log.info("Interval forest added.");
 
 			// Add markers to 'all'
 			markersAll.add(markers);
 		}
-		if (verbose) Timer.showStdErr("Total number of markers (all files) : " + markersAll.size());
+		if (verbose) Log.info("Total number of markers (all files) : " + markersAll.size());
 
 		//---
 		// Loading 'NOT' intervals from files
@@ -158,21 +158,21 @@ public class SnpSiftCmdIntersect extends SnpSift {
 		notForests = new ArrayList<IntervalForest>();
 		for (String fileName : notFileNames) {
 			// Load file
-			if (verbose) Timer.showStdErr("Loading 'NOT' file '" + fileName + "'");
+			if (verbose) Log.info("Loading 'NOT' file '" + fileName + "'");
 			Markers markers = Markers.readMarkers(fileName);
-			if (verbose) Timer.showStdErr("Done. Markers in file : " + markers.size());
+			if (verbose) Log.info("Done. Markers in file : " + markers.size());
 
 			// Create forest
 			IntervalForest ifor = new IntervalForest();
 			ifor.add(markers);
 			ifor.build();
 			notForests.add(ifor);
-			if (verbose) Timer.showStdErr("Interval forest added.");
+			if (verbose) Log.info("Interval forest added.");
 
 			// Add markers to 'all'
 			markersNotAll.add(markers);
 		}
-		if (verbose && !notFileNames.isEmpty()) Timer.showStdErr("Total number of 'NOT' markers (all files) : " + markersNotAll.size());
+		if (verbose && !notFileNames.isEmpty()) Log.info("Total number of 'NOT' markers (all files) : " + markersNotAll.size());
 
 		// Show header
 		System.out.println("# " + SnpSift.VERSION_NO_NAME);
@@ -205,7 +205,7 @@ public class SnpSiftCmdIntersect extends SnpSift {
 			}
 		}
 
-		if (verbose) Timer.showStdErr("Total number of markers intersected : " + done.size() + (coutFilteredOut > 0 ? "\n\tFiltered out : " + coutFilteredOut : ""));
+		if (verbose) Log.info("Total number of markers intersected : " + done.size() + (coutFilteredOut > 0 ? "\n\tFiltered out : " + coutFilteredOut : ""));
 		return true;
 	}
 

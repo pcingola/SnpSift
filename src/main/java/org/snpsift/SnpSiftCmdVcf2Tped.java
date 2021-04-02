@@ -64,7 +64,7 @@ public class SnpSiftCmdVcf2Tped extends SnpSift {
 	 * Load all data
 	 */
 	void loadTfam() {
-		if (verbose) Timer.showStdErr("Loading TFAM file '" + tfamFile + "'");
+		if (verbose) Log.info("Loading TFAM file '" + tfamFile + "'");
 		pedigree = new PedPedigree();
 		pedigree.loadTfam(tfamFile);
 	}
@@ -185,7 +185,7 @@ public class SnpSiftCmdVcf2Tped extends SnpSift {
 	 *
 	 */
 	public void vcf2Tped(String vcfFile, String tfamFile, String outTfamFile, String outTpedFile) {
-		if (verbose) Timer.showStdErr("Converting file '" + vcfFile + "' to TPED format: '" + outTpedFile + "'");
+		if (verbose) Log.info("Converting file '" + vcfFile + "' to TPED format: '" + outTpedFile + "'");
 
 		int countVcf = 1, countTped = 0;
 		int skipMissing = 0, skipNotSnp = 0, skipNonBiAllelic = 0;
@@ -274,7 +274,7 @@ public class SnpSiftCmdVcf2Tped extends SnpSift {
 					}
 
 					countVcf++;
-					if (verbose && (countVcf % 1000 == 0)) Timer.showStdErr("\tLine " + countVcf + "\t" + ve.getChromosomeName() + ":" + (ve.getStart() + 1));
+					if (verbose && (countVcf % 1000 == 0)) Log.info("\tLine " + countVcf + "\t" + ve.getChromosomeName() + ":" + (ve.getStart() + 1));
 				} catch (Exception e) {
 					Log.debug("Exception processing VCF entry : " + ve);
 					e.printStackTrace();
@@ -289,7 +289,7 @@ public class SnpSiftCmdVcf2Tped extends SnpSift {
 		}
 
 		// Show some info
-		if (verbose) Timer.showStdErr("Done: " //
+		if (verbose) Log.info("Done: " //
 				+ "\n\tVCF entries converted     : " + countVcf //
 				+ "\n\tTPED entries              : " + countTped //
 				+ "\n\tSkipped Non Biallelic     : " + skipNonBiAllelic //
@@ -341,7 +341,7 @@ public class SnpSiftCmdVcf2Tped extends SnpSift {
 		if (newTfam.size() <= 0) throw new RuntimeException("New TFAM file has no entries!");
 
 		// Save new file
-		if (verbose) Timer.showStdErr("Saving new TFAM file '" + outTfamFile + "'");
+		if (verbose) Log.info("Saving new TFAM file '" + outTfamFile + "'");
 		newTfam.saveTfam(outTfamFile);
 
 		return use;

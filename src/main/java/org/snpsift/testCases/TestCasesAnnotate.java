@@ -37,7 +37,7 @@ public class TestCasesAnnotate extends TestCase {
 	 * Annotate
 	 */
 	public List<VcfEntry> annotate(String dbFileName, String fileName, String[] extraArgs) {
-		if (verbose) System.out.println("Annotate: " + dbFileName + "\t" + fileName);
+		if (verbose) Log.info("Annotate: " + dbFileName + "\t" + fileName);
 
 		if (deleteIndexFile) deleteIndexFile(dbFileName);
 
@@ -63,7 +63,7 @@ public class TestCasesAnnotate extends TestCase {
 	 * Annotate and return STDOUT as a string
 	 */
 	public String annotateOut(String dbFileName, String fileName, String[] extraArgs) {
-		if (verbose) System.out.println("Annotate: " + dbFileName + "\t" + fileName);
+		if (verbose) Log.info("Annotate: " + dbFileName + "\t" + fileName);
 
 		if (deleteIndexFile) deleteIndexFile(dbFileName);
 
@@ -269,7 +269,7 @@ public class TestCasesAnnotate extends TestCase {
 
 		// Make sure output header for "GMAF" is present ONLY ONCE.
 		// Also make sure implicit headers are not (e.g. AC)
-		if (verbose) System.out.println(out);
+		if (verbose) Log.info(out);
 		int hasGmaf = 0;
 		int hasAc = 0;
 		for (String line : out.split("\n")) {
@@ -314,7 +314,7 @@ public class TestCasesAnnotate extends TestCase {
 
 		// Make sure output header for "AA" is present ONLY ONCE.
 		// Also make sure implicit headers are not (e.g. AC)
-		if (verbose) System.out.println(out);
+		if (verbose) Log.info(out);
 		int hasAa = 0;
 		for (String line : out.split("\n"))
 			if (line.startsWith("##INFO=<ID=AA")) hasAa++;
@@ -332,7 +332,7 @@ public class TestCasesAnnotate extends TestCase {
 
 		// Check results
 		VcfEntry ve = results.get(0);
-		if (verbose) System.out.println(ve);
+		if (verbose) Log.info(ve);
 		String allNum = ve.getInfo("ALL_NUM");
 		Assert.assertEquals("2", allNum);
 	}
@@ -347,7 +347,7 @@ public class TestCasesAnnotate extends TestCase {
 
 		// Check results
 		VcfEntry ve = results.get(0);
-		if (verbose) System.out.println(ve);
+		if (verbose) Log.info(ve);
 		String allNum = ve.getInfo("ALL_NUM");
 		Assert.assertEquals("value_REF,value_C", allNum);
 	}
@@ -388,7 +388,7 @@ public class TestCasesAnnotate extends TestCase {
 			String type = ve.getInfo("TYPE");
 			String ann = ve.getInfo("ANN");
 
-			if (verbose) System.out.println(ve.toStr() + "\t" + type + "\t" + ann);
+			if (verbose) Log.info(ve.toStr() + "\t" + type + "\t" + ann);
 			Assert.assertEquals(types.get(type), ann);
 		}
 	}
@@ -401,7 +401,7 @@ public class TestCasesAnnotate extends TestCase {
 		List<VcfEntry> results = annotate(dbFileName, fileName, null);
 		VcfEntry ve = results.get(0);
 		String ukac = ve.getInfo("UK10KWES_AC");
-		if (verbose) System.out.println("Annotated value: " + ukac);
+		if (verbose) Log.info("Annotated value: " + ukac);
 		Assert.assertEquals(".,49,44,.,.,.,.,.,.,.,.", ukac);
 	}
 
@@ -473,7 +473,7 @@ public class TestCasesAnnotate extends TestCase {
 		// Check results
 		VcfEntry ve = results.get(0);
 		String caf = ve.getInfo("CAF");
-		if (verbose) System.out.println(ve + "\n\tCAF: " + caf);
+		if (verbose) Log.info(ve + "\n\tCAF: " + caf);
 		Assert.assertEquals("0.9642,.,0.03581", caf);
 	}
 
@@ -493,7 +493,7 @@ public class TestCasesAnnotate extends TestCase {
 		String out = annotateOut(dbFileName, fileName, extraArgs);
 
 		// Make sure output header for "PREPEND_AA"  and "PREPEND_BB" are present ONLY ONCE.
-		if (verbose) System.out.println(out);
+		if (verbose) Log.info(out);
 		int hasAa = 0, hasBb = 0, hasCc = 0;
 		for (String line : out.split("\n")) {
 			if (line.startsWith("##INFO=<ID=PREPEND_AA")) hasAa++;
@@ -522,7 +522,7 @@ public class TestCasesAnnotate extends TestCase {
 		String out = annotateOut(dbFileName, fileName, extraArgs);
 
 		// Make sure output header for "PREPEND_AA"  and "PREPEND_BB" are present ONLY ONCE.
-		if (verbose) System.out.println(out);
+		if (verbose) Log.info(out);
 		int hasAa = 0, hasBb = 0, hasCc = 0;
 		for (String line : out.split("\n")) {
 			if (line.startsWith("##INFO=<ID=PREPEND_AA")) hasAa++;
@@ -556,7 +556,7 @@ public class TestCasesAnnotate extends TestCase {
 		String fileName = "./test/annotate_27.vcf";
 		List<VcfEntry> res = annotate(dbFileName, fileName, null);
 		for (VcfEntry ve : res) {
-			if (verbose) System.out.println(ve);
+			if (verbose) Log.info(ve);
 			Assert.assertEquals("121964859,45578238", ve.getInfo("RS"));
 		}
 	}
@@ -573,7 +573,7 @@ public class TestCasesAnnotate extends TestCase {
 
 		List<VcfEntry> res = annotate(dbFileName, fileName, args);
 		for (VcfEntry ve : res) {
-			if (verbose) System.out.println(ve);
+			if (verbose) Log.info(ve);
 
 			// Check
 			if (ve.getStart() == 201331098) Assert.assertTrue("Existing VCF entry has not been annotated", ve.hasInfo("EXISTS"));
@@ -593,7 +593,7 @@ public class TestCasesAnnotate extends TestCase {
 
 		List<VcfEntry> res = annotate(dbFileName, fileName, args);
 		for (VcfEntry ve : res) {
-			if (verbose) System.out.println(ve);
+			if (verbose) Log.info(ve);
 
 			// Check
 			if (ve.getStart() == 838418) Assert.assertEquals("rs1130678", ve.getId());
@@ -647,7 +647,7 @@ public class TestCasesAnnotate extends TestCase {
 		// Check results
 		VcfEntry ve = results.get(0);
 		String rs = ve.getInfo("RS");
-		if (verbose) System.out.println(ve + "\n\tRS: " + rs);
+		if (verbose) Log.info(ve + "\n\tRS: " + rs);
 		Assert.assertEquals("207477890", rs);
 	}
 
@@ -679,7 +679,7 @@ public class TestCasesAnnotate extends TestCase {
 		List<VcfEntry> results = annotate(dbFileName, fileName, extraArgs);
 
 		VcfEntry ve = results.get(0);
-		if (verbose) System.out.println(ve);
+		if (verbose) Log.info(ve);
 		String infoStr = ve.getInfoStr();
 
 		// Check that trailing '=true' is not added
@@ -709,7 +709,7 @@ public class TestCasesAnnotate extends TestCase {
 		List<VcfEntry> results = annotate(dbFileName, fileName, extraArgs);
 
 		VcfEntry ve = results.get(0);
-		if (verbose) System.out.println(ve);
+		if (verbose) Log.info(ve);
 		String infoStr = ve.getInfoStr();
 
 		// Check that CAF annotation is added
@@ -745,7 +745,7 @@ public class TestCasesAnnotate extends TestCase {
 
 		// Get first entry
 		VcfEntry ve = results.get(0);
-		if (verbose) System.out.println(ve);
+		if (verbose) Log.info(ve);
 		String infoStr = ve.getInfoStr();
 
 		// Check that CAF annotation is added
@@ -772,7 +772,7 @@ public class TestCasesAnnotate extends TestCase {
 
 		// Get first entry
 		VcfEntry ve = results.get(0);
-		if (verbose) System.out.println(ve);
+		if (verbose) Log.info(ve);
 		String infoStr = ve.getInfoStr();
 
 		// Check that CAF annotation is added
@@ -797,7 +797,7 @@ public class TestCasesAnnotate extends TestCase {
 
 		// Get first entry
 		VcfEntry ve = results.get(0);
-		if (verbose) System.out.println(ve);
+		if (verbose) Log.info(ve);
 		String infoStr = ve.getInfoStr();
 
 		// Check that annotation is added
@@ -823,7 +823,7 @@ public class TestCasesAnnotate extends TestCase {
 
 		// Get first entry
 		VcfEntry ve = results.get(0);
-		if (verbose) System.out.println(ve);
+		if (verbose) Log.info(ve);
 		String infoStr = ve.getInfoStr();
 
 		// Check that annotation is added
