@@ -10,10 +10,10 @@ import java.util.List;
 import org.snpeff.collections.AutoHashMap;
 import org.snpeff.fileIterator.SeekableBufferedReader;
 import org.snpeff.fileIterator.VcfFileIterator;
+import org.snpeff.snpEffect.ErrorWarningType;
 import org.snpeff.stats.CountByType;
 import org.snpeff.util.Gpr;
 import org.snpeff.util.Log;
-import org.snpeff.util.Timer;
 import org.snpeff.vcf.FileIndexChrPos;
 import org.snpeff.vcf.VcfEntry;
 import org.snpeff.vcf.VcfGenotype;
@@ -300,7 +300,7 @@ public class SnpSiftCmdConcordance extends SnpSift {
 
 		// No such chromosome?
 		if (start < 0) {
-			Log.warning("Chromosome '" + chr + "' not found in database.");
+			Log.warning(ErrorWarningType.WARNING_CHROMOSOME_NOT_FOUND, "Chromosome '" + chr + "' not found in database.");
 			return false;
 		}
 
