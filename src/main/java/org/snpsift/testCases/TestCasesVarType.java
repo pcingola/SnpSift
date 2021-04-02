@@ -55,22 +55,27 @@ public class TestCasesVarType extends TestCase {
 	}
 
 	public void test_01_SNP() {
+		Log.debug("Test");
 		checkAllVarType("test/varType_snp.vcf", "SNP");
 	}
 
 	public void test_02_MNP() {
+		Log.debug("Test");
 		checkAllVarType("test/varType_mnp.vcf", "MNP");
 	}
 
 	public void test_03_INS() {
+		Log.debug("Test");
 		checkAllVarType("test/varType_ins.vcf", "INS");
 	}
 
 	public void test_04_DEL() {
+		Log.debug("Test");
 		checkAllVarType("test/varType_del.vcf", "DEL");
 	}
 
 	public void test_05_multiple() {
+		Log.debug("Test");
 		checkVarTypeField("test/varType_multiple.vcf", "SNP,INS");
 	}
 

@@ -55,10 +55,6 @@ public class TestCasesGt extends TestCase {
 		cmdUn.run();
 		String outputUn = cmdUn.getOutput();
 
-		//---
-		// Compare original and 'uncompressed'
-		//---
-
 		// Read all non-header lines form original file
 		ArrayList<String> ori = new ArrayList<>();
 		for (String line : Gpr.readFile(file).split("\n"))
@@ -70,13 +66,9 @@ public class TestCasesGt extends TestCase {
 			if (!line.startsWith("#")) un.add(line);
 
 		// Compare original to uncompressed
-		boolean diff = false;
 		for (int i = 0; i < ori.size(); i++) {
-			if (!ori.get(i).equals(un.get(i))) {
-				System.err.println("Line " + i + " differs:\n\t'" + ori.get(i) + "'\n\t'" + un.get(i) + "'");
-				diff = true;
-				Assert.assertEquals(false, diff); // We expect no differences.
-			}
+			// We expect no differences.
+			Assert.assertTrue("Line " + i + " differs:\n\t'" + ori.get(i) + "'\n\t'" + un.get(i) + "'", ori.get(i).equals(un.get(i)));
 		}
 	}
 }

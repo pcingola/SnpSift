@@ -6,7 +6,7 @@
   <packaging>jar</packaging>
   <name>SnpSift</name>
   <description>SnpSift is a collection of tools for variant filtering and annotation.</description>
-  <url>http://snpeff.sourceforge.net/</url>
+  <url>https://github.com/pcingola/SnpSift</url>
   <licenses>
     <license>
       <name>GNU LESSER GENERAL PUBLIC LICENSE, Version 3.0</name>
@@ -29,13 +29,11 @@
   </developers>
   
   <dependencies>
-  	
     <dependency>
       <groupId>org.snpeff</groupId>
       <artifactId>SnpEff</artifactId>
       <version>5.0</version>
     </dependency>
-    
     <dependency>
       <groupId>org.antlr</groupId>
       <artifactId>antlr4</artifactId>
@@ -95,19 +93,18 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
-        <version>2.3.2</version>
+        <version>3.8.1</version>
         <configuration>
-          <source>1.8</source>
-          <target>1.8</target>
-          <encoding>ISO-8859-1</encoding>
-          <showDeprecation>true</showDeprecation>
-          <showWarnings>true</showWarnings>
+			<release>12</release>
+			<encoding>ISO-8859-1</encoding>
+			<showDeprecation>true</showDeprecation>
+			<showWarnings>true</showWarnings>
         </configuration>
       </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-resources-plugin</artifactId>
-        <version>2.4.3</version>
+        <version>3.2.0</version>
         <configuration>
           <encoding>ISO-8859-1</encoding>
         </configuration>
@@ -115,7 +112,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-assembly-plugin</artifactId>
-        <version>2.2-beta-5</version>
+        <version>3.3.0</version>
         <configuration>
           <descriptorRefs>
             <descriptorRef>jar-with-dependencies</descriptorRef>
