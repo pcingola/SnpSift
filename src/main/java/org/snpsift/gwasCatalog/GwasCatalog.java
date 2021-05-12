@@ -6,6 +6,8 @@ import java.util.List;
 
 import org.snpeff.collections.MultivalueHashMap;
 import org.snpeff.interval.Chromosome;
+import org.snpeff.snpEffect.ErrorWarningType;
+import org.snpeff.util.Log;
 
 /**
  * GWAS catalog table.
@@ -79,11 +81,13 @@ public class GwasCatalog implements Iterable<GwasCatalogEntry> {
 		for (GwasCatalogEntry ge : gfile) {
 			// Add entries by chr:pos
 			String key = key(ge); // Note: Positions in GWAS file are one-based (we use zero-based coordinates everywhere).
+			if (gwasEntryByChrPos.containsKey(key)) Log.warning(ErrorWarningType.WARNING_DUPLICATE_PRIMARY_KEY, "GwasCatalog entry chr:pos '" + key + "' already exists");
 			gwasEntryByChrPos.add(key, ge);
 
 			// Add entries by RS
 			for (String rs : ge.snps.split(","))
 				if (!rs.isEmpty() && !rs.equals("NR")) {
+					if (gwasEntryByRs.containsKey(rs)) Log.warning(ErrorWarningType.WARNING_DUPLICATE_PRIMARY_KEY, "GwasCatalog entry RS number '" + rs + "' already exists");
 					gwasEntryByRs.add(rs, ge);
 				}
 		}

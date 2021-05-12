@@ -434,7 +434,7 @@ public class SnpSiftCmdAnnotate extends SnpSift {
 		System.err.println("\nCommand Options:");
 		System.err.println("\t-a                   : Annotate fields, even if the database has an empty value (annotates using '.' for empty).");
 		System.err.println("\t-exists <tag>        : Annotate whether the variant exists or not in the database (using 'tag' as an INFO field FLAG).");
-		System.err.println("\t-id                  : Only annotate ID field (do not add INFO field). Default: " + useId);
+		System.err.println("\t-id                  : Only annotate ID field. Default: " + useId);
 		System.err.println("\t-info <list>         : Annotate using a list of info fields (list is a comma separated list of fields). Default: ALL.");
 		System.err.println("\t-name str            : Prepend 'str' to all annotated INFO fields. Default: ''.");
 		System.err.println("\t-maxBlockSize <int>  : Use 'max block size' when creating index ('-sorted' command line option). Default: " + maxBlockSize);
