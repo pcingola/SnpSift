@@ -113,7 +113,7 @@ public class SnpSiftCmdDbNsfp extends SnpSift {
 			}
 
 			String infoKey = VcfEntry.vcfInfoKeySafe(DBNSFP_VCF_INFO_PREFIX + key);
-			vcfFile.getVcfHeader().addLine("##INFO=<ID=" + infoKey + ",Number=A,Type=" + type + ",Description=\"" + fieldsToAdd.get(key) + "\">");
+			vcfFile.getVcfHeader().addLine("##INFO=<ID=" + infoKey + ",Number=.,Type=" + type + ",Description=\"" + fieldsToAdd.get(key) + "\">");
 		}
 
 		return false;
