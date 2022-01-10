@@ -1,4 +1,4 @@
-package org.snpsift.testCases;
+package org.snpsift.testCases.unit;
 
 /**
  * Test cases for dbNSFP database annotations

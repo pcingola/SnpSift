@@ -12,6 +12,6 @@ import org.junit.platform.suite.api.SuiteDisplayName;
 
 @Suite
 @SuiteDisplayName("Unit test cases")
-@SelectPackages({"org.snpsift.testCases"})
+@SelectPackages({"org.snpsift.testCases.unit"})
 public class TestSuiteAll {
 }

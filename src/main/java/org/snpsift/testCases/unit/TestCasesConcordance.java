@@ -1,4 +1,4 @@
-package org.snpsift.testCases;
+package org.snpsift.testCases.unit;
 
 import org.junit.jupiter.api.Test;
 import org.snpeff.stats.CountByType;

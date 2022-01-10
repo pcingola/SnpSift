@@ -1,4 +1,4 @@
-package org.snpsift.testCases;
+package org.snpsift.testCases.unit;
 
 /**
  * Annotate test case using TABIX indexed files
