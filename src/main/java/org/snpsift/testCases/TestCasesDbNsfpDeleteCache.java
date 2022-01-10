@@ -2,14 +2,14 @@ package org.snpsift.testCases;
 
 /**
  * Test cases for dbNSFP database annotations
- * Note: This class deletes and re-builds 'data type cache' files 
- * 
+ * Note: This class deletes and re-builds 'data type cache' files
+ *
  * @author pcingola
  */
 public class TestCasesDbNsfpDeleteCache extends TestCasesDbNsfp {
 
-	public TestCasesDbNsfpDeleteCache() {
-		removeDataTypesCache = true;
-	}
+    public TestCasesDbNsfpDeleteCache() {
+        removeDataTypesCache = true;
+    }
 
 }
