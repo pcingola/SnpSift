@@ -824,7 +824,7 @@ public class TestCasesAnnotate {
         // Note: We don't care about annotation order in this case
         String expectedCaf = ".";
         String caf = ve.getInfo("CAF");
-        assertEquals("Expecting empty field", expectedCaf, caf);
+        assertEquals(expectedCaf, caf);
     }
 
     /**
@@ -850,7 +850,7 @@ public class TestCasesAnnotate {
         // Note: We don't care about annotation order in this case
         String expectedAfAfr = "6.60044e-03";
         String afAfr = ve.getInfo("AF_AFR");
-        assertEquals("Expecting different value", expectedAfAfr, afAfr);
+        assertEquals(expectedAfAfr, afAfr);
     }
 
     /**
@@ -877,7 +877,7 @@ public class TestCasesAnnotate {
         // Note: We don't care about annotation order in this case
         String expectedValue = "2";
         String value = ve.getInfo(fieldName);
-        assertEquals("Expecting different value", expectedValue, value);
+        assertEquals(expectedValue, value);
     }
 
 }
