@@ -4,6 +4,7 @@ import htsjdk.tribble.readers.TabixReader;
 import org.snpeff.fileIterator.LineFileIterator;
 import org.snpeff.interval.Chromosome;
 import org.snpeff.interval.Genome;
+import org.snpeff.interval.Marker;
 import org.snpeff.interval.Variant;
 import org.snpeff.util.Gpr;
 import org.snpeff.util.Log;
@@ -57,11 +58,18 @@ public class DbNsfp implements DbMarker<Variant, DbNsfpEntry> {
     protected Genome genome;
     protected HashMap<String, Integer> names2index; // Map column name to index
     protected TabixReader tabixReader;
-    protected List<DbNsfpEntry> latestResults;
+    protected List<DbNsfpEntry> latestResults; // Latest results when searching in the tabix file
+    protected Marker latestResultsInterval; // Latest interval queried in tabix file
 
     public DbNsfp(String fileName) {
         this.fileName = fileName;
         genome = new Genome();
+        latestResults = new LinkedList<>();
+
+        // Initialize with an invalid marker
+        Genome genome = new Genome("NULL_GENOME");
+        Chromosome chr = new Chromosome(genome, -1, -1, "NULL_CHROMOSOME");
+        latestResultsInterval = new Marker(chr, -1, -1);
     }
 
     @Override
@@ -432,48 +440,33 @@ public class DbNsfp implements DbMarker<Variant, DbNsfpEntry> {
         maxChrPosRefAltIdx = Math.max(maxChrPosRefAltIdx, altIdx);
     }
 
+    /**
+     * Query tabix file to get dbNsfp entries (or cached entries from latest results)
+     *
+     * @param variant: Variant to query in DnNSFP
+     * @return A list of result
+     */
     @Override
     public Collection<DbNsfpEntry> query(Variant variant) {
-        // Query and parse results
-        var chr = variant.getChromosomeName();
-        var start = variant.getStart();
-        var end = variant.getEnd() + 1;
+        LinkedList<DbNsfpEntry> results = new LinkedList<>();
 
-        System.out.println("!!!!!!! TODO: CHECK latestResults");
-
-        // TODO:
-        //  - Create `latestResultsInterval`
-        //  - Check against latestResultsInterval
-        //  - If included => Use `latestResults`
-        //  - Else query tabix file
-        //  -    Store latestResutls / latestResultsInterval
-
-//        // Do we have a cached result?
-//        String tiblocks = tabixIterator.toStringBlocks();
-//        if (tiblocks.equals(latestTabixIteratorBlocks)) {
-//            // Used cached entries
-//            LinkedList<DbNsfpEntry> results = new LinkedList<>();
-//
-//            for (DbNsfpEntry de : latestResults) {
-//                if (match(variant, de)) results.add(de);
-//                else if (variant.getEnd() < de.getStart()) break; // Past query end? No need to continue.
-//            }
-//
-//            return results;
-//        }
-
+        // Check if we've already retrieved these results last time
+        if (latestResultsInterval.includes(variant)) {
+            // Match: We can find the results in `latestResults`
+            for (DbNsfpEntry de : latestResults)
+                if (match(variant, de)) results.add(de);
+            return results;
+        }
 
         // Query tabix file
-        // FIXME: Check tabix indeces [start, end] intervals
-        System.out.printf("CHECK CHR, START, END: '%s' %d , %d", chr, start, end);
-        TabixReader.Iterator tabixIterator = tabixReader.query(chr, start, end);
-        if (tabixIterator == null) return null; // Any results?
+        TabixReader.Iterator tabixIterator = tabixReader.query(variant.getChromosomeName(), variant.getStart(), variant.getEnd() + 1);
+        latestResults = new LinkedList<>(); // Clear latest results
+        latestResultsInterval = variant; // Update latest results interval
+        if (tabixIterator == null) return null; // No results?
 
         //---
         // Read and parse all entries, select the ones the match query
         //---
-        latestResults = new LinkedList<>(); // Clear latest results
-        LinkedList<DbNsfpEntry> results = new LinkedList<>();
         int numLines = 0;
         String line;
         try {
@@ -483,7 +476,7 @@ public class DbNsfp implements DbMarker<Variant, DbNsfpEntry> {
                 if (debug) Log.debug("Query: Parse line " + line);
                 DbNsfpEntry de = new DbNsfpEntry(this, line);
 
-                // Add
+                // Add to results & latestResults
                 if (match(variant, de)) results.add(de);
                 latestResults.add(de);
                 numLines++;

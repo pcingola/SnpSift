@@ -11,6 +11,8 @@ import java.util.Map;
  * DbNSFP database entry:
  * Reference	https://sites.google.com/site/jpopgen/dbNSFP
  *
+ * Added lazy parsing of key/value pairs
+ *
  * @author lletourn
  */
 public class DbNsfpEntry extends Variant {
