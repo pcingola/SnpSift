@@ -10,7 +10,8 @@ import org.snpsift.SnpSiftCmdExtractFields;
 
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
  * Extract fields test cases
@@ -57,7 +58,7 @@ public class TestCasesExtractFields {
 
         int i = 0;
         for (String line : linesList) {
-            assertEquals("Result numnber " + i + " does not match (expression: '" + fieldExpression + "').", expected[i], line);
+            assertEquals(expected[i], line, "Result numnber " + i + " does not match (expression: '" + fieldExpression + "').");
             i++;
         }
     }
@@ -76,7 +77,7 @@ public class TestCasesExtractFields {
             annField = "ANN." + annField;
             VcfHeaderInfo vi = vcfHeader.getVcfHeaderInfo(annField);
             if (debug) System.out.println("\t" + annField + "\t" + vi);
-			assertNotNull(vi, "Cannot find INFO header for field '" + annField + "'");
+            assertNotNull(vi, "Cannot find INFO header for field '" + annField + "'");
         }
 
         // Make sure all map2num are in the INFO field
@@ -85,7 +86,7 @@ public class TestCasesExtractFields {
             effField = "EFF." + effField;
             VcfHeaderInfo vi = vcfHeader.getVcfHeaderInfo(effField);
             if (debug) System.out.println("\t" + effField + "\t" + vi);
-			assertNotNull(vi, "Cannot find INFO header for field '" + effField + "'");
+            assertNotNull(vi, "Cannot find INFO header for field '" + effField + "'");
         }
     }
 

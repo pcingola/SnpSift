@@ -25,7 +25,9 @@
           <root url="jar://$MODULE_DIR$/../SnpEff/target/SnpEff-5.1-jar-with-dependencies.jar!/" />
         </CLASSES>
         <JAVADOC />
-        <SOURCES />
+        <SOURCES>
+          <root url="file://$MODULE_DIR$/../SnpEff/src/main/java" />
+        </SOURCES>
       </library>
     </orderEntry>
     <orderEntry type="library" name="Maven: org.snpeff:SnpEff:5.1" level="project" />

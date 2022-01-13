@@ -45,18 +45,18 @@ public class DbNsfp implements DbMarker<Variant, DbNsfpEntry> {
 
     protected String fileName;
     protected boolean debug;
-    protected boolean multipleValues[] = null; // Does this column have multiple columns?
+    protected boolean[] multipleValues = null; // Does this column have multiple columns?
     protected boolean verbose;
     protected int chromosomeIdx; // Column number for chrsomosome informaiton
     protected int startIdx; // Column number for 'start position' informaiton
     protected int altIdx; // Column number of 'ALT' information
     protected int refIdx; // Column number of 'REF' information
-    protected String fieldNames[] = null; // Field names in same order as file columns
-    protected VcfInfoType types[] = null; // VCF data types
+    protected int maxChrPosRefAltIdx; // Max of the column indexes to parse chr, pos, ref, alt
+    protected String[] fieldNames = null; // Field names in same order as file columns
+    protected VcfInfoType[] types = null; // VCF data types
     protected Genome genome;
     protected HashMap<String, Integer> names2index; // Map column name to index
     protected TabixReader tabixReader;
-    protected String latestTabixIteratorBlocks = "";
     protected List<DbNsfpEntry> latestResults;
 
     public DbNsfp(String fileName) {
@@ -101,6 +101,10 @@ public class DbNsfp implements DbMarker<Variant, DbNsfpEntry> {
 
     public int getAltIdx() {
         return altIdx;
+    }
+
+    public int getChrPosRefAltIdx() {
+        return maxChrPosRefAltIdx;
     }
 
     /**
@@ -161,7 +165,7 @@ public class DbNsfp implements DbMarker<Variant, DbNsfpEntry> {
         // Do we have multiple valued field? Split it
         //---
         if (isMultipleValues(value)) {
-            String values[] = DbNsfpEntry.splitValuesField(value);
+            String[] values = DbNsfpEntry.splitValuesField(value);
 
             VcfInfoType type = null;
             for (String val : values) {
@@ -240,7 +244,7 @@ public class DbNsfp implements DbMarker<Variant, DbNsfpEntry> {
                     throw new RuntimeException("Cannot parse file '" + fileName + "'. Missing header?");
 
                 boolean done = true;
-                String values[] = line.split(COLUMN_SEPARATOR, -1);
+                String[] values = line.split(COLUMN_SEPARATOR, -1);
 
                 // Process each field
                 for (int i = 0; i < fieldNames.length; i++) {
@@ -301,7 +305,6 @@ public class DbNsfp implements DbMarker<Variant, DbNsfpEntry> {
             // Open tabix reader
             if (verbose) Log.info("Opening database file and loading index");
             tabixReader = new TabixReader(fileName);
-            // tabixReader.setShowHeader(false); // Don't show header line in query results
         } catch (IOException e) {
             throw new RuntimeException("Error opening tabix file '" + fileName + "'", e);
         }
@@ -313,8 +316,8 @@ public class DbNsfp implements DbMarker<Variant, DbNsfpEntry> {
      * Do we have multiple values separated by 'subfieldSeparator'?
      */
     boolean isMultipleValues(String value) {
-        return value.indexOf(SUBFIELD_SEPARATOR) >= 0 //
-                || value.indexOf(SUBFIELD_SEPARATOR_2) >= 0;
+        return value.contains(SUBFIELD_SEPARATOR) //
+                || value.contains(SUBFIELD_SEPARATOR_2);
     }
 
     /**
@@ -340,7 +343,7 @@ public class DbNsfp implements DbMarker<Variant, DbNsfpEntry> {
         }
 
         // Read file
-        String lines[] = Gpr.readFile(cacheFileName).split("\n");
+        String[] lines = Gpr.readFile(cacheFileName).split("\n");
 
         // Initialize
         fieldNames = new String[lines.length];
@@ -349,7 +352,7 @@ public class DbNsfp implements DbMarker<Variant, DbNsfpEntry> {
 
         // Parse lines
         for (int i = 0; i < lines.length; i++) {
-            String fields[] = lines[i].split("\t");
+            String[] fields = lines[i].split("\t");
 
             if (fields.length != 3)
                 throw new RuntimeException("Error parsing line " + (i + 1) + " from file '" + fileName + "':\n" + lines[i]);
@@ -360,7 +363,7 @@ public class DbNsfp implements DbMarker<Variant, DbNsfpEntry> {
         }
 
         // Names to index mapping
-        names2index = new HashMap<String, Integer>();
+        names2index = new HashMap<>();
         for (int i = 0; i < fieldNames.length; i++) {
             String fieldName = fieldNames[i].trim();
             fieldNames[i] = fieldName;
@@ -368,6 +371,7 @@ public class DbNsfp implements DbMarker<Variant, DbNsfpEntry> {
             updateIndexes(fieldName, i);
         }
 
+        updateChrPosRefAltIndex();
         return true;
     }
 
@@ -405,7 +409,7 @@ public class DbNsfp implements DbMarker<Variant, DbNsfpEntry> {
         fieldNames = line.split(COLUMN_SEPARATOR, -1);
         types = new VcfInfoType[fieldNames.length];
         multipleValues = new boolean[fieldNames.length];
-        names2index = new HashMap<String, Integer>();
+        names2index = new HashMap<>();
         for (int idx = 0; idx < fieldNames.length; idx++) {
             String fieldName = fieldNames[idx].trim();
             fieldNames[idx] = fieldName;
@@ -417,16 +421,32 @@ public class DbNsfp implements DbMarker<Variant, DbNsfpEntry> {
         if (chromosomeIdx == -1) throw new RuntimeException("Missing '" + COLUMN_CHR_NAME + "' columns in dbNSFP file");
         if (startIdx == -1) throw new RuntimeException("Missing '" + COLUMN_POS_NAME_v2 + "' columns in dbNSFP file");
         if (altIdx == -1) throw new RuntimeException("Missing '" + ALT_NAME + "' columns in dbNSFP file");
+        updateChrPosRefAltIndex();
+    }
+
+    void updateChrPosRefAltIndex() {
+        maxChrPosRefAltIdx = -1;
+        maxChrPosRefAltIdx = Math.max(maxChrPosRefAltIdx, chromosomeIdx);
+        maxChrPosRefAltIdx = Math.max(maxChrPosRefAltIdx, startIdx);
+        maxChrPosRefAltIdx = Math.max(maxChrPosRefAltIdx, refIdx);
+        maxChrPosRefAltIdx = Math.max(maxChrPosRefAltIdx, altIdx);
     }
 
     @Override
     public Collection<DbNsfpEntry> query(Variant variant) {
         // Query and parse results
-        // TabixIterator tabixIterator = tabixReader.query(variant);
-        TabixReader.Iterator tabixIterator = tabixReader.query(variant.getChromosomeName(), variant.getStart(), variant.getEnd());
+        var chr = variant.getChromosomeName();
+        var start = variant.getStart();
+        var end = variant.getEnd() + 1;
 
-        // Any results?
-        if (tabixIterator == null) return null;
+        System.out.println("!!!!!!! TODO: CHECK latestResults");
+
+        // TODO:
+        //  - Create `latestResultsInterval`
+        //  - Check against latestResultsInterval
+        //  - If included => Use `latestResults`
+        //  - Else query tabix file
+        //  -    Store latestResutls / latestResultsInterval
 
 //        // Do we have a cached result?
 //        String tiblocks = tabixIterator.toStringBlocks();
@@ -442,13 +462,18 @@ public class DbNsfp implements DbMarker<Variant, DbNsfpEntry> {
 //            return results;
 //        }
 
+
+        // Query tabix file
+        // FIXME: Check tabix indeces [start, end] intervals
+        System.out.printf("CHECK CHR, START, END: '%s' %d , %d", chr, start, end);
+        TabixReader.Iterator tabixIterator = tabixReader.query(chr, start, end);
+        if (tabixIterator == null) return null; // Any results?
+
         //---
-        // Not in cache.
         // Read and parse all entries, select the ones the match query
         //---
-        latestResults = new LinkedList<>();
+        latestResults = new LinkedList<>(); // Clear latest results
         LinkedList<DbNsfpEntry> results = new LinkedList<>();
-        // latestTabixIteratorBlocks = tiblocks;
         int numLines = 0;
         String line;
         try {
@@ -480,7 +505,7 @@ public class DbNsfp implements DbMarker<Variant, DbNsfpEntry> {
         StringBuilder sb = new StringBuilder();
 
         for (int i = 0; i < fieldNames.length; i++)
-            sb.append(fieldNames[i] + "\t" + types[i] + "\t" + multipleValues[i] + "\n");
+            sb.append(fieldNames[i]).append("\t").append(types[i]).append("\t").append(multipleValues[i]).append("\n");
 
         Gpr.toFile(cacheFileName, sb);
     }
