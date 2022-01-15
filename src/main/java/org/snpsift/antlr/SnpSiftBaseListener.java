@@ -1,4 +1,4 @@
-// Generated from SnpSift.g by ANTLR 4.5.1
+// Generated from SnpSift.g by ANTLR 4.9.3
 package org.snpsift.antlr;
 
 import org.antlr.v4.runtime.ParserRuleContext;
