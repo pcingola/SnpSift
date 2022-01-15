@@ -59,19 +59,6 @@ public abstract class AnnotateVcfDb {
             // Skip huge structural variants
             if (var.isStructuralHuge()) continue;
 
-            // Query database
-            System.err.printf("VCF Entry: [%d, %d]\tvar: [%d, %d]\n", vcfEntry.getStart(), vcfEntry.getEnd(), var.getStart(), var.getEnd());
-//			!!!!!!!!!!!!!
-            // TODO:
-            //     veqr = query(vcfEntry.start, vcfEntry.end)
-            //     foreach veqr: query_results
-            //        foreach variant: veqr
-            //        	foreach variant: vcfEntry
-            //			  match? => Annotate
-            // Special cases speedup:
-            //    0 results
-            //    1 result, 1 variants in vcfEntry
-
             Collection<VariantVcfEntry> results = query(var);
 
             // Make sure we add all found VcfEntries
@@ -111,65 +98,6 @@ public abstract class AnnotateVcfDb {
 
         return annotated;
     }
-	/**
-	 * Annotate a VCF entry
-	 */
-	public boolean annotateOri(VcfEntry vcfEntry) throws IOException {
-		boolean annotated = false;
-		Set<String> idSet = new HashSet<>();
-		Map<String, String> infos = new HashMap<>();
-		boolean exists = false;
-
-		//---
-		// Find all matching database entries
-		// Note that QueryResult.variantVcfEntry can be 'null'
-		//---
-		List<QueryResult> queryResults = new LinkedList<>();
-		Set<VcfEntry> uniqueVcfEntries = new HashSet<>();
-		for (Variant var : vcfEntry.variants()) {
-			// Skip huge structural variants
-			if (var.isStructuralHuge()) continue;
-
-			// Query database
-			Collection<VariantVcfEntry> results = query(var);
-
-			// Make sure we add all found VcfEntries
-			for (VariantVcfEntry dbEntry : results)
-				uniqueVcfEntries.add(dbEntry.getVcfEntry());
-
-			// Add query and result
-			QueryResult qr = new QueryResult(var, results);
-			queryResults.add(qr);
-			if (debug) Log.debug("Adding QueryResult: " + qr);
-		}
-
-		// Try to find INFO fields that we might have not seen before
-		if (useAllInfoFields) {
-			for (VcfEntry ve : uniqueVcfEntries)
-				discoverInfoFields(ve);
-		}
-
-		// Add INFO fields using 'REF' data
-		findDbInfoRef(infos, uniqueVcfEntries);
-
-		//---
-		// Annotate all fields
-		//---
-		for (QueryResult qr : queryResults) {
-			if (debug) Log.debug("Processing QueryResult: " + qr);
-
-			if (useId) findDbId(idSet, qr);
-			if (existsInfoField != null) exists |= findDbExists(qr);
-			if (useInfoFields) findDbInfo(infos, qr);
-		}
-
-		// Annotate input vcfEntry
-		annotated |= annotateIds(vcfEntry, idSet);
-		annotated |= annotateInfo(vcfEntry, infos);
-		if (exists) annotated |= annotateExists(vcfEntry);
-
-		return annotated;
-	}
 
     /**
      * Add 'exists' flag to INFO fields

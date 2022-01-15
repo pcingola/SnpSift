@@ -103,10 +103,9 @@ public class DbVcfTabix extends DbVcf {
             // remove characters from the end of `prefix` until we get "CHR_"
             foundNewPrepend:
             {
-                for (int i = prefix.length(); i > 0; i++) {
+                for (int i = prefix.length() - 1; i > 0; i--) {
                     if (chr.startsWith(prefix.substring(0, i))) { // Does it start with a substring of the prepend?
                         prefix = prefix.substring(0, i); // Update new prepend
-                        System.out.printf("PREPEND: '%s'\n", prefix);
                         break foundNewPrepend;
                     }
                 }
@@ -128,7 +127,6 @@ public class DbVcfTabix extends DbVcf {
             // Open tabix reader
             tabixReader = new TabixReader(fileName);
             chrPrepend = findChrPrefix(tabixReader.getChromosomes());
-            System.out.printf("CHRS: %s\nPREFIX: '%s'\n", tabixReader.getChromosomes(), chrPrepend);
         } catch (IOException e) {
             throw new RuntimeException("Error opening tabix file '" + fileName + "'", e);
         }
@@ -157,7 +155,6 @@ public class DbVcfTabix extends DbVcf {
         var chr = chrName(variant);
         var start = variant.getStart() - 1; // Why '-1'? We want to capture deletions that happen right before the start base
         var end = variant.getEnd() + 1; // Why '+1'? Tabix query interval does not include the 'end' base
-        System.out.printf("QUERY: '%s', %d, %d\n", chr, start, end);
         TabixReader.Iterator ti = tabixReader.query(chr, start, end);
 
         // Any results?
@@ -174,7 +171,6 @@ public class DbVcfTabix extends DbVcf {
             }
         }
 
-        System.err.printf("variant = %d, %d\t%s\tresults: %d\n", variant.getStart(), variant.getEnd(), variant, results.size());
         return results;
     }
 
