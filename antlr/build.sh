@@ -1,22 +1,24 @@
 #!/bin/sh -e
 
 grammar="SnpSift.g"
-package="ca.mcgill.mcb.pcingola.snpSift.antlr"
+package="org.snpsift.antlr"
 init="main"
 testFile="../test/z.bds"
+package_dir=$( echo "$package" | tr '.' '/')
+dst="../src/main/java/$package_dir/"
 
 # Programs
-jar=$HOME/tools/antlr/antlr-*-complete.jar
+jar="antlr-4.9.3-complete.jar"
 antlr4="java -Xmx1g -cp $jar org.antlr.v4.Tool"
 grun="java -Xmx1g -cp .:$jar org.antlr.v4.runtime.misc.TestRig"
 
 # Delete old files
 echo Deleting old files
-touch tmp.java tmp.class
-rm *.class *.java
+rm -vf *.class *.java
 
 echo Compiling
-$antlr4 -visitor -package $package $grammar
+# $antlr4 -visitor -package $package $grammar
+$antlr4 -package "$package" $grammar
 
-echo Copying files
-cp -vf *.java ../src/main/java/ca/mcgill/mcb/pcingola/snpSift/antlr/
+echo Copying files to $dst
+cp -vf *.java "$dst"

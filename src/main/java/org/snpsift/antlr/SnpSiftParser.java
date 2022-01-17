@@ -1,4 +1,4 @@
-// Generated from SnpSift.g by ANTLR 4.5.1
+// Generated from SnpSift.g by ANTLR 4.9.3
 package org.snpsift.antlr;
 import org.antlr.v4.runtime.atn.*;
 import org.antlr.v4.runtime.dfa.DFA;
@@ -11,7 +11,7 @@ import java.util.ArrayList;
 
 @SuppressWarnings({"all", "warnings", "unchecked", "unused", "cast"})
 public class SnpSiftParser extends Parser {
-	static { RuntimeMetaData.checkVersion("4.5.1", RuntimeMetaData.VERSION); }
+	static { RuntimeMetaData.checkVersion("4.9.3", RuntimeMetaData.VERSION); }
 
 	protected static final DFA[] _decisionToDFA;
 	protected static final PredictionContextCache _sharedContextCache =
@@ -26,23 +26,32 @@ public class SnpSiftParser extends Parser {
 		ID=43;
 	public static final int
 		RULE_compilationUnit = 0, RULE_expression = 1;
-	public static final String[] ruleNames = {
-		"compilationUnit", "expression"
-	};
+	private static String[] makeRuleNames() {
+		return new String[] {
+			"compilationUnit", "expression"
+		};
+	}
+	public static final String[] ruleNames = makeRuleNames();
 
-	private static final String[] _LITERAL_NAMES = {
-		null, "'ANY'", "'*'", "'ALL'", "'?'", "'('", "','", "')'", "'['", "']'", 
-		"'].'", "'/'", "'%'", "'+'", "'-'", "'='", "'=='", "'!='", "'<'", "'<='", 
-		"'>'", "'>='", "'=~'", "'!~'", "'has'", "'!'", "'&'", "'&&'", "'|'", "'||'", 
-		"'^'", "'exists'", "'na'", "'in'", "'SET'", "':'"
-	};
-	private static final String[] _SYMBOLIC_NAMES = {
-		null, null, null, null, null, null, null, null, null, null, null, null, 
-		null, null, null, null, null, null, null, null, null, null, null, null, 
-		null, null, null, null, null, null, null, null, null, null, null, null, 
-		"WS", "COMMENT_SL", "COMMENT_HASH", "BOOL_LITERAL", "INT_LITERAL", "FLOAT_LITERAL", 
-		"STRING_LITERAL", "ID"
-	};
+	private static String[] makeLiteralNames() {
+		return new String[] {
+			null, "'ANY'", "'*'", "'ALL'", "'?'", "'('", "','", "')'", "'['", "']'", 
+			"'].'", "'/'", "'%'", "'+'", "'-'", "'='", "'=='", "'!='", "'<'", "'<='", 
+			"'>'", "'>='", "'=~'", "'!~'", "'has'", "'!'", "'&'", "'&&'", "'|'", 
+			"'||'", "'^'", "'exists'", "'na'", "'in'", "'SET'", "':'"
+		};
+	}
+	private static final String[] _LITERAL_NAMES = makeLiteralNames();
+	private static String[] makeSymbolicNames() {
+		return new String[] {
+			null, null, null, null, null, null, null, null, null, null, null, null, 
+			null, null, null, null, null, null, null, null, null, null, null, null, 
+			null, null, null, null, null, null, null, null, null, null, null, null, 
+			"WS", "COMMENT_SL", "COMMENT_HASH", "BOOL_LITERAL", "INT_LITERAL", "FLOAT_LITERAL", 
+			"STRING_LITERAL", "ID"
+		};
+	}
+	private static final String[] _SYMBOLIC_NAMES = makeSymbolicNames();
 	public static final Vocabulary VOCABULARY = new VocabularyImpl(_LITERAL_NAMES, _SYMBOLIC_NAMES);
 
 	/**
@@ -92,6 +101,7 @@ public class SnpSiftParser extends Parser {
 		super(input);
 		_interp = new ParserATNSimulator(this,_ATN,_decisionToDFA,_sharedContextCache);
 	}
+
 	public static class CompilationUnitContext extends ParserRuleContext {
 		public ExpressionContext expression() {
 			return getRuleContext(ExpressionContext.class,0);
@@ -108,11 +118,6 @@ public class SnpSiftParser extends Parser {
 		@Override
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof SnpSiftListener ) ((SnpSiftListener)listener).exitCompilationUnit(this);
-		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof SnpSiftVisitor ) return ((SnpSiftVisitor<? extends T>)visitor).visitCompilationUnit(this);
-			else return visitor.visitChildren(this);
 		}
 	}
 
@@ -166,11 +171,6 @@ public class SnpSiftParser extends Parser {
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof SnpSiftListener ) ((SnpSiftListener)listener).exitExpressionSet(this);
 		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof SnpSiftVisitor ) return ((SnpSiftVisitor<? extends T>)visitor).visitExpressionSet(this);
-			else return visitor.visitChildren(this);
-		}
 	}
 	public static class LiteralStringContext extends ExpressionContext {
 		public TerminalNode STRING_LITERAL() { return getToken(SnpSiftParser.STRING_LITERAL, 0); }
@@ -182,11 +182,6 @@ public class SnpSiftParser extends Parser {
 		@Override
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof SnpSiftListener ) ((SnpSiftListener)listener).exitLiteralString(this);
-		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof SnpSiftVisitor ) return ((SnpSiftVisitor<? extends T>)visitor).visitLiteralString(this);
-			else return visitor.visitChildren(this);
 		}
 	}
 	public static class ExpressionUnaryContext extends ExpressionContext {
@@ -202,11 +197,6 @@ public class SnpSiftParser extends Parser {
 		@Override
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof SnpSiftListener ) ((SnpSiftListener)listener).exitExpressionUnary(this);
-		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof SnpSiftVisitor ) return ((SnpSiftVisitor<? extends T>)visitor).visitExpressionUnary(this);
-			else return visitor.visitChildren(this);
 		}
 	}
 	public static class ExpressionCompContext extends ExpressionContext {
@@ -226,11 +216,6 @@ public class SnpSiftParser extends Parser {
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof SnpSiftListener ) ((SnpSiftListener)listener).exitExpressionComp(this);
 		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof SnpSiftVisitor ) return ((SnpSiftVisitor<? extends T>)visitor).visitExpressionComp(this);
-			else return visitor.visitChildren(this);
-		}
 	}
 	public static class LiteralBoolContext extends ExpressionContext {
 		public TerminalNode BOOL_LITERAL() { return getToken(SnpSiftParser.BOOL_LITERAL, 0); }
@@ -242,11 +227,6 @@ public class SnpSiftParser extends Parser {
 		@Override
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof SnpSiftListener ) ((SnpSiftListener)listener).exitLiteralBool(this);
-		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof SnpSiftVisitor ) return ((SnpSiftVisitor<? extends T>)visitor).visitLiteralBool(this);
-			else return visitor.visitChildren(this);
 		}
 	}
 	public static class VarReferenceListContext extends ExpressionContext {
@@ -265,11 +245,6 @@ public class SnpSiftParser extends Parser {
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof SnpSiftListener ) ((SnpSiftListener)listener).exitVarReferenceList(this);
 		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof SnpSiftVisitor ) return ((SnpSiftVisitor<? extends T>)visitor).visitVarReferenceList(this);
-			else return visitor.visitChildren(this);
-		}
 	}
 	public static class LiteralFloatContext extends ExpressionContext {
 		public TerminalNode FLOAT_LITERAL() { return getToken(SnpSiftParser.FLOAT_LITERAL, 0); }
@@ -281,11 +256,6 @@ public class SnpSiftParser extends Parser {
 		@Override
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof SnpSiftListener ) ((SnpSiftListener)listener).exitLiteralFloat(this);
-		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof SnpSiftVisitor ) return ((SnpSiftVisitor<? extends T>)visitor).visitLiteralFloat(this);
-			else return visitor.visitChildren(this);
 		}
 	}
 	public static class LiteralIndexContext extends ExpressionContext {
@@ -299,11 +269,6 @@ public class SnpSiftParser extends Parser {
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof SnpSiftListener ) ((SnpSiftListener)listener).exitLiteralIndex(this);
 		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof SnpSiftVisitor ) return ((SnpSiftVisitor<? extends T>)visitor).visitLiteralIndex(this);
-			else return visitor.visitChildren(this);
-		}
 	}
 	public static class VarReferenceContext extends ExpressionContext {
 		public TerminalNode ID() { return getToken(SnpSiftParser.ID, 0); }
@@ -315,11 +280,6 @@ public class SnpSiftParser extends Parser {
 		@Override
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof SnpSiftListener ) ((SnpSiftListener)listener).exitVarReference(this);
-		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof SnpSiftVisitor ) return ((SnpSiftVisitor<? extends T>)visitor).visitVarReference(this);
-			else return visitor.visitChildren(this);
 		}
 	}
 	public static class VarReferenceListSubContext extends ExpressionContext {
@@ -337,11 +297,6 @@ public class SnpSiftParser extends Parser {
 		@Override
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof SnpSiftListener ) ((SnpSiftListener)listener).exitVarReferenceListSub(this);
-		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof SnpSiftVisitor ) return ((SnpSiftVisitor<? extends T>)visitor).visitVarReferenceListSub(this);
-			else return visitor.visitChildren(this);
 		}
 	}
 	public static class ExpressionTimesContext extends ExpressionContext {
@@ -361,11 +316,6 @@ public class SnpSiftParser extends Parser {
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof SnpSiftListener ) ((SnpSiftListener)listener).exitExpressionTimes(this);
 		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof SnpSiftVisitor ) return ((SnpSiftVisitor<? extends T>)visitor).visitExpressionTimes(this);
-			else return visitor.visitChildren(this);
-		}
 	}
 	public static class ExpressionExistsContext extends ExpressionContext {
 		public Token op;
@@ -380,11 +330,6 @@ public class SnpSiftParser extends Parser {
 		@Override
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof SnpSiftListener ) ((SnpSiftListener)listener).exitExpressionExists(this);
-		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof SnpSiftVisitor ) return ((SnpSiftVisitor<? extends T>)visitor).visitExpressionExists(this);
-			else return visitor.visitChildren(this);
 		}
 	}
 	public static class ExpressionPlusContext extends ExpressionContext {
@@ -404,11 +349,6 @@ public class SnpSiftParser extends Parser {
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof SnpSiftListener ) ((SnpSiftListener)listener).exitExpressionPlus(this);
 		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof SnpSiftVisitor ) return ((SnpSiftVisitor<? extends T>)visitor).visitExpressionPlus(this);
-			else return visitor.visitChildren(this);
-		}
 	}
 	public static class ExpressionLogicContext extends ExpressionContext {
 		public Token op;
@@ -426,11 +366,6 @@ public class SnpSiftParser extends Parser {
 		@Override
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof SnpSiftListener ) ((SnpSiftListener)listener).exitExpressionLogic(this);
-		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof SnpSiftVisitor ) return ((SnpSiftVisitor<? extends T>)visitor).visitExpressionLogic(this);
-			else return visitor.visitChildren(this);
 		}
 	}
 	public static class FunctionCallContext extends ExpressionContext {
@@ -450,11 +385,6 @@ public class SnpSiftParser extends Parser {
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof SnpSiftListener ) ((SnpSiftListener)listener).exitFunctionCall(this);
 		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof SnpSiftVisitor ) return ((SnpSiftVisitor<? extends T>)visitor).visitFunctionCall(this);
-			else return visitor.visitChildren(this);
-		}
 	}
 	public static class ExpressionParenContext extends ExpressionContext {
 		public ExpressionContext expression() {
@@ -468,11 +398,6 @@ public class SnpSiftParser extends Parser {
 		@Override
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof SnpSiftListener ) ((SnpSiftListener)listener).exitExpressionParen(this);
-		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof SnpSiftVisitor ) return ((SnpSiftVisitor<? extends T>)visitor).visitExpressionParen(this);
-			else return visitor.visitChildren(this);
 		}
 	}
 	public static class ExpressionCondContext extends ExpressionContext {
@@ -491,11 +416,6 @@ public class SnpSiftParser extends Parser {
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof SnpSiftListener ) ((SnpSiftListener)listener).exitExpressionCond(this);
 		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof SnpSiftVisitor ) return ((SnpSiftVisitor<? extends T>)visitor).visitExpressionCond(this);
-			else return visitor.visitChildren(this);
-		}
 	}
 	public static class LiteralIntContext extends ExpressionContext {
 		public TerminalNode INT_LITERAL() { return getToken(SnpSiftParser.INT_LITERAL, 0); }
@@ -507,11 +427,6 @@ public class SnpSiftParser extends Parser {
 		@Override
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof SnpSiftListener ) ((SnpSiftListener)listener).exitLiteralInt(this);
-		}
-		@Override
-		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof SnpSiftVisitor ) return ((SnpSiftVisitor<? extends T>)visitor).visitLiteralInt(this);
-			else return visitor.visitChildren(this);
 		}
 	}
 
@@ -532,138 +447,149 @@ public class SnpSiftParser extends Parser {
 			enterOuterAlt(_localctx, 1);
 			{
 			setState(35);
+			_errHandler.sync(this);
 			switch ( getInterpreter().adaptivePredict(_input,2,_ctx) ) {
 			case 1:
-				{
-				_localctx = new ExpressionUnaryContext(_localctx);
-				_ctx = _localctx;
-				_prevctx = _localctx;
-
-				setState(8);
-				((ExpressionUnaryContext)_localctx).op = _input.LT(1);
-				_la = _input.LA(1);
-				if ( !((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << T__12) | (1L << T__13) | (1L << T__24))) != 0)) ) {
-					((ExpressionUnaryContext)_localctx).op = (Token)_errHandler.recoverInline(this);
-				} else {
-					consume();
-				}
-				setState(9);
-				expression(6);
-				}
-				break;
-			case 2:
-				{
-				_localctx = new ExpressionExistsContext(_localctx);
-				_ctx = _localctx;
-				_prevctx = _localctx;
-				setState(10);
-				((ExpressionExistsContext)_localctx).op = _input.LT(1);
-				_la = _input.LA(1);
-				if ( !(_la==T__30 || _la==T__31) ) {
-					((ExpressionExistsContext)_localctx).op = (Token)_errHandler.recoverInline(this);
-				} else {
-					consume();
-				}
-				setState(11);
-				expression(4);
-				}
-				break;
-			case 3:
 				{
 				_localctx = new LiteralBoolContext(_localctx);
 				_ctx = _localctx;
 				_prevctx = _localctx;
-				setState(12);
+
+				setState(8);
 				match(BOOL_LITERAL);
 				}
 				break;
-			case 4:
+			case 2:
 				{
 				_localctx = new LiteralIntContext(_localctx);
 				_ctx = _localctx;
 				_prevctx = _localctx;
-				setState(13);
+				setState(9);
 				match(INT_LITERAL);
 				}
 				break;
-			case 5:
+			case 3:
 				{
 				_localctx = new LiteralFloatContext(_localctx);
 				_ctx = _localctx;
 				_prevctx = _localctx;
-				setState(14);
+				setState(10);
 				match(FLOAT_LITERAL);
 				}
 				break;
-			case 6:
+			case 4:
 				{
 				_localctx = new LiteralStringContext(_localctx);
 				_ctx = _localctx;
 				_prevctx = _localctx;
-				setState(15);
+				setState(11);
 				match(STRING_LITERAL);
 				}
 				break;
-			case 7:
+			case 5:
 				{
 				_localctx = new LiteralIndexContext(_localctx);
 				_ctx = _localctx;
 				_prevctx = _localctx;
-				setState(16);
+				setState(12);
 				((LiteralIndexContext)_localctx).idx = _input.LT(1);
 				_la = _input.LA(1);
 				if ( !((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << T__0) | (1L << T__1) | (1L << T__2) | (1L << T__3))) != 0)) ) {
 					((LiteralIndexContext)_localctx).idx = (Token)_errHandler.recoverInline(this);
-				} else {
+				}
+				else {
+					if ( _input.LA(1)==Token.EOF ) matchedEOF = true;
+					_errHandler.reportMatch(this);
 					consume();
 				}
 				}
 				break;
-			case 8:
+			case 6:
 				{
 				_localctx = new FunctionCallContext(_localctx);
 				_ctx = _localctx;
 				_prevctx = _localctx;
-				setState(17);
+				setState(13);
 				match(ID);
-				setState(18);
+				setState(14);
 				match(T__4);
-				setState(27);
+				setState(23);
+				_errHandler.sync(this);
 				_la = _input.LA(1);
 				if ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << T__0) | (1L << T__1) | (1L << T__2) | (1L << T__3) | (1L << T__4) | (1L << T__12) | (1L << T__13) | (1L << T__24) | (1L << T__30) | (1L << T__31) | (1L << BOOL_LITERAL) | (1L << INT_LITERAL) | (1L << FLOAT_LITERAL) | (1L << STRING_LITERAL) | (1L << ID))) != 0)) {
 					{
-					setState(19);
+					setState(15);
 					expression(0);
-					setState(24);
+					setState(20);
 					_errHandler.sync(this);
 					_la = _input.LA(1);
 					while (_la==T__5) {
 						{
 						{
-						setState(20);
+						setState(16);
 						match(T__5);
-						setState(21);
+						setState(17);
 						expression(0);
 						}
 						}
-						setState(26);
+						setState(22);
 						_errHandler.sync(this);
 						_la = _input.LA(1);
 					}
 					}
 				}
 
-				setState(29);
+				setState(25);
 				match(T__6);
 				}
 				break;
-			case 9:
+			case 7:
 				{
 				_localctx = new VarReferenceContext(_localctx);
 				_ctx = _localctx;
 				_prevctx = _localctx;
-				setState(30);
+				setState(26);
 				match(ID);
+				}
+				break;
+			case 8:
+				{
+				_localctx = new ExpressionUnaryContext(_localctx);
+				_ctx = _localctx;
+				_prevctx = _localctx;
+				setState(27);
+				((ExpressionUnaryContext)_localctx).op = _input.LT(1);
+				_la = _input.LA(1);
+				if ( !((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << T__12) | (1L << T__13) | (1L << T__24))) != 0)) ) {
+					((ExpressionUnaryContext)_localctx).op = (Token)_errHandler.recoverInline(this);
+				}
+				else {
+					if ( _input.LA(1)==Token.EOF ) matchedEOF = true;
+					_errHandler.reportMatch(this);
+					consume();
+				}
+				setState(28);
+				expression(6);
+				}
+				break;
+			case 9:
+				{
+				_localctx = new ExpressionExistsContext(_localctx);
+				_ctx = _localctx;
+				_prevctx = _localctx;
+				setState(29);
+				((ExpressionExistsContext)_localctx).op = _input.LT(1);
+				_la = _input.LA(1);
+				if ( !(_la==T__30 || _la==T__31) ) {
+					((ExpressionExistsContext)_localctx).op = (Token)_errHandler.recoverInline(this);
+				}
+				else {
+					if ( _input.LA(1)==Token.EOF ) matchedEOF = true;
+					_errHandler.reportMatch(this);
+					consume();
+				}
+				setState(30);
+				expression(4);
 				}
 				break;
 			case 10:
@@ -690,6 +616,7 @@ public class SnpSiftParser extends Parser {
 					_prevctx = _localctx;
 					{
 					setState(78);
+					_errHandler.sync(this);
 					switch ( getInterpreter().adaptivePredict(_input,3,_ctx) ) {
 					case 1:
 						{
@@ -719,7 +646,10 @@ public class SnpSiftParser extends Parser {
 						_la = _input.LA(1);
 						if ( !((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << T__0) | (1L << T__1) | (1L << T__2) | (1L << T__3))) != 0)) ) {
 						_errHandler.recoverInline(this);
-						} else {
+						}
+						else {
+							if ( _input.LA(1)==Token.EOF ) matchedEOF = true;
+							_errHandler.reportMatch(this);
 							consume();
 						}
 						setState(46);
@@ -739,7 +669,10 @@ public class SnpSiftParser extends Parser {
 						_la = _input.LA(1);
 						if ( !((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << T__1) | (1L << T__10) | (1L << T__11))) != 0)) ) {
 							((ExpressionTimesContext)_localctx).op = (Token)_errHandler.recoverInline(this);
-						} else {
+						}
+						else {
+							if ( _input.LA(1)==Token.EOF ) matchedEOF = true;
+							_errHandler.reportMatch(this);
 							consume();
 						}
 						setState(50);
@@ -757,7 +690,10 @@ public class SnpSiftParser extends Parser {
 						_la = _input.LA(1);
 						if ( !(_la==T__12 || _la==T__13) ) {
 							((ExpressionPlusContext)_localctx).op = (Token)_errHandler.recoverInline(this);
-						} else {
+						}
+						else {
+							if ( _input.LA(1)==Token.EOF ) matchedEOF = true;
+							_errHandler.reportMatch(this);
 							consume();
 						}
 						setState(53);
@@ -775,7 +711,10 @@ public class SnpSiftParser extends Parser {
 						_la = _input.LA(1);
 						if ( !((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << T__14) | (1L << T__15) | (1L << T__16) | (1L << T__17) | (1L << T__18) | (1L << T__19) | (1L << T__20) | (1L << T__21) | (1L << T__22) | (1L << T__23))) != 0)) ) {
 							((ExpressionCompContext)_localctx).op = (Token)_errHandler.recoverInline(this);
-						} else {
+						}
+						else {
+							if ( _input.LA(1)==Token.EOF ) matchedEOF = true;
+							_errHandler.reportMatch(this);
 							consume();
 						}
 						setState(56);
@@ -793,7 +732,10 @@ public class SnpSiftParser extends Parser {
 						_la = _input.LA(1);
 						if ( !((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << T__25) | (1L << T__26) | (1L << T__27) | (1L << T__28) | (1L << T__29))) != 0)) ) {
 							((ExpressionLogicContext)_localctx).op = (Token)_errHandler.recoverInline(this);
-						} else {
+						}
+						else {
+							if ( _input.LA(1)==Token.EOF ) matchedEOF = true;
+							_errHandler.reportMatch(this);
 							consume();
 						}
 						setState(59);
@@ -900,30 +842,30 @@ public class SnpSiftParser extends Parser {
 	}
 
 	public static final String _serializedATN =
-		"\3\u0430\ud6d1\u8206\uad2d\u4417\uaef1\u8d80\uaadd\3-V\4\2\t\2\4\3\t\3"+
-		"\3\2\3\2\3\2\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3"+
-		"\3\7\3\31\n\3\f\3\16\3\34\13\3\5\3\36\n\3\3\3\3\3\3\3\3\3\3\3\3\3\5\3"+
+		"\3\u608b\ua72a\u8133\ub9ed\u417c\u3be7\u7786\u5964\3-V\4\2\t\2\4\3\t\3"+
+		"\3\2\3\2\3\2\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\7\3\25\n\3\f"+
+		"\3\16\3\30\13\3\5\3\32\n\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\5\3"+
 		"&\n\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3"+
 		"\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3"+
 		"\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\7\3Q\n\3\f\3\16\3T\13\3\3\3\2\3\4\4\2\4"+
-		"\2\t\4\2\17\20\33\33\3\2!\"\3\2\3\6\4\2\4\4\r\16\3\2\17\20\3\2\21\32\3"+
-		"\2\34 g\2\6\3\2\2\2\4%\3\2\2\2\6\7\5\4\3\2\7\b\7\2\2\3\b\3\3\2\2\2\t\n"+
-		"\b\3\1\2\n\13\t\2\2\2\13&\5\4\3\b\f\r\t\3\2\2\r&\5\4\3\6\16&\7)\2\2\17"+
-		"&\7*\2\2\20&\7+\2\2\21&\7,\2\2\22&\t\4\2\2\23\24\7-\2\2\24\35\7\7\2\2"+
-		"\25\32\5\4\3\2\26\27\7\b\2\2\27\31\5\4\3\2\30\26\3\2\2\2\31\34\3\2\2\2"+
-		"\32\30\3\2\2\2\32\33\3\2\2\2\33\36\3\2\2\2\34\32\3\2\2\2\35\25\3\2\2\2"+
-		"\35\36\3\2\2\2\36\37\3\2\2\2\37&\7\t\2\2 &\7-\2\2!\"\7\7\2\2\"#\5\4\3"+
-		"\2#$\7\t\2\2$&\3\2\2\2%\t\3\2\2\2%\f\3\2\2\2%\16\3\2\2\2%\17\3\2\2\2%"+
-		"\20\3\2\2\2%\21\3\2\2\2%\22\3\2\2\2%\23\3\2\2\2% \3\2\2\2%!\3\2\2\2&R"+
-		"\3\2\2\2\'(\f\r\2\2()\7\n\2\2)*\5\4\3\2*+\7\f\2\2+,\5\4\3\16,Q\3\2\2\2"+
-		"-.\f\f\2\2./\7\n\2\2/\60\t\4\2\2\60\61\7\f\2\2\61Q\5\4\3\r\62\63\f\13"+
+		"\2\t\3\2\3\6\4\2\17\20\33\33\3\2!\"\4\2\4\4\r\16\3\2\17\20\3\2\21\32\3"+
+		"\2\34 \2g\2\6\3\2\2\2\4%\3\2\2\2\6\7\5\4\3\2\7\b\7\2\2\3\b\3\3\2\2\2\t"+
+		"\n\b\3\1\2\n&\7)\2\2\13&\7*\2\2\f&\7+\2\2\r&\7,\2\2\16&\t\2\2\2\17\20"+
+		"\7-\2\2\20\31\7\7\2\2\21\26\5\4\3\2\22\23\7\b\2\2\23\25\5\4\3\2\24\22"+
+		"\3\2\2\2\25\30\3\2\2\2\26\24\3\2\2\2\26\27\3\2\2\2\27\32\3\2\2\2\30\26"+
+		"\3\2\2\2\31\21\3\2\2\2\31\32\3\2\2\2\32\33\3\2\2\2\33&\7\t\2\2\34&\7-"+
+		"\2\2\35\36\t\3\2\2\36&\5\4\3\b\37 \t\4\2\2 &\5\4\3\6!\"\7\7\2\2\"#\5\4"+
+		"\3\2#$\7\t\2\2$&\3\2\2\2%\t\3\2\2\2%\13\3\2\2\2%\f\3\2\2\2%\r\3\2\2\2"+
+		"%\16\3\2\2\2%\17\3\2\2\2%\34\3\2\2\2%\35\3\2\2\2%\37\3\2\2\2%!\3\2\2\2"+
+		"&R\3\2\2\2\'(\f\r\2\2()\7\n\2\2)*\5\4\3\2*+\7\f\2\2+,\5\4\3\16,Q\3\2\2"+
+		"\2-.\f\f\2\2./\7\n\2\2/\60\t\2\2\2\60\61\7\f\2\2\61Q\5\4\3\r\62\63\f\13"+
 		"\2\2\63\64\t\5\2\2\64Q\5\4\3\f\65\66\f\n\2\2\66\67\t\6\2\2\67Q\5\4\3\13"+
 		"89\f\t\2\29:\t\7\2\2:Q\5\4\3\n;<\f\7\2\2<=\t\b\2\2=Q\5\4\3\b>?\f\3\2\2"+
 		"?@\7\6\2\2@A\5\4\3\2AB\7%\2\2BC\5\4\3\4CQ\3\2\2\2DE\f\16\2\2EF\7\n\2\2"+
 		"FG\5\4\3\2GH\7\13\2\2HQ\3\2\2\2IJ\f\5\2\2JK\7#\2\2KL\7$\2\2LM\7\n\2\2"+
 		"MN\5\4\3\2NO\7\13\2\2OQ\3\2\2\2P\'\3\2\2\2P-\3\2\2\2P\62\3\2\2\2P\65\3"+
 		"\2\2\2P8\3\2\2\2P;\3\2\2\2P>\3\2\2\2PD\3\2\2\2PI\3\2\2\2QT\3\2\2\2RP\3"+
-		"\2\2\2RS\3\2\2\2S\5\3\2\2\2TR\3\2\2\2\7\32\35%PR";
+		"\2\2\2RS\3\2\2\2S\5\3\2\2\2TR\3\2\2\2\7\26\31%PR";
 	public static final ATN _ATN =
 		new ATNDeserializer().deserialize(_serializedATN.toCharArray());
 	static {
