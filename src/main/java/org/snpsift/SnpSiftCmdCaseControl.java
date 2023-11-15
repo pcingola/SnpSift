@@ -498,7 +498,7 @@ public class SnpSiftCmdCaseControl extends SnpSift {
 		System.err.println("\t<CaseControlString> : A string of {'+', '-', '0'}, one per sample, to identify two groups (case='+', control='-', neutral='0')");
 		System.err.println("\t -chi2              : Use ChiSquare approximarion instead of Fisher exact test.");
 		System.err.println("\t -name nameStr      : A name to be added after to 'Cases' or 'Controls' tags");
-		System.err.println("\t -tfam file.tfam    : A TFAM file having case/control informations (phenotype colmun)");
+		System.err.println("\t -tfam file.tfam    : A TFAM file having case/control informations (phenotype column)");
 		System.err.println("\tfile.vcf            : A VCF file (variants and genotype data)");
 		System.exit(1);
 	}
