@@ -14,12 +14,8 @@ import java.util.*;
 
 /**
  * Annotate a VCF file with dbNSFP.
- * <p>
  * The dbNSFP is an integrated database of functional predictions from multiple algorithms for the comprehensive
- * collection of human non-synonymous SNPs (NSs). Its current version (ver 1.1) is based on CCDS version 20090327
- * and includes a total of 75,931,005 NSs. It compiles prediction scores from four prediction algorithms (SIFT,
- * Polyphen2, LRT and MutationTaster), two conservation scores (PhyloP and GERP++) and other related information.
- * <p>
+ * collection of human non-synonymous SNPs (NSs).
  * References:
  * <p>
  * http://sites.google.com/site/jpopgen/dbNSFP

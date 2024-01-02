@@ -13,7 +13,6 @@ import org.snpeff.snpEffect.commandLine.CommandLine;
 import org.snpeff.util.Download;
 import org.snpeff.util.Gpr;
 import org.snpeff.util.Log;
-import org.snpeff.util.Timer;
 import org.snpeff.vcf.VcfEntry;
 import org.snpeff.vcf.VcfHeaderEntry;
 import org.snpsift.caseControl.SnpSiftCmdCaseControlSummary;
