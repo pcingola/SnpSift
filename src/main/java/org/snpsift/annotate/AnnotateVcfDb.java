@@ -372,6 +372,13 @@ public abstract class AnnotateVcfDb {
                 if (var.getReference().equalsIgnoreCase(dbEntry.getReference()) //
                         && var.getAlt().equalsIgnoreCase(dbEntry.getAlt()) //
                 ) return true;
+                // if this is a deletion check if the db entry is a longer synonymus version
+                if (dbEntry.getReference().length() > var.getReference().length()) {
+                    String extraRefStr = dbEntry.getReference().substring(var.getReference().length(), dbEntry.getReference().length());
+                    if (var.getReference().concat(extraRefStr).equalsIgnoreCase(dbEntry.getReference()) //
+                        && var.getAlt().concat(extraRefStr).equalsIgnoreCase(dbEntry.getAlt()) //
+                    ) return true;
+                }
             } else {
                 // No need to use Ref & Alt, it's a match
                 return true;
