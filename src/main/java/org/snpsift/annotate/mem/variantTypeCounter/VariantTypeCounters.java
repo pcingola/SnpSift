@@ -59,6 +59,10 @@ public class VariantTypeCounters {
 		count++;
 	}
 
+	public VariantTypeCounter get(String chr) {
+        return counters.get(chr);
+    }
+
 	public void save(String fileName) {
 		// Serialize data to a file
 		// Open file

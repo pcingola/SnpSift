@@ -13,7 +13,7 @@ import org.snpeff.fileIterator.VcfFileIterator;
 import org.snpeff.interval.Variant;
 import org.snpeff.util.Gpr;
 import org.snpeff.vcf.VcfEntry;
-import org.snpsift.annotate.mem.database.VariantDatabasePerChr;
+import org.snpsift.annotate.mem.database.VariantDatabase;
 import org.snpsift.annotate.mem.variantTypeCounter.VariantTypeCounters;
 import org.snpsift.util.ShowProgress;
 
@@ -27,7 +27,7 @@ public class Zzz {
 	
 	String databaseFileName;	// Database file
 	String[] fields;	// Fields to extract
-	VariantDatabasePerChr variantDatabasePerChr;
+	VariantDatabase variantDatabasePerChr;
 
 	/**
 	 * Main
@@ -70,9 +70,11 @@ public class Zzz {
 		var vcfFile = new VcfFileIterator(databaseFileName);
 		VariantTypeCounters vc = new VariantTypeCounters();
 		var progress = new ShowProgress();
+		int i = 0;
 		for (VcfEntry vcfEntry : vcfFile) {
 			vc.count(vcfEntry);
-			progress.tick(vc.count, vcfEntry); // Show progress
+			progress.tick(i, vcfEntry); // Show progress
+			i++;
 		}
 		System.out.println(vc.toString());
 		return vc;
@@ -85,7 +87,7 @@ public class Zzz {
 		// First, count the number of entries in the VCF file
 		VariantTypeCounters vc = countVcfVariants();
 		// Load data
-		variantDatabasePerChr = new VariantDatabasePerChr(vc, fields);
+		variantDatabasePerChr = new VariantDatabase(vc, fields);
 		variantDatabasePerChr.createDb(databaseFileName);
 	}
 

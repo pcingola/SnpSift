@@ -18,6 +18,12 @@ public class SnpColumnDataSet extends IndexedColumnDataSet {
 		return alt;
 	}
 
+	@Override
+	public Object getData(String columnName, int pos, String ref, String alt) {
+		// TODO Auto-generated method stub
+		throw new UnsupportedOperationException("Unimplemented method 'getData'");
+	}
+
 	public void setData(String columnName, Object value, int pos, String ref, String alt) {
 		if(!alt.equals(this.alt)) throw new RuntimeException("Cannot set data for SNP '" + this.alt + "' using alt '" + alt + "'");
 		posIndex.set(currentIdx, pos);

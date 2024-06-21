@@ -44,7 +44,7 @@ public class VariantDatabase {
 		// Different chromosome? => Save current database and create a new one
 		if(db != null) db.save(dbDir + "/" + this.chr + DB_EXT);
 		this.chr = chr;
-		db = new VariantDatabaseChr(variantTypeCounters.counters.get(chr), fields);
+		db = new VariantDatabaseChr(variantTypeCounters.get(chr), fields);
 		db.add(vcfEntry, fields);
 	}
 

@@ -44,11 +44,11 @@ public class VariantDatabaseChr {
 		snpC = new SnpColumnDataSet(variantTypeCounter.countSnpC, "C", fields);
 		snpG = new SnpColumnDataSet(variantTypeCounter.countSnpG, "G", fields);
 		snpT = new SnpColumnDataSet(variantTypeCounter.countSnpT, "T", fields);
-		ins = new IndexedColumnDataSet(variantTypeCounter.countIns, fields);
-		del = new IndexedColumnDataSet(variantTypeCounter.countDel, fields);
-		mnp = new IndexedColumnDataSet(variantTypeCounter.countMnp, fields);
-		mixed = new IndexedColumnDataSet(variantTypeCounter.countMixed, fields);
-		other = new IndexedColumnDataSet(variantTypeCounter.countOther, fields);
+		ins = new InsColumnDataSet(variantTypeCounter.countIns, fields);
+		del = new DelColumnDataSet(variantTypeCounter.countDel, fields);
+		mnp = new MnpColumnDataSet(variantTypeCounter.countMnp, fields);
+		mixed = new MixedColumnDataSet(variantTypeCounter.countMixed, fields);
+		other = new OtherColumnDataSet(variantTypeCounter.countOther, fields);
 	}
 
 	/**
