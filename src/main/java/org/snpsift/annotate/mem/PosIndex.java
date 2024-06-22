@@ -5,7 +5,7 @@ import java.util.Arrays;
 /**
  * An index by possition
  */
-public class PosIndex {
+public class PosIndex implements java.io.Serializable {
 	int[] positions;	// Chromosome positions of each entry
 
 	public PosIndex(int numEntries) {

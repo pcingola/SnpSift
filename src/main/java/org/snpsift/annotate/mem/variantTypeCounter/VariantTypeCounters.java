@@ -8,7 +8,9 @@ import java.io.ObjectOutputStream;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.snpeff.fileIterator.VcfFileIterator;
 import org.snpeff.vcf.VcfEntry;
+import org.snpsift.util.ShowProgress;
 
 /**
  * Variant type counters for each chromosome
@@ -37,7 +39,24 @@ public class VariantTypeCounters {
 			throw new RuntimeException("Cannot load from file '" + fileName + "'", e);
 		}
 	}
-	
+
+	/**
+	 * Count the number of variants in a VCF file
+	 */
+	public void count(String vcfFileName) {
+		System.out.println("Counting number of variants in " + vcfFileName);
+		var vcfFile = new VcfFileIterator(vcfFileName);
+		var progress = new ShowProgress();
+		int i = 0;
+		for (VcfEntry vcfEntry : vcfFile) {
+			count(vcfEntry);
+			progress.tick(i, vcfEntry); // Show progress
+			i++;
+		}
+		vcfFile.close();
+		System.out.println(this);
+	}
+
 	/**
 	 * Count the number of variants in a VCF file
 	 */

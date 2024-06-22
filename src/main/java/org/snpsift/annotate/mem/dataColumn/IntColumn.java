@@ -1,26 +1,20 @@
 package org.snpsift.annotate.mem.dataColumn;
 
-public class IntColumn implements DataColumn<Integer> {
+public class IntColumn extends DataColumn<Integer> {
 	int[] data;
-	String name;
 
-	public IntColumn(String name, int[] data) {
-		this.name = name;
-		this.data = data;
+	public IntColumn(String name, int size) {
+		super(name, size);
+		this.data = new int[size];
 	}
 
 	@Override
-	public Integer get(int i) {
+	protected Integer getData(int i) {
 		return data[i];
 	}
 
 	@Override
-	public String getName() {
-		return name;
-	}
-
-	@Override
-	public void set(int i, Object value) {
+	protected void setData(int i, Object value) {
 		data[i] = (Integer) value;
 	}
 }

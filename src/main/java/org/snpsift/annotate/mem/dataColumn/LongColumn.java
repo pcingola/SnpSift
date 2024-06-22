@@ -1,26 +1,20 @@
 package org.snpsift.annotate.mem.dataColumn;
 
-public class LongColumn implements DataColumn<Long> {
+public class LongColumn extends DataColumn<Long> {
 	long[] data;
-	String name;
 
-	public LongColumn(String name, long[] data) {
-		this.name = name;
-		this.data = data;
+	public LongColumn(String name, int size) {
+		super(name, size);
+		this.data = new long[size];
 	}
 
 	@Override
-	public Long get(int i) {
+	protected Long getData(int i) {
 		return data[i];
 	}
 
 	@Override
-	public String getName() {
-		return name;
-	}
-
-	@Override
-	public void set(int i, Object value) {
+	protected void setData(int i, Object value) {
 		data[i] = (Long) value;
 	}
 }

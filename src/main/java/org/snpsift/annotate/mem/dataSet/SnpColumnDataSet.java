@@ -1,5 +1,8 @@
 package org.snpsift.annotate.mem.dataSet;
 
+import java.util.Map;
+
+import org.snpeff.vcf.VcfInfoType;
 
 /**
  * A set of DataColumns specific SNP 'alt'  (e.g. Data for SNP "N -> A")
@@ -9,8 +12,8 @@ package org.snpsift.annotate.mem.dataSet;
 public class SnpColumnDataSet extends IndexedColumnDataSet {
 	String alt;	// Alternative allele, i.e. one of 'A', 'C', 'G', 'T'
 
-	public SnpColumnDataSet(int numEntries, String alt, String[] fields) {
-		super(numEntries, fields);
+	public SnpColumnDataSet(int numEntries, String alt, Map<String, VcfInfoType> fields2type) {
+		super(numEntries, fields2type);
 		this.alt = alt;
 	}
 

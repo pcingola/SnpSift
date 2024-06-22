@@ -1,20 +1,8 @@
 package org.snpsift.annotate.mem;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
-
 import org.snpeff.fileIterator.VcfFileIterator;
-import org.snpeff.interval.Variant;
 import org.snpeff.util.Gpr;
-import org.snpeff.vcf.VcfEntry;
 import org.snpsift.annotate.mem.database.VariantDatabase;
-import org.snpsift.annotate.mem.variantTypeCounter.VariantTypeCounters;
 import org.snpsift.util.ShowProgress;
 
 
@@ -27,7 +15,7 @@ public class Zzz {
 	
 	String databaseFileName;	// Database file
 	String[] fields;	// Fields to extract
-	VariantDatabase variantDatabasePerChr;
+	VariantDatabase variantDatabase;
 
 	/**
 	 * Main
@@ -37,9 +25,9 @@ public class Zzz {
 		var databaseFileName = Gpr.HOME + "/snpEff/db/GRCh38/dbSnp/dbsnp_test.vcf";
 		var fields = new String[] { "RS" };
 
-		// Load the database
+		// Create the database from a VCF file
 		Zzz zzz = new Zzz(databaseFileName, fields);
-		zzz.create();	// Load the "database" VCF file
+		zzz.create();
 	}
 
 	public Zzz(String dbFile, String[] fields) {
@@ -63,49 +51,12 @@ public class Zzz {
 	}
 
 	/**
-	 * Count the number of variants in a VCF file
-	 */
-	private VariantTypeCounters countVcfVariants() {
-		System.out.println("Counting number of variants in " + databaseFileName);
-		var vcfFile = new VcfFileIterator(databaseFileName);
-		VariantTypeCounters vc = new VariantTypeCounters();
-		var progress = new ShowProgress();
-		int i = 0;
-		for (VcfEntry vcfEntry : vcfFile) {
-			vc.count(vcfEntry);
-			progress.tick(i, vcfEntry); // Show progress
-			i++;
-		}
-		System.out.println(vc.toString());
-		return vc;
-	}
-
-	/**
-	 * Create index from VCF "database" file
+	 * Create database
 	 */
 	public void create() {
-		// First, count the number of entries in the VCF file
-		VariantTypeCounters vc = countVcfVariants();
 		// Load data
-		variantDatabasePerChr = new VariantDatabase(vc, fields);
-		variantDatabasePerChr.createDb(databaseFileName);
-	}
-
-	/**
-	 * Test: Find all positions
-	 *  Check that all positions extracted from zzz.positions are found
-	 */
-	void testFindAll() {
-		// // Time the total search time
-		// long startTime = System.currentTimeMillis();
-		// System.out.println("Testing: Find all positions...");
-		// for (int i = 0; i < entriesToCheck; i++) {
-		// 	int p = posIndex.get(i);
-		// 	int idx = posIndex.indexOf(p);
-		// 	if (idx < 0) throw new RuntimeException("ERROR: Position not found: " + p + "\tIndex: " + idx);
-		// }
-		// long endTime = System.currentTimeMillis();
-		// double timePerEntry = ((double) (endTime - startTime)) / entriesToCheck / 1000.0;
-		// System.out.println("All positions found in " + (endTime - startTime) + "ms" + "\tTime per entry: " + timePerEntry + " second");
+		variantDatabase = new VariantDatabase(fields);
+		var dbDir = databaseFileName + '_' + VariantDatabase.DB_EXT;
+		variantDatabase.createDb(databaseFileName, dbDir);
 	}
 }

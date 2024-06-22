@@ -1,11 +1,13 @@
-package org.snpsift.annotate.mem.database;
+package org.snpsift.annotate.mem.dataSet;
 
-import org.snpsift.annotate.mem.dataSet.IndexedColumnDataSet;
+import java.util.Map;
+
+import org.snpeff.vcf.VcfInfoType;
 
 public class MixedColumnDataSet extends IndexedColumnDataSet {
         
-    public MixedColumnDataSet(int numEntries, String[] fields) {
-        super(numEntries, fields);
+    public MixedColumnDataSet(int numEntries, Map<String, VcfInfoType> fields2type) {
+        super(numEntries, fields2type);
     }
 
     @Override

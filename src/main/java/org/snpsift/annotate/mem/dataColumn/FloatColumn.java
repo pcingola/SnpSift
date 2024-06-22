@@ -1,26 +1,20 @@
 package org.snpsift.annotate.mem.dataColumn;
 
-public class FloatColumn implements DataColumn<Double> {
+public class FloatColumn extends DataColumn<Double> {
 	double[] data;
-	String name;
 
-	public FloatColumn(String name, double[] data) {
-		this.name = name;
-		this.data = data;
+	public FloatColumn(String name, int size) {
+		super(name, size);
+		this.data = new double[size];
 	}
 
 	@Override
-	public Double get(int i) {
+	protected Double getData(int i) {
 		return data[i];
 	}
 
 	@Override
-	public String getName() {
-		return name;
-	}
-
-	@Override
-	public void set(int i, Object value) {
+	protected void setData(int i, Object value) {
 		data[i] = (Double) value;
 	}
 }
