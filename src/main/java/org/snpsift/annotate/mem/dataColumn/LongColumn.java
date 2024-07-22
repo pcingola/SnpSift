@@ -17,4 +17,10 @@ public class LongColumn extends DataColumn<Long> {
 	protected void setData(int i, Object value) {
 		data[i] = (Long) value;
 	}
+
+	@Override
+	public int size() {
+		return data.length;
+	}
+
 }

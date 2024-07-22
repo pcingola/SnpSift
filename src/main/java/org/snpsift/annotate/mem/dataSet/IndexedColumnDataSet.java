@@ -19,7 +19,7 @@ import org.snpsift.annotate.mem.dataColumn.StringColumn;
 public abstract class IndexedColumnDataSet implements java.io.Serializable {
 	int size;	// Number of entries
 	int currentIdx = 0;	// Current index
-	PosIndex posIndex;	// Index by position
+	PosIndex posIndex;	// Index by position (i.e. chromosome position is transformed into a "column / array index")
 	StringColumn ref;	// Reference allele
 	StringColumn alt;	// Alternative allele
 	Map<String, DataColumn<?>> columns;	// Data columns

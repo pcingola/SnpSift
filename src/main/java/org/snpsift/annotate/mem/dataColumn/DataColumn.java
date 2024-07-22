@@ -7,6 +7,8 @@ import java.io.Serializable;
  */
 public abstract class DataColumn<T> implements Serializable {
 
+	public static final int MAX_NUMBER_OF_ELEMENTS_TO_SHOW = 10;
+
 	protected String name;
 	protected byte[] isNUllData; // If the data is null, we set the corresponding bit in this array to 1
 
@@ -57,6 +59,7 @@ public abstract class DataColumn<T> implements Serializable {
 	 * Set value at index i, consideting null data
 	 */
 	public void set(int i, Object value) {
+		System.err.println("SET " + i + ": " + value);
 		if (value == null) setNull(i);
 		else {
 			clearNull(i);
@@ -73,7 +76,19 @@ public abstract class DataColumn<T> implements Serializable {
 	 * Set data to null
 	 */
 	public void setNull(int i) {
+		System.err.println("SET NULL: " + i);
 		isNUllData[i / 8] |= 1 << (i % 8);
 	}
 
+	/** Number of elements in this DataColumn */
+	public abstract int size();
+
+	public String toString() {
+		var sb = new StringBuilder();
+		sb.append( this.getClass().getName() + ": '" + name + "', size: " + size() + "\n");
+		for (int i = 0; i < size() && i < MAX_NUMBER_OF_ELEMENTS_TO_SHOW; i++) {
+			sb.append("\t" + i + ": " + (isNull(i) ? "null" : get(i).toString()) + "\n");
+		}
+		return sb.toString();
+	}
 }

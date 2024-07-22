@@ -10,6 +10,7 @@ import java.util.Map;
 
 import org.snpeff.fileIterator.VcfFileIterator;
 import org.snpeff.vcf.VcfEntry;
+import org.snpeff.vcf.VcfInfoType;
 import org.snpsift.util.ShowProgress;
 
 /**
@@ -17,11 +18,16 @@ import org.snpsift.util.ShowProgress;
 */
 public class VariantTypeCounters {
 
-	Map<String, VariantTypeCounter> counters = new HashMap<>(); // Counters per chromosome
+	Map<String, VcfInfoType> fields2type; // Fields to create or annotate
+    Map<String, VariantTypeCounter> counters = new HashMap<>(); // Counters per chromosome
 	String latestChr = ""; // Latest chromosome
 	VariantTypeCounter latestCounter = null; // Counter for the latest chromosome
 	VariantTypeCounter counterAll = new VariantTypeCounter(); // Count all variants
 	int count = 0;	// Total number of variants
+
+	public VariantTypeCounters(Map<String, VcfInfoType> fields2type) {
+        this.fields2type = fields2type;
+    }
 
 	/**
 	 * Load from file
@@ -67,7 +73,7 @@ public class VariantTypeCounters {
 			latestChr = chr;
 			latestCounter = counters.get(chr);
 			if(latestCounter == null) {
-				latestCounter = new VariantTypeCounter();
+				latestCounter = new VariantTypeCounter(fields2type);
 				counters.put(chr, latestCounter);
 			}
 		}

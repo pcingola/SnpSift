@@ -17,4 +17,9 @@ public class BoolColumn extends DataColumn<Boolean> {
 	protected void setData(int i, Object value) {
 		data[i] = (Boolean) value;
 	}
+
+	@Override
+	public int size() {
+		return data.length;
+	}
 }

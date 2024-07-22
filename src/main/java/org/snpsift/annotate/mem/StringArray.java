@@ -62,7 +62,6 @@ public class StringArray {
      * @param size : Initial size of the array
      */
     public StringArray(int numElements, int size) {
-        // this.size = size;
         offset = 0;
         currentIndex = 0;
         // Initialize arrays

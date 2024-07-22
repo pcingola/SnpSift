@@ -17,4 +17,10 @@ public class FloatColumn extends DataColumn<Double> {
 	protected void setData(int i, Object value) {
 		data[i] = (Double) value;
 	}
+
+	@Override
+	public int size() {
+		return data.length;
+	}
+
 }

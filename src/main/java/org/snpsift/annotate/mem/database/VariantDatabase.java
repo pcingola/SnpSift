@@ -106,7 +106,7 @@ public class VariantDatabase {
 			System.out.println("Added field: " + vcfInfo.getId() + " type: " + fields2type.get(vcfInfo.getId()));
 		}
 		vcfFile.close();
-		// If the fiels type is still 'null', set it to 'String'
+		// If the fields type is still 'null', set it to 'String'
 		for(String field: fields) {
 			if(fields2type.get(field) == null) fields2type.put(field, VcfInfoType.String);
 		}
@@ -124,7 +124,7 @@ public class VariantDatabase {
 		// Get column types
 		fields2type = columnTypes(databaseFileName); 
 		// Count the number of entries in the VCF file		
-		variantTypeCounters = new VariantTypeCounters();
+		variantTypeCounters = new VariantTypeCounters(fields2type);
 		variantTypeCounters.count(databaseFileName);
 		// Load data
 		loadDbData(databaseFileName);

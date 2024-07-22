@@ -17,4 +17,10 @@ public class CharColumn extends DataColumn<Character> {
 	protected void setData(int i, Object value) {
 		data[i] = (Character) value;
 	}
+
+	@Override
+	public int size() {
+		return data.length;
+	}
+
 }

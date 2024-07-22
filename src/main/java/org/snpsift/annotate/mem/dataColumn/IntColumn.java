@@ -17,4 +17,10 @@ public class IntColumn extends DataColumn<Integer> {
 	protected void setData(int i, Object value) {
 		data[i] = (Integer) value;
 	}
+
+	@Override
+	public int size() {
+		return data.length;
+	}
+
 }
