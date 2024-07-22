@@ -46,7 +46,7 @@ public class PosIndex implements java.io.Serializable {
 	 * @param pos: A zero-based position
 	 * @return index of the position or negative number if not found
 	 */
-	int indexOfSlow(int pos) {
+	public int indexOfSlow(int pos) {
 		for (int i = 0; i < positions.length; i++)
 			if (positions[i] == pos) return i;
 		return -1;
