@@ -1,4 +1,6 @@
-package org.snpsift.testCases;
+package org.snpsift.tests;
+
+
 
 import org.junit.jupiter.api.Test;
 import org.snpeff.util.Log;

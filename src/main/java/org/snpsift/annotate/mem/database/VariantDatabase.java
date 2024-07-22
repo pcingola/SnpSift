@@ -12,9 +12,13 @@ import org.snpsift.annotate.mem.variantTypeCounter.VariantTypeCounters;
 import org.snpsift.util.ShowProgress;
 
 /**
- * A database of variant's data.
- * The database is stored in a file per chromosome, this class manages the database files (loading, saving, etc).
- * The database is a collection of VariantDatabaseChr objects, one per chromosome.
+ * A database of variant's data used to annotate a VCF file (i.e. VCF entries).
+ * The database only loads one chromosome at a time, to speed up the process while fitting in memory.
+ * 
+ * The database is a collection of VariantDatabaseChr objects, one per chromosome. Each 'VariantDatabaseChr' is
+ * stored in one file per chromosome.
+ * 
+ * 'VariantDatabase' manages the 'VariantDatabaseChr' files (loading, saving, etc).
  */
 public class VariantDatabase {
 	public static final String DB_EXT = "snpsift_db";	// Database file extension
@@ -44,16 +48,14 @@ public class VariantDatabase {
 	void add(VcfEntry vcfEntry) {
 		// Same chromosome? => Add to current database
 		var chr = vcfEntry.getChromosomeName();
-		if(chr.equals(this.chr)) {
-			db.add(vcfEntry);
-			return;
+		if(!chr.equals(this.chr)) {
+			// Different chromosome? => Save current database and create a new one
+			if(db != null) db.save(dbDir + "/" + this.chr + '.' + DB_EXT);
+			this.chr = chr;
+			var vcounter = variantTypeCounters.get(chr);
+			if(vcounter == null) throw new RuntimeException("Cannot find variant type counters for chromosome: '" + chr + "'");
+			db = new VariantDatabaseChr(vcounter, fields2type);
 		}
-		// Different chromosome? => Save current database and create a new one
-		if(db != null) db.save(dbDir + "/" + this.chr + '.' + DB_EXT);
-		this.chr = chr;
-		var vcounter = variantTypeCounters.get(chr);
-		if(vcounter == null) throw new RuntimeException("Cannot find variant type counters for chromosome: '" + chr + "'");
-		db = new VariantDatabaseChr(vcounter, fields2type);
 		db.add(vcfEntry);
 	}
 

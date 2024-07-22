@@ -19,7 +19,6 @@ import org.snpeff.interval.Markers;
 import org.snpeff.interval.Variant;
 import org.snpeff.interval.tree.Itree;
 import org.snpeff.util.Log;
-import org.snpeff.util.Timer;
 import org.snpeff.vcf.VcfEntry;
 
 import gnu.trove.list.array.TIntArrayList;

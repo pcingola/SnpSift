@@ -1,17 +1,12 @@
 package org.snpsift.annotate.mem;
 
 import java.util.Arrays;
+import java.util.Collection;
 
 /**
  * Implement a memory efficient array of strings
  */
 public class StringArray {
-    protected byte[] data;
-    protected int[] index2offset; // Convert array index to data offset
-    protected int size;
-    protected int currentIndex;
-    protected int offset;
-
     /**
      * Calculate the size of a string in memory
      */
@@ -20,13 +15,54 @@ public class StringArray {
         return len + 1; // +1 for the '\0' character
     }
 
+    public static int sizeOf(String[] strings) {
+        int len = 0;
+        for (var s : strings)
+            len += sizeOf(s);
+        return len;
+    }
+
+    public static int sizeOf(Collection<String> strings) {
+        int len = 0;
+        for (var s : strings)
+            len += sizeOf(s);
+        return len;
+    }
+
+    public static final int MAX_NUM_STRING_TO_SHOW = 10;
+    
+    protected byte[] data; // Raw data as a byte array
+    protected int[] index2offset; // Convert array index to data offset
+    protected int currentIndex; // Index of latest element added
+    protected int offset;
+
+    /**
+     * Create a StringArray from an array of strings
+     */
+    public static StringArray of(String[] strings) {
+        var sa = new StringArray(strings.length, sizeOf(strings));
+        for (var s : strings)
+            sa.add(s);
+        return sa;
+    }
+
+    /**
+     * Create a StringArray from a collection of strings
+     */
+    public static StringArray of(Collection<String> strings) {
+        var sa = new StringArray(strings.size(), sizeOf(strings));
+        for (String s : strings)
+            sa.add(s);
+        return sa;
+    }
+
     /**
      * Constructor
      * @param numElements : Number of elements in the array
      * @param size : Initial size of the array
      */
     public StringArray(int numElements, int size) {
-        this.size = size;
+        // this.size = size;
         offset = 0;
         currentIndex = 0;
         // Initialize arrays
@@ -48,21 +84,30 @@ public class StringArray {
      * Get the string at array index 'i'
      */
     public String get(int i) {
-        var offsst = index2offset[i];
-        if (offsst == -1) return null;
+        var offset = index2offset[i];
+        if (offset == -1) return null;
         return get_by_offset(index2offset[i]);
     }
 
     /**
-     * Get a string
+     * Get a string from a data offset
+     * This method is used to get a string from the data array
+     * Should be used only internally
      */
-    String get_by_offset(int offset) {
+    private String get_by_offset(int offset) {
         // Find the end of the string
         int end = offset;
         while (end < data.length && data[end] != 0)
             end++;
         // Return the string
         return new String(data, offset, end - offset);
+    }
+
+    /**
+     * Number of ellements in the array
+     */
+    public int length() {
+        return currentIndex;
     }
 
     /**
@@ -88,9 +133,20 @@ public class StringArray {
     }
 
     /**
-     * Number of strings
+     * Size of the data array (capacity of number of bytes)
      */
     public int size() {
-        return size;
+        return data.length;
     }
+
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("StringArray(" + index2offset.length + ", " + data.length + ")");
+        if (currentIndex > 0 ) sb.append(":\n");
+        for (int i = 0; i < currentIndex && i < MAX_NUM_STRING_TO_SHOW; i++) {
+            sb.append("\t" + i + ": ' " +get(i) + "'\n");
+        }
+        return sb.toString();
+    }
+
 }

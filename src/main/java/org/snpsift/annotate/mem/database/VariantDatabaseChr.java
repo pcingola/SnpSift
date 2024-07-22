@@ -20,7 +20,8 @@ import org.snpsift.annotate.mem.dataSet.SnpColumnDataSet;
 import org.snpsift.annotate.mem.variantTypeCounter.VariantTypeCounter;
 
 /**
- * A database of variant's data that is indexed by possition and variant type.
+ * A table of variant's data that is indexed by possition and variant type.
+ * 
  * We create an "IndexedColumnDataSet" for each variant type: SNP(A), SNP(C), SNP(G), SNP(T), INS, DEL, MNP, MIXED, OTHER.
  */
 public class VariantDatabaseChr implements java.io.Serializable {

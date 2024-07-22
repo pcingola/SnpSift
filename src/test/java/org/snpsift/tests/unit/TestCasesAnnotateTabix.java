@@ -1,7 +1,4 @@
-package org.snpsift.testCases.unit;
-
-import org.junit.jupiter.api.Test;
-import org.snpeff.util.Log;
+package org.snpsift.tests.unit;
 
 /**
  * Annotate test case using TABIX indexed files
