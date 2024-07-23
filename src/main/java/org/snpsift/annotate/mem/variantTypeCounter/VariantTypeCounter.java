@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.snpeff.util.Log;
 import org.snpeff.vcf.VcfEntry;
 import org.snpeff.vcf.VcfInfoType;
 import org.snpsift.annotate.mem.VariantCategory;
