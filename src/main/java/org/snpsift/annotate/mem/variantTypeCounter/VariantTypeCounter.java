@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.snpeff.util.Log;
 import org.snpeff.vcf.VcfEntry;
 import org.snpeff.vcf.VcfInfoType;
 import org.snpsift.annotate.mem.VariantCategory;
@@ -33,9 +34,9 @@ public class VariantTypeCounter {
 		var numberOfCategories = VariantCategory.size();
 		countByCategory= new int[numberOfCategories]; // Count by category
 		// Initialize field size counters
-		Map<String, int[]> sizeByField = new HashMap<>();
+		sizesByField = new HashMap<>();
 		for(var field: fieldsString) {
-			sizeByField.put(field, new int[numberOfCategories]);
+			sizesByField.put(field, new int[numberOfCategories]);
 		}
 	}
 
@@ -76,17 +77,18 @@ public class VariantTypeCounter {
 
 	public String toString() {
 		var sb = new StringBuffer();
-		sb.append("VariantTypeCounter:\n");
-		sb.append("\tVCF entries: " + countVcfEntries + "\n");
-		sb.append("\tVariants: " + countVariants + "\n");
+		sb.append("VariantTypeCounter:");
+		sb.append("VCF entries: " + countVcfEntries);
+		sb.append(", Variants: " + countVariants + "\n");
 		// Show counterd by "category"
 		for(var variantCategory: VariantCategory.values()) {
 			var variantCategoryOrd = variantCategory.ordinal();
-			sb.append("\t" + variantCategory + ": " + countByCategory[variantCategoryOrd] + "\n");
+			sb.append("\t" + variantCategory + ": " + countByCategory[variantCategoryOrd] + ". ");
 			// Show string field total lengths by category
 			for(var field: fieldsString) {
-				sb.append("\t\t" + field + ": " + sizesByField.get(field)[variantCategoryOrd] + "\n");
+				sb.append(field + ": " + sizesByField.get(field)[variantCategoryOrd] + ", ");
 			}
+			sb.append("\n");
 		}
 		return sb.toString();
 	}
