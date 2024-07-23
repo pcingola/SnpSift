@@ -64,8 +64,14 @@ public class VariantTypeCounter {
 		return countByCategory[variantCategory.ordinal()];
 	}
 
+	/**
+	 * Get total size (in bytes) of a field (only string fields)
+	 * @return Total size (in bytes) or -1 if the field is not found
+	 */
 	public int getSize(VariantCategory variantCategory, String field) {
-		return sizesByField.get(field)[variantCategory.ordinal()];
+		var sizes = sizesByField.get(field);
+		if(sizes == null) return -1;
+		return sizes[variantCategory.ordinal()];
 	}
 
 	public String toString() {
