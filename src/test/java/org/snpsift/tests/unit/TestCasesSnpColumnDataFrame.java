@@ -8,7 +8,7 @@ import org.snpsift.annotate.mem.dataFrame.DataFrameSnp;
 import java.util.HashMap;
 import java.util.Map;
 
-public class TestCasesSnpColumnDataSet {
+public class TestCasesSnpColumnDataFrame {
     private DataFrameSnp dataSet;
 
     @BeforeEach

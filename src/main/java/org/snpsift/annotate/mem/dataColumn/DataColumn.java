@@ -4,6 +4,8 @@ import java.io.Serializable;
 
 /**
  * A wrapper for a data column of primitive type T
+ * A Data Column is a column of a specific data tyle (String, Float, Long, etc.) that is stored using primitive types for memory efficiency.
+ * The data that can be null, so we need to store a bit array to indicate which data is null.
  */
 public abstract class DataColumn<T> implements Serializable {
 
@@ -59,7 +61,6 @@ public abstract class DataColumn<T> implements Serializable {
 	 * Set value at index i, consideting null data
 	 */
 	public void set(int i, Object value) {
-		System.err.println("SET " + i + ": " + value);
 		if (value == null) setNull(i);
 		else {
 			clearNull(i);
@@ -76,7 +77,6 @@ public abstract class DataColumn<T> implements Serializable {
 	 * Set data to null
 	 */
 	public void setNull(int i) {
-		System.err.println("SET NULL: " + i);
 		isNUllData[i / 8] |= 1 << (i % 8);
 	}
 

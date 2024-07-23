@@ -21,9 +21,10 @@ import org.snpsift.annotate.mem.variantTypeCounter.VariantTypeCounter;
 import org.snpsift.annotate.mem.VariantCategory;
 
 /**
- * A table of variant's data that is indexed by possition and variant type.
+ * A DataFrame of variant's data that is indexed "variant type AND chromosome possition".
  * 
  * We create an "DataFrame" for each variant type: SNP(A), SNP(C), SNP(G), SNP(T), INS, DEL, MNP, MIXED, OTHER.
+ * Each DataFrame is indexed by chromosome position. DataFrames have columns for each field to annotate.
  */
 public class VariantDataFrame implements java.io.Serializable {
 
