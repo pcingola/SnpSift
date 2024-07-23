@@ -10,36 +10,35 @@ import java.util.Map;
 import org.snpeff.interval.Variant;
 import org.snpeff.vcf.VcfEntry;
 import org.snpeff.vcf.VcfInfoType;
-import org.snpsift.annotate.mem.dataSet.DelColumnDataSet;
-import org.snpsift.annotate.mem.dataSet.IndexedColumnDataSet;
-import org.snpsift.annotate.mem.dataSet.InsColumnDataSet;
-import org.snpsift.annotate.mem.dataSet.MixedColumnDataSet;
-import org.snpsift.annotate.mem.dataSet.MnpColumnDataSet;
-import org.snpsift.annotate.mem.dataSet.OtherColumnDataSet;
-import org.snpsift.annotate.mem.dataSet.SnpColumnDataSet;
+import org.snpsift.annotate.mem.dataFrame.DataFrame;
+import org.snpsift.annotate.mem.dataFrame.DataFrameDel;
+import org.snpsift.annotate.mem.dataFrame.DataFrameIns;
+import org.snpsift.annotate.mem.dataFrame.DataFrameMixed;
+import org.snpsift.annotate.mem.dataFrame.DataFrameMnp;
+import org.snpsift.annotate.mem.dataFrame.DataFrameOther;
+import org.snpsift.annotate.mem.dataFrame.DataFrameSnp;
 import org.snpsift.annotate.mem.variantTypeCounter.VariantTypeCounter;
+import org.snpsift.annotate.mem.VariantCategory;
 
 /**
  * A table of variant's data that is indexed by possition and variant type.
  * 
- * We create an "IndexedColumnDataSet" for each variant type: SNP(A), SNP(C), SNP(G), SNP(T), INS, DEL, MNP, MIXED, OTHER.
+ * We create an "DataFrame" for each variant type: SNP(A), SNP(C), SNP(G), SNP(T), INS, DEL, MNP, MIXED, OTHER.
  */
-public class VariantDatabaseChr implements java.io.Serializable {
+public class VariantDataFrame implements java.io.Serializable {
 
 	String[] fields;	// Fields to annotate
 	Map<String, VcfInfoType> fields2type; // Fields to create or annotate
-	SnpColumnDataSet snpA, snpC, snpG, snpT;	// Data sets for each SNP
-	IndexedColumnDataSet ins, del;	// Data sets for insertions and deletions
-	IndexedColumnDataSet mnp, mixed, other;	// Data set for other variants
+	DataFrame dataFrames[]; // Each dataFrame indexed by variant type
 
-	public static VariantDatabaseChr load(String fileName) {
+	public static VariantDataFrame load(String fileName) {
 		// Deserialize data from a file
 		try {
 			System.out.println("Loading from file: " + fileName);
 			var file = new File(fileName);
 			FileInputStream fis = new FileInputStream(file);
 			ObjectInputStream ois = new ObjectInputStream(fis);
-			var vd = (VariantDatabaseChr) ois.readObject();
+			var vd = (VariantDataFrame) ois.readObject();
 			ois.close();
 			return vd;
 		} catch (Exception e) {
@@ -47,44 +46,44 @@ public class VariantDatabaseChr implements java.io.Serializable {
 		}
 	}
 
-	public VariantDatabaseChr(VariantTypeCounter variantTypeCounter, Map<String, VcfInfoType> fields2type) {
+	public VariantDataFrame(VariantTypeCounter variantTypeCounter, Map<String, VcfInfoType> fields2type) {
 		this.fields2type = fields2type;
 		this.fields = fields2type.keySet().toArray(new String[0]);
 		// Create data sets according to the variant type, and counters for each variant type
-		snpA = new SnpColumnDataSet(variantTypeCounter.countSnpA, "A", fields2type);
-		snpC = new SnpColumnDataSet(variantTypeCounter.countSnpC, "C", fields2type);
-		snpG = new SnpColumnDataSet(variantTypeCounter.countSnpG, "G", fields2type);
-		snpT = new SnpColumnDataSet(variantTypeCounter.countSnpT, "T", fields2type);
-		ins = new InsColumnDataSet(variantTypeCounter.countIns, fields2type);
-		del = new DelColumnDataSet(variantTypeCounter.countDel, fields2type);
-		mnp = new MnpColumnDataSet(variantTypeCounter.countMnp, fields2type);
-		mixed = new MixedColumnDataSet(variantTypeCounter.countMixed, fields2type);
-		other = new OtherColumnDataSet(variantTypeCounter.countOther, fields2type);
+		dataFrames = new DataFrame[VariantCategory.size()];
+		dataFrames[VariantCategory.SNP_A.ordinal()] = new DataFrameSnp(variantTypeCounter.getCount(VariantCategory.SNP_A), "A", fields2type);
+		dataFrames[VariantCategory.SNP_C.ordinal()] = new DataFrameSnp(variantTypeCounter.getCount(VariantCategory.SNP_C), "C", fields2type);
+		dataFrames[VariantCategory.SNP_G.ordinal()] = new DataFrameSnp(variantTypeCounter.getCount(VariantCategory.SNP_G), "G", fields2type);
+		dataFrames[VariantCategory.SNP_T.ordinal()] = new DataFrameSnp(variantTypeCounter.getCount(VariantCategory.SNP_T), "T", fields2type);
+		dataFrames[VariantCategory.INS.ordinal()] = new DataFrameIns(variantTypeCounter.getCount(VariantCategory.INS), fields2type);
+		dataFrames[VariantCategory.DEL.ordinal()] = new DataFrameDel(variantTypeCounter.getCount(VariantCategory.DEL), fields2type);
+		dataFrames[VariantCategory.MNP.ordinal()] = new DataFrameMnp(variantTypeCounter.getCount(VariantCategory.MNP), fields2type);
+		dataFrames[VariantCategory.MIXED.ordinal()] = new DataFrameMixed(variantTypeCounter.getCount(VariantCategory.MIXED), fields2type);
+		dataFrames[VariantCategory.OTHER.ordinal()] = new DataFrameOther(variantTypeCounter.getCount(VariantCategory.OTHER), fields2type);
 	}
 
 	/**
-	 * Add data to the database
+	 * Add data to this VariantDataFrame
 	 */
 	void add(VcfEntry vcfEntry) {
 		for(var variant: vcfEntry.variants()) {
-			var dataSet = getDataSetByVariantType(variant);
-			if(dataSet == null) throw new RuntimeException("Cannot find data set for variant: " + variant.toString());
+			var dataFrame = getDataFrameByVariantType(variant);
+			if(dataFrame == null) throw new RuntimeException("Cannot find data frame for variant: " + variant.toString());
 
 			// Add fields
 			for(var field : fields2type.keySet()) {
 				Object value = getFieldValue(vcfEntry, field);
-				if(value == null) continue;	// No value (i.e. field not present in VCF entry
-				dataSet.setData(field, value, variant.getStart(), variant.getReference(), variant.getAlt());
+				dataFrame.setData(field, value, variant.getStart(), variant.getReference(), variant.getAlt());
 			}
 		}
 	}
 
 	/**
-	 * Annotate a VCF entry
+	 * Annotate a VCF entry with the fields in this VariantDataFrame
 	 */
 	void annotate(VcfEntry vcfEntry, String[] fields) {
 		for(var variant: vcfEntry.variants()) {
-			var dataSet = getDataSetByVariantType(variant);
+			var dataSet = getDataFrameByVariantType(variant);
 			if(dataSet == null) throw new RuntimeException("Cannot find data set for variant: " + variant.toString());
 
 			// Add fields
@@ -121,40 +120,20 @@ public class VariantDatabaseChr implements java.io.Serializable {
 	/**
 	 * Select the appropirate data set for a variant
 	 */
-	IndexedColumnDataSet getDataSetByVariantType(Variant variant) {
-		if(variant.isSnp()) {
-			switch (variant.getAlt().toUpperCase()) {
-				case "A":
-					return snpA;
-				case "C":
-					return snpC;
-				case "G":
-					return snpG;
-				case "T":
-					return snpT;
-				default:
-					throw new RuntimeException("Unknown SNP: " + variant.getAlt() + "\t" + variant.toString());
-			} 
-		} else if(variant.isIns()) {
-			return ins;
-		} else if(variant.isDel()) {
-			return del;
-		} else if(variant.isMnp()) {
-			return mnp;
-		} else if(variant.isMixed()) {
-			return mixed;
-		} else {
-			return other;
-		}
+	public DataFrame getDataFrameByVariantType(Variant variant) {
+		return getDataFrameByCategory(VariantCategory.of(variant));
+	}
+
+	public DataFrame getDataFrameByCategory(VariantCategory category) {
+		return dataFrames[category.ordinal()];
 	}
 
 	/**
 	 * Resize and memory optimize the data
 	 */
 	void resize() {
-		var columns = new IndexedColumnDataSet[] { snpA, snpC, snpG, snpT, ins, del, mnp, mixed, other };
-		for(var column: columns) {
-			column.resize();
+		for(var dataFrame : dataFrames) {
+			dataFrame.resize();
 		}
 	}
 

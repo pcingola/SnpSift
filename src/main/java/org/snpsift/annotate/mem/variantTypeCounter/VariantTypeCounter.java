@@ -1,11 +1,12 @@
 package org.snpsift.annotate.mem.variantTypeCounter;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.snpeff.interval.Variant;
 import org.snpeff.vcf.VcfEntry;
 import org.snpeff.vcf.VcfInfoType;
+import org.snpsift.annotate.mem.VariantCategory;
 
 /**
  * Count different types of variants
@@ -13,54 +14,28 @@ import org.snpeff.vcf.VcfInfoType;
  */
 public class VariantTypeCounter {
 
-	public enum VariantCategory {
-		SNP_A, SNP_C, SNP_G, SNP_T, INS, DEL, MNP, MIXED, OTHER;
-
-		public static VariantCategory of(Variant variant) {
-			if(variant.isSnp()) {
-				char alt = variant.getAlt().toUpperCase().charAt(0);
-				switch (alt) {
-					case 'A':
-						return SNP_A;
-					case 'C':
-						return SNP_C;
-					case 'G':
-						return SNP_G;
-					case 'T':
-						return SNP_T;
-					default:
-						throw new RuntimeException("Unknown SNP: " + variant.getAlt() + "\t" + variant.toString());
-				} 
-			} else if(variant.isIns()) {
-				return INS;
-			} else if(variant.isDel()) {
-				return DEL;
-			} else if(variant.isMnp()) {
-				return MNP;
-			} else if(variant.isMixed()) {
-				return MIXED;
-			} else {
-				return OTHER;
-			}
-		}
-	};
-
 	protected Map<String, VcfInfoType> fields2type; // Fields to create or annotate
 	protected String[] fieldsString; // Fields to create or annotate
 	protected int countByCategory[]; // Count by category
 	protected long countVcfEntries = 0;
 	protected long countVariants = 0;
-	protected Map<String, int[]> sizeByField; // Total size (in bytes) by field (only string fields)
+	protected Map<String, int[]> sizesByField; // Total size (in bytes) by field (only string fields)
 
 	public VariantTypeCounter(Map<String, VcfInfoType> fields2type) {
 		this.fields2type = fields2type;
-		fieldsString = fields2type.values().stream().filter(t -> t == VcfInfoType.String).toArray(String[]::new);
-		var numCategories = VariantCategory.values().length;
-		countByCategory= new int[numCategories]; // Count by category
-		// Size by field
+		// Get all 'string' fields
+		var fieldsStringList = new ArrayList<>();
+		for(var field: fields2type.keySet()) {
+			if(fields2type.get(field) == VcfInfoType.String) fieldsStringList.add(field);
+		}
+		fieldsString = fieldsStringList.toArray(new String[0]);
+		// Initialize counters
+		var numberOfCategories = VariantCategory.size();
+		countByCategory= new int[numberOfCategories]; // Count by category
+		// Initialize field size counters
 		Map<String, int[]> sizeByField = new HashMap<>();
 		for(var field: fieldsString) {
-			sizeByField.put(field, new int[numCategories]);
+			sizeByField.put(field, new int[numberOfCategories]);
 		}
 	}
 
@@ -68,26 +43,29 @@ public class VariantTypeCounter {
 	 * Count the number of variants in a VCF file
 	 */
 	public void count(VcfEntry vcfEntry) {
-		countVcfEntries++;
-
+		countVcfEntries++;	// Count VCF entries
 		// Count all variants (i.e. all ALTs)
 		for(var variant: vcfEntry.variants()) {
-			countVariants++;
+			countVariants++;	// Count variants
+			// Get variant category
 			var variantCategory = VariantCategory.of(variant);
 			int variantCategoryOrd = variantCategory.ordinal();
+			// Count by category
 			countByCategory[variantCategoryOrd]++;
 			// Size of each 'string' field
 			for(var field: fieldsString) {
 				var fieldValue = vcfEntry.getInfo(field);
-				if(fieldValue == null) continue;
-				int sizes[] = sizeByField.get(field);
-				sizes[variantCategoryOrd] += fieldValue.length();
+				updateSizes(variantCategory, field, fieldValue);
 			}
 		}
 	}
 
 	public int getCount(VariantCategory variantCategory) {
 		return countByCategory[variantCategory.ordinal()];
+	}
+
+	public int getSize(VariantCategory variantCategory, String field) {
+		return sizesByField.get(field)[variantCategory.ordinal()];
 	}
 
 	public String toString() {
@@ -101,9 +79,18 @@ public class VariantTypeCounter {
 			sb.append("\t" + variantCategory + ": " + countByCategory[variantCategoryOrd] + "\n");
 			// Show string field total lengths by category
 			for(var field: fieldsString) {
-				sb.append("\t\t" + field + ": " + sizeByField.get(field)[variantCategoryOrd] + "\n");
+				sb.append("\t\t" + field + ": " + sizesByField.get(field)[variantCategoryOrd] + "\n");
 			}
 		}
 		return sb.toString();
+	}
+
+	/**
+	 * Update sizes for a field
+	 */
+	protected void updateSizes(VariantCategory variantCategory, String field, String value) {
+		if(value == null) return;
+		int sizes[] = sizesByField.get(field);
+		sizes[variantCategory.ordinal()] += value.length();
 	}
 }

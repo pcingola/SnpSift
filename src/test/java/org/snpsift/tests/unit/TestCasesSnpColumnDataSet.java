@@ -3,20 +3,20 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.snpeff.vcf.VcfInfoType;
-import org.snpsift.annotate.mem.dataSet.SnpColumnDataSet;
+import org.snpsift.annotate.mem.dataFrame.DataFrameSnp;
 
 import java.util.HashMap;
 import java.util.Map;
 
 public class TestCasesSnpColumnDataSet {
-    private SnpColumnDataSet dataSet;
+    private DataFrameSnp dataSet;
 
     @BeforeEach
     public void setup() {
         int numEntries = 10;
         String alt = "A";
         Map<String, VcfInfoType> fields2type = new HashMap<>();
-        dataSet = new SnpColumnDataSet(numEntries, alt, fields2type);
+        dataSet = new DataFrameSnp(numEntries, alt, fields2type);
     }
 
     @Test

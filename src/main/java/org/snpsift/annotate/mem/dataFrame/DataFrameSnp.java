@@ -1,4 +1,4 @@
-package org.snpsift.annotate.mem.dataSet;
+package org.snpsift.annotate.mem.dataFrame;
 
 import java.util.Map;
 
@@ -9,10 +9,10 @@ import org.snpeff.vcf.VcfInfoType;
  * A set of DataColumns, indexed by position.
  * This is used to store data for a chromosome
  */
-public class SnpColumnDataSet extends IndexedColumnDataSet {
+public class DataFrameSnp extends DataFrame {
 	String alt;	// Alternative allele, i.e. one of 'A', 'C', 'G', 'T'
 
-	public SnpColumnDataSet(int numEntries, String alt, Map<String, VcfInfoType> fields2type) {
+	public DataFrameSnp(int numEntries, String alt, Map<String, VcfInfoType> fields2type) {
 		super(numEntries, fields2type);
 		this.alt = alt;
 	}

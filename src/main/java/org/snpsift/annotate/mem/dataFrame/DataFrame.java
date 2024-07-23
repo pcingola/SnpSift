@@ -1,4 +1,4 @@
-package org.snpsift.annotate.mem.dataSet;
+package org.snpsift.annotate.mem.dataFrame;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -16,7 +16,7 @@ import org.snpsift.annotate.mem.dataColumn.StringColumn;
  * A set of DataColumns, indexed by position
  * This is used to store data for a chromosome
  */
-public abstract class IndexedColumnDataSet implements java.io.Serializable {
+public abstract class DataFrame implements java.io.Serializable {
 	int size;	// Number of entries
 	int currentIdx = 0;	// Current index
 	PosIndex posIndex;	// Index by position (i.e. chromosome position is transformed into a "column / array index")
@@ -26,7 +26,7 @@ public abstract class IndexedColumnDataSet implements java.io.Serializable {
 	String[] fields;	// Fields to annotate
 	Map<String, VcfInfoType> fields2type; // Fields to create or annotate
 
-	public IndexedColumnDataSet(int size, Map<String, VcfInfoType> fields2type) {
+	public DataFrame(int size, Map<String, VcfInfoType> fields2type) {
 		this.size = size;
 		posIndex = new PosIndex(size);
 		columns = new HashMap<>();
@@ -44,10 +44,8 @@ public abstract class IndexedColumnDataSet implements java.io.Serializable {
 
 	/**
 	 * Create a column of a given type
-	 
 	 */
-	@SuppressWarnings("rawtypes")
-	DataColumn createColumn(String field, VcfInfoType type) {
+	DataColumn<?> createColumn(String field, VcfInfoType type) {
 		switch (type) {
 			case Flag:
 				return new BoolColumn(field, size);

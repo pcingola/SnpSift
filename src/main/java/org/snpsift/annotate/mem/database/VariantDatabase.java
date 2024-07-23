@@ -27,7 +27,7 @@ public class VariantDatabase {
 	String dbDir; // Directory where databases are stored
 	String[] fields; // Fields to create or annotate
 	Map<String, VcfInfoType> fields2type; // Fields to create or annotate
-	VariantDatabaseChr db; // Database for current chromosome
+	VariantDataFrame db; // Database for current chromosome
 	VariantTypeCounters variantTypeCounters; // Counters per chromosome
 
 	/**
@@ -54,7 +54,7 @@ public class VariantDatabase {
 			this.chr = chr;
 			var vcounter = variantTypeCounters.get(chr);
 			if(vcounter == null) throw new RuntimeException("Cannot find variant type counters for chromosome: '" + chr + "'");
-			db = new VariantDatabaseChr(vcounter, fields2type);
+			db = new VariantDataFrame(vcounter, fields2type);
 		}
 		db.add(vcfEntry);
 	}
@@ -135,12 +135,12 @@ public class VariantDatabase {
 	/**
 	 * Get the database for a chromosome
 	 */
-	VariantDatabaseChr get(String chr) {
+	VariantDataFrame get(String chr) {
 		if(chr.equals(this.chr)) return db;
 		// Load from database file
 		this.chr = chr;
 		var dbFile = dbDir + "/" + chr + '.' + DB_EXT;
-		db = VariantDatabaseChr.load(dbFile);
+		db = VariantDataFrame.load(dbFile);
 		return db;
 	}
 

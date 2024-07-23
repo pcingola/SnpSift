@@ -1,12 +1,12 @@
-package org.snpsift.annotate.mem.dataSet;
+package org.snpsift.annotate.mem.dataFrame;
 
 import java.util.Map;
 
 import org.snpeff.vcf.VcfInfoType;
 
-public class MixedColumnDataSet extends IndexedColumnDataSet {
-        
-    public MixedColumnDataSet(int numEntries, Map<String, VcfInfoType> fields2type) {
+public class DataFrameMnp extends DataFrame {
+    
+    public DataFrameMnp(int numEntries, Map<String, VcfInfoType> fields2type) {
         super(numEntries, fields2type);
     }
 
@@ -21,4 +21,5 @@ public class MixedColumnDataSet extends IndexedColumnDataSet {
         // TODO Set the data in the column
         throw new UnsupportedOperationException("Unimplemented method 'setData'");
     }
+
 }

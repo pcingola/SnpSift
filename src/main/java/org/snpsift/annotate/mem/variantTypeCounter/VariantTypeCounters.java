@@ -22,11 +22,12 @@ public class VariantTypeCounters {
     Map<String, VariantTypeCounter> counters = new HashMap<>(); // Counters per chromosome
 	String latestChr = ""; // Latest chromosome
 	VariantTypeCounter latestCounter = null; // Counter for the latest chromosome
-	VariantTypeCounter counterAll = new VariantTypeCounter(); // Count all variants
+	VariantTypeCounter counterAll; // Count all variants
 	int count = 0;	// Total number of variants
 
 	public VariantTypeCounters(Map<String, VcfInfoType> fields2type) {
         this.fields2type = fields2type;
+		counterAll = new VariantTypeCounter(fields2type);
     }
 
 	/**
