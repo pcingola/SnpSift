@@ -52,15 +52,15 @@ public class VariantDataFrame implements java.io.Serializable {
 		this.fields = fields2type.keySet().toArray(new String[0]);
 		// Create data sets according to the variant type, and counters for each variant type
 		dataFrames = new DataFrame[VariantCategory.size()];
-		dataFrames[VariantCategory.SNP_A.ordinal()] = new DataFrameSnp(variantTypeCounter.getCount(VariantCategory.SNP_A), "A", fields2type);
-		dataFrames[VariantCategory.SNP_C.ordinal()] = new DataFrameSnp(variantTypeCounter.getCount(VariantCategory.SNP_C), "C", fields2type);
-		dataFrames[VariantCategory.SNP_G.ordinal()] = new DataFrameSnp(variantTypeCounter.getCount(VariantCategory.SNP_G), "G", fields2type);
-		dataFrames[VariantCategory.SNP_T.ordinal()] = new DataFrameSnp(variantTypeCounter.getCount(VariantCategory.SNP_T), "T", fields2type);
-		dataFrames[VariantCategory.INS.ordinal()] = new DataFrameIns(variantTypeCounter.getCount(VariantCategory.INS), fields2type);
-		dataFrames[VariantCategory.DEL.ordinal()] = new DataFrameDel(variantTypeCounter.getCount(VariantCategory.DEL), fields2type);
-		dataFrames[VariantCategory.MNP.ordinal()] = new DataFrameMnp(variantTypeCounter.getCount(VariantCategory.MNP), fields2type);
-		dataFrames[VariantCategory.MIXED.ordinal()] = new DataFrameMixed(variantTypeCounter.getCount(VariantCategory.MIXED), fields2type);
-		dataFrames[VariantCategory.OTHER.ordinal()] = new DataFrameOther(variantTypeCounter.getCount(VariantCategory.OTHER), fields2type);
+		dataFrames[VariantCategory.SNP_A.ordinal()] = new DataFrameSnp(variantTypeCounter, VariantCategory.SNP_A);
+		dataFrames[VariantCategory.SNP_C.ordinal()] = new DataFrameSnp(variantTypeCounter, VariantCategory.SNP_C);
+		dataFrames[VariantCategory.SNP_G.ordinal()] = new DataFrameSnp(variantTypeCounter, VariantCategory.SNP_G);
+		dataFrames[VariantCategory.SNP_T.ordinal()] = new DataFrameSnp(variantTypeCounter, VariantCategory.SNP_T);
+		dataFrames[VariantCategory.INS.ordinal()] = new DataFrameIns(variantTypeCounter, VariantCategory.INS);
+		dataFrames[VariantCategory.DEL.ordinal()] = new DataFrameDel(variantTypeCounter, VariantCategory.DEL);
+		dataFrames[VariantCategory.MNP.ordinal()] = new DataFrameMnp(variantTypeCounter, VariantCategory.MNP);
+		dataFrames[VariantCategory.MIXED.ordinal()] = new DataFrameMixed(variantTypeCounter, VariantCategory.MIXED);
+		dataFrames[VariantCategory.OTHER.ordinal()] = new DataFrameOther(variantTypeCounter, VariantCategory.OTHER);
 	}
 
 	/**
@@ -92,6 +92,15 @@ public class VariantDataFrame implements java.io.Serializable {
 				var data = dataSet.getData(field, variant.getStart(), variant.getReference(), variant.getAlt());
 				if(data != null) vcfEntry.addInfo(field, data.toString());
 			}
+		}
+	}
+
+	/** 
+	 * This is used after creating the data to verify there are no issues with the dataFrames and indeces
+	*/
+	public void check() {
+		for(var dataFrame : dataFrames) {
+			dataFrame.check();
 		}
 	}
 
@@ -142,6 +151,7 @@ public class VariantDataFrame implements java.io.Serializable {
 	 * Save to file
 	 */
 	void save(String fileName) {
+		check();
 		resize();	// Optimize memory usage
 		try {
 			System.out.println("Saving to file: " + fileName);

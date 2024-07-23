@@ -64,6 +64,14 @@ public class VariantTypeCounter {
 		return countByCategory[variantCategory.ordinal()];
 	}
 
+	public int[] getCountByCategory() {
+		return countByCategory;
+	}
+
+	public Map<String, VcfInfoType> getFields2type() {
+		return fields2type;
+	}
+
 	/**
 	 * Get total size (in bytes) of a field (only string fields)
 	 * @return Total size (in bytes) or -1 if the field is not found
@@ -74,6 +82,11 @@ public class VariantTypeCounter {
 		return sizes[variantCategory.ordinal()];
 	}
 
+	public Map<String, int[]> getSizesByField() {
+		return sizesByField;
+	}
+
+	@Override
 	public String toString() {
 		var sb = new StringBuffer();
 		sb.append("VariantTypeCounter:");
@@ -100,4 +113,5 @@ public class VariantTypeCounter {
 		int sizes[] = sizesByField.get(field);
 		sizes[variantCategory.ordinal()] += value.length();
 	}
+
 }

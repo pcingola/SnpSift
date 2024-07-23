@@ -5,19 +5,22 @@ import java.util.Map;
 
 import org.snpeff.vcf.VcfInfoType;
 import org.snpsift.annotate.mem.PosIndex;
+import org.snpsift.annotate.mem.VariantCategory;
 import org.snpsift.annotate.mem.dataColumn.BoolColumn;
 import org.snpsift.annotate.mem.dataColumn.CharColumn;
 import org.snpsift.annotate.mem.dataColumn.IntColumn;
 import org.snpsift.annotate.mem.dataColumn.FloatColumn;
 import org.snpsift.annotate.mem.dataColumn.DataColumn;
 import org.snpsift.annotate.mem.dataColumn.StringColumn;
+import org.snpsift.annotate.mem.variantTypeCounter.VariantTypeCounter;
 
 /**
  * A set of DataColumns, indexed by position
  * This is used to store data for a chromosome
  */
 public abstract class DataFrame implements java.io.Serializable {
-	int size;	// Number of entries
+	VariantTypeCounter variantTypeCounter;
+	VariantCategory variantCategory;
 	int currentIdx = 0;	// Current index
 	PosIndex posIndex;	// Index by position (i.e. chromosome position is transformed into a "column / array index")
 	StringColumn ref;	// Reference allele
@@ -26,11 +29,13 @@ public abstract class DataFrame implements java.io.Serializable {
 	String[] fields;	// Fields to annotate
 	Map<String, VcfInfoType> fields2type; // Fields to create or annotate
 
-	public DataFrame(int size, Map<String, VcfInfoType> fields2type) {
-		this.size = size;
+	public DataFrame(VariantTypeCounter variantTypeCounter, VariantCategory variantCategory) {
+		this.variantTypeCounter = variantTypeCounter;
+		this.variantCategory = variantCategory;
+		int size = variantTypeCounter.getCount(variantCategory);
 		posIndex = new PosIndex(size);
 		columns = new HashMap<>();
-		this.fields2type = fields2type;
+		this.fields2type = variantTypeCounter.getFields2type();
 		this.fields = fields2type.keySet().toArray(new String[0]);
 		createColumns();
 	}
@@ -42,21 +47,27 @@ public abstract class DataFrame implements java.io.Serializable {
 		columns.put(name, column);
 	}
 
+	public void check() {
+		posIndex.check();
+	}
+	
 	/**
 	 * Create a column of a given type
 	 */
 	DataColumn<?> createColumn(String field, VcfInfoType type) {
+		int numEntries = variantTypeCounter.getCount(variantCategory);
 		switch (type) {
 			case Flag:
-				return new BoolColumn(field, size);
+				return new BoolColumn(field, numEntries);
 			case Integer:
-				return new IntColumn(field, size);
+				return new IntColumn(field, numEntries);
 			case Float:
-				return new FloatColumn(field, size);
+				return new FloatColumn(field, numEntries);
 			case Character:
-				return new CharColumn(field, size);
+				return new CharColumn(field, numEntries);
 			case String:
-				return new StringColumn(field, size);
+				int memSize = variantTypeCounter.getSize(variantCategory, field);
+				return new StringColumn(field, numEntries, memSize);
 			default:
 				throw new RuntimeException("Unimplemented type: " + type);
 		}

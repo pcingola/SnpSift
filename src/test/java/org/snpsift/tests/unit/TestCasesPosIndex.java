@@ -58,8 +58,18 @@ public class TestCasesPosIndex {
     }
 
     @Test
+    public void testCapacity() {
+        PosIndex posIndex = new PosIndex(5);
+        assertEquals(5, posIndex.capacity());
+    }
+
+    @Test
     public void testSize() {
         PosIndex posIndex = new PosIndex(5);
-        assertEquals(5, posIndex.size());
+        posIndex.set(0, 10);
+        posIndex.set(1, 20);
+        posIndex.set(2, 30);
+        assertEquals(3, posIndex.size());
     }
+
 }

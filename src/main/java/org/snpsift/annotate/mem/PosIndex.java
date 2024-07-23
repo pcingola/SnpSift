@@ -7,16 +7,22 @@ import java.util.Arrays;
  */
 public class PosIndex implements java.io.Serializable {
 	int[] positions;	// Chromosome positions of each entry
+	int size = 0;	// Maximum position
 
 	public PosIndex(int numEntries) {
 		positions = new int[numEntries];
 	}
 
+	public int capacity() {
+		return positions.length;
+	}
+
 	/**
-	 * Check that all positions are in non-decreasing order
+	 * Check that all positions are in non-decreasing order.
+	 * This is necesary because we use binary search to find positions
 	 */
-	void checkPositions() {
-		for (int i = 1; i < positions.length; i++)
+	public void check() {
+		for (int i = 1; i < size; i++)
 			if (positions[i - 1] > positions[i]) throw new RuntimeException("ERROR: Positions are not sorted: " + i + "\t" + positions[i - 1] + " >= " + positions[i]);
 	}
 
@@ -37,7 +43,7 @@ public class PosIndex implements java.io.Serializable {
 	 * @return index of the position or negative number if not found
 	 */
 	public int indexOf(int pos) {
-		return Arrays.binarySearch(positions, pos);
+		return Arrays.binarySearch(positions, 0, size, pos);
 	}
 
 	/**
@@ -47,7 +53,7 @@ public class PosIndex implements java.io.Serializable {
 	 * @return index of the position or negative number if not found
 	 */
 	public int indexOfSlow(int pos) {
-		for (int i = 0; i < positions.length; i++)
+		for (int i = 0; i < size; i++)
 			if (positions[i] == pos) return i;
 		return -1;
 	}
@@ -57,13 +63,14 @@ public class PosIndex implements java.io.Serializable {
 	 */
 	public void set(int i, int pos) {
 		positions[i] = pos;
+		size = Math.max(size, i + 1);
 	}
 
 	/**
-	 * Number of entries
+	 * Number of entries in use
 	 */
 	public int size() {
-		return positions.length;
+		return size;
 	}
 }
 

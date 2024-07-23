@@ -28,10 +28,6 @@ public class StringColumn extends DataColumn<String> {
 		data = new StringArray(length, size);
 	}
 
-	public StringColumn(String name, int length) {
-		super(name, length);
-	}
-
 	@Override
 	protected String getData(int i) {
 		return data.get(i);

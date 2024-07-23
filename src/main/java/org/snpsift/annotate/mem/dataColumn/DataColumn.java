@@ -17,9 +17,9 @@ public abstract class DataColumn<T> implements Serializable {
 	public DataColumn(String name, int size) {
 		this.name = name;
 		isNUllData = new byte[(size + 7) / 8];
-		// Initialize all data to not null
+		// Initialize all data to null
 		for (int i = 0; i < isNUllData.length; i++)
-			isNUllData[i] = 0;
+			isNUllData[i] = (byte) 0xFF;
 	}
 
 	/**

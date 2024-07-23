@@ -1,13 +1,12 @@
 package org.snpsift.annotate.mem.dataFrame;
 
-import java.util.Map;
-
-import org.snpeff.vcf.VcfInfoType;
+import org.snpsift.annotate.mem.VariantCategory;
+import org.snpsift.annotate.mem.variantTypeCounter.VariantTypeCounter;
 
 public class DataFrameMixed extends DataFrame {
         
-    public DataFrameMixed(int numEntries, Map<String, VcfInfoType> fields2type) {
-        super(numEntries, fields2type);
+    public DataFrameMixed(VariantTypeCounter variantTypeCounter, VariantCategory variantCategory) {
+        super(variantTypeCounter, variantCategory);
     }
 
     @Override
