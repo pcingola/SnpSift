@@ -143,7 +143,7 @@ public class StringArray {
         sb.append("StringArray(" + index2offset.length + ", " + data.length + ")");
         if (currentIndex > 0 ) sb.append(":\n");
         for (int i = 0; i < currentIndex && i < MAX_NUM_STRING_TO_SHOW; i++) {
-            sb.append("\t" + i + ": ' " +get(i) + "'\n");
+            sb.append("\t" + i + ": ' " + get(i) + "'\n");
         }
         return sb.toString();
     }

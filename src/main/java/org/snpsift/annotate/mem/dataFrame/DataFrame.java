@@ -3,8 +3,10 @@ package org.snpsift.annotate.mem.dataFrame;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.snpeff.util.Tuple;
 import org.snpeff.vcf.VcfInfoType;
 import org.snpsift.annotate.mem.PosIndex;
+import org.snpsift.annotate.mem.StringArray;
 import org.snpsift.annotate.mem.VariantCategory;
 import org.snpsift.annotate.mem.dataColumn.BoolColumn;
 import org.snpsift.annotate.mem.dataColumn.CharColumn;
@@ -23,8 +25,8 @@ public abstract class DataFrame implements java.io.Serializable {
 	VariantCategory variantCategory;
 	int currentIdx = 0;	// Current index
 	PosIndex posIndex;	// Index by position (i.e. chromosome position is transformed into a "column / array index")
-	StringColumn ref;	// Reference allele
-	StringColumn alt;	// Alternative allele
+	StringArray ref;	// Reference allele.
+	StringArray alt;	// Alternative allele.
 	Map<String, DataColumn<?>> columns;	// Data columns
 	String[] fields;	// Fields to annotate
 	Map<String, VcfInfoType> fields2type; // Fields to create or annotate
@@ -84,6 +86,16 @@ public abstract class DataFrame implements java.io.Serializable {
 	}
 
 	/**
+	 * Does the entry at possition 'idx' match the given (pos, ref, alt) values?
+	 */
+	public boolean eq(int idx, int pos, String ref, String alt) {
+		if( posIndex.get(idx) != pos) return false;
+		if( (ref != null) && this.ref.get(idx) != ref) return false;
+		if( (alt != null) && this.alt.get(idx) != alt) return false;
+		return true;
+	}
+
+	/**
 	 * Get a column
 	 */
 	public DataColumn<?> getColumn(String name) {
@@ -91,7 +103,15 @@ public abstract class DataFrame implements java.io.Serializable {
 	}
 
 	/**
-	 * Get data from a column
+	 * Get data from a column by searching by position, reference and alternative alleles.
+	 * Note: The value can be null
+	 */
+	public boolean hasEntry(int pos, String ref, String alt) {
+		throw new RuntimeException("Unimplemented method 'hasEntry'");
+	}
+
+	/**
+	 * Get data from a column by searching by position, reference and alternative alleles.
 	 * Note: The value can be null
 	 */
 	public Object getData(String columnName, int pos, String ref, String alt) {
@@ -99,11 +119,37 @@ public abstract class DataFrame implements java.io.Serializable {
 		var col = columns.get(columnName);
 		if(col == null) throw new RuntimeException("Cannot find column: " + columnName);
 		// Find index in the column
-		// TODO: Find lower and upper bounds to index, scan multiple entries
 		var idx = posIndex.indexOf(pos);
 		if(idx < 0) return null; // Not found
 		if(col.isNull(idx)) return null; // Found, but entry has a null value
 		return col.get(idx);
+	}
+
+	/**
+	 * Get a lower and upper bound index where the same '(pos, ref, alt)' values are stored.
+	 * @return A tuple with the lower and upper bound index (inclusive). If the entry is not found, returns null.
+	 * 
+	 * For example if there is only one entry as position 123, the tuple will be (123, 123)
+	 * If there are two entries at positions 123 and 124, the tuple will be (123, 124)
+	 */
+	public Tuple<Integer, Integer> getDataRange(String columnName, int pos, String ref, String alt) {
+		/*
+		 * WE NEED TO RE-IMPLEMENT THIS.
+		 * CAN The same 'pos' may have different non-consecutive entries matching '(pos, ref, alt)'?
+		 * COULD THIS HAPPEN IN CASES OF multiallelic VCF entries????
+		 * ADD A SANITY CHECK?
+		 */
+		throw new RuntimeException("Unimplemented method 'hasEntry'");
+		// var idx = posIndex.indexOf(pos);
+		// if(idx < 0) return null; // Not found
+		// if(!eq(idx, pos, ref, alt)) return null; // Not found
+		// // Find lower bound
+		// int lower = idx;
+		// while(lower > 0 && eq(lower - 1, pos, ref, alt)) lower--;
+		// // Find upper bound
+		// int upper = idx;
+		// while(upper < posIndex.size() - 1 && eq(upper + 1, pos, ref, alt)) upper++;
+		// return new Tuple<>(lower, upper);
 	}
 
 	/**

@@ -1,6 +1,5 @@
 package org.snpsift.annotate.mem.dataFrame;
 
-import org.snpeff.util.Log;
 import org.snpsift.annotate.mem.VariantCategory;
 import org.snpsift.annotate.mem.variantTypeCounter.VariantTypeCounter;
 
@@ -40,12 +39,9 @@ public class DataFrameSnp extends DataFrame {
 	@Override
 	public Object getData(String columnName, int pos, String ref, String alt) {
 		var column = columns.get(columnName);
-		Log.debug("COLUMN: " + columnName + "\t" + column);
 		if(column == null) throw new RuntimeException("Cannot find column: " + columnName);
 		int idx = posIndex.indexOf(pos);
-		Log.debug("IDX: " + idx);
 		if(idx < 0) return null;
-		Log.debug("VALUE: " + column.get(idx));
 		return column.get(idx);
 	}
 
