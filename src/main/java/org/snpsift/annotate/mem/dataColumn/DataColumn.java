@@ -2,6 +2,8 @@ package org.snpsift.annotate.mem.dataColumn;
 
 import java.io.Serializable;
 
+import org.snpsift.annotate.mem.BoolArray;
+
 /**
  * A wrapper for a data column of primitive type T
  * A Data Column is a column of a specific data tyle (String, Float, Long, etc.) that is stored using primitive types for memory efficiency.
@@ -12,21 +14,12 @@ public abstract class DataColumn<T> implements Serializable {
 	public static final int MAX_NUMBER_OF_ELEMENTS_TO_SHOW = 10;
 
 	protected String name;
-	protected byte[] isNUllData; // If the data is null, we set the corresponding bit in this array to 1
+	protected BoolArray isNUllData; // If the data is null, we set the corresponding bit in this array to 1
 
 	public DataColumn(String name, int size) {
 		this.name = name;
-		isNUllData = new byte[(size + 7) / 8];
-		// Initialize all data to null
-		for (int i = 0; i < isNUllData.length; i++)
-			isNUllData[i] = (byte) 0xFF;
-	}
-
-	/**
-	 * Clear null data
-	 */
-	public void clearNull(int i) {
-		isNUllData[i / 8] &= ~(1 << (i % 8));
+		isNUllData = new BoolArray(size);
+		isNUllData.fill();
 	}
 
 	public String getName() {
@@ -37,7 +30,7 @@ public abstract class DataColumn<T> implements Serializable {
 	 * Is the data at index i null?
 	 */
 	public boolean isNull(int i) {
-		return (isNUllData[i / 8] & (1 << (i % 8))) != 0;
+		return isNUllData.is(i);
 	}
 
 	/**
@@ -61,9 +54,9 @@ public abstract class DataColumn<T> implements Serializable {
 	 * Set value at index i, consideting null data
 	 */
 	public void set(int i, Object value) {
-		if (value == null) setNull(i);
+		if (value == null) isNUllData.set(i);
 		else {
-			clearNull(i);
+			isNUllData.clear(i);
 			setData(i, value);
 		}
 	}
@@ -72,13 +65,6 @@ public abstract class DataColumn<T> implements Serializable {
 	 * Set data at index i
 	 */
 	protected abstract void setData(int i, Object value);
-
-	/**
-	 * Set data to null
-	 */
-	public void setNull(int i) {
-		isNUllData[i / 8] |= 1 << (i % 8);
-	}
 
 	/** Number of elements in this DataColumn */
 	public abstract int size();

@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.junit.jupiter.api.Test;
 import org.snpsift.annotate.mem.StringArray;
+import org.snpsift.util.RandomUtil;
 
 /**
  * Unit test cases for StringArray
@@ -63,4 +64,37 @@ public class TestCasesStringArray {
         assertEquals("banana", sa.get(1), "String mismatch at index 1: 'banana' != '" + sa.get(1) + "'");
         assertEquals("cherry", sa.get(2), "String mismatch at index 2: 'cherry' != '" + sa.get(2) + "'");
     }
+
+    @Test
+    public void testRand() {
+        for(int iter = 0 ; iter < 100; iter++) {
+            RandomUtil ru = new RandomUtil(iter);
+
+            var numStrings = ru.randInt(100000);
+
+            // Calculate the size of the StringArray
+            var size = 0;
+            ru.reset();
+            for(int i = 0; i < numStrings; i++) {
+                var r = ru.randStringOrNull();
+                size += r == null ? 0 : r.length();
+            }
+
+            // Create a StringArray with random strings
+            StringArray sarray = new StringArray(numStrings + 1, size + numStrings);
+            ru.reset();
+            for(int i = 0; i < numStrings; i++) {
+                sarray.add(ru.randStringOrNull());
+            }
+
+            // Check that all strings match
+            ru.reset();
+            for(int i = 0; i < numStrings; i++) {
+                var exp = ru.randStringOrNull();
+                if(exp == null) exp = "";
+                assertEquals(exp, sarray.get(i), "Mismatch at iteration " + iter + ", index " + i + ": " + sarray.get(i) + " != " + exp);
+            }
+        }
+    }
+    
 }

@@ -11,7 +11,7 @@ import org.snpsift.annotate.mem.VariantCategory;
 import org.snpsift.annotate.mem.dataColumn.BoolColumn;
 import org.snpsift.annotate.mem.dataColumn.CharColumn;
 import org.snpsift.annotate.mem.dataColumn.IntColumn;
-import org.snpsift.annotate.mem.dataColumn.FloatColumn;
+import org.snpsift.annotate.mem.dataColumn.DoubleColumn;
 import org.snpsift.annotate.mem.dataColumn.DataColumn;
 import org.snpsift.annotate.mem.dataColumn.StringColumn;
 import org.snpsift.annotate.mem.variantTypeCounter.VariantTypeCounter;
@@ -64,7 +64,7 @@ public abstract class DataFrame implements java.io.Serializable {
 			case Integer:
 				return new IntColumn(field, numEntries);
 			case Float:
-				return new FloatColumn(field, numEntries);
+				return new DoubleColumn(field, numEntries);
 			case Character:
 				return new CharColumn(field, numEntries);
 			case String:

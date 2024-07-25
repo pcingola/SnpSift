@@ -1,9 +1,9 @@
 package org.snpsift.annotate.mem.dataColumn;
 
-public class FloatColumn extends DataColumn<Double> {
+public class DoubleColumn extends DataColumn<Double> {
 	double[] data;
 
-	public FloatColumn(String name, int size) {
+	public DoubleColumn(String name, int size) {
 		super(name, size);
 		this.data = new double[size];
 	}
