@@ -69,13 +69,15 @@ public class TestCasesSnpColumnDataFrame {
     @Test
     public void testDataFrame02() {
         var size = 100;
-        var varCounter = variantTypeCounter(new String[]{"field_string", "field_string_2"}, size, size * 20);
+        var stringMaxLen = 100;
+        var varCounter = variantTypeCounter(new String[]{"field_string", "field_string_2"}, size, size * stringMaxLen);
         var dataFrame = new DataFrameSnp(varCounter, VariantCategory.SNP_A);
         // Create random data, 100 points
         // Initialize random seed
         var pos = 0;
         var alt = "A";
         RandomUtil randUtil = new RandomUtil();
+        randUtil.reset();
         for(int i=0; i < size; i++) {
             pos += randUtil.randInt(1000); // Random position increment
             var ref = randUtil.randAcgt(); // Reference: A random value from 'A', 'C', 'G', 'T'
@@ -84,8 +86,9 @@ public class TestCasesSnpColumnDataFrame {
             var rf = randUtil.randDoubleOrNull();
             var rc = randUtil.randCharOrNull();
             var rb = randUtil.randBoolOrNull();
-            var rs = randUtil.randStringOrNull();
-            var rs2 = randUtil.randStringOrNull();
+            var rs = randUtil.randStringOrNull(stringMaxLen);
+            var rs2 = randUtil.randStringOrNull(stringMaxLen);
+            System.out.println("i: " + i + "\tpos: " + pos + "\tref: " + ref + "\talt: " + alt + "\tri: " + ri + "\trf: " + rf + "\trc: " + rc + "\trb: " + rb + "\trs: " + rs + "\trs2: " + rs2);
             // Set data
             dataFrame.setData("field_int", ri, pos, ref, alt);
             dataFrame.setData("field_float", rf, pos, ref, alt);
@@ -93,6 +96,7 @@ public class TestCasesSnpColumnDataFrame {
             dataFrame.setData("field_bool", rb, pos, ref, alt);
             dataFrame.setData("field_string", rs, pos, ref, alt);
             dataFrame.setData("field_string_2", rs2, pos, ref, alt);
+            dataFrame.next();
         }
 
         randUtil.reset();
@@ -105,8 +109,8 @@ public class TestCasesSnpColumnDataFrame {
             var rf = randUtil.randDoubleOrNull();
             var rc = randUtil.randCharOrNull();
             var rb = randUtil.randBoolOrNull();
-            var rs = randUtil.randStringOrNull();
-            var rs2 = randUtil.randStringOrNull();
+            var rs = randUtil.randStringOrNull(stringMaxLen);
+            var rs2 = randUtil.randStringOrNull(stringMaxLen);
             System.out.println("pos: " + pos + "\tref: " + ref + "\talt: " + alt + "\tri: " + ri + "\trf: " + rf + "\trc: " + rc + "\trb: " + rb + "\trs: " + rs + "\trs2: " + rs2);
             // Check data
             assertEquals(ri, dataFrame.getData("field_int", pos, ref, alt));
@@ -117,35 +121,4 @@ public class TestCasesSnpColumnDataFrame {
             assertEquals(rs2, dataFrame.getData("field_string_2", pos, ref, alt));
         }
     }
-
-    //     Object value = "Value42";
-    //     int pos = 5;
-    //     String ref = "N";
-    //     String alt = "A";
-
-    //     Assertions.assertThrows(RuntimeException.class, () -> {
-    //         dataFrame.setData(columnName, value, pos, ref, "C");
-    //     });
-
-    //     dataFrame.setData(columnName, value, pos, ref, alt);
-    //     Object actualValue = dataFrame.getData(columnName, pos, ref, alt);
-    //     Assertions.assertEquals(value, actualValue);
-    // }
-
-    // @Test
-    // public void testDataFrame03() {
-    //     String columnName = "column1";
-    //     Object value = "Value42";
-    //     int pos = 5;
-    //     String ref = "N";
-    //     String alt = "A";
-
-    //     Assertions.assertThrows(RuntimeException.class, () -> {
-    //         dataFrame.setData(columnName, value, pos, ref, "C");
-    //     });
-
-    //     dataFrame.setData(columnName, value, pos, ref, alt);
-    //     Object actualValue = dataFrame.getData(columnName, pos, ref, alt);
-    //     Assertions.assertEquals(value, actualValue);
-    // }
 }

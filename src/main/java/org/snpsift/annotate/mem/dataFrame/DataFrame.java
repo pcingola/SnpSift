@@ -106,14 +106,6 @@ public abstract class DataFrame implements java.io.Serializable {
 	 * Get data from a column by searching by position, reference and alternative alleles.
 	 * Note: The value can be null
 	 */
-	public boolean hasEntry(int pos, String ref, String alt) {
-		throw new RuntimeException("Unimplemented method 'hasEntry'");
-	}
-
-	/**
-	 * Get data from a column by searching by position, reference and alternative alleles.
-	 * Note: The value can be null
-	 */
 	public Object getData(String columnName, int pos, String ref, String alt) {
 		// Find column
 		var col = columns.get(columnName);
@@ -150,6 +142,19 @@ public abstract class DataFrame implements java.io.Serializable {
 		// int upper = idx;
 		// while(upper < posIndex.size() - 1 && eq(upper + 1, pos, ref, alt)) upper++;
 		// return new Tuple<>(lower, upper);
+	}
+
+	/**
+	 * Get data from a column by searching by position, reference and alternative alleles.
+	 * Note: The value can be null
+	 */
+	public boolean hasEntry(int pos, String ref, String alt) {
+		throw new RuntimeException("Unimplemented method 'hasEntry'");
+	}
+
+
+	public void next() {
+		currentIdx++;
 	}
 
 	/**

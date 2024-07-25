@@ -102,9 +102,9 @@ public class RandomUtil {
         return randLong(maxLong);
     }
 
-    public String randString() {
+    public String randString(int maxLen) {
         // Create a random string (random length), but return null 10% of the time
-        var len = rand.nextInt(10);
+        var len = rand.nextInt(maxLen);
         var sb = new StringBuilder();
         for (int i = 0; i < len; i++)
             sb.append(randChar());
@@ -114,7 +114,13 @@ public class RandomUtil {
     public String randStringOrNull() {
         if (rand.nextDouble() < nullRatio)
             return null;
-        return randString();
+        return randString(256);
+    }
+
+    public String randStringOrNull(int maxLen) {
+        if (rand.nextDouble() < nullRatio)
+            return null;
+        return randString(maxLen);
     }
 
     public void setNullRatio(double nullRatio) {

@@ -51,6 +51,6 @@ public class DataFrameSnp extends DataFrame {
 		var column = columns.get(columnName);
 		if(column == null) throw new RuntimeException("Cannot find column: " + columnName);
 		column.set(currentIdx, value);
-		currentIdx++;
 	}
+
 }
