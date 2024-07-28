@@ -12,16 +12,4 @@ public class DataFrameMnp extends DataFrame {
         super(variantTypeCounter, variantCategory);
     }
 
-    @Override
-    public Object getData(String columnName, int pos, String ref, String alt) {
-        // TODO Look up the data in the column
-        throw new UnsupportedOperationException("Unimplemented method 'getData'");
-    }
-
-    @Override
-    public void setData(String columnName, Object value, int pos, String ref, String alt) {
-        // TODO Set the data in the column
-        throw new UnsupportedOperationException("Unimplemented method 'setData'");
-    }
-
 }

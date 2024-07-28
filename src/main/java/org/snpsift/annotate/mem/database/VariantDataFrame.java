@@ -67,32 +67,34 @@ public class VariantDataFrame implements java.io.Serializable {
 	 * Add data to this VariantDataFrame
 	 */
 	void add(VcfEntry vcfEntry) {
-		for(var variant: vcfEntry.variants()) {
-			var dataFrame = getDataFrameByVariantType(variant);
-			if(dataFrame == null) throw new RuntimeException("Cannot find data frame for variant: " + variant.toString());
+		throw new RuntimeException("Unimplemented");
+		// for(var variant: vcfEntry.variants()) {
+		// 	var dataFrame = getDataFrameByVariantType(variant);
+		// 	if(dataFrame == null) throw new RuntimeException("Cannot find data frame for variant: " + variant.toString());
 
-			// Add fields
-			for(var field : fields2type.keySet()) {
-				Object value = getFieldValue(vcfEntry, field);
-				dataFrame.setData(field, value, variant.getStart(), variant.getReference(), variant.getAlt());
-			}
-		}
+		// 	// Add fields
+		// 	for(var field : fields2type.keySet()) {
+		// 		Object value = getFieldValue(vcfEntry, field);
+		// 		dataFrame.setData(field, value, variant.getStart(), variant.getReference(), variant.getAlt());
+		// 	}
+		// }
 	}
 
 	/**
 	 * Annotate a VCF entry with the fields in this VariantDataFrame
 	 */
 	void annotate(VcfEntry vcfEntry, String[] fields) {
-		for(var variant: vcfEntry.variants()) {
-			var dataSet = getDataFrameByVariantType(variant);
-			if(dataSet == null) throw new RuntimeException("Cannot find data set for variant: " + variant.toString());
+		throw new RuntimeException("Unimplemented");
+		// for(var variant: vcfEntry.variants()) {
+		// 	var dataSet = getDataFrameByVariantType(variant);
+		// 	if(dataSet == null) throw new RuntimeException("Cannot find data set for variant: " + variant.toString());
 
-			// Add fields
-			for(var field : fields) {
-				var data = dataSet.getData(field, variant.getStart(), variant.getReference(), variant.getAlt());
-				if(data != null) vcfEntry.addInfo(field, data.toString());
-			}
-		}
+		// 	// Add fields
+		// 	for(var field : fields) {
+		// 		var data = dataSet.getData(field, variant.getStart(), variant.getReference(), variant.getAlt());
+		// 		if(data != null) vcfEntry.addInfo(field, data.toString());
+		// 	}
+		// }
 	}
 
 	/** 

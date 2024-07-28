@@ -3,32 +3,30 @@ package org.snpsift.annotate.mem.dataFrame;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.snpeff.util.Tuple;
 import org.snpeff.vcf.VcfInfoType;
 import org.snpsift.annotate.mem.PosIndex;
 import org.snpsift.annotate.mem.StringArray;
 import org.snpsift.annotate.mem.VariantCategory;
-import org.snpsift.annotate.mem.dataColumn.BoolColumn;
-import org.snpsift.annotate.mem.dataColumn.CharColumn;
-import org.snpsift.annotate.mem.dataColumn.IntColumn;
-import org.snpsift.annotate.mem.dataColumn.DoubleColumn;
-import org.snpsift.annotate.mem.dataColumn.DataColumn;
-import org.snpsift.annotate.mem.dataColumn.StringColumn;
+import org.snpsift.annotate.mem.dataFrame.dataFrameColumn.DataFrameColumnBool;
+import org.snpsift.annotate.mem.dataFrame.dataFrameColumn.DataFrameColumnChar;
+import org.snpsift.annotate.mem.dataFrame.dataFrameColumn.DataColumn;
+import org.snpsift.annotate.mem.dataFrame.dataFrameColumn.DataFrameColumnDouble;
+import org.snpsift.annotate.mem.dataFrame.dataFrameColumn.DataFrameColumnInt;
+import org.snpsift.annotate.mem.dataFrame.dataFrameColumn.DataFrameColumnString;
 import org.snpsift.annotate.mem.variantTypeCounter.VariantTypeCounter;
 
 /**
  * A set of DataColumns, indexed by position
  * This is used to store data for a chromosome
  */
-public abstract class DataFrame implements java.io.Serializable {
+public class DataFrame implements java.io.Serializable {
 	VariantTypeCounter variantTypeCounter;
 	VariantCategory variantCategory;
 	int currentIdx = 0;	// Current index
 	PosIndex posIndex;	// Index by position (i.e. chromosome position is transformed into a "column / array index")
-	StringArray ref;	// Reference allele.
-	StringArray alt;	// Alternative allele.
+	StringArray refs;	// Reference allele.
+	StringArray alts;	// Alternative allele.
 	Map<String, DataColumn<?>> columns;	// Data columns
-	String[] fields;	// Fields to annotate
 	Map<String, VcfInfoType> fields2type; // Fields to create or annotate
 
 	public DataFrame(VariantTypeCounter variantTypeCounter, VariantCategory variantCategory) {
@@ -38,38 +36,54 @@ public abstract class DataFrame implements java.io.Serializable {
 		posIndex = new PosIndex(size);
 		columns = new HashMap<>();
 		this.fields2type = variantTypeCounter.getFields2type();
-		this.fields = fields2type.keySet().toArray(new String[0]);
 		createColumns();
 	}
 
 	/**
 	 * Add a column
 	 */
-	public void addColumn(String name, DataColumn<?> column) {
+	void addColumn(String name, DataColumn<?> column) {
 		columns.put(name, column);
+	}
+
+	/**
+	 * Add a row to the data frame
+	 */
+	public void addRow(DataFrameRow row) {
+		if(row.getIdx() >= 0) throw new RuntimeException("Row already added");
+		posIndex.set(currentIdx, row.getPos());
+		row.setIdx(currentIdx);
+		row.setDataFrame();
+		currentIdx++;
 	}
 
 	public void check() {
 		posIndex.check();
+		for(var col: columns.values())
+			col.check();
 	}
 	
+	public Iterable<String> columnNames() {
+		return columns.keySet();
+	}
+
 	/**
 	 * Create a column of a given type
 	 */
-	DataColumn<?> createColumn(String field, VcfInfoType type) {
+	protected DataColumn<?> createColumn(String field, VcfInfoType type) {
 		int numEntries = variantTypeCounter.getCount(variantCategory);
 		switch (type) {
 			case Flag:
-				return new BoolColumn(field, numEntries);
+				return new DataFrameColumnBool(field, numEntries);
 			case Integer:
-				return new IntColumn(field, numEntries);
+				return new DataFrameColumnInt(field, numEntries);
 			case Float:
-				return new DoubleColumn(field, numEntries);
+				return new DataFrameColumnDouble(field, numEntries);
 			case Character:
-				return new CharColumn(field, numEntries);
+				return new DataFrameColumnChar(field, numEntries);
 			case String:
 				int memSize = variantTypeCounter.getSize(variantCategory, field);
-				return new StringColumn(field, numEntries, memSize);
+				return new DataFrameColumnString(field, numEntries, memSize);
 			default:
 				throw new RuntimeException("Unimplemented type: " + type);
 		}
@@ -78,21 +92,29 @@ public abstract class DataFrame implements java.io.Serializable {
 	/**
 	 * Create columns based on fields
 	*/
-	public void createColumns() {
+	protected void createColumns() {
 		for(var field: fields2type.keySet()) {
 			var column = createColumn(field, fields2type.get(field));
-			columns.put(field, column);
+			addColumn(field, column);
 		}
 	}
 
 	/**
 	 * Does the entry at possition 'idx' match the given (pos, ref, alt) values?
 	 */
-	public boolean eq(int idx, int pos, String ref, String alt) {
+	protected boolean eq(int idx, int pos, String ref, String alt) {
 		if( posIndex.get(idx) != pos) return false;
-		if( (ref != null) && this.ref.get(idx) != ref) return false;
-		if( (alt != null) && this.alt.get(idx) != alt) return false;
+		if( (ref != null) && (this.refs != null) && !this.refs.get(idx).equals(ref)) return false;
+		if( (alt != null) && (this.alts != null) && !this.alts.get(idx).equals(alt)) return false;
 		return true;
+	}
+
+	/**
+	 * Get data from a column by searching by position, reference and alternative alleles.
+	 * Note: The value can be null
+	 */
+	protected Object get(String columnName, int idx) {
+		return columns.get(columnName).get(idx);
 	}
 
 	/**
@@ -103,45 +125,42 @@ public abstract class DataFrame implements java.io.Serializable {
 	}
 
 	/**
-	 * Get data from a column by searching by position, reference and alternative alleles.
-	 * Note: The value can be null
+	 * Get a 'row' from the data frame.
+	 * @param pos : Position
+	 * @param ref : Reference allele
+	 * @param alt : Alternative allele
+	 * @return A data frame row if found, or null if not found
 	 */
-	public Object getData(String columnName, int pos, String ref, String alt) {
-		// Find column
-		var col = columns.get(columnName);
-		if(col == null) throw new RuntimeException("Cannot find column: " + columnName);
-		// Find index in the column
-		var idx = posIndex.indexOf(pos);
+	public DataFrameRow getRow(int pos, String ref, String alt) {
+		var idx = find(pos, ref, alt);
 		if(idx < 0) return null; // Not found
-		if(col.isNull(idx)) return null; // Found, but entry has a null value
-		return col.get(idx);
+		return new DataFrameRow(this, pos, ref, alt, idx);
 	}
 
 	/**
-	 * Get a lower and upper bound index where the same '(pos, ref, alt)' values are stored.
-	 * @return A tuple with the lower and upper bound index (inclusive). If the entry is not found, returns null.
-	 * 
-	 * For example if there is only one entry as position 123, the tuple will be (123, 123)
-	 * If there are two entries at positions 123 and 124, the tuple will be (123, 124)
+	 * Get data from a column index by searching by position, reference and alternative alleles.
+	 * @return The index of the row in the data frame, or -1 if not found
 	 */
-	public Tuple<Integer, Integer> getDataRange(String columnName, int pos, String ref, String alt) {
-		/*
-		 * WE NEED TO RE-IMPLEMENT THIS.
-		 * CAN The same 'pos' may have different non-consecutive entries matching '(pos, ref, alt)'?
-		 * COULD THIS HAPPEN IN CASES OF multiallelic VCF entries????
-		 * ADD A SANITY CHECK?
-		 */
-		throw new RuntimeException("Unimplemented method 'hasEntry'");
-		// var idx = posIndex.indexOf(pos);
-		// if(idx < 0) return null; // Not found
-		// if(!eq(idx, pos, ref, alt)) return null; // Not found
-		// // Find lower bound
-		// int lower = idx;
-		// while(lower > 0 && eq(lower - 1, pos, ref, alt)) lower--;
-		// // Find upper bound
-		// int upper = idx;
-		// while(upper < posIndex.size() - 1 && eq(upper + 1, pos, ref, alt)) upper++;
-		// return new Tuple<>(lower, upper);
+	protected int find(int pos, String ref, String alt) {
+		var idx = posIndex.indexOf(pos);
+		if(idx < 0) return -1; // Not found
+
+		// Check current index
+		if( eq(idx, pos, ref, alt)) return idx;
+
+		// Check previous indexes
+		for(int i = idx - 1; i >= 0; i--) {
+			if( posIndex.get(i) != pos) break;
+			if( eq(i, pos, ref, alt)) return i;
+		}
+
+		// Check next indexes
+		for(int i = idx + 1; i < posIndex.size(); i++) {
+			if( posIndex.get(i) != pos) return -1;
+			if( eq(i, pos, ref, alt)) return i;
+		}
+
+		return -1;
 	}
 
 	/**
@@ -149,12 +168,7 @@ public abstract class DataFrame implements java.io.Serializable {
 	 * Note: The value can be null
 	 */
 	public boolean hasEntry(int pos, String ref, String alt) {
-		throw new RuntimeException("Unimplemented method 'hasEntry'");
-	}
-
-
-	public void next() {
-		currentIdx++;
+		return find(pos, ref, alt) >= 0;
 	}
 
 	/**
@@ -166,9 +180,33 @@ public abstract class DataFrame implements java.io.Serializable {
 	}
 
 	/**
-	 * Set data in a column.
-	 * Note: The value can be null
+	 * Set data in a column
 	 */
-	public abstract void setData(String columnName, Object value, int pos, String ref, String alt);
+	protected void set(String columnName, int idx, Object value) {
+		columns.get(columnName).set(idx, value);
+	}
+
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		sb.append("DataFrame: " + variantCategory);
+		sb.append(", size: " + posIndex.size());
+		sb.append(", current index: " + currentIdx + "\n");
+		sb.append("\tField types:\n");
+		for(var field: fields2type.keySet())
+			sb.append("\t\t" + field + " : " + fields2type.get(field) + "\n");
+		
+		// Show columns as a table
+		int size = posIndex.size();
+		for(int i=0 ; i < size; i++) {
+			sb.append("\t" + i + "\t" + posIndex.get(i) 
+						+ (refs != null ? "\t" + refs.get(i) : "")
+						+ (alts != null ? "\t" + alts.get(i) : "")
+						+ " | ");
+			for(var col: columns.values())
+				sb.append(col.get(i) + "\t| ");
+			sb.append("\n");
+		}
+		return sb.toString();
+	}
 }
 

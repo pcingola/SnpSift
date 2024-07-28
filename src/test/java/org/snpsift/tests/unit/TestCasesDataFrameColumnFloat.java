@@ -2,15 +2,15 @@ package org.snpsift.tests.unit;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.junit.jupiter.api.Test;
-import org.snpsift.annotate.mem.dataColumn.DoubleColumn;
+import org.snpsift.annotate.mem.dataFrame.dataFrameColumn.DataFrameColumnDouble;
 import org.snpsift.util.RandomUtil;
 
 
-public class TestCasesFloatColumn {
+public class TestCasesDataFrameColumnFloat {
 
     @Test
     public void testGet01() {
-        DoubleColumn column = new DoubleColumn("test", 6);
+        DataFrameColumnDouble column = new DataFrameColumnDouble("test", 6);
         column.set(0, 10.123456);
         column.set(1, 20.123456);
         column.set(2, 30.123456);
@@ -29,7 +29,7 @@ public class TestCasesFloatColumn {
 
     @Test
     public void testSize() {
-        DoubleColumn column = new DoubleColumn("test", 5);
+        DataFrameColumnDouble column = new DataFrameColumnDouble("test", 5);
         assertEquals(5, column.size());
     }
 
@@ -38,7 +38,7 @@ public class TestCasesFloatColumn {
         for(int iter = 0 ; iter < 100; iter++) {
             RandomUtil ru = new RandomUtil(iter);
             var size = ru.randInt(100000);
-            DoubleColumn column = new DoubleColumn("test", size);
+            DataFrameColumnDouble column = new DataFrameColumnDouble("test", size);
 
             ru.reset();
             for(int i = 0; i < size; i++) {

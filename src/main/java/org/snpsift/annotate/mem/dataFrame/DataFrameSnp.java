@@ -36,21 +36,13 @@ public class DataFrameSnp extends DataFrame {
 		return alt;
 	}
 
-	@Override
-	public Object getData(String columnName, int pos, String ref, String alt) {
-		var column = columns.get(columnName);
-		if(column == null) throw new RuntimeException("Cannot find column: " + columnName);
-		int idx = posIndex.indexOf(pos);
-		if(idx < 0) return null;
-		return column.get(idx);
-	}
-
-	public void setData(String columnName, Object value, int pos, String ref, String alt) {
-		if(!alt.equals(this.alt)) throw new RuntimeException("Cannot set data for SNP '" + this.alt + "' using alt '" + alt + "'");
-		posIndex.set(currentIdx, pos);
-		var column = columns.get(columnName);
-		if(column == null) throw new RuntimeException("Cannot find column: " + columnName);
-		column.set(currentIdx, value);
+	/**
+	 * Does the entry at possition 'idx' match the given (pos, ref, alt) values?
+	 */
+	protected boolean eq(int idx, int pos, String ref, String alt) {
+		if(posIndex.get(idx) != pos) return false;
+		if(!this.alt.equals(alt.toUpperCase())) throw new RuntimeException("This should never happen! Alt: " + alt + " != " + this.alt);
+		return true;
 	}
 
 }

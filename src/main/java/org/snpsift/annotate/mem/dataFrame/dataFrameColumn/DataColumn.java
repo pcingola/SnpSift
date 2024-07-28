@@ -22,6 +22,13 @@ public abstract class DataColumn<T> implements Serializable {
 		isNUllData.fill();
 	}
 
+	/**
+	 * Check data consistency
+	 */
+	public void check() {
+		// Nothing to do
+	}
+
 	public String getName() {
 		return name;
 	}

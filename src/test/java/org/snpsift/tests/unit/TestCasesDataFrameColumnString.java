@@ -1,16 +1,16 @@
 package org.snpsift.tests.unit;
 import org.junit.jupiter.api.Test;
-import org.snpsift.annotate.mem.dataColumn.StringColumn;
+import org.snpsift.annotate.mem.dataFrame.dataFrameColumn.DataFrameColumnString;
 import org.snpsift.util.RandomUtil;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class TestCasesStringColumn {
+public class TestCasesDataFrameColumnString {
 
     @Test
     public void testGetData() {
         String[] strings = {"Value1", "Value2", "Value3"};
-        StringColumn stringColumn = StringColumn.of("Test", strings);
+        DataFrameColumnString stringColumn = DataFrameColumnString.of("Test", strings);
         assertEquals("Value1", stringColumn.get(0));
         assertEquals("Value2", stringColumn.get(1));
         assertEquals("Value3", stringColumn.get(2));
@@ -19,7 +19,7 @@ public class TestCasesStringColumn {
     @Test
     public void testGetNull() {
         String[] strings = {"Value1", "Value2", "Value3", null, "Value4"};
-        StringColumn stringColumn = StringColumn.of("Test", strings);
+        DataFrameColumnString stringColumn = DataFrameColumnString.of("Test", strings);
         System.err.println("STRING COLUMN: " + stringColumn);
         assertEquals("Value1", stringColumn.get(0));
         assertEquals("Value2", stringColumn.get(1));
@@ -44,7 +44,7 @@ public class TestCasesStringColumn {
             }
 
             // Create a StringArray with random strings
-            StringColumn sarray = new StringColumn("test", numStrings + 1, size + numStrings);
+            DataFrameColumnString sarray = new DataFrameColumnString("test", numStrings + 1, size + numStrings);
             ru.reset();
             for(int i = 0; i < numStrings; i++) {
                 sarray.set(i, ru.randStringOrNull());

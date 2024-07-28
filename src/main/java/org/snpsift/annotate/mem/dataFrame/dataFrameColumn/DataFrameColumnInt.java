@@ -1,9 +1,9 @@
-package org.snpsift.annotate.mem.dataColumn;
+package org.snpsift.annotate.mem.dataFrame.dataFrameColumn;
 
-public class IntColumn extends DataColumn<Integer> {
+public class DataFrameColumnInt extends DataColumn<Integer> {
 	int[] data;
 
-	public IntColumn(String name, int size) {
+	public DataFrameColumnInt(String name, int size) {
 		super(name, size);
 		this.data = new int[size];
 	}

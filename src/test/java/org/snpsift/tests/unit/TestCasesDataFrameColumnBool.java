@@ -1,36 +1,36 @@
 package org.snpsift.tests.unit;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.Test;
-import org.snpsift.annotate.mem.dataColumn.CharColumn;
+import org.snpsift.annotate.mem.dataFrame.dataFrameColumn.DataFrameColumnBool;
 import org.snpsift.util.RandomUtil;
 
 
-public class TestCasesCharColumn {
+public class TestCasesDataFrameColumnBool {
 
     @Test
     public void testGet01() {
-        CharColumn column = new CharColumn("test", 6);
-        column.set(0, '1');
-        column.set(1, '2');
-        column.set(2, '3');
-        column.set(3, null);
-        column.set(4, '4');
-        column.set(5, '5');
+        DataFrameColumnBool column = new DataFrameColumnBool("test", 6);
 
-        assertEquals('1', column.get(0));
-        assertEquals('2', column.get(1));
-        assertEquals('3', column.get(2));
+        // Set values
+        for(int i=0 ; i < 6 ; i++) {
+            column.set(i, i % 2 == 0);
+        }
+
+        // Check values
+        for(int i=0 ; i < 6 ; i++) {
+            assertEquals(i % 2 == 0, column.get(i));
+        }
+
+        column.set(3, null);
         assertEquals(null, column.get(3));
-        assertEquals('4', column.get(4));
-        assertEquals('5', column.get(5));
-        assertEquals(6, column.size());
     }
 
     @Test
     public void testSize() {
-        CharColumn column = new CharColumn("test", 5);
-        assertEquals(5, column.size());
+        DataFrameColumnBool column = new DataFrameColumnBool("test", 5);
+        assertTrue(5 <= column.size());
     }
 
     @Test
@@ -38,16 +38,16 @@ public class TestCasesCharColumn {
         for(int iter = 0 ; iter < 100; iter++) {
             RandomUtil ru = new RandomUtil(iter);
             var size = ru.randInt(100000);
-            CharColumn column = new CharColumn("test", size);
+            DataFrameColumnBool column = new DataFrameColumnBool("test", size);
 
             ru.reset();
             for(int i = 0; i < size; i++) {
-                column.set(i, ru.randCharOrNull());
+                column.set(i, ru.randBoolOrNull());
             }
 
             ru.reset();
             for(int i = 0; i < size; i++) {
-                var exp = ru.randCharOrNull();
+                var exp = ru.randBoolOrNull();
                 assertEquals(exp, column.get(i), "Mismatch at iteration " + iter + ", index " + i + ": " + column.get(i) + " != " + exp);
             }
         }

@@ -1,4 +1,4 @@
-package org.snpsift.annotate.mem.dataColumn;
+package org.snpsift.annotate.mem.dataFrame.dataFrameColumn;
 
 import org.snpsift.annotate.mem.BoolArray;
 
@@ -6,10 +6,10 @@ import org.snpsift.annotate.mem.BoolArray;
  * A column of boolean values, that can also be null
  * The bollean values are stored in a BoolArray
  */
-public class BoolColumn extends DataColumn<Boolean> {
+public class DataFrameColumnBool extends DataColumn<Boolean> {
 	BoolArray data;
 
-	public BoolColumn(String name, int size) {
+	public DataFrameColumnBool(String name, int size) {
 		super(name, size);
 		this.data = new BoolArray(size);
 	}

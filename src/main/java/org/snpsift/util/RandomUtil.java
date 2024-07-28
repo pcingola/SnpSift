@@ -87,7 +87,7 @@ public class RandomUtil {
     }
 
     public long randLong(long maxLong) {
-        return rand.nextLong(maxLong);
+        return rand.nextLong() % maxLong;
     }
 
     public Long randLongOrNull() {
