@@ -37,11 +37,11 @@ public class DataFrameRow implements java.io.Serializable, Iterable<String> {
 	/**
 	 * Return all data for this row from the data frame
 	 */
-	public Map<String, Object> getDataFrame() {
+	public Map<String, Object> getDataFrameValues() {
 		if( values == null) {
 			values = new HashMap<>();
 			for(var col: this) {
-				values.put(col, getDataFrame(col));
+				values.put(col, getDataFrameValue(col));
 			}
 		}
 		return values;
@@ -54,7 +54,7 @@ public class DataFrameRow implements java.io.Serializable, Iterable<String> {
 	/**
 	 * Get data single column value from the data frame
 	 */
-	public Object getDataFrame(String columnName) {
+	public Object getDataFrameValue(String columnName) {
 		return dataFrame.get(columnName, idx);
 	}
 
@@ -119,8 +119,12 @@ public class DataFrameRow implements java.io.Serializable, Iterable<String> {
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
 		sb.append("DataFrameRow: pos=" + pos + ", ref=" + ref + ", alt=" + alt + ", idx=" + idx + "\n");
-		for(var col: this) {
-			sb.append("\t" + col + "\t" + get(col) + "\n");
+		if(values == null) sb.append("No values\n");
+		else {
+			sb.append("Values:\n");
+			for(var col: this) {
+				sb.append("\t" + col + "\t" + get(col) + "\n");
+			}
 		}
 		return sb.toString();
 	}

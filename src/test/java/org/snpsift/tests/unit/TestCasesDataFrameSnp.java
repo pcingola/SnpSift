@@ -9,6 +9,7 @@ import org.snpsift.annotate.mem.variantTypeCounter.VariantTypeCounter;
 import org.snpsift.util.RandomUtil;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -59,72 +60,79 @@ public class TestCasesDataFrameSnp {
         // Create a row
         DataFrameRow dataFrameRow = new DataFrameRow(dataFrame, pos, ref, alt);
         dataFrameRow.set(columnName, value);
-        System.out.println("dataFrameRow: " + dataFrameRow);
 
         // Add the row to the data frame
         dataFrame.addRow(dataFrameRow);
         dataFrame.check();
-        System.out.println("dataFrame: " + dataFrame);
 
         // Retrieve the row and check the value
         var retrievedRow = dataFrame.getRow(pos, ref, alt);
-        System.out.println("retrievedRow: " + retrievedRow);
-        Assertions.assertEquals(value, retrievedRow);
+        assertNotNull(retrievedRow);
+        assertEquals(value, retrievedRow.getDataFrameValue(columnName));
     }
 
     @Test
     public void testDataFrame02() {
-        // var size = 100;
-        // var stringMaxLen = 100;
-        // var varCounter = variantTypeCounter(new String[]{"field_string", "field_string_2"}, size, size * stringMaxLen);
-        // var dataFrame = new DataFrameSnp(varCounter, VariantCategory.SNP_A);
-        // // Create random data, 100 points
-        // // Initialize random seed
-        // var pos = 0;
-        // var alt = "A";
-        // RandomUtil randUtil = new RandomUtil();
-        // randUtil.reset();
-        // for(int i=0; i < size; i++) {
-        //     pos += randUtil.randInt(1000); // Random position increment
-        //     var ref = randUtil.randAcgt(); // Reference: A random value from 'A', 'C', 'G', 'T'
-        //     // Values
-        //     var ri = randUtil.randIntOrNull();
-        //     var rf = randUtil.randDoubleOrNull();
-        //     var rc = randUtil.randCharOrNull();
-        //     var rb = randUtil.randBoolOrNull();
-        //     var rs = randUtil.randStringOrNull(stringMaxLen);
-        //     var rs2 = randUtil.randStringOrNull(stringMaxLen);
-        //     System.out.println("i: " + i + "\tpos: " + pos + "\tref: " + ref + "\talt: " + alt + "\tri: " + ri + "\trf: " + rf + "\trc: " + rc + "\trb: " + rb + "\trs: " + rs + "\trs2: " + rs2);
-        //     // Set data
+        var size = 100;
+        var stringMaxLen = 100;
+        var varCounter = variantTypeCounter(new String[]{"field_string", "field_string_2"}, size, size * stringMaxLen);
+        var dataFrame = new DataFrameSnp(varCounter, VariantCategory.SNP_A);
 
-        //     dataFrame.setData("field_int", ri, pos, ref, alt);
-        //     dataFrame.setData("field_float", rf, pos, ref, alt);
-        //     dataFrame.setData("field_char", rc, pos, ref, alt);
-        //     dataFrame.setData("field_bool", rb, pos, ref, alt);
-        //     dataFrame.setData("field_string", rs, pos, ref, alt);
-        //     dataFrame.setData("field_string_2", rs2, pos, ref, alt);
-        // }
+        // Create random data, 'size' rows
+        // Initialize random seed
+        var pos = 0;
+        var alt = "A";
+        RandomUtil randUtil = new RandomUtil();
+        randUtil.reset();
+        for(int i=0; i < size; i++) {
+            pos += randUtil.randInt(1000); // Random position increment
+            var ref = randUtil.randAcgt(); // Reference: A random value from 'A', 'C', 'G', 'T'
+            // Values
+            var ri = randUtil.randIntOrNull();
+            var rf = randUtil.randDoubleOrNull();
+            var rc = randUtil.randCharOrNull();
+            var rb = randUtil.randBoolOrNull();
+            var rs = randUtil.randStringOrNull(stringMaxLen);
+            var rs2 = randUtil.randStringOrNull(stringMaxLen);
 
-        // randUtil.reset();
-        // pos = 0;
-        // for(int i=0; i < size; i++) {
-        //     pos += randUtil.randInt(1000); // Random position increment
-        //     var ref = randUtil.randAcgt(); // Reference: A random value from 'A', 'C', 'G', 'T'
-        //     // Values
-        //     var ri = randUtil.randIntOrNull();
-        //     var rf = randUtil.randDoubleOrNull();
-        //     var rc = randUtil.randCharOrNull();
-        //     var rb = randUtil.randBoolOrNull();
-        //     var rs = randUtil.randStringOrNull(stringMaxLen);
-        //     var rs2 = randUtil.randStringOrNull(stringMaxLen);
-        //     System.out.println("pos: " + pos + "\tref: " + ref + "\talt: " + alt + "\tri: " + ri + "\trf: " + rf + "\trc: " + rc + "\trb: " + rb + "\trs: " + rs + "\trs2: " + rs2);
-        //     // Check data
-        //     assertEquals(ri, dataFrame.getData("field_int", pos, ref, alt));
-        //     assertEquals(rf, dataFrame.getData("field_float", pos, ref, alt));
-        //     assertEquals(rc, dataFrame.getData("field_char", pos, ref, alt));
-        //     assertEquals(rb, dataFrame.getData("field_bool", pos, ref, alt));
-        //     assertEquals(rs, dataFrame.getData("field_string", pos, ref, alt));
-        //     assertEquals(rs2, dataFrame.getData("field_string_2", pos, ref, alt));
-        // }
+            // Create a dataframe row, and add the random data
+            DataFrameRow dataFrameRow = new DataFrameRow(dataFrame, pos, ref, alt);
+            dataFrameRow.set("field_int", ri);
+            dataFrameRow.set("field_float", rf);
+            dataFrameRow.set("field_char", rc);
+            dataFrameRow.set("field_bool", rb);
+            dataFrameRow.set("field_string", rs);
+            dataFrameRow.set("field_string_2", rs2);
+
+            // Add the row to the data frame
+            dataFrame.addRow(dataFrameRow);
+        }
+
+        // Check data
+        randUtil.reset();
+        pos = 0;
+        for(int i=0; i < size; i++) {
+            pos += randUtil.randInt(1000); // Random position increment
+            var ref = randUtil.randAcgt(); // Reference: A random value from 'A', 'C', 'G', 'T'
+            // Values
+            var ri = randUtil.randIntOrNull();
+            var rf = randUtil.randDoubleOrNull();
+            var rc = randUtil.randCharOrNull();
+            var rb = randUtil.randBoolOrNull();
+            var rs = randUtil.randStringOrNull(stringMaxLen);
+            var rs2 = randUtil.randStringOrNull(stringMaxLen);
+
+            // Query row from the data frame
+            var dataFrameRow = dataFrame.getRow(pos, ref, alt);
+            assertNotNull(dataFrameRow);
+
+            // Check data
+            assertEquals(ri, dataFrameRow.getDataFrameValue("field_int"));
+            assertEquals(rf, dataFrameRow.getDataFrameValue("field_float"));
+            assertEquals(rc, dataFrameRow.getDataFrameValue("field_char"));
+            assertEquals(rb, dataFrameRow.getDataFrameValue("field_bool"));
+            assertEquals(rs, dataFrameRow.getDataFrameValue("field_string"));
+            assertEquals(rs2, dataFrameRow.getDataFrameValue("field_string_2"));
+        }
     }
 }
