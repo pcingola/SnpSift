@@ -5,7 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import java.util.List;
 
 import org.junit.jupiter.api.Test;
-import org.snpsift.annotate.mem.StringArray;
+import org.snpsift.annotate.mem.arrays.StringArray;
 import org.snpsift.util.RandomUtil;
 
 /**

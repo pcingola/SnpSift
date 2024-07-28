@@ -5,7 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.Test;
-import org.snpsift.annotate.mem.BoolArray;
+import org.snpsift.annotate.mem.arrays.BoolArray;
 import org.snpsift.util.RandomUtil;
 
 public class TestCasesBoolArray {

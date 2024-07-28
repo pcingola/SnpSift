@@ -1,6 +1,6 @@
 package org.snpsift.annotate.mem.dataFrame.dataFrameColumn;
 
-import org.snpsift.annotate.mem.StringArray;
+import org.snpsift.annotate.mem.arrays.StringArray;
 
 public class DataFrameColumnString extends DataColumn<String> {
 	StringArray data;

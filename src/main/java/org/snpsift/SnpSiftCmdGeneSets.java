@@ -11,7 +11,6 @@ import org.snpeff.geneSets.GeneSet;
 import org.snpeff.geneSets.GeneSets;
 import org.snpeff.stats.CountByType;
 import org.snpeff.util.Log;
-import org.snpeff.util.Timer;
 import org.snpeff.vcf.VcfEffect;
 import org.snpeff.vcf.VcfEntry;
 import org.snpeff.vcf.VcfHeaderEntry;

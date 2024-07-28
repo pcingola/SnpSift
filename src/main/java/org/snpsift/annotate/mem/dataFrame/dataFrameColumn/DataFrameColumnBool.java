@@ -1,6 +1,6 @@
 package org.snpsift.annotate.mem.dataFrame.dataFrameColumn;
 
-import org.snpsift.annotate.mem.BoolArray;
+import org.snpsift.annotate.mem.arrays.BoolArray;
 
 /**
  * A column of boolean values, that can also be null

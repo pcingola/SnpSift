@@ -4,9 +4,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.snpeff.vcf.VcfInfoType;
-import org.snpsift.annotate.mem.PosIndex;
-import org.snpsift.annotate.mem.StringArray;
 import org.snpsift.annotate.mem.VariantCategory;
+import org.snpsift.annotate.mem.arrays.PosIndex;
+import org.snpsift.annotate.mem.arrays.StringArray;
 import org.snpsift.annotate.mem.dataFrame.dataFrameColumn.DataFrameColumnBool;
 import org.snpsift.annotate.mem.dataFrame.dataFrameColumn.DataFrameColumnChar;
 import org.snpsift.annotate.mem.dataFrame.dataFrameColumn.DataColumn;

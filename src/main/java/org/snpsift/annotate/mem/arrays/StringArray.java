@@ -1,4 +1,4 @@
-package org.snpsift.annotate.mem;
+package org.snpsift.annotate.mem.arrays;
 
 import java.util.Arrays;
 import java.util.Collection;

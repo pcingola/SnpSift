@@ -1,8 +1,8 @@
-package org.snpsift.annotate.mem.dataColumn;
+package org.snpsift.annotate.mem.dataFrame.dataFrameColumn;
 
 import java.io.Serializable;
 
-import org.snpsift.annotate.mem.BoolArray;
+import org.snpsift.annotate.mem.arrays.BoolArray;
 
 /**
  * A wrapper for a data column of primitive type T
