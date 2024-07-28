@@ -6,7 +6,7 @@ import org.snpsift.annotate.mem.variantTypeCounter.VariantTypeCounter;
 public class DataFrameIns extends DataFrame {
 
     public DataFrameIns(VariantTypeCounter variantTypeCounter, VariantCategory variantCategory) {
-        super(variantTypeCounter, variantCategory);
+        super(variantTypeCounter, variantCategory, false, true);
     }
 
 }

@@ -1,6 +1,6 @@
 package org.snpsift.annotate.mem.dataFrame.dataFrameColumn;
 
-public class DataFrameColumnChar extends DataColumn<Character> {
+public class DataFrameColumnChar extends DataFrameColumn<Character> {
 	char[] data;
 
 	public DataFrameColumnChar(String name, int size) {

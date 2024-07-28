@@ -14,6 +14,9 @@ import org.snpsift.annotate.mem.VariantCategory;
  */
 public class VariantTypeCounter {
 
+	public static final String REF = "REF";
+	public static final String ALT = "ALT";
+
 	protected Map<String, VcfInfoType> fields2type; // Fields to create or annotate
 	protected String[] fieldsString; // Fields to create or annotate
 	protected int countByCategory[]; // Count by category
@@ -37,6 +40,8 @@ public class VariantTypeCounter {
 		for(var field: fieldsString) {
 			sizesByField.put(field, new int[numberOfCategories]);
 		}
+		sizesByField.put(REF, new int[numberOfCategories]);
+		sizesByField.put(ALT, new int[numberOfCategories]);
 	}
 
 	/**
@@ -57,6 +62,9 @@ public class VariantTypeCounter {
 				var fieldValue = vcfEntry.getInfo(field);
 				updateSizes(variantCategory, field, fieldValue);
 			}
+			// Size of REF and ALT
+			updateSizes(variantCategory, REF, variant.getReference());
+			updateSizes(variantCategory, ALT, variant.getAlt());
 		}
 	}
 

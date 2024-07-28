@@ -9,14 +9,14 @@ import org.snpsift.annotate.mem.arrays.BoolArray;
  * A Data Column is a column of a specific data tyle (String, Float, Long, etc.) that is stored using primitive types for memory efficiency.
  * The data that can be null, so we need to store a bit array to indicate which data is null.
  */
-public abstract class DataColumn<T> implements Serializable {
+public abstract class DataFrameColumn<T> implements Serializable {
 
 	public static final int MAX_NUMBER_OF_ELEMENTS_TO_SHOW = 10;
 
 	protected String name;
 	protected BoolArray isNUllData; // If the data is null, we set the corresponding bit in this array to 1
 
-	public DataColumn(String name, int size) {
+	public DataFrameColumn(String name, int size) {
 		this.name = name;
 		isNUllData = new BoolArray(size);
 		isNUllData.fill();

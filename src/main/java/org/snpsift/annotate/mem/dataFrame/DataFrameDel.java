@@ -6,6 +6,6 @@ import org.snpsift.annotate.mem.variantTypeCounter.VariantTypeCounter;
 public class DataFrameDel extends DataFrame {
     
     public DataFrameDel(VariantTypeCounter variantTypeCounter, VariantCategory variantCategory) {
-        super(variantTypeCounter, variantCategory);
+        super(variantTypeCounter, variantCategory, true, false);
     }
 }

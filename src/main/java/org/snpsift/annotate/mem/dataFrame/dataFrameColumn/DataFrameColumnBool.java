@@ -6,7 +6,7 @@ import org.snpsift.annotate.mem.arrays.BoolArray;
  * A column of boolean values, that can also be null
  * The bollean values are stored in a BoolArray
  */
-public class DataFrameColumnBool extends DataColumn<Boolean> {
+public class DataFrameColumnBool extends DataFrameColumn<Boolean> {
 	BoolArray data;
 
 	public DataFrameColumnBool(String name, int size) {

@@ -1,6 +1,6 @@
 package org.snpsift.annotate.mem.dataFrame.dataFrameColumn;
 
-public class DataFrameColumnDouble extends DataColumn<Double> {
+public class DataFrameColumnDouble extends DataFrameColumn<Double> {
 	double[] data;
 
 	public DataFrameColumnDouble(String name, int size) {

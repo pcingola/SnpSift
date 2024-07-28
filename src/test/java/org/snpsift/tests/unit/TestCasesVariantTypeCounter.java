@@ -2,6 +2,7 @@ package org.snpsift.tests.unit;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.snpeff.fileIterator.VcfFileIterator;
+import org.snpeff.interval.Variant.VariantType;
 import org.snpeff.vcf.VcfEntry;
 import org.snpeff.vcf.VcfHeader;
 import org.snpeff.vcf.VcfHeaderInfo;
@@ -78,6 +79,8 @@ public class TestCasesVariantTypeCounter {
         assertEquals(-1, variantTypeCounter.getSize(VariantCategory.SNP_T, "FIELD_INT"));
         assertEquals(-1, variantTypeCounter.getSize(VariantCategory.SNP_T, "FIELD_FLOAT"));
         assertEquals(6, variantTypeCounter.getSize(VariantCategory.SNP_T, "FIELD_STRING"));
+        assertEquals(1, variantTypeCounter.getSize(VariantCategory.SNP_T, VariantTypeCounter.REF));
+        assertEquals(1, variantTypeCounter.getSize(VariantCategory.SNP_T, VariantTypeCounter.ALT));
     }
 
     @Test
@@ -103,6 +106,8 @@ public class TestCasesVariantTypeCounter {
         assertEquals(-1, variantTypeCounter.getSize(VariantCategory.SNP_C, "FIELD_INT"));
         assertEquals(-1, variantTypeCounter.getSize(VariantCategory.SNP_C, "FIELD_FLOAT"));
         assertEquals(21,variantTypeCounter.getSize(VariantCategory.SNP_C, "FIELD_STRING"));
+        assertEquals(3, variantTypeCounter.getSize(VariantCategory.SNP_C, VariantTypeCounter.REF));
+        assertEquals(3, variantTypeCounter.getSize(VariantCategory.SNP_C, VariantTypeCounter.ALT));
     }
 
     @Test
@@ -121,6 +126,8 @@ public class TestCasesVariantTypeCounter {
         assertEquals(-1, variantTypeCounter.getSize(VariantCategory.INS, "FIELD_INT"));
         assertEquals(-1, variantTypeCounter.getSize(VariantCategory.INS, "FIELD_FLOAT"));
         assertEquals(7,variantTypeCounter.getSize(VariantCategory.INS, "FIELD_STRING"));
+        assertEquals(0, variantTypeCounter.getSize(VariantCategory.INS, VariantTypeCounter.REF));
+        assertEquals(1, variantTypeCounter.getSize(VariantCategory.INS, VariantTypeCounter.ALT));
     }
 
     @Test
@@ -139,6 +146,8 @@ public class TestCasesVariantTypeCounter {
         assertEquals(-1, variantTypeCounter.getSize(VariantCategory.DEL, "FIELD_INT"));
         assertEquals(-1, variantTypeCounter.getSize(VariantCategory.DEL, "FIELD_FLOAT"));
         assertEquals(7,variantTypeCounter.getSize(VariantCategory.DEL, "FIELD_STRING"));
+        assertEquals(1, variantTypeCounter.getSize(VariantCategory.DEL, VariantTypeCounter.REF));
+        assertEquals(0, variantTypeCounter.getSize(VariantCategory.DEL, VariantTypeCounter.ALT));
     }
 
 }

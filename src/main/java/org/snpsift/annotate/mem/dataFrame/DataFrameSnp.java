@@ -12,7 +12,7 @@ public class DataFrameSnp extends DataFrame {
 	String alt;	// Alternative allele, i.e. one of 'A', 'C', 'G', 'T'
 
 	public DataFrameSnp(VariantTypeCounter variantTypeCounter, VariantCategory variantCategory) {
-		super(variantTypeCounter, variantCategory);
+		super(variantTypeCounter, variantCategory, false, false);
 		// Set 'alt' based on the variant category
 		switch(variantCategory) {
 			case SNP_A:

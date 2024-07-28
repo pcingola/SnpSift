@@ -113,6 +113,7 @@ public class TestCasesDataFrameSnp {
             dataFrame.addRow(dataFrameRow);
         }
 
+        System.out.println("DataFrame : " + dataFrame);
         // Check data
         randUtil.reset();
         pos = 0;

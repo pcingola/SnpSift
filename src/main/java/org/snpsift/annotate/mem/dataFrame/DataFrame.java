@@ -9,7 +9,7 @@ import org.snpsift.annotate.mem.arrays.PosIndex;
 import org.snpsift.annotate.mem.arrays.StringArray;
 import org.snpsift.annotate.mem.dataFrame.dataFrameColumn.DataFrameColumnBool;
 import org.snpsift.annotate.mem.dataFrame.dataFrameColumn.DataFrameColumnChar;
-import org.snpsift.annotate.mem.dataFrame.dataFrameColumn.DataColumn;
+import org.snpsift.annotate.mem.dataFrame.dataFrameColumn.DataFrameColumn;
 import org.snpsift.annotate.mem.dataFrame.dataFrameColumn.DataFrameColumnDouble;
 import org.snpsift.annotate.mem.dataFrame.dataFrameColumn.DataFrameColumnInt;
 import org.snpsift.annotate.mem.dataFrame.dataFrameColumn.DataFrameColumnString;
@@ -26,10 +26,10 @@ public class DataFrame implements java.io.Serializable {
 	PosIndex posIndex;	// Index by position (i.e. chromosome position is transformed into a "column / array index")
 	StringArray refs;	// Reference allele.
 	StringArray alts;	// Alternative allele.
-	Map<String, DataColumn<?>> columns;	// Data columns
+	Map<String, DataFrameColumn<?>> columns;	// Data columns
 	Map<String, VcfInfoType> fields2type; // Fields to create or annotate
 
-	public DataFrame(VariantTypeCounter variantTypeCounter, VariantCategory variantCategory) {
+	public DataFrame(VariantTypeCounter variantTypeCounter, VariantCategory variantCategory, boolean hasRefs, boolean hasAlts) {
 		this.variantTypeCounter = variantTypeCounter;
 		this.variantCategory = variantCategory;
 		int size = variantTypeCounter.getCount(variantCategory);
@@ -37,12 +37,14 @@ public class DataFrame implements java.io.Serializable {
 		columns = new HashMap<>();
 		this.fields2type = variantTypeCounter.getFields2type();
 		createColumns();
+		if(hasRefs) refs = new StringArray(size, variantTypeCounter.getSize(variantCategory, VariantTypeCounter.REF));
+		if(hasAlts) alts = new StringArray(size, variantTypeCounter.getSize(variantCategory, VariantTypeCounter.ALT));
 	}
 
 	/**
 	 * Add a column
 	 */
-	void addColumn(String name, DataColumn<?> column) {
+	void addColumn(String name, DataFrameColumn<?> column) {
 		columns.put(name, column);
 	}
 
@@ -70,7 +72,7 @@ public class DataFrame implements java.io.Serializable {
 	/**
 	 * Create a column of a given type
 	 */
-	protected DataColumn<?> createColumn(String field, VcfInfoType type) {
+	protected DataFrameColumn<?> createColumn(String field, VcfInfoType type) {
 		int numEntries = variantTypeCounter.getCount(variantCategory);
 		switch (type) {
 			case Flag:
@@ -120,7 +122,7 @@ public class DataFrame implements java.io.Serializable {
 	/**
 	 * Get a column
 	 */
-	public DataColumn<?> getColumn(String name) {
+	public DataFrameColumn<?> getColumn(String name) {
 		return columns.get(name);
 	}
 
