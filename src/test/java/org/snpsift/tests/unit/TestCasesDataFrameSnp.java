@@ -12,7 +12,9 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 public class TestCasesDataFrameSnp {
 
@@ -80,12 +82,15 @@ public class TestCasesDataFrameSnp {
 
         // Create random data, 'size' rows
         // Initialize random seed
-        var pos = 0;
+        int pos = 0, maxPos = 0;
         var alt = "A";
+        Set<Integer> positions = new HashSet<>();
         RandomUtil randUtil = new RandomUtil();
         randUtil.reset();
         for(int i=0; i < size; i++) {
             pos += randUtil.randInt(1000); // Random position increment
+            maxPos = pos;
+            positions.add(pos);
             var ref = randUtil.randAcgt(); // Reference: A random value from 'A', 'C', 'G', 'T'
             // Values
             var ri = randUtil.randIntOrNull();
@@ -133,6 +138,16 @@ public class TestCasesDataFrameSnp {
             assertEquals(rb, dataFrameRow.getDataFrameValue("field_bool"));
             assertEquals(rs, dataFrameRow.getDataFrameValue("field_string"));
             assertEquals(rs2, dataFrameRow.getDataFrameValue("field_string_2"));
+        }
+
+        // Check positions that should not be found
+        for(int i=0; i < size; i++) {
+            var pos2 = randUtil.randInt(maxPos); // Random position
+            if( !positions.contains(pos2)) {
+                var ref = randUtil.randAcgt(); // Reference: A random value from 'A', 'C', 'G', 'T'
+                var dataFrameRow = dataFrame.getRow(pos2, ref, alt);
+                Assertions.assertNull(dataFrameRow);
+            }
         }
     }
 }
