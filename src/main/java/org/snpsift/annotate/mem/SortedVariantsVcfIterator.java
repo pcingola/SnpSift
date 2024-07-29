@@ -18,7 +18,7 @@ import org.snpeff.vcf.VcfEntry;
  * When a variant is returned, the min heap is updated with the next variant from the same chromosome.
  * The process continues until all variants have been returned.
  */
-public class SortedVariantsIterator implements Iterator<VariantVcfEntry>, Iterable<VariantVcfEntry> {
+public class SortedVariantsVcfIterator implements Iterator<VariantVcfEntry>, Iterable<VariantVcfEntry> {
 
 	String vcfFileName;
 	VcfFileIterator vcfFileIterator;
@@ -27,7 +27,7 @@ public class SortedVariantsIterator implements Iterator<VariantVcfEntry>, Iterab
 	int vcfPos; // Position of the last VcfEntry read from the VCF file
 	VcfEntry vcfEntryPending; // A 'pending' vcf entry (i.e. we did not process it beecause it belongs to a different chromosome)
 
-	public SortedVariantsIterator(String vcfFileName) {
+	public SortedVariantsVcfIterator(String vcfFileName) {
 		this.vcfFileName = vcfFileName;
 		vcfFileIterator = new VcfFileIterator(vcfFileName);
 		variantsMinHeap = new PriorityQueue<>(Comparator.comparingInt(varvcf -> varvcf.getStart()));

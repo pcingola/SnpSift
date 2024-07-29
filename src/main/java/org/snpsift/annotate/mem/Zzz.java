@@ -54,7 +54,7 @@ public class Zzz {
 
 		// Time how long it takes to read the Sorted VCF file
 		startTime = System.currentTimeMillis();
-		SortedVariantsIterator sortedVariantsIterator = new SortedVariantsIterator(databaseFileName);
+		SortedVariantsVcfIterator sortedVariantsIterator = new SortedVariantsVcfIterator(databaseFileName);
 		chrPrev = "";
 		count = 0;
 		pos = -1;
