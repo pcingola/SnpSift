@@ -2,7 +2,6 @@ package org.snpsift.tests.unit;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.snpeff.fileIterator.VcfFileIterator;
-import org.snpeff.interval.Variant.VariantType;
 import org.snpeff.vcf.VcfEntry;
 import org.snpeff.vcf.VcfHeader;
 import org.snpeff.vcf.VcfHeaderInfo;

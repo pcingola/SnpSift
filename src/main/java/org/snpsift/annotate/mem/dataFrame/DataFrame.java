@@ -53,9 +53,14 @@ public class DataFrame implements java.io.Serializable {
 	 */
 	public void addRow(DataFrameRow row) {
 		if(row.getIdx() >= 0) throw new RuntimeException("Row already added");
+		// Set possition, index, reference, and alternative alleles
 		posIndex.set(currentIdx, row.getPos());
 		row.setIdx(currentIdx);
+		if(refs != null) refs.set(currentIdx, row.getRef());
+		if(alts != null) alts.set(currentIdx, row.getAlt());
+		// Set all fields
 		row.setDataFrame();
+		// Prepare for next entry
 		currentIdx++;
 	}
 

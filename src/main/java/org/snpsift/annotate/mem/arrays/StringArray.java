@@ -123,7 +123,7 @@ public class StringArray {
         if (str.length() > 0) {
             // Copy bytes from the string to the data array
             byte[] strBytes = str.getBytes();
-            if (offset + strBytes.length > data.length) throw new RuntimeException("Out of memory");
+            if (offset + strBytes.length > data.length) throw new RuntimeException("StringArray: Out of memory. The allocated memory is " + data.length + " bytes, but we need " + (offset + strBytes.length) + " bytes, to add new entry " + i + " with string '" + str + "'");
             System.arraycopy(strBytes, 0, data, offset, strBytes.length);
             offset += strBytes.length;
         }
