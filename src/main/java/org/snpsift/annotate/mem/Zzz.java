@@ -3,7 +3,6 @@ package org.snpsift.annotate.mem;
 import org.snpeff.fileIterator.VcfFileIterator;
 import org.snpeff.util.Gpr;
 import org.snpsift.annotate.mem.database.VariantDatabase;
-import org.snpsift.util.RandomUtil;
 import org.snpsift.util.ShowProgress;
 
 
@@ -22,13 +21,13 @@ public class Zzz {
 	 * Main
 	 */
 	public static void main(String[] args) {
-		// // var databaseFileName = Gpr.HOME + "/snpEff/db/GRCh38/dbSnp/dbsnp_small_chr1.vcf";
-		// var databaseFileName = Gpr.HOME + "/snpEff/db/GRCh38/dbSnp/dbsnp_test.vcf";
-		// var fields = new String[] { "RS" };
+		// var databaseFileName = Gpr.HOME + "/snpEff/db/GRCh38/dbSnp/dbsnp_small_chr1.vcf";
+		var databaseFileName = Gpr.HOME + "/snpEff/db/GRCh38/dbSnp/dbsnp_test.vcf";
+		var fields = new String[] { "RS" };
 
-		// // Create the database from a VCF file
-		// Zzz zzz = new Zzz(databaseFileName, fields);
-		// zzz.create();
+		// Create the database from a VCF file
+		Zzz zzz = new Zzz(databaseFileName, fields);
+		zzz.create();
 	}
 
 	public Zzz(String dbFile, String[] fields) {

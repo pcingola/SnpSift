@@ -5,17 +5,15 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.util.Map;
-
 import org.snpeff.interval.Variant;
 import org.snpeff.vcf.VcfEntry;
-import org.snpeff.vcf.VcfInfoType;
 import org.snpsift.annotate.mem.dataFrame.DataFrame;
 import org.snpsift.annotate.mem.dataFrame.DataFrameDel;
 import org.snpsift.annotate.mem.dataFrame.DataFrameIns;
 import org.snpsift.annotate.mem.dataFrame.DataFrameMixed;
 import org.snpsift.annotate.mem.dataFrame.DataFrameMnp;
 import org.snpsift.annotate.mem.dataFrame.DataFrameOther;
+import org.snpsift.annotate.mem.dataFrame.DataFrameRow;
 import org.snpsift.annotate.mem.dataFrame.DataFrameSnp;
 import org.snpsift.annotate.mem.variantTypeCounter.VariantTypeCounter;
 import org.snpsift.annotate.mem.VariantCategory;
@@ -29,8 +27,8 @@ import org.snpsift.annotate.mem.VariantCategory;
 public class VariantDataFrame implements java.io.Serializable {
 
 	String[] fields;	// Fields to annotate
-	Map<String, VcfInfoType> fields2type; // Fields to create or annotate
 	DataFrame dataFrames[]; // Each dataFrame indexed by variant type
+	VariantTypeCounter variantTypeCounter;
 
 	public static VariantDataFrame load(String fileName) {
 		// Deserialize data from a file
@@ -47,9 +45,9 @@ public class VariantDataFrame implements java.io.Serializable {
 		}
 	}
 
-	public VariantDataFrame(VariantTypeCounter variantTypeCounter, Map<String, VcfInfoType> fields2type) {
-		this.fields2type = fields2type;
-		this.fields = fields2type.keySet().toArray(new String[0]);
+	public VariantDataFrame(VariantTypeCounter variantTypeCounter) {
+		this.variantTypeCounter = variantTypeCounter;
+		this.fields = variantTypeCounter.getFields2type().keySet().toArray(new String[0]);
 		// Create data sets according to the variant type, and counters for each variant type
 		dataFrames = new DataFrame[VariantCategory.size()];
 		dataFrames[VariantCategory.SNP_A.ordinal()] = new DataFrameSnp(variantTypeCounter, VariantCategory.SNP_A);
@@ -67,17 +65,21 @@ public class VariantDataFrame implements java.io.Serializable {
 	 * Add data to this VariantDataFrame
 	 */
 	void add(VcfEntry vcfEntry) {
-		throw new RuntimeException("Unimplemented");
-		// for(var variant: vcfEntry.variants()) {
-		// 	var dataFrame = getDataFrameByVariantType(variant);
-		// 	if(dataFrame == null) throw new RuntimeException("Cannot find data frame for variant: " + variant.toString());
+		for(var variant: vcfEntry.variants()) {
+			var dataFrame = getDataFrameByVariantType(variant);
+			if(dataFrame == null) throw new RuntimeException("Cannot find data frame for variant: " + variant.toString());
 
-		// 	// Add fields
-		// 	for(var field : fields2type.keySet()) {
-		// 		Object value = getFieldValue(vcfEntry, field);
-		// 		dataFrame.setData(field, value, variant.getStart(), variant.getReference(), variant.getAlt());
-		// 	}
-		// }
+			// var variantCategory = VariantCategory.of(variant);
+			DataFrameRow row = new DataFrameRow(dataFrame, variant.getStart(), variant.getReference(), variant.getAlt());
+			// Add fields
+			for(var field : fields) {
+				Object value = getFieldValue(vcfEntry, field);
+				row.set(field, value);
+			}
+
+			// Add row to dataFrame
+			dataFrame.add(row);
+		}
 	}
 
 	/**
@@ -110,7 +112,7 @@ public class VariantDataFrame implements java.io.Serializable {
 	 * Get a field value from a VCF entry
 	 */
 	Object getFieldValue(VcfEntry vcfEntry, String field) {
-		var type = fields2type.get(field);
+		var type = variantTypeCounter.getFields2type().get(field);
 		var valueStr = vcfEntry.getInfo(field);
 		if (valueStr == null) return null;
 		switch(type) {

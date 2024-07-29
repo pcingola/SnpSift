@@ -91,14 +91,14 @@ public class DataFrameRow implements java.io.Serializable, Iterable<String> {
 	/**
 	 * Set the data frame with a value from this row
 	 */
-	public void setDaraFrame(String columnName) {
+	public void setDataFrame(String columnName) {
 		dataFrame.set(columnName, idx, get(columnName));
 	}
 
 	/**
 	 * Set the data frame with a specific value
 	 */
-	public void setDaraFrame(String columnName, Object value) {
+	public void setDataFrame(String columnName, Object value) {
 		dataFrame.set(columnName, idx, value);
 	}
 
@@ -108,7 +108,7 @@ public class DataFrameRow implements java.io.Serializable, Iterable<String> {
 	 */
 	public void setDataFrame() {
 		for(var col: this) {
-			setDaraFrame(col, values.get(col));
+			setDataFrame(col, values.get(col));
 		}
 	}
 

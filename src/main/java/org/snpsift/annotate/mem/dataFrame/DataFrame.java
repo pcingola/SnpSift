@@ -37,21 +37,21 @@ public class DataFrame implements java.io.Serializable {
 		columns = new HashMap<>();
 		this.fields2type = variantTypeCounter.getFields2type();
 		createColumns();
-		if(hasRefs) refs = new StringArray(size, variantTypeCounter.getSize(variantCategory, VariantTypeCounter.REF));
-		if(hasAlts) alts = new StringArray(size, variantTypeCounter.getSize(variantCategory, VariantTypeCounter.ALT));
+		if(hasRefs) refs = new StringArray(size, memSize(variantCategory, VariantTypeCounter.REF));
+		if(hasAlts) alts = new StringArray(size, memSize(variantCategory, VariantTypeCounter.ALT));
 	}
 
 	/**
 	 * Add a column
 	 */
-	void addColumn(String name, DataFrameColumn<?> column) {
+	void add(String name, DataFrameColumn<?> column) {
 		columns.put(name, column);
 	}
 
 	/**
 	 * Add a row to the data frame
 	 */
-	public void addRow(DataFrameRow row) {
+	public void add(DataFrameRow row) {
 		if(row.getIdx() >= 0) throw new RuntimeException("Row already added");
 		// Set possition, index, reference, and alternative alleles
 		posIndex.set(currentIdx, row.getPos());
@@ -89,7 +89,7 @@ public class DataFrame implements java.io.Serializable {
 			case Character:
 				return new DataFrameColumnChar(field, numEntries);
 			case String:
-				int memSize = variantTypeCounter.getSize(variantCategory, field);
+				int memSize = memSize(variantCategory, field);
 				return new DataFrameColumnString(field, numEntries, memSize);
 			default:
 				throw new RuntimeException("Unimplemented type: " + type);
@@ -102,7 +102,7 @@ public class DataFrame implements java.io.Serializable {
 	protected void createColumns() {
 		for(var field: fields2type.keySet()) {
 			var column = createColumn(field, fields2type.get(field));
-			addColumn(field, column);
+			add(field, column);
 		}
 	}
 
@@ -168,6 +168,12 @@ public class DataFrame implements java.io.Serializable {
 		}
 
 		return -1;
+	}
+
+	int memSize(VariantCategory variantCategory, String field) {
+		var size = variantTypeCounter.getSize(variantCategory, field);
+		var num = variantTypeCounter.getCount(variantCategory);
+		return size + num;
 	}
 
 	/**

@@ -54,7 +54,7 @@ public class VariantDatabase {
 			this.chr = chr;
 			var vcounter = variantTypeCounters.get(chr);
 			if(vcounter == null) throw new RuntimeException("Cannot find variant type counters for chromosome: '" + chr + "'");
-			db = new VariantDataFrame(vcounter, fields2type);
+			db = new VariantDataFrame(vcounter);
 		}
 		db.add(vcfEntry);
 	}

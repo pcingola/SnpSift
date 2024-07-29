@@ -24,7 +24,7 @@ public class TestCasesDataFrameDel extends TestCasesDataFrame {
         dataFrameRow.set(columnName, value);
 
         // Add the row to the data frame
-        dataFrame.addRow(dataFrameRow);
+        dataFrame.add(dataFrameRow);
         dataFrame.check();
 
         // Retrieve the row and check the value

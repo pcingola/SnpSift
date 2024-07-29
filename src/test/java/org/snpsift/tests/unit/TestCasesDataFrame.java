@@ -143,7 +143,7 @@ public class TestCasesDataFrame {
             // Create a dataframe row, and add the random data
             DataFrameRow dataFrameRow = randDataFrameRow(randUtil, dataFrame, pos, stringMaxLen, variantCategory);
             // Add the row to the data frame
-            dataFrame.addRow(dataFrameRow);
+            dataFrame.add(dataFrameRow);
         }
         System.out.println(dataFrame);
 
