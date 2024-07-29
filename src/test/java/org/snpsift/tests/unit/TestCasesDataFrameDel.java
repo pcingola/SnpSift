@@ -6,16 +6,16 @@ import org.snpsift.annotate.mem.dataFrame.DataFrameMnp;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-public class TestCasesDataFrameMnp extends TestCasesDataFrame {
+public class TestCasesDataFrameDel extends TestCasesDataFrame {
 
     @Test
     public void testDataFrame01() {
         var varCounter = variantTypeCounter(10, 100);
-        var dataFrame = new DataFrameMnp(varCounter, VariantCategory.MNP);
+        var dataFrame = new DataFrameMnp(varCounter, VariantCategory.DEL);
 
         int pos = 5;
         String ref = "AC";
-        String alt = "GT";
+        String alt = "";
         String columnName = "field_string";
         String value = "Value";
 
@@ -37,6 +37,6 @@ public class TestCasesDataFrameMnp extends TestCasesDataFrame {
 
     @Test
     public void testDataFrame02() {
-        testDataFrame(VariantCategory.MNP, 100, 100);
+        testDataFrame(VariantCategory.DEL, 100, 100);
    }
 }
