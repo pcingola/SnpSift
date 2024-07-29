@@ -22,10 +22,6 @@ public class Zzz {
 	 * Main
 	 */
 	public static void main(String[] args) {
-		RandomUtil randUtil = new RandomUtil();
-		for(int i = 0; i < 10; i++) {
-			System.out.println("randAcgt: " + randUtil.randVariant(VariantCategory.MIXED));
-		}
 		// // var databaseFileName = Gpr.HOME + "/snpEff/db/GRCh38/dbSnp/dbsnp_small_chr1.vcf";
 		// var databaseFileName = Gpr.HOME + "/snpEff/db/GRCh38/dbSnp/dbsnp_test.vcf";
 		// var fields = new String[] { "RS" };
