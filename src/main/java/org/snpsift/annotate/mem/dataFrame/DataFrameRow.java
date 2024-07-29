@@ -118,14 +118,13 @@ public class DataFrameRow implements java.io.Serializable, Iterable<String> {
 
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
-		sb.append("DataFrameRow: pos=" + pos + ", ref=" + ref + ", alt=" + alt + ", idx=" + idx + "\n");
-		if(values == null) sb.append("No values\n");
-		else {
-			sb.append("Values:\n");
+		sb.append("DataFrameRow: pos=" + pos + ", ref=" + ref + ", alt=" + alt + ", idx=" + idx);
+		if(values != null) {
 			for(var col: this) {
-				sb.append("\t" + col + "\t" + get(col) + "\n");
+				sb.append(", " + col + "= " + get(col));
 			}
 		}
+		sb.append("\n");
 		return sb.toString();
 	}
 

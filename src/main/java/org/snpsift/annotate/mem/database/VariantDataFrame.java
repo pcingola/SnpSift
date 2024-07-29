@@ -5,6 +5,8 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.util.List;
+
 import org.snpeff.interval.Variant;
 import org.snpeff.vcf.VcfEntry;
 import org.snpsift.annotate.mem.dataFrame.DataFrame;
@@ -65,7 +67,8 @@ public class VariantDataFrame implements java.io.Serializable {
 	 * Add data to this VariantDataFrame
 	 */
 	void add(VcfEntry vcfEntry) {
-		for(var variant: vcfEntry.variants()) {
+		var variants = vcfEntry.variants();
+		for(var variant: variants) {
 			var dataFrame = getDataFrameByVariantType(variant);
 			if(dataFrame == null) throw new RuntimeException("Cannot find data frame for variant: " + variant.toString());
 

@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.snpeff.fileIterator.VcfFileIterator;
+import org.snpeff.vcf.VariantVcfEntry;
 import org.snpeff.vcf.VcfEntry;
 import org.snpeff.vcf.VcfHeaderInfo;
 import org.snpeff.vcf.VcfHeaderInfo.VcfInfoNumber;
@@ -153,7 +154,10 @@ public class VariantDatabase {
 		var vcfFile = new VcfFileIterator(databaseFileName);
 		var i = 0; // Current entry number
 		var progress = new ShowProgress();
+		int pos = -1;
 		for (var vcfEntry : vcfFile) {
+			if( vcfEntry.getStart() < pos) throw new RuntimeException("VCF file '" + databaseFileName + "' is not sorted by position. Found position: " + vcfEntry.getStart() + " after position: " + pos);
+			pos = vcfEntry.getStart();
 			add(vcfEntry);
 			progress.tick(i, vcfEntry); // Show progress
 			i++;
