@@ -5,7 +5,7 @@ import java.util.Iterator;
 import java.util.PriorityQueue;
 
 import org.snpeff.fileIterator.VcfFileIterator;
-import org.snpeff.interval.Variant;
+import org.snpeff.vcf.VariantVcfEntry;
 import org.snpeff.vcf.VcfEntry;
 
 
@@ -18,11 +18,11 @@ import org.snpeff.vcf.VcfEntry;
  * When a variant is returned, the min heap is updated with the next variant from the same chromosome.
  * The process continues until all variants have been returned.
  */
-public class SortedVariantsIterator implements Iterator<Variant>, Iterable<Variant> {
+public class SortedVariantsIterator implements Iterator<VariantVcfEntry>, Iterable<VariantVcfEntry> {
 
 	String vcfFileName;
 	VcfFileIterator vcfFileIterator;
-	PriorityQueue<Variant> variantsMinHeap; // Min heap to keep track of the next variant to be returned
+	PriorityQueue<VariantVcfEntry> variantsMinHeap; // Min heap to keep track of the next variant to be returned
 	String vcfChr; // Chromosome of the last VcfEntry read from the VCF file
 	int vcfPos; // Position of the last VcfEntry read from the VCF file
 	VcfEntry vcfEntryPending; // A 'pending' vcf entry (i.e. we did not process it beecause it belongs to a different chromosome)
@@ -30,7 +30,7 @@ public class SortedVariantsIterator implements Iterator<Variant>, Iterable<Varia
 	public SortedVariantsIterator(String vcfFileName) {
 		this.vcfFileName = vcfFileName;
 		vcfFileIterator = new VcfFileIterator(vcfFileName);
-		variantsMinHeap = new PriorityQueue<>(Comparator.comparingInt(variant -> variant.getStart()));
+		variantsMinHeap = new PriorityQueue<>(Comparator.comparingInt(varvcf -> varvcf.getStart()));
 		vcfChr = "";
 		vcfPos = -1;
 	}
@@ -38,16 +38,14 @@ public class SortedVariantsIterator implements Iterator<Variant>, Iterable<Varia
 	/**
 	 * Add the variants from a VcfEntry to the minHeap
 	 */
-	private void addVariantsToMinHeap(VcfEntry vcfEntry) {
-		for(Variant variant : vcfEntry.variants()) {
-			variantsMinHeap.add(variant);
-		}
+	private void addVariantsVcfToMinHeap(VcfEntry vcfEntry) {
+		variantsMinHeap.addAll(VariantVcfEntry.factory(vcfEntry));	
 		vcfChr = vcfEntry.getChromosomeName();
 		vcfPos = vcfEntry.getStart();
 	}
 
 	@Override
-	public Iterator<Variant> iterator() {
+	public Iterator<VariantVcfEntry> iterator() {
 		return this;
 	}
 
@@ -57,7 +55,7 @@ public class SortedVariantsIterator implements Iterator<Variant>, Iterable<Varia
 	}
 
 	@Override
-	public Variant next() {
+	public VariantVcfEntry next() {
 		// If the variant from the minHeap has the same position as the last variant read from the VCF file, return the variant from the minHeap
 		if (!variantsMinHeap.isEmpty() && (variantsMinHeap.peek().getStart() <= vcfPos)) {
 			return variantsMinHeap.poll();
@@ -68,7 +66,7 @@ public class SortedVariantsIterator implements Iterator<Variant>, Iterable<Varia
 			if( !variantsMinHeap.isEmpty() ) return variantsMinHeap.poll();
 			// No more variants in the heap, we can start processing the next chromosome
 			// Add variants from vcfEntryPending to the minHeap
-			addVariantsToMinHeap(vcfEntryPending);
+			addVariantsVcfToMinHeap(vcfEntryPending);
 			vcfEntryPending = null;
 		}
 		// If we run out of VcfEntries, then return the variants from the minHeap
@@ -81,7 +79,7 @@ public class SortedVariantsIterator implements Iterator<Variant>, Iterable<Varia
 		if (!vcfEntry.getChromosomeName().equals(vcfChr)) {
 			vcfEntryPending = vcfEntry;
 		} else {
-			addVariantsToMinHeap(vcfEntry);
+			addVariantsVcfToMinHeap(vcfEntry);
 		}
 		return next(); // Recursively call next() to return the next variant
 	}

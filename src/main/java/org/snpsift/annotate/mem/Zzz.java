@@ -30,26 +30,26 @@ public class Zzz {
 		var startTime = System.currentTimeMillis();
 		int count = 0, pos = -1, countUnsorted = 0;
 		String chrPrev = "";
-		// VcfFileIterator vcfFileIterator = new VcfFileIterator(databaseFileName);
-		// for(var vcfEntry : vcfFileIterator) {
-		// 	for(var variant : vcfEntry.variants()) {
-		// 		// Check if they are sorted
-		// 		if(chrPrev.equals(variant.getChromosomeName()) && pos > variant.getStart()) countUnsorted++;
-		// 		chrPrev = variant.getChromosomeName();
-		// 		pos = variant.getStart();
-		// 		// Show progress
-		// 		count++;
-		// 		if(count % showEvery == 0) {
-		// 			if(count % (showEvery * 100) == 0) System.out.println("VCF Count: " + count + ", unsorted: " + countUnsorted + ", chr: " + variant.getChromosomeName() + ", pos: " + variant.getStart());
-		// 			else {
-		// 				System.out.print(".");
-		// 				System.out.flush();
-		// 			}
-		// 		}
-		// 	}
-		// }
-		// var endTime = System.currentTimeMillis();
-		// System.out.println("VCF Done. Count: " + count + ", unsorted: " + countUnsorted + ", time: " + (endTime - startTime) / 1000.0 + " sec\n");
+		VcfFileIterator vcfFileIterator = new VcfFileIterator(databaseFileName);
+		for(var vcfEntry : vcfFileIterator) {
+			for(var variant : vcfEntry.variants()) {
+				// Check if they are sorted
+				if(pos > variant.getStart() && chrPrev.equals(variant.getChromosomeName())) countUnsorted++;
+				chrPrev = variant.getChromosomeName();
+				pos = variant.getStart();
+				// Show progress
+				count++;
+				if(count % showEvery == 0) {
+					if(count % (showEvery * 100) == 0) System.out.println("VCF Count: " + count + ", unsorted: " + countUnsorted + ", chr: " + variant.getChromosomeName() + ", pos: " + variant.getStart());
+					else {
+						System.out.print(".");
+						System.out.flush();
+					}
+				}
+			}
+		}
+		var endTime = System.currentTimeMillis();
+		System.out.println("VCF Done. Count: " + count + ", unsorted: " + countUnsorted + ", time: " + (endTime - startTime) / 1000.0 + " sec\n");
 
 
 		// Time how long it takes to read the Sorted VCF file
@@ -59,22 +59,22 @@ public class Zzz {
 		count = 0;
 		pos = -1;
 		countUnsorted = 0;
-		for(var variant : sortedVariantsIterator) {
+		for(var varVcf : sortedVariantsIterator) {
 			// Check if they are sorted
-			if(chrPrev.equals(variant.getChromosomeName()) && pos > variant.getStart()) countUnsorted++;
-			chrPrev = variant.getChromosomeName();
-			pos = variant.getStart();
+			if(pos > varVcf.getStart() && chrPrev.equals(varVcf.getChromosomeName())) countUnsorted++;
+			chrPrev = varVcf.getChromosomeName();
+			pos = varVcf.getStart();
 			// Show progress
 			count++;
 			if(count % showEvery == 0) {
-				if(count % (showEvery * 100) == 0) System.out.println("VCF Count: " + count + ", unsorted: " + countUnsorted + ", chr: " + variant.getChromosomeName() + ", pos: " + variant.getStart());
+				if(count % (showEvery * 100) == 0) System.out.println("SORT Count: " + count + ", unsorted: " + countUnsorted + ", chr: " + varVcf.getChromosomeName() + ", pos: " + varVcf.getStart());
 				else {
 					System.out.print(".");
 					System.out.flush();
 				}
 			}
 		}
-		var endTime = System.currentTimeMillis();
+		endTime = System.currentTimeMillis();
 		System.out.println("SORT Done. Count: " + count + ", unsorted: " + countUnsorted + ", time: " + (endTime - startTime) / 1000.0 + " sec");
 
 		// var fields = new String[] { "RS" };
