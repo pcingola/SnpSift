@@ -139,6 +139,13 @@ public class StringArray implements Serializable {
         return data.length;
     }
 
+    /**
+	 * Memory size of this object (approximate size in bytes)
+	 */
+	public long sizeBytes() {
+        return data.length + index2offset.length * 4;
+    }
+
     public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append("StringArray(" + index2offset.length + ", " + data.length + ")");

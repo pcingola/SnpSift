@@ -23,4 +23,11 @@ public class DataFrameColumnDouble extends DataFrameColumn<Double> {
 		return data.length;
 	}
 
+	/**
+	 * Memory size of this object (approximate size in bytes)
+	 */
+	public long sizeBytes() {
+        return isNUllData.sizeBytes() + 8 * data.length;
+    }
+
 }

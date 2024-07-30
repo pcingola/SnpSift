@@ -14,12 +14,15 @@ import org.snpsift.annotate.mem.dataFrame.dataFrameColumn.DataFrameColumnDouble;
 import org.snpsift.annotate.mem.dataFrame.dataFrameColumn.DataFrameColumnInt;
 import org.snpsift.annotate.mem.dataFrame.dataFrameColumn.DataFrameColumnString;
 import org.snpsift.annotate.mem.variantTypeCounter.VariantTypeCounter;
+import org.snpsift.util.FormatUtil;
 
 /**
  * A set of DataColumns, indexed by position
  * This is used to store data for a chromosome
  */
 public class DataFrame implements java.io.Serializable {
+	public static final int MAX_ROWS_TO_SHOW = 100;
+
 	VariantTypeCounter variantTypeCounter;
 	VariantCategory variantCategory;
 	int currentIdx = 0;	// Current index
@@ -37,8 +40,8 @@ public class DataFrame implements java.io.Serializable {
 		columns = new HashMap<>();
 		this.fields2type = variantTypeCounter.getFields2type();
 		createColumns();
-		if(hasRefs) refs = new StringArray(size, memSize(variantCategory, VariantTypeCounter.REF));
-		if(hasAlts) alts = new StringArray(size, memSize(variantCategory, VariantTypeCounter.ALT));
+		if(hasRefs) refs = new StringArray(size, stringArrayMemSize(variantCategory, VariantTypeCounter.REF));
+		if(hasAlts) alts = new StringArray(size, stringArrayMemSize(variantCategory, VariantTypeCounter.ALT));
 	}
 
 	/**
@@ -89,7 +92,7 @@ public class DataFrame implements java.io.Serializable {
 			case Character:
 				return new DataFrameColumnChar(field, numEntries);
 			case String:
-				int memSize = memSize(variantCategory, field);
+				int memSize = stringArrayMemSize(variantCategory, field);
 				return new DataFrameColumnString(field, numEntries, memSize);
 			default:
 				throw new RuntimeException("Unimplemented type: " + type);
@@ -170,12 +173,6 @@ public class DataFrame implements java.io.Serializable {
 		return -1;
 	}
 
-	int memSize(VariantCategory variantCategory, String field) {
-		var size = variantTypeCounter.getSize(variantCategory, field);
-		var num = variantTypeCounter.getCount(variantCategory);
-		return size + num;
-	}
-
 	/**
 	 * Get data from a column by searching by position, reference and alternative alleles.
 	 * Note: The value can be null
@@ -199,18 +196,37 @@ public class DataFrame implements java.io.Serializable {
 		columns.get(columnName).set(idx, value);
 	}
 
+	/**
+	 * Memory size of this object
+	 */
+	public long sizeBytes() {
+		long size = posIndex.sizeBytes();
+		for(var col: columns.values())
+			size += col.sizeBytes();
+		if(refs != null) size += refs.sizeBytes();
+		if(alts != null) size += alts.sizeBytes();
+		return size;
+	}
+
+	int stringArrayMemSize(VariantCategory variantCategory, String field) {
+		var size = variantTypeCounter.getSize(variantCategory, field);
+		var num = variantTypeCounter.getCount(variantCategory);
+		return size + num;
+	}
+
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
 		sb.append("DataFrame: " + variantCategory);
 		sb.append(", size: " + posIndex.size());
-		sb.append(", current index: " + currentIdx + "\n");
+		sb.append(", current index: " + currentIdx);
+		sb.append(", memory: " + FormatUtil.formatBytes(sizeBytes()) + "\n");
 		sb.append("\tField types:\n");
 		for(var field: fields2type.keySet())
 			sb.append("\t\t" + field + " : " + fields2type.get(field) + "\n");
 		
 		// Show columns as a table
-		int size = posIndex.size();
-		for(int i=0 ; i < size; i++) {
+		int rowToShow = Math.min(posIndex.size(), MAX_ROWS_TO_SHOW);
+		for(int i=0 ; i < rowToShow; i++) {
 			sb.append("\t" + i + "\t" + posIndex.get(i) 
 						+ (refs != null ? "\t" + refs.get(i) : "")
 						+ (alts != null ? "\t" + alts.get(i) : "")

@@ -72,6 +72,14 @@ public class PosIndex implements java.io.Serializable {
 	public int size() {
 		return size;
 	}
+
+	/**
+	 * Memory size of this object (approximate size in bytes)
+	 */
+	public long sizeBytes() {
+        return positions.length * 4;
+    }
+
 }
 
 

@@ -22,5 +22,11 @@ public class DataFrameColumnInt extends DataFrameColumn<Integer> {
 	public int size() {
 		return data.length;
 	}
+    /**
+	 * Memory size of this object (approximate size in bytes)
+	 */
+	public long sizeBytes() {
+        return isNUllData.sizeBytes() + 4 * data.length;
+    }
 
 }

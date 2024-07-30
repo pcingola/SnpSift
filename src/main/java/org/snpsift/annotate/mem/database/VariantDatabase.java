@@ -23,13 +23,13 @@ import org.snpsift.util.ShowProgress;
  * 'VariantDatabase' manages the 'VariantDatabaseChr' files (loading, saving, etc).
  */
 public class VariantDatabase {
-	public static final String DB_EXT = "snpsift_db";	// Database file extension
+	public static final String VARIANT_DATAFRAME_EXT = "snpsift_db";	// Database file extension
 
 	String chr; // Current chromosome
-	String dbDir; // Directory where databases are stored
+	String dfDir; // Directory where databases are stored
 	String[] fields; // Fields to create or annotate
 	Map<String, VcfInfoType> fields2type; // Fields to create or annotate
-	VariantDataFrame db; // Database for current chromosome
+	VariantDataFrame variantDataFrame; // Database for current chromosome
 	VariantTypeCounters variantTypeCounters; // Counters per chromosome
 
 	/**
@@ -37,8 +37,8 @@ public class VariantDatabase {
 	 */
 	public VariantDatabase(String[] fields) {
 		this.fields = fields;
-		this.dbDir = null;
-		this.db = null;
+		this.dfDir = null;
+		this.variantDataFrame = null;
 		this.chr = null;
 		this.fields2type = null;
 		this.variantTypeCounters = null;
@@ -52,13 +52,13 @@ public class VariantDatabase {
 		var chr = variantVcfEntry.getChromosomeName();
 		if(!chr.equals(this.chr)) {
 			// Different chromosome? => Save current database and create a new one
-			if(db != null) db.save(dbDir + "/" + this.chr + '.' + DB_EXT);
+			if(variantDataFrame != null) variantDataFrame.save(dfDir + "/" + this.chr + '.' + VARIANT_DATAFRAME_EXT);
 			this.chr = chr;
 			var vcounter = variantTypeCounters.get(chr);
 			if(vcounter == null) throw new RuntimeException("Cannot find variant type counters for chromosome: '" + chr + "'");
-			db = new VariantDataFrame(vcounter);
+			variantDataFrame = new VariantDataFrame(vcounter);
 		}
-		db.add(variantVcfEntry);
+		variantDataFrame.add(variantVcfEntry);
 	}
 
 	/**
@@ -118,10 +118,10 @@ public class VariantDatabase {
 	/**
 	 * Create a database from a VCF file
 	 */
-	public void createDb(String databaseFileName, String dbDir) {
-		this.dbDir = dbDir;
+	public void create(String databaseFileName, String dfDir) {
+		this.dfDir = dfDir;
 		// Create directory
-		var dir = new java.io.File(dbDir);
+		var dir = new java.io.File(dfDir);
 		if(!dir.exists()) dir.mkdirs();
 		// Get column types
 		fields2type = columnTypes(databaseFileName); 
@@ -129,28 +129,28 @@ public class VariantDatabase {
 		variantTypeCounters = new VariantTypeCounters(fields2type);
 		variantTypeCounters.count(databaseFileName);
 		// Load data
-		loadDbData(databaseFileName);
+		load(databaseFileName);
 		// Make sure we save the last database
-		if(db != null) db.save(dbDir + "/" + chr + '.' + DB_EXT);
+		if(variantDataFrame != null) variantDataFrame.save(dfDir + "/" + chr + '.' + VARIANT_DATAFRAME_EXT);
 	}
 
 	/**
 	 * Get the database for a chromosome
 	 */
 	VariantDataFrame get(String chr) {
-		if(chr.equals(this.chr)) return db;
+		if(chr.equals(this.chr)) return variantDataFrame;
 		// Load from database file
 		this.chr = chr;
-		var dbFile = dbDir + "/" + chr + '.' + DB_EXT;
-		db = VariantDataFrame.load(dbFile);
-		return db;
+		var variantDataFrameFile = dfDir + "/" + chr + '.' + VARIANT_DATAFRAME_EXT;
+		variantDataFrame = VariantDataFrame.load(variantDataFrameFile);
+		return variantDataFrame;
 	}
 
 	/**
 	 * Load database from a VCF file
 	 */
-	void loadDbData(String databaseFileName) {
-		System.out.println("Loading db from file: " + databaseFileName);
+	void load(String databaseFileName) {
+		System.out.println("Loading variant DataFrame from file: " + databaseFileName);
 		// Iterate over all VCF entries
 		var vcfFile = new SortedVariantsVcfIterator(databaseFileName);
 		var i = 0; // Current entry number
@@ -162,6 +162,13 @@ public class VariantDatabase {
 		}
 		vcfFile.close();
 		System.out.println("Done: " + i + " entries.");
+	}
+
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		sb.append("VariantDatabase[chr: " + chr + "]\n");
+		sb.append(variantDataFrame);
+		 return sb.toString();
 	}
 }
 

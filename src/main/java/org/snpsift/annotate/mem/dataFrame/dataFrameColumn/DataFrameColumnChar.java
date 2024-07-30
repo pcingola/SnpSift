@@ -23,4 +23,11 @@ public class DataFrameColumnChar extends DataFrameColumn<Character> {
 		return data.length;
 	}
 
+    /**
+	 * Memory size of this object (approximate size in bytes)
+	 */
+	public long sizeBytes() {
+        return isNUllData.sizeBytes() + 2 * data.length;
+    }
+
 }

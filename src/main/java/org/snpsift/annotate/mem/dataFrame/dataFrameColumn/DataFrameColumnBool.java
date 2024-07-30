@@ -32,4 +32,12 @@ public class DataFrameColumnBool extends DataFrameColumn<Boolean> {
 	public int size() {
 		return data.size();
 	}
+
+    /**
+	 * Memory size of this object (approximate size in bytes)
+	 */
+	public long sizeBytes() {
+        return isNUllData.sizeBytes() + data.sizeBytes();
+    }
+
 }

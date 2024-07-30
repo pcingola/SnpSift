@@ -57,8 +57,9 @@ public class Zzz {
 	public void create() {
 		// Load data
 		variantDatabase = new VariantDatabase(fields);
-		var dbDir = databaseFileName + '_' + VariantDatabase.DB_EXT;
-		variantDatabase.createDb(databaseFileName, dbDir);
+		var dbDir = databaseFileName + '_' + VariantDatabase.VARIANT_DATAFRAME_EXT;
+		variantDatabase.create(databaseFileName, dbDir);
+		System.out.println(variantDatabase);
 	}
 
 	public void benchmarkSortedVariantsVcfIterator(String databaseFileName) {

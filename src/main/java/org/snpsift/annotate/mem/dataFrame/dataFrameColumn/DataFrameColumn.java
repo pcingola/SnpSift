@@ -76,6 +76,11 @@ public abstract class DataFrameColumn<T> implements Serializable {
 	/** Number of elements in this DataColumn */
 	public abstract int size();
 
+	/**
+	 * Memory size of this object (approximate size in bytes)
+	 */
+	public abstract long sizeBytes();
+
 	public String toString() {
 		var sb = new StringBuilder();
 		sb.append( this.getClass().getName() + ": '" + name + "', size: " + size() + "\n");

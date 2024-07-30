@@ -5,7 +5,6 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.util.List;
 
 import org.snpeff.interval.Variant;
 import org.snpeff.vcf.VariantVcfEntry;
@@ -19,6 +18,7 @@ import org.snpsift.annotate.mem.dataFrame.DataFrameOther;
 import org.snpsift.annotate.mem.dataFrame.DataFrameRow;
 import org.snpsift.annotate.mem.dataFrame.DataFrameSnp;
 import org.snpsift.annotate.mem.variantTypeCounter.VariantTypeCounter;
+import org.snpsift.util.FormatUtil;
 import org.snpsift.annotate.mem.VariantCategory;
 
 /**
@@ -165,5 +165,24 @@ public class VariantDataFrame implements java.io.Serializable {
 		} catch (Exception e) {
 			throw new RuntimeException("Cannot save to file '" + fileName + "'", e);
 		}
+	}
+
+	public long sizeBytes() {
+		long size = 0;
+		for(var dataFrame : dataFrames) {
+			size += dataFrame.sizeBytes();
+		}
+		return size;
+	}
+
+	@Override
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		sb.append("VariantDataFrame: memory= " + FormatUtil.formatBytes(sizeBytes()) + "\n");
+		for(var vc : VariantCategory.values()) {
+			sb.append("Variant category: " + vc + "\n");
+			sb.append(dataFrames[vc.ordinal()] + "\n");
+		}
+		return sb.toString();
 	}
 }
