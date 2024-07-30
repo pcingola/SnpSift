@@ -57,8 +57,8 @@ public class VariantTypeCounters {
 		int i = 0;
 		for (VcfEntry vcfEntry : vcfFile) {
 			count(vcfEntry);
-			progress.tick(i, vcfEntry); // Show progress
 			i++;
+			progress.tick(i, vcfEntry); // Show progress
 		}
 		vcfFile.close();
 		System.out.println(this);

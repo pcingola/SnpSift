@@ -1,5 +1,6 @@
 package org.snpsift.util;
 
+import org.snpeff.vcf.VariantVcfEntry;
 import org.snpeff.vcf.VcfEntry;
 
 public class ShowProgress {
@@ -21,9 +22,13 @@ public class ShowProgress {
 	}
 
     public void tick(int count) {
-        tick(count, null);
+        tick(count, (VcfEntry) null);
 
     }
+
+	public void tick(int count, VariantVcfEntry varVcf) {
+		tick(count, varVcf.getVcfEntry());
+	}
 
 	/**
 	 * Call this method every iteration

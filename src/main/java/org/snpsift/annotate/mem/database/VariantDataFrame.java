@@ -8,6 +8,7 @@ import java.io.ObjectOutputStream;
 import java.util.List;
 
 import org.snpeff.interval.Variant;
+import org.snpeff.vcf.VariantVcfEntry;
 import org.snpeff.vcf.VcfEntry;
 import org.snpsift.annotate.mem.dataFrame.DataFrame;
 import org.snpsift.annotate.mem.dataFrame.DataFrameDel;
@@ -66,23 +67,17 @@ public class VariantDataFrame implements java.io.Serializable {
 	/**
 	 * Add data to this VariantDataFrame
 	 */
-	void add(VcfEntry vcfEntry) {
-		var variants = vcfEntry.variants();
-		for(var variant: variants) {
-			var dataFrame = getDataFrameByVariantType(variant);
-			if(dataFrame == null) throw new RuntimeException("Cannot find data frame for variant: " + variant.toString());
-
-			// var variantCategory = VariantCategory.of(variant);
-			DataFrameRow row = new DataFrameRow(dataFrame, variant.getStart(), variant.getReference(), variant.getAlt());
-			// Add fields
-			for(var field : fields) {
-				Object value = getFieldValue(vcfEntry, field);
-				row.set(field, value);
-			}
-
-			// Add row to dataFrame
-			dataFrame.add(row);
+	void add(VariantVcfEntry variantVcfEntry) {
+		var dataFrame = getDataFrameByVariantType(variantVcfEntry);
+		if(dataFrame == null) throw new RuntimeException("Cannot find data frame for variant: " + variantVcfEntry.toString());
+		DataFrameRow row = new DataFrameRow(dataFrame, variantVcfEntry.getStart(), variantVcfEntry.getReference(), variantVcfEntry.getAlt());
+		// Add fields
+		var vcfEntry = variantVcfEntry.getVcfEntry();
+		for(var field : fields) {
+			Object value = getFieldValue(vcfEntry, field);
+			row.set(field, value);
 		}
+		dataFrame.add(row); // Add row to dataFrame
 	}
 
 	/**

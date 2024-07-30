@@ -1,5 +1,6 @@
 package org.snpsift.annotate.mem.variantTypeCounter;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -12,7 +13,7 @@ import org.snpsift.annotate.mem.VariantCategory;
  * Count different types of variants
  * These statistics are used to create data sets
  */
-public class VariantTypeCounter {
+public class VariantTypeCounter implements Serializable{
 
 	public static final String REF = "REF";
 	public static final String ALT = "ALT";

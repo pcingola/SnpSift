@@ -60,7 +60,6 @@ public class DataFrame implements java.io.Serializable {
 		if(alts != null) alts.set(currentIdx, row.getAlt());
 		// Set all fields
 		row.setDataFrame();
-		System.out.println("Added row: " + row);
 		// Prepare for next entry
 		currentIdx++;
 	}

@@ -9,6 +9,7 @@ import org.snpeff.vcf.VcfEntry;
 import org.snpeff.vcf.VcfHeaderInfo;
 import org.snpeff.vcf.VcfHeaderInfo.VcfInfoNumber;
 import org.snpeff.vcf.VcfInfoType;
+import org.snpsift.annotate.mem.SortedVariantsVcfIterator;
 import org.snpsift.annotate.mem.variantTypeCounter.VariantTypeCounters;
 import org.snpsift.util.ShowProgress;
 
@@ -46,9 +47,9 @@ public class VariantDatabase {
 	/**
 	 * Add a VCF entry to the database
 	 */
-	void add(VcfEntry vcfEntry) {
+	void add(VariantVcfEntry variantVcfEntry) {
 		// Same chromosome? => Add to current database
-		var chr = vcfEntry.getChromosomeName();
+		var chr = variantVcfEntry.getChromosomeName();
 		if(!chr.equals(this.chr)) {
 			// Different chromosome? => Save current database and create a new one
 			if(db != null) db.save(dbDir + "/" + this.chr + '.' + DB_EXT);
@@ -57,7 +58,7 @@ public class VariantDatabase {
 			if(vcounter == null) throw new RuntimeException("Cannot find variant type counters for chromosome: '" + chr + "'");
 			db = new VariantDataFrame(vcounter);
 		}
-		db.add(vcfEntry);
+		db.add(variantVcfEntry);
 	}
 
 	/**
@@ -151,16 +152,13 @@ public class VariantDatabase {
 	void loadDbData(String databaseFileName) {
 		System.out.println("Loading db from file: " + databaseFileName);
 		// Iterate over all VCF entries
-		var vcfFile = new VcfFileIterator(databaseFileName);
+		var vcfFile = new SortedVariantsVcfIterator(databaseFileName);
 		var i = 0; // Current entry number
 		var progress = new ShowProgress();
-		int pos = -1;
-		for (var vcfEntry : vcfFile) {
-			if( vcfEntry.getStart() < pos) throw new RuntimeException("VCF file '" + databaseFileName + "' is not sorted by position. Found position: " + vcfEntry.getStart() + " after position: " + pos);
-			pos = vcfEntry.getStart();
-			add(vcfEntry);
-			progress.tick(i, vcfEntry); // Show progress
+		for (var variantVcf : vcfFile) {
+			add(variantVcf);
 			i++;
+			progress.tick(i, variantVcf); // Show progress
 		}
 		vcfFile.close();
 		System.out.println("Done: " + i + " entries.");

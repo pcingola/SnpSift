@@ -1,12 +1,13 @@
 package org.snpsift.annotate.mem.arrays;
 
+import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Collection;
 
 /**
  * Implement a memory efficient array of strings
  */
-public class StringArray {
+public class StringArray implements Serializable {
     /**
      * Calculate the size of a string in memory
      */

@@ -44,6 +44,10 @@ public class SortedVariantsVcfIterator implements Iterator<VariantVcfEntry>, Ite
 		vcfPos = vcfEntry.getStart();
 	}
 
+	public void close() {
+		vcfFileIterator.close();
+	}
+
 	@Override
 	public Iterator<VariantVcfEntry> iterator() {
 		return this;
@@ -79,6 +83,7 @@ public class SortedVariantsVcfIterator implements Iterator<VariantVcfEntry>, Ite
 		if (!vcfEntry.getChromosomeName().equals(vcfChr)) {
 			vcfEntryPending = vcfEntry;
 		} else {
+			if( vcfEntry.getStart() < vcfPos ) throw new RuntimeException("VCF file is not sorted. Position: " + vcfEntry.getStart() + " is before " + vcfPos + "\n" + vcfEntry);
 			addVariantsVcfToMinHeap(vcfEntry);
 		}
 		return next(); // Recursively call next() to return the next variant
