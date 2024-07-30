@@ -161,7 +161,7 @@ public class VariantDatabase {
 			progress.tick(i, variantVcf); // Show progress
 		}
 		vcfFile.close();
-		System.out.println("Done: " + i + " entries.");
+		System.out.println("Done: " + i + " variants in " + progress.elapsedSec() + " seconds.");
 	}
 
 	public String toString() {
