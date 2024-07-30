@@ -47,7 +47,7 @@ public class VariantDatabase {
 	/**
 	 * Add a VCF entry to the database
 	 */
-	void add(VariantVcfEntry variantVcfEntry) {
+	protected void add(VariantVcfEntry variantVcfEntry) {
 		// Same chromosome? => Add to current database
 		var chr = variantVcfEntry.getChromosomeName();
 		if(!chr.equals(this.chr)) {
@@ -65,10 +65,10 @@ public class VariantDatabase {
 	 * This method is used to annotate a VCF entry
 	 * The annotations are added to the INFO field of the VCF entry
 	 */
-	void annotate(VcfEntry vcfEntry) {
+	public void annotate(VcfEntry vcfEntry) {
 		var chr = vcfEntry.getChromosomeName();
 		var db = get(chr);
-		db.annotate(vcfEntry, fields);
+		db.annotate(vcfEntry);
 	}
 
 	/**
@@ -152,16 +152,16 @@ public class VariantDatabase {
 	void load(String databaseFileName) {
 		System.out.println("Loading variant DataFrame from file: " + databaseFileName);
 		// Iterate over all VCF entries
-		var vcfFile = new SortedVariantsVcfIterator(databaseFileName);
+		var sortedVariants = new SortedVariantsVcfIterator(databaseFileName);
 		var i = 0; // Current entry number
 		var progress = new ShowProgress();
-		for (var variantVcf : vcfFile) {
+		for (var variantVcf : sortedVariants) {
 			add(variantVcf);
 			i++;
 			progress.tick(i, variantVcf); // Show progress
 		}
-		vcfFile.close();
-		System.out.println("Done: " + i + " variants in " + progress.elapsedSec() + " seconds.");
+		sortedVariants.close();
+		System.out.println("\nDone: " + i + " variants in " + progress.elapsedSec() + " seconds.");
 	}
 
 	public String toString() {

@@ -22,13 +22,15 @@ public class Zzz {
 	 */
 	public static void main(String[] args) {
 		// var databaseFileName = Gpr.HOME + "/snpEff/db/GRCh38/dbSnp/GCF_000001405.40.gz";
-		var databaseFileName = Gpr.HOME + "/snpEff/db/GRCh38/dbSnp/dbsnp_small_chr1.vcf";
-		// var databaseFileName = Gpr.HOME + "/snpEff/db/GRCh38/dbSnp/dbsnp_test.vcf";
+		// var databaseFileName = Gpr.HOME + "/snpEff/db/GRCh38/dbSnp/dbsnp_small_chr1.vcf";
+		var databaseFileName = Gpr.HOME + "/snpEff/db/GRCh38/dbSnp/dbsnp_test.vcf";
+		var inputVcf = Gpr.HOME + "/snpEff/z.vcf";
 		var fields = new String[] { "RS" };
 
 		// Create the database from a VCF file
 		Zzz zzz = new Zzz(databaseFileName, fields);
-		zzz.create();
+		zzz.load();
+		zzz.annotate(inputVcf);
 	}
 
 	public Zzz(String dbFile, String[] fields) {
@@ -45,6 +47,7 @@ public class Zzz {
 		var count = 0;
 		var progress = new ShowProgress();
 		for(var vcfEntry : new VcfFileIterator(vcfInput)) {
+			variantDatabase.annotate(vcfEntry);
 			count++;
 			progress.tick(count, vcfEntry);
 		}

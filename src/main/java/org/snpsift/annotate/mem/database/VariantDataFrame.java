@@ -83,7 +83,7 @@ public class VariantDataFrame implements java.io.Serializable {
 	/**
 	 * Annotate a VCF entry with the fields in this VariantDataFrame
 	 */
-	void annotate(VcfEntry vcfEntry, String[] fields) {
+	public void annotate(VcfEntry vcfEntry) {
 		throw new RuntimeException("Unimplemented");
 		// for(var variant: vcfEntry.variants()) {
 		// 	var dataSet = getDataFrameByVariantType(variant);

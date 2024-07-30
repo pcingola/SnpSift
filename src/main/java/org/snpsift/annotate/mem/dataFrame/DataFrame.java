@@ -228,9 +228,9 @@ public class DataFrame implements java.io.Serializable {
 		int rowToShow = Math.min(posIndex.size(), MAX_ROWS_TO_SHOW);
 		for(int i=0 ; i < rowToShow; i++) {
 			sb.append("\t" + i + "\t" + posIndex.get(i) 
-						+ (refs != null ? "\t" + refs.get(i) : "")
-						+ (alts != null ? "\t" + alts.get(i) : "")
-						+ " | ");
+						+ (refs != null ? "\t| " + refs.get(i) : "")
+						+ (alts != null ? "\t| " + alts.get(i) : "")
+						+ "\t| ");
 			for(var col: columns.values())
 				sb.append(col.get(i) + "\t| ");
 			sb.append("\n");
