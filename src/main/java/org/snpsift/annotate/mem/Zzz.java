@@ -8,6 +8,10 @@ import org.snpsift.util.ShowProgress;
 
 /***
  * Test: This class loaads a "database" VCF file and then annotates another VCF file.
+ * 
+ * 
+ * Chromosome aliases file: http://hgdownload.soe.ucsc.edu/goldenPath/hg38/database/chromAlias.txt.gz
+ * 
  */
 public class Zzz {
 
@@ -24,12 +28,12 @@ public class Zzz {
 		// var databaseFileName = Gpr.HOME + "/snpEff/db/GRCh38/dbSnp/GCF_000001405.40.gz";
 		// var databaseFileName = Gpr.HOME + "/snpEff/db/GRCh38/dbSnp/dbsnp_small_chr1.vcf";
 		var databaseFileName = Gpr.HOME + "/snpEff/db/GRCh38/dbSnp/dbsnp_test.vcf";
+		
 		var inputVcf = Gpr.HOME + "/snpEff/z.vcf";
 		var fields = new String[] { "RS" };
 
 		// Create the database from a VCF file
 		Zzz zzz = new Zzz(databaseFileName, fields);
-		zzz.load();
 		zzz.annotate(inputVcf);
 	}
 

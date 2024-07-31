@@ -4,6 +4,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.snpeff.fileIterator.VcfFileIterator;
+import org.snpeff.interval.Marker;
+import org.snpeff.interval.tree.IntervalForest;
 import org.snpeff.vcf.VariantVcfEntry;
 import org.snpeff.vcf.VcfEntry;
 import org.snpeff.vcf.VcfHeaderInfo;
@@ -29,17 +31,20 @@ public class VariantDatabase {
 	String dfDir; // Directory where databases are stored
 	String[] fields; // Fields to create or annotate
 	Map<String, VcfInfoType> fields2type; // Fields to create or annotate
+	Marker currentInterval; // Current interval
 	VariantDataFrame variantDataFrame; // Database for current chromosome
 	VariantTypeCounters variantTypeCounters; // Counters per chromosome
+	IntervalForest intervalForest; // Interval forest of the DataFrame's intervals
 
 	/**
 	 * Constructor used to create a database
 	 */
 	public VariantDatabase(String[] fields) {
 		this.fields = fields;
+		this.chr = null;
 		this.dfDir = null;
 		this.variantDataFrame = null;
-		this.chr = null;
+		this.currentInterval = null;
 		this.fields2type = null;
 		this.variantTypeCounters = null;
 	}
@@ -129,9 +134,27 @@ public class VariantDatabase {
 		variantTypeCounters = new VariantTypeCounters(fields2type);
 		variantTypeCounters.count(databaseFileName);
 		// Load data
-		load(databaseFileName);
+		createFromVcf(databaseFileName);
 		// Make sure we save the last database
 		if(variantDataFrame != null) variantDataFrame.save(dfDir + "/" + chr + '.' + VARIANT_DATAFRAME_EXT);
+	}
+
+	/**
+	 * Creat database from a VCF file
+	 */
+	void createFromVcf(String databaseFileName) {
+		System.out.println("Creating variant database from file: " + databaseFileName);
+		// Iterate over all VCF entries
+		var sortedVariants = new SortedVariantsVcfIterator(databaseFileName);
+		var i = 0; // Current entry number
+		var progress = new ShowProgress();
+		for (var variantVcf : sortedVariants) {
+			add(variantVcf);
+			i++;
+			progress.tick(i, variantVcf); // Show progress
+		}
+		sortedVariants.close();
+		System.out.println("\nDone: " + i + " variants in " + progress.elapsedSec() + " seconds.");
 	}
 
 	/**
@@ -144,24 +167,6 @@ public class VariantDatabase {
 		var variantDataFrameFile = dfDir + "/" + chr + '.' + VARIANT_DATAFRAME_EXT;
 		variantDataFrame = VariantDataFrame.load(variantDataFrameFile);
 		return variantDataFrame;
-	}
-
-	/**
-	 * Load database from a VCF file
-	 */
-	void load(String databaseFileName) {
-		System.out.println("Loading variant DataFrame from file: " + databaseFileName);
-		// Iterate over all VCF entries
-		var sortedVariants = new SortedVariantsVcfIterator(databaseFileName);
-		var i = 0; // Current entry number
-		var progress = new ShowProgress();
-		for (var variantVcf : sortedVariants) {
-			add(variantVcf);
-			i++;
-			progress.tick(i, variantVcf); // Show progress
-		}
-		sortedVariants.close();
-		System.out.println("\nDone: " + i + " variants in " + progress.elapsedSec() + " seconds.");
 	}
 
 	public String toString() {
