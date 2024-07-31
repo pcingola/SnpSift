@@ -12,6 +12,7 @@ import org.snpeff.vcf.VcfHeaderInfo;
 import org.snpeff.vcf.VcfHeaderInfo.VcfInfoNumber;
 import org.snpeff.vcf.VcfInfoType;
 import org.snpsift.annotate.mem.SortedVariantsVcfIterator;
+import org.snpsift.annotate.mem.VariantCategory;
 import org.snpsift.annotate.mem.variantTypeCounter.VariantTypeCounters;
 import org.snpsift.util.ShowProgress;
 

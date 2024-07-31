@@ -121,12 +121,10 @@ public class DataFrameRow implements java.io.Serializable, Iterable<String> {
 		sb.append("DataFrameRow: pos=" + pos + ", ref=" + ref + ", alt=" + alt + ", idx=" + idx);
 		if(values != null) {
 			for(var col: this) {
-				sb.append(", " + col + "= " + get(col));
+				sb.append(", " + col + "='" + get(col) + "'");
 			}
 		}
-		sb.append("\n");
 		return sb.toString();
 	}
-
 }
 

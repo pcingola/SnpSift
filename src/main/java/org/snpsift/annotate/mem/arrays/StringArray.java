@@ -1,11 +1,13 @@
 package org.snpsift.annotate.mem.arrays;
 
 import java.io.Serializable;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Collection;
 
 /**
  * Implement a memory efficient array of strings
+ * It only stores bytes (i.e. UTF-8 encoding) and uses a single byte to mark the end of a string ('\0')
  */
 public class StringArray implements Serializable {
     /**
@@ -35,7 +37,7 @@ public class StringArray implements Serializable {
     protected byte[] data; // Raw data as a byte array
     protected int[] index2offset; // Convert array index to data offset
     protected int currentIndex; // Index of latest element added
-    protected int offset;
+    protected int offset; // Current offset in the data array
 
     /**
      * Create a StringArray from an array of strings
@@ -86,7 +88,7 @@ public class StringArray implements Serializable {
     public String get(int i) {
         var offset = index2offset[i];
         if (offset == -1) return null;
-        return get_by_offset(index2offset[i]);
+        return getByOffset(index2offset[i]);
     }
 
     /**
@@ -94,13 +96,17 @@ public class StringArray implements Serializable {
      * This method is used to get a string from the data array
      * Should be used only internally
      */
-    private String get_by_offset(int offset) {
+    private String getByOffset(int offset) {
         // Find the end of the string
         int end = offset;
         while (end < data.length && data[end] != 0)
             end++;
         // Return the string
         return new String(data, offset, end - offset);
+    }
+
+    public int getOffset() {
+        return offset;
     }
 
     /**
@@ -123,7 +129,7 @@ public class StringArray implements Serializable {
         // Copy non-empty strings
         if (str.length() > 0) {
             // Copy bytes from the string to the data array
-            byte[] strBytes = str.getBytes();
+            byte[] strBytes = str.getBytes(StandardCharsets.UTF_8);
             if (offset + strBytes.length > data.length) throw new RuntimeException("StringArray: Out of memory. The allocated memory is " + data.length + " bytes, but we need " + (offset + strBytes.length) + " bytes, to add new entry " + i + " with string '" + str + "'");
             System.arraycopy(strBytes, 0, data, offset, strBytes.length);
             offset += strBytes.length;

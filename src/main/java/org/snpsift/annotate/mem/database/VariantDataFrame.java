@@ -78,7 +78,15 @@ public class VariantDataFrame implements java.io.Serializable {
 			Object value = getFieldValue(vcfEntry, field);
 			row.set(field, value);
 		}
-		dataFrame.add(row); // Add row to dataFrame
+		try {
+			dataFrame.add(row);
+		} catch (Exception e) {
+			throw new RuntimeException("Error adding row to dataFrame:" //
+										+ "\n\trow: " + row //
+										+ "\n\tvariant category: " + VariantCategory.of(variantVcfEntry) //
+										+ "\n\t" + variantVcfEntry //
+										, e);
+		}
 	}
 
 	/**

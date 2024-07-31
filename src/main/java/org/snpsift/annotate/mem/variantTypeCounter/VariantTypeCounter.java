@@ -1,6 +1,7 @@
 package org.snpsift.annotate.mem.variantTypeCounter;
 
 import java.io.Serializable;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -59,9 +60,9 @@ public class VariantTypeCounter implements Serializable{
 			// Count by category
 			countByCategory[variantCategoryOrd]++;
 			// Size of each 'string' field
-			for(var field: fieldsString) {
-				var fieldValue = vcfEntry.getInfo(field);
-				updateSizes(variantCategory, field, fieldValue);
+			for(var fieldName: fieldsString) {
+				var fieldValue = vcfEntry.getInfo(fieldName);
+				updateSizes(variantCategory, fieldName, fieldValue);
 			}
 			// Size of REF and ALT
 			updateSizes(variantCategory, REF, variant.getReference());
@@ -120,7 +121,9 @@ public class VariantTypeCounter implements Serializable{
 	protected void updateSizes(VariantCategory variantCategory, String field, String value) {
 		if(value == null) return;
 		int sizes[] = sizesByField.get(field);
-		sizes[variantCategory.ordinal()] += value.length();
+		// Convert the string to UTF-8 bytes, otherwise we'll get the number of characters (not bytes)
+		byte[] utf8Bytes = value.getBytes(StandardCharsets.UTF_8);
+		sizes[variantCategory.ordinal()] += utf8Bytes.length;
 	}
 
 }
