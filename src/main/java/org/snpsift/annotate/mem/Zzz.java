@@ -29,10 +29,9 @@ public class Zzz {
 		vd.add(Gpr.HOME + "/snpEff/wgs_test/db/gnomad.genomes.v4.1.sites.chr21.vcf.gz", List.of("AF", "AF_grpmax", "AC_grpmax", "AN_grpmax"));
 		vd.create();
 
-		// // Annotate
-		// var annotate = true;
-		// var inputVcf = Gpr.HOME + "/snpEff/wgs_test/test.vcf";
-		// vd.annotate(null, inputVcf);
+		// Annotate
+		var inputVcf = Gpr.HOME + "/snpEff/wgs_test/test.vcf";
+		vd.annotate(inputVcf);
 	}
 
 	public Zzz() {

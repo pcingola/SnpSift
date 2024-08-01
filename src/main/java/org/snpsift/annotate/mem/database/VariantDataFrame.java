@@ -7,7 +7,6 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.HashMap;
 
-import org.snpeff.interval.Interval;
 import org.snpeff.interval.Variant;
 import org.snpeff.util.Log;
 import org.snpeff.vcf.VariantVcfEntry;

@@ -116,7 +116,7 @@ public class VariantDatabases {
 			var dbDir = dbDir(dbFileName, false);
 			var dir = new File(dbDir);
 			if(dir.exists() && dir.list().length > 0) {
-				Log.info("Database directory exists and is non-empty, skipping: '" + dbDir + "'");
+				Log.info("Create database: Database directory exists and is non-empty, skipping: '" + dbDir + "'");
 				continue;
 			}
 			// Create database
