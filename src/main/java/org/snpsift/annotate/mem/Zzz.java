@@ -28,22 +28,22 @@ public class Zzz {
 		// DbSnp database
 		var databaseFileNameDnSnp = Gpr.HOME + "/snpEff/wgs_test/db/dbSnp.151.vcf";
 		var fieldsDbSnp = new String[] { "RS", "CAF" };
-		var createDbSnp = true;
+		var createDbSnp = false;
 		
 		// Cosmic database
 		var databaseFileNameCosmic = Gpr.HOME + "/snpEff/wgs_test/db/cosmic-v92.vcf";
 		var fieldsCosmic = new String[] { "CNT", "LEGACY_ID" };
-		var createCosmic = true;
+		var createCosmic = false;
 
 		// Clinvar database
 		var databaseFileNameClinvar = Gpr.HOME + "/snpEff/wgs_test/db/clinvar.vcf";
 		var fieldsClinvar = new String[] { "CLNSIG", "CLNDN" };
-		var createClinvar = true;
+		var createClinvar = false;
 
 		// Gnomad database
 		var databaseFileNameGnomad = Gpr.HOME + "/snpEff/wgs_test/db/gnomad.genomes.v4.1.sites.chr21.vcf";
 		var fieldsGnomad = new String[] { "AF", "AF_grpmax", "AC_grpmax", "AN_grpmax" };
-		var createGnomad = true;
+		var createGnomad = false;
 
 		// Annotate
 		var annotate = true;
@@ -76,8 +76,8 @@ public class Zzz {
 		if( annotate ) {
 			// Annotate the database from a VCF file
 			zzz = new Zzz();
-			// String[] dbs = { databaseFileNameDnSnp, databaseFileNameCosmic, databaseFileNameClinvar, databaseFileNameGnomad };
-			String[] dbs = { databaseFileNameClinvar };
+			String[] dbs = { databaseFileNameDnSnp, databaseFileNameCosmic, databaseFileNameClinvar, databaseFileNameGnomad };
+			// String[] dbs = { databaseFileNameClinvar };
 			zzz.annotate(dbs, inputVcf, emptyIfNotFound);
 		}
 	}
@@ -122,6 +122,7 @@ public class Zzz {
 					+ ", found annotations for " + String.format("%,d", found) //
 					+ String.format(" ( %.1f %% )", foundPerc) //
 					+ ", added " + String.format("%,d", annotationsAdded) + " annotations." //
+					+ ", elapsed time: " + progress.elapsedSec() //
 		);
 	}
 
