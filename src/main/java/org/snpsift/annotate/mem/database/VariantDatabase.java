@@ -6,13 +6,13 @@ import java.util.Map;
 import org.snpeff.fileIterator.VcfFileIterator;
 import org.snpeff.interval.Marker;
 import org.snpeff.interval.tree.IntervalForest;
+import org.snpeff.util.Log;
 import org.snpeff.vcf.VariantVcfEntry;
 import org.snpeff.vcf.VcfEntry;
 import org.snpeff.vcf.VcfHeaderInfo;
 import org.snpeff.vcf.VcfHeaderInfo.VcfInfoNumber;
 import org.snpeff.vcf.VcfInfoType;
 import org.snpsift.annotate.mem.SortedVariantsVcfIterator;
-import org.snpsift.annotate.mem.VariantCategory;
 import org.snpsift.annotate.mem.variantTypeCounter.VariantTypeCounters;
 import org.snpsift.util.ShowProgress;
 
@@ -30,6 +30,7 @@ public class VariantDatabase {
 
 	String chr; // Current chromosome
 	String dfDir; // Directory where databases are stored
+	boolean emptyIfNotFound; // If a database file is not found, create an empty one
 	String[] fields; // Fields to create or annotate
 	Map<String, VcfInfoType> fields2type; // Fields to create or annotate
 	Marker currentInterval; // Current interval
@@ -44,6 +45,17 @@ public class VariantDatabase {
 		this.fields = fields;
 		this.chr = null;
 		this.dfDir = null;
+		this.variantDataFrame = null;
+		this.currentInterval = null;
+		this.fields2type = null;
+		this.variantTypeCounters = null;
+	}
+
+	public VariantDatabase(String dfDir, boolean emptyIfNotFound) {
+		this.dfDir = dfDir;
+		this.emptyIfNotFound = emptyIfNotFound;
+		this.fields = null;
+		this.chr = null;
 		this.variantDataFrame = null;
 		this.currentInterval = null;
 		this.fields2type = null;
@@ -71,10 +83,10 @@ public class VariantDatabase {
 	 * This method is used to annotate a VCF entry
 	 * The annotations are added to the INFO field of the VCF entry
 	 */
-	public void annotate(VcfEntry vcfEntry) {
+	public int annotate(VcfEntry vcfEntry) {
 		var chr = vcfEntry.getChromosomeName();
 		var db = get(chr);
-		db.annotate(vcfEntry);
+		return db.annotate(vcfEntry);
 	}
 
 	/**
@@ -111,7 +123,6 @@ public class VariantDatabase {
 			if(! fields2type.containsKey(vcfInfo.getId())) continue;
 			// Add field
 			fields2type.put(vcfInfo.getId(), columnType(vcfInfo));
-			System.out.println("Added field: " + vcfInfo.getId() + " type: " + fields2type.get(vcfInfo.getId()));
 		}
 		vcfFile.close();
 		// If the fields type is still 'null', set it to 'String'
@@ -144,7 +155,7 @@ public class VariantDatabase {
 	 * Creat database from a VCF file
 	 */
 	void createFromVcf(String databaseFileName) {
-		System.out.println("Creating variant database from file: " + databaseFileName);
+		Log.info("Creating variant database from file: " + databaseFileName);
 		// Iterate over all VCF entries
 		var sortedVariants = new SortedVariantsVcfIterator(databaseFileName);
 		var i = 0; // Current entry number
@@ -155,7 +166,7 @@ public class VariantDatabase {
 			progress.tick(i, variantVcf); // Show progress
 		}
 		sortedVariants.close();
-		System.out.println("\nDone: " + i + " variants in " + progress.elapsedSec() + " seconds.");
+		Log.info("\nDone: " + i + " variants in " + progress.elapsedSec() + " seconds.");
 	}
 
 	/**
@@ -166,7 +177,8 @@ public class VariantDatabase {
 		// Load from database file
 		this.chr = chr;
 		var variantDataFrameFile = dfDir + "/" + chr + '.' + VARIANT_DATAFRAME_EXT;
-		variantDataFrame = VariantDataFrame.load(variantDataFrameFile);
+		Log.info("Loading data frame from file: " + variantDataFrameFile);
+		variantDataFrame = VariantDataFrame.load(variantDataFrameFile, emptyIfNotFound);
 		return variantDataFrame;
 	}
 

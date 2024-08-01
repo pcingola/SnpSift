@@ -10,6 +10,8 @@ import java.util.Collection;
  * It only stores bytes (i.e. UTF-8 encoding) and uses a single byte to mark the end of a string ('\0')
  */
 public class StringArray implements Serializable {
+    private static final long serialVersionUID = 2024073106L;
+
     /**
      * Calculate the size of a string in memory
      */

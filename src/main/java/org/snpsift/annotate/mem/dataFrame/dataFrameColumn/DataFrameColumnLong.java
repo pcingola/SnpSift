@@ -1,6 +1,7 @@
 package org.snpsift.annotate.mem.dataFrame.dataFrameColumn;
 
 public class DataFrameColumnLong extends DataFrameColumn<Long> {
+	
 	long[] data;
 
 	public DataFrameColumnLong(String name, int size) {

@@ -1,6 +1,7 @@
 package org.snpsift.annotate.mem.dataFrame.dataFrameColumn;
 
 public class DataFrameColumnInt extends DataFrameColumn<Integer> {
+	
 	int[] data;
 
 	public DataFrameColumnInt(String name, int size) {

@@ -1,5 +1,6 @@
 package org.snpsift.annotate.mem.dataFrame;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -20,7 +21,10 @@ import org.snpsift.util.FormatUtil;
  * A set of DataColumns, indexed by position
  * This is used to store data for a chromosome
  */
-public class DataFrame implements java.io.Serializable {
+public class DataFrame implements Serializable {
+
+	private static final long serialVersionUID = 2024073101L;
+
 	public static final int MAX_ROWS_TO_SHOW = 100;
 
 	VariantTypeCounter variantTypeCounter;

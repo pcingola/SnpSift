@@ -11,6 +11,8 @@ import org.snpsift.annotate.mem.arrays.BoolArray;
  */
 public abstract class DataFrameColumn<T> implements Serializable {
 
+	private static final long serialVersionUID = 2024073103L;
+
 	public static final int MAX_NUMBER_OF_ELEMENTS_TO_SHOW = 10;
 
 	protected String name;

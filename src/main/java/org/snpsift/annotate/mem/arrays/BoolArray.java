@@ -9,6 +9,8 @@ import java.util.Arrays;
  */
 public class BoolArray implements Serializable {
 
+	private static final long serialVersionUID = 2024073104L;
+
 	protected byte[] bytes;
 
 	public BoolArray(int size) {

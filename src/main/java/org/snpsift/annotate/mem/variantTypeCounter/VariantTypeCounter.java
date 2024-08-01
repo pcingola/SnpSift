@@ -16,6 +16,8 @@ import org.snpsift.annotate.mem.VariantCategory;
  */
 public class VariantTypeCounter implements Serializable{
 
+	private static final long serialVersionUID = 2024073102L;
+
 	public static final String REF = "REF";
 	public static final String ALT = "ALT";
 

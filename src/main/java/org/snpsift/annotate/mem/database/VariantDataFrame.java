@@ -5,9 +5,11 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.util.HashMap;
 
 import org.snpeff.interval.Interval;
 import org.snpeff.interval.Variant;
+import org.snpeff.util.Log;
 import org.snpeff.vcf.VariantVcfEntry;
 import org.snpeff.vcf.VcfEntry;
 import org.snpsift.annotate.mem.dataFrame.DataFrame;
@@ -34,11 +36,18 @@ public class VariantDataFrame implements java.io.Serializable {
 	DataFrame dataFrames[]; // Each dataFrame indexed by variant type
 	VariantTypeCounter variantTypeCounter;
 
-	public static VariantDataFrame load(String fileName) {
+
+	public static VariantDataFrame load(String fileName, boolean emptyIfNotFound) {
 		// Deserialize data from a file
 		try {
-			System.out.println("Loading from file: " + fileName);
 			var file = new File(fileName);
+			if(!file.exists()) {
+				if(emptyIfNotFound) {
+					Log.warning("File not found: '" + fileName + "'. Returning empty VariantDataFrame");
+					return new VariantDataFrame(new VariantTypeCounter(new HashMap<>()));
+				}
+				throw new RuntimeException("File not found: '" + fileName + "'");
+			}
 			FileInputStream fis = new FileInputStream(file);
 			ObjectInputStream ois = new ObjectInputStream(fis);
 			var vd = (VariantDataFrame) ois.readObject();
@@ -92,18 +101,26 @@ public class VariantDataFrame implements java.io.Serializable {
 	/**
 	 * Annotate a VCF entry with the fields in this VariantDataFrame
 	 */
-	public void annotate(VcfEntry vcfEntry) {
-		throw new RuntimeException("Unimplemented");
-		// for(var variant: vcfEntry.variants()) {
-		// 	var dataSet = getDataFrameByVariantType(variant);
-		// 	if(dataSet == null) throw new RuntimeException("Cannot find data set for variant: " + variant.toString());
+	public int annotate(VcfEntry vcfEntry) {
+		int found = 0;
+		for(var variant: vcfEntry.variants()) {
+			var dataFrame = getDataFrameByVariantType(variant);
+			if(dataFrame == null) throw new RuntimeException("Cannot find data set for variant: " + variant.toString());
 
-		// 	// Add fields
-		// 	for(var field : fields) {
-		// 		var data = dataSet.getData(field, variant.getStart(), variant.getReference(), variant.getAlt());
-		// 		if(data != null) vcfEntry.addInfo(field, data.toString());
-		// 	}
-		// }
+			// Get the row for this variant
+			DataFrameRow row = dataFrame.getRow(variant.getStart(), variant.getReference(), variant.getAlt());
+			if(row == null) continue;	// No data for this variant
+
+			// Add all fields to the VCF entry
+			for(var field : row) {
+				var value = row.getDataFrameValue(field);
+				if(value != null) {
+					vcfEntry.addInfo(field, value.toString());
+					found++;
+				}
+			}
+		}
+		return found;
 	}
 
 	/** 

@@ -3,6 +3,7 @@ package org.snpsift.annotate.mem.dataFrame.dataFrameColumn;
 import org.snpsift.annotate.mem.arrays.StringArray;
 
 public class DataFrameColumnString extends DataFrameColumn<String> {
+	
 	StringArray data;
 
 	/**

@@ -1,12 +1,11 @@
 package org.snpsift.annotate.mem;
 
-import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.snpeff.fileIterator.VcfFileIterator;
 import org.snpeff.util.Gpr;
-import org.snpeff.vcf.VariantVcfEntry;
-import org.snpeff.vcf.VcfEntry;
-import org.snpsift.annotate.mem.arrays.StringArray;
+import org.snpeff.util.Log;
 import org.snpsift.annotate.mem.database.VariantDatabase;
 import org.snpsift.util.ShowProgress;
 
@@ -22,107 +21,116 @@ public class Zzz {
 
 	public static final int CHR1_NUM_ENTRIES = 86844566;
 	
-	String databaseFileName;	// Database file
-	String[] fields;	// Fields to extract
-	VariantDatabase variantDatabase;
-
 	/**
 	 * Main
 	 */
 	public static void main(String[] args) {
 		// DbSnp database
-		// var databaseFileName = Gpr.HOME + "/snpEff/wgs_test/db/dbSnp.151.vcf";
-		// var fields = new String[] { "RS", "CAF" };
-
-		// // Cosmic database
-		// var databaseFileName = Gpr.HOME + "/snpEff/wgs_test/db/cosmic-v92.vcf";
-		// var fields = new String[] { "CNT", "LEGACY_ID" };
+		var databaseFileNameDnSnp = Gpr.HOME + "/snpEff/wgs_test/db/dbSnp.151.vcf";
+		var fieldsDbSnp = new String[] { "RS", "CAF" };
+		var createDbSnp = false;
+		
+		// Cosmic database
+		var databaseFileNameCosmic = Gpr.HOME + "/snpEff/wgs_test/db/cosmic-v92.vcf";
+		var fieldsCosmic = new String[] { "CNT", "LEGACY_ID" };
+		var createCosmic = false;
 
 		// Clinvar database
-		var databaseFileName = Gpr.HOME + "/snpEff/wgs_test/db/clinvar.vcf";
-		var fields = new String[] { "CLNSIG", "CLNDN" };
-		// // Clinvar database
-		// var databaseFileName = Gpr.HOME + "/snpEff/wgs_test/db/clinvar.chr1.vcf";
-		// var fields = new String[] { "CLNDN" };
-		
-		// var inputVcf = Gpr.HOME + "/snpEff/z.vcf";
+		var databaseFileNameClinvar = Gpr.HOME + "/snpEff/wgs_test/db/clinvar.vcf";
+		var fieldsClinvar = new String[] { "CLNSIG", "CLNDN" };
+		var createClinvar = false;
 
+		// Gnomad database
+		var databaseFileNameGnomad = Gpr.HOME + "/snpEff/wgs_test/db/gnomad.genomes.v4.1.sites.chr21.vcf";
+		var fieldsGnomad = new String[] { "AF", "AF_grpmax", "AC_grpmax", "AN_grpmax" };
+		var createGnomad = false;
 
-		// StringArray sa = new StringArray(379, 144270);
-		// String fieldname = "CLNDN";
-		// int count = 0, size = 0, offset = 0;
-		// StringBuffer sb = new StringBuffer();
-		// for(VcfEntry vcfEntry : new VcfFileIterator(databaseFileName)) {
-		// 	for(var variant : vcfEntry.variants()) {
-		// 		if( VariantCategory.of(variant) == VariantCategory.MIXED) {
-		// 			count++;
-		// 			String value = vcfEntry.getInfo(fieldname);
-		// 			sa.add(value);
-		// 			// Append to a string buffer
-		// 			if(value == null) value = "";
-		// 			var valueUtf8 = new String(value.getBytes(StandardCharsets.UTF_8));
-		// 			offset += value.getBytes(StandardCharsets.UTF_8).length + 1;
-		// 			sb.append(valueUtf8 + "\n");
-		// 			size += (valueUtf8 != null ? valueUtf8.length() : 0);
-		// 			System.out.println( //
-		// 								(sb.length() != sa.getOffset() ? "ERROR\t" : "") //
-		// 								+ count //
-		// 								+ "\tvalue='" + value + "'" //
-		// 								+ "\tvalueUtf8='" + valueUtf8 + "'" //
-		// 								+ "\tsb.len: " + sb.length() //
-		// 								+ "\tsa.offset: " + sa.getOffset() //
-		// 								+ "\toffset: " + offset //
-		// 								);
-		// 		}
-		// 	}
-		// }
-		// System.out.println("Count: " + count + ", size: " + size + ", sb.length: " + sb.length());
+		// Annotate
+		var annotate = true;
+		boolean emptyIfNotFound = true;
+		var inputVcf = Gpr.HOME + "/snpEff/wgs_test/test.vcf";
 
-		// count = 0;
-		// size = 0;
-		// for(VariantVcfEntry varVcf: new SortedVariantsVcfIterator(databaseFileName)) {
-		// 	if( VariantCategory.of(varVcf) == VariantCategory.MIXED) {
-		// 		count++;
-		// 		String value = varVcf.getVcfEntry().getInfo(fieldname);
-		// 		size += (value != null ? value.length() : 0);
-		// 	}
-		// }
-		// System.out.println("Count: " + count + ", size: " + size);
+		// Create databases
+		Zzz zzz;
+		if( createDbSnp ) {
+			// DbSnp database
+			zzz = new Zzz();
+			zzz.create(databaseFileNameDnSnp, fieldsDbSnp);
+		}
+		if( createCosmic ) {
+			// Cosmic database
+			zzz = new Zzz();
+			zzz.create(databaseFileNameCosmic, fieldsCosmic);
+		}
+		if( createClinvar ) {
+			// Clinvar database
+			zzz = new Zzz();
+			zzz.create(databaseFileNameClinvar, fieldsClinvar);
+		}
+		if( createGnomad ) {
+			// Gnomad database
+			zzz = new Zzz();
+			zzz.create(databaseFileNameGnomad, fieldsGnomad);
+		}
 
-
-		// Create the database from a VCF file
-		Zzz zzz = new Zzz(databaseFileName, fields);
-		zzz.create();
-		// // // zzz.annotate(inputVcf);
+		if( annotate ) {
+			// Annotate the database from a VCF file
+			zzz = new Zzz();
+			// String[] dbs = { databaseFileNameDnSnp, databaseFileNameCosmic, databaseFileNameClinvar, databaseFileNameGnomad };
+			String[] dbs = { databaseFileNameClinvar };
+			zzz.annotate(dbs, inputVcf, emptyIfNotFound);
+		}
 	}
 
-	public Zzz(String dbFile, String[] fields) {
-		databaseFileName = dbFile;
-		this.fields = fields;
+	public Zzz() {
 	}
 
 	/**
 	 * Annotate a VCF file
 	 */
-	void annotate(String vcfInput) {
-		System.out.println("Annotating file: " + vcfInput);
-		var found = 0;
-		var count = 0;
+	void annotate(String[] dbs, String vcfInput, boolean emptyIfNotFound) {
+		Log.info("Annotating file: " + vcfInput);
+
+		// Create a list of databases to use
+		List<VariantDatabase> variantDatabases = new ArrayList<>();
+		for(String dbFile: dbs) {
+			String dbDir = dbFile + '_' + VariantDatabase.VARIANT_DATAFRAME_EXT;
+			variantDatabases.add(new VariantDatabase(dbDir, emptyIfNotFound));
+		}
+
+		// Annotate each VcfEntry
+		int found = 0, countVcfEntries = 0, annotationsAdded = 0;
 		var progress = new ShowProgress();
 		for(var vcfEntry : new VcfFileIterator(vcfInput)) {
-			variantDatabase.annotate(vcfEntry);
-			count++;
-			progress.tick(count, vcfEntry);
+			var annotations = 0;
+			for(var variantDatabase : variantDatabases) {
+				annotations += variantDatabase.annotate(vcfEntry);
+			}
+
+			// Update counters
+			countVcfEntries++;
+			annotationsAdded += annotations;
+			if( annotations > 0 ) found++;
+			
+			// Show progress
+			progress.tick(countVcfEntries, vcfEntry);
 		}
-		System.out.println("Done. Found: " + found + " out of " + count + " entries.");
+
+		// Show stats
+		var foundPerc = (100.0 * found) / ((double) countVcfEntries);
+		Log.info("Done. Processed: " + String.format("%,d", countVcfEntries) + " VCF entries" //
+					+ ", found annotations for " + String.format("%,d", found) //
+					+ String.format(" ( %.1f %% )", foundPerc) //
+					+ ", added " + String.format("%,d", annotationsAdded) + " annotations." //
+		);
 	}
 
 	/**
 	 * Create database
 	 */
-	public void create() {
+	public void create(String databaseFileName, String[] fields) {
 		// Load data
-		variantDatabase = new VariantDatabase(fields);
+		var variantDatabase = new VariantDatabase(fields);
 		var dbDir = databaseFileName + '_' + VariantDatabase.VARIANT_DATAFRAME_EXT;
 		variantDatabase.create(databaseFileName, dbDir);
 		System.out.println(variantDatabase);
