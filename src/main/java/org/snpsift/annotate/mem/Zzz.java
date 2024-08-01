@@ -36,9 +36,9 @@ public class Zzz {
 		var createCosmic = false;
 
 		// Clinvar database
-		var databaseFileNameClinvar = Gpr.HOME + "/snpEff/wgs_test/db/clinvar.vcf";
+		var databaseFileNameClinvar = Gpr.HOME + "/snpEff/wgs_test/db/clinvar.vcf.gz";
 		var fieldsClinvar = new String[] { "CLNSIG", "CLNDN" };
-		var createClinvar = false;
+		var createClinvar = true;
 
 		// Gnomad database
 		var databaseFileNameGnomad = Gpr.HOME + "/snpEff/wgs_test/db/gnomad.genomes.v4.1.sites.chr21.vcf";
