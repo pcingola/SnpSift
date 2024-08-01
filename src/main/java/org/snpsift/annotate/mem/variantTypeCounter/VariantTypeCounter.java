@@ -7,8 +7,11 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.snpeff.vcf.VcfEntry;
+import org.snpeff.vcf.VcfHeader;
+import org.snpeff.vcf.VcfHeaderInfo;
 import org.snpeff.vcf.VcfInfoType;
 import org.snpsift.annotate.mem.VariantCategory;
+import org.snpsift.util.FormatUtil;
 
 /**
  * Count different types of variants
@@ -27,6 +30,28 @@ public class VariantTypeCounter implements Serializable{
 	protected long countVcfEntries = 0;
 	protected long countVariants = 0;
 	protected Map<String, int[]> sizesByField; // Total size (in bytes) by field (only string fields)
+
+
+	/**
+     * Count variants in a string of VCF lines (i.e. a VCF file contents in a string)
+	 * This is used for testing
+     */
+    public static VariantTypeCounter countVariants(String vcfLines) {
+        VcfHeader vcfHeader = FormatUtil.lines2VcfFileIterator(vcfLines).readHeader(); // Skip header
+
+        // Create a map of names to types
+        Map<String, VcfInfoType> fields2type = new HashMap<>();
+        for(VcfHeaderInfo vi : vcfHeader.getVcfHeaderInfo()) {
+            if( ! vi.isImplicit() ) fields2type.put(vi.getId(), vi.getVcfInfoType());
+        }
+
+        // Create a variant type counter and count variants
+        var variantTypeCounter = new VariantTypeCounter(fields2type);
+        for(VcfEntry vcfEntry : FormatUtil.lines2VcfFileIterator(vcfLines)) {
+            variantTypeCounter.count(vcfEntry);
+        }
+        return variantTypeCounter;
+    }
 
 	public VariantTypeCounter(Map<String, VcfInfoType> fields2type) {
 		this.fields2type = fields2type;

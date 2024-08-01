@@ -53,7 +53,10 @@ public class VariantTypeCounters {
 	 */
 	public void count(String vcfFileName) {
 		Log.info("Counting number of variants in '" + vcfFileName + "'");
-		var vcfFile = new VcfFileIterator(vcfFileName);
+		count(new VcfFileIterator(vcfFileName));
+	}
+	
+	public void count(VcfFileIterator vcfFile) {
 		var progress = new ShowProgress();
 		int i = 0;
 		for (VcfEntry vcfEntry : vcfFile) {
@@ -90,6 +93,10 @@ public class VariantTypeCounters {
         return counters.get(chr);
     }
 
+	public Map<String, VcfInfoType> getFields2type() {
+		return fields2type;
+	}
+	
 	public void save(String fileName) {
 		// Serialize data to a file
 		// Open file

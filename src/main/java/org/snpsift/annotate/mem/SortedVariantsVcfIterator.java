@@ -1,5 +1,9 @@
 package org.snpsift.annotate.mem;
 
+import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.PriorityQueue;
@@ -7,7 +11,6 @@ import java.util.PriorityQueue;
 import org.snpeff.fileIterator.VcfFileIterator;
 import org.snpeff.vcf.VariantVcfEntry;
 import org.snpeff.vcf.VcfEntry;
-
 
 
 /**
@@ -20,16 +23,36 @@ import org.snpeff.vcf.VcfEntry;
  */
 public class SortedVariantsVcfIterator implements Iterator<VariantVcfEntry>, Iterable<VariantVcfEntry> {
 
-	String vcfFileName;
-	VcfFileIterator vcfFileIterator;
-	PriorityQueue<VariantVcfEntry> variantsMinHeap; // Min heap to keep track of the next variant to be returned
-	String vcfChr; // Chromosome of the last VcfEntry read from the VCF file
-	int vcfPos; // Position of the last VcfEntry read from the VCF file
-	VcfEntry vcfEntryPending; // A 'pending' vcf entry (i.e. we did not process it beecause it belongs to a different chromosome)
+	/**
+     * Create a VcfFileIterator from a string containig VCF lines
+     */
+    public static SortedVariantsVcfIterator lines2SortedVariantsVcfIterator(String vcfLines) {
+        try (var bais = new ByteArrayInputStream(vcfLines.getBytes("UTF-8"))) {
+            InputStreamReader isr = new InputStreamReader(bais);
+            BufferedReader br = new BufferedReader(isr);
+            return new SortedVariantsVcfIterator(br);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+	protected String vcfFileName;
+	protected VcfFileIterator vcfFileIterator;
+	protected PriorityQueue<VariantVcfEntry> variantsMinHeap; // Min heap to keep track of the next variant to be returned
+	protected String vcfChr; // Chromosome of the last VcfEntry read from the VCF file
+	protected int vcfPos; // Position of the last VcfEntry read from the VCF file
+	protected VcfEntry vcfEntryPending; // A 'pending' vcf entry (i.e. we did not process it beecause it belongs to a different chromosome)
 
 	public SortedVariantsVcfIterator(String vcfFileName) {
 		this.vcfFileName = vcfFileName;
 		vcfFileIterator = new VcfFileIterator(vcfFileName);
+		variantsMinHeap = new PriorityQueue<>(Comparator.comparingInt(varvcf -> varvcf.getStart()));
+		vcfChr = "";
+		vcfPos = -1;
+	}
+
+	public SortedVariantsVcfIterator(BufferedReader reader) {
+		vcfFileIterator = new VcfFileIterator(reader);
 		variantsMinHeap = new PriorityQueue<>(Comparator.comparingInt(varvcf -> varvcf.getStart()));
 		vcfChr = "";
 		vcfPos = -1;
