@@ -155,7 +155,7 @@ public class VariantDatabase {
 	 * Creat database from a VCF file
 	 */
 	void createFromVcf(String databaseFileName) {
-		Log.info("Creating variant database from file: " + databaseFileName);
+		Log.info("Creating variant database from file '" + databaseFileName + "'");
 		// Iterate over all VCF entries
 		var sortedVariants = new SortedVariantsVcfIterator(databaseFileName);
 		var i = 0; // Current entry number

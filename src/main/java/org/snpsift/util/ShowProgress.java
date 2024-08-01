@@ -36,12 +36,12 @@ public class ShowProgress {
 	public void tick(int count, VcfEntry vcfEntry) {
 		if (count % showEvery == 0) {
 			if (count % showEveryLine == 0) {
-				System.out.println(" " + count + ", " 
+				System.err.println(" " + count + ", " 
                                     + (vcfEntry != null ? vcfEntry.getChromosomeName() + ":" + vcfEntry.getStart() + "\t" : "")
                 );
 			} else {
-				System.out.print('.');
-				System.out.flush();
+				System.err.print('.');
+				System.err.flush();
 			}
 		}
 	}

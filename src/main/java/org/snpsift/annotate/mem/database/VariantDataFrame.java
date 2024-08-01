@@ -182,7 +182,7 @@ public class VariantDataFrame implements java.io.Serializable {
 		check();
 		resize();	// Optimize memory usage
 		try {
-			System.out.println("Saving to file: " + fileName);
+			Log.info("Saving to file '" + fileName + "'");
 			var file = new File(fileName);
 			FileOutputStream fos = new FileOutputStream(file);
 			ObjectOutputStream oos = new ObjectOutputStream(fos);
