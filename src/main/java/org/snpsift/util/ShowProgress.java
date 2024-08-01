@@ -4,7 +4,7 @@ import org.snpeff.vcf.VariantVcfEntry;
 import org.snpeff.vcf.VcfEntry;
 
 public class ShowProgress {
-	public static final int SHOW_EVERY = 100 * 1000;
+	public static final int SHOW_EVERY = 10 * 1000;
 	public static final int SHOW_EVERY_LINE = 100 * SHOW_EVERY;
 
 	int showEvery = 100 * 1000;

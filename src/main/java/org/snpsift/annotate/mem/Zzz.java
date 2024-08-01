@@ -26,12 +26,12 @@ public class Zzz {
 	 */
 	public static void main(String[] args) {
 		// DbSnp database
-		var databaseFileNameDnSnp = Gpr.HOME + "/snpEff/wgs_test/db/dbSnp.151.vcf";
+		var databaseFileNameDnSnp = Gpr.HOME + "/snpEff/wgs_test/db/dbSnp.151.vcf.gz";
 		var fieldsDbSnp = new String[] { "RS", "CAF" };
 		var createDbSnp = false;
 		
 		// Cosmic database
-		var databaseFileNameCosmic = Gpr.HOME + "/snpEff/wgs_test/db/cosmic-v92.vcf";
+		var databaseFileNameCosmic = Gpr.HOME + "/snpEff/wgs_test/db/cosmic-v92.vcf.gz";
 		var fieldsCosmic = new String[] { "CNT", "LEGACY_ID" };
 		var createCosmic = false;
 
@@ -41,7 +41,7 @@ public class Zzz {
 		var createClinvar = true;
 
 		// Gnomad database
-		var databaseFileNameGnomad = Gpr.HOME + "/snpEff/wgs_test/db/gnomad.genomes.v4.1.sites.chr21.vcf";
+		var databaseFileNameGnomad = Gpr.HOME + "/snpEff/wgs_test/db/gnomad.genomes.v4.1.sites.chr21.vcf.gz";
 		var fieldsGnomad = new String[] { "AF", "AF_grpmax", "AC_grpmax", "AN_grpmax" };
 		var createGnomad = false;
 
@@ -52,6 +52,8 @@ public class Zzz {
 
 		// Create databases
 		Zzz zzz;
+		var progress = new ShowProgress();
+		System.out.println("Building databases...");
 		if( createDbSnp ) {
 			// DbSnp database
 			zzz = new Zzz();
@@ -72,6 +74,7 @@ public class Zzz {
 			zzz = new Zzz();
 			zzz.create(databaseFileNameGnomad, fieldsGnomad);
 		}
+		System.out.println("Done. Elapsed time: " + progress.elapsedSec());
 
 		if( annotate ) {
 			// Annotate the database from a VCF file
