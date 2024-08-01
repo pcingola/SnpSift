@@ -28,22 +28,22 @@ public class Zzz {
 		// DbSnp database
 		var databaseFileNameDnSnp = Gpr.HOME + "/snpEff/wgs_test/db/dbSnp.151.vcf";
 		var fieldsDbSnp = new String[] { "RS", "CAF" };
-		var createDbSnp = false;
+		var createDbSnp = true;
 		
 		// Cosmic database
 		var databaseFileNameCosmic = Gpr.HOME + "/snpEff/wgs_test/db/cosmic-v92.vcf";
 		var fieldsCosmic = new String[] { "CNT", "LEGACY_ID" };
-		var createCosmic = false;
+		var createCosmic = true;
 
 		// Clinvar database
 		var databaseFileNameClinvar = Gpr.HOME + "/snpEff/wgs_test/db/clinvar.vcf";
 		var fieldsClinvar = new String[] { "CLNSIG", "CLNDN" };
-		var createClinvar = false;
+		var createClinvar = true;
 
 		// Gnomad database
 		var databaseFileNameGnomad = Gpr.HOME + "/snpEff/wgs_test/db/gnomad.genomes.v4.1.sites.chr21.vcf";
 		var fieldsGnomad = new String[] { "AF", "AF_grpmax", "AC_grpmax", "AN_grpmax" };
-		var createGnomad = false;
+		var createGnomad = true;
 
 		// Annotate
 		var annotate = true;
