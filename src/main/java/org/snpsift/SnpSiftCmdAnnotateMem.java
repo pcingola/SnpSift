@@ -1,22 +1,17 @@
 package org.snpsift;
 
-import java.io.IOException;
+import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.snpeff.fileIterator.VcfFileIterator;
-import org.snpeff.util.Gpr;
 import org.snpeff.util.Log;
 import org.snpeff.vcf.VcfEntry;
-import org.snpeff.vcf.VcfHeader;
 import org.snpeff.vcf.VcfHeaderEntry;
-import org.snpeff.vcf.VcfHeaderInfo;
-import org.snpeff.vcf.VcfInfoType;
-import org.snpsift.annotate.AnnotateVcfDb;
-import org.snpsift.annotate.AnnotateVcfDbMem;
-import org.snpsift.annotate.AnnotateVcfDbSorted;
-import org.snpsift.annotate.AnnotateVcfDbTabix;
-import org.snpsift.annotate.VcfIndexTree;
+import org.snpsift.annotate.mem.database.VariantDatabase;
+import org.snpsift.util.ShowProgress;
 
 /**
  * Annotate a VCF file from another VCF file (database)
@@ -25,6 +20,13 @@ import org.snpsift.annotate.VcfIndexTree;
  * @author pcingola
  */
 public class SnpSiftCmdAnnotateMem extends SnpSift {
+
+	boolean emptyIfNotFound; 
+	List<String> dbFileNames; // Database file names
+	List<VariantDatabase> variantDatabases; // Databases
+	Map<String, String[]> dbfile2fields; // Database name to fields mapping
+	int found = 0, countVcfEntries = 0, annotationsAdded = 0; // Counters for simple statistics
+	ShowProgress progress; // Show progress
 
 
 	public SnpSiftCmdAnnotateMem() {
@@ -35,9 +37,63 @@ public class SnpSiftCmdAnnotateMem extends SnpSift {
 		super(args);
 	}
 
+		/**
+	 * Add a database file
+	 */
+	public void add(String dbFileName) {
+		add(dbFileName, null);
+	}
+
+	/**
+	 * Add a database file, and the fields to use
+	 */
+	public void add(String dbFileName, String[] fields) {
+		dbFileNames.add(dbFileName);
+		String dbDir = dbDir(dbFileName, false);
+		Log.info("Adding database direcory: " + dbDir);
+		variantDatabases.add(new VariantDatabase(dbDir, emptyIfNotFound));
+		if(fields != null) dbfile2fields.put(dbFileName, fields);
+	}
+
+	/**
+	 * Get the database directory name from a database file name
+	 */
+	String dbDir(String dbFileName, boolean check) {
+		String dbDir = dbFileName + '_' + VariantDatabase.VARIANT_DATAFRAME_EXT;
+		if(check) {
+			var dbDirFile =  new File(dbDir);
+			if( !dbDirFile.exists() ) throw new RuntimeException("Database directory not found: '" + dbDir + "', directory path inferred from database file: '" + dbFileName + "'");
+		}
+		return dbDir;
+	}
+
 	@Override
 	public boolean annotate(VcfEntry vcfEntry) {
-		throw new RuntimeException("Unimplemented method!");
+		var annotations = 0;
+		for(var variantDatabase : variantDatabases) {
+			annotations += variantDatabase.annotate(vcfEntry);
+		}
+
+		// Update counters
+		countVcfEntries++;
+		annotationsAdded += annotations;
+		if( annotations > 0 ) found++;
+		
+		// Show progress
+		progress.tick(countVcfEntries, vcfEntry);
+		return annotations > 0;
+	}
+
+	public boolean annotateFinish() {
+		// Show stats
+		var foundPerc = (100.0 * found) / ((double) countVcfEntries);
+		Log.info("Done. Processed: " + String.format("%,d", countVcfEntries) + " VCF entries" //
+					+ ", found annotations for " + String.format("%,d", found) //
+					+ String.format(" ( %.1f %% )", foundPerc) //
+					+ ", added " + String.format("%,d", annotationsAdded) + " annotations." //
+					+ ", elapsed time: " + progress.elapsedSec() //
+		);
+		return true;
 	}
 
 	/**
@@ -45,8 +101,37 @@ public class SnpSiftCmdAnnotateMem extends SnpSift {
 	 */
 	@Override
 	public boolean annotateInit(VcfFileIterator vcfFile) {
-		throw new RuntimeException("Unimplemented method!");
+		// Initialize progress
+		progress = new ShowProgress();
+		// Create a list of databases to use
+		List<VariantDatabase> variantDatabases = new ArrayList<>();
+		for(String dbFile: dbFileNames) {
+			String dbDir = dbDir(dbFile, true);
+			variantDatabases.add(new VariantDatabase(dbDir, emptyIfNotFound));
+		}
+		return true;
 	}
+
+	/**
+	 * Create all databases
+	 */
+	public void create() {
+		Log.info("Create databases");
+		for(String dbFileName : dbFileNames) {
+			// Does the directory exists and it is non-empty?
+			var dbDir = dbDir(dbFileName, false);
+			var dir = new File(dbDir);
+			if(dir.exists() && dir.list().length > 0) {
+				Log.info("Create database: Database directory exists and is non-empty, skipping: '" + dbDir + "'");
+				continue;
+			}
+			// Create database
+			String[] fields = dbfile2fields.get(dbFileName);
+			var variantDatabase = new VariantDatabase(fields);
+			variantDatabase.create(dbFileName, dbDir);
+			}
+		Log.info("Create databases: Done!");
+		}
 
 	/**
 	 * Build headers to add
@@ -90,23 +175,47 @@ public class SnpSiftCmdAnnotateMem extends SnpSift {
 	}
 
 	/**
+	 * Initialize
+	 */
+	@Override
+	public void init() {
+		super.init();
+		emptyIfNotFound = true;
+		dbFileNames = new ArrayList<>();
+		variantDatabases = new ArrayList<>();
+		dbfile2fields = new HashMap<>();
+	}
+
+	/**
 	 * Parse command line arguments
 	 */
 	@Override
 	public void parseArgs(String[] args) {
 		if (args.length == 0) usage(null);
 
+		String latestDbName = null;
 		for (int i = 0; i < args.length; i++) {
 			String arg = args[i];
 
 			// Command line option?
 			if (isOpt(arg)) {
 				switch (arg.toLowerCase()) {
-				case "-a":
+				case "-db":
+					if (args.length > (i + 1)) {
+						latestDbName = args[++i];
+						dbFileNames.add(latestDbName);
+					} else usage("Missing parameter for '-db'");
 					break;
 
+				case "-fields":
+					if (args.length > (i + 1)) {
+						if( latestDbName == null ) usage("Missing database file name for '-fields'. Option '-fields' must be precedded by the corresponding '-db' option");
+						String[] fields = args[++i].split(",");
+						add(latestDbName, fields);
+					} else usage("Missing parameter for '-fields'");
+					break;
 
-				default:
+					default:
 					usage("Unknown command line option '" + arg + "'");
 				}
 			} else {
@@ -140,7 +249,8 @@ public class SnpSiftCmdAnnotateMem extends SnpSift {
 		if (config == null) loadConfig();
 
 		// Annotate
-		return annotate(createList);
+		// return annotate(createList);
+		return null;
 	}
 
 	/**
@@ -172,13 +282,7 @@ public class SnpSiftCmdAnnotateMem extends SnpSift {
 		System.err.println("\t-create              : Create a database from the VCF file.");
 		System.err.println("\t-db file.vcf                  : Use VCF file (either to create a database or to annotate).");
 		System.err.println("\t-fields field_1,..,field_N    : Use VCF info fields when creating the database. Comma separated list, no spaces. Only for create command.");
-
-		usageGenericAndDb();
-
-		System.err.println("Note: According the the VCF's database format provided, SnpSift annotate uses different strategies");
-		System.err.println("\t  i) plain VCF       : SnpSift indexes the VCF file (creating an index file *.sidx).");
-		System.err.println("\t ii) bgzip+tabix     : SnpSift uses tabix's index.");
-
+		System.err.println("Note: VCF files can be compressed with Gzip / Bgzip");
 		System.exit(1);
 	}
 
