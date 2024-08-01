@@ -1,6 +1,9 @@
 package org.snpsift.annotate.mem;
 
+import java.util.List;
+
 import org.snpeff.fileIterator.VcfFileIterator;
+import org.snpeff.util.Gpr;
 
 
 
@@ -19,6 +22,16 @@ public class Zzz {
 	 * Main
 	 */
 	public static void main(String[] args) {
+		// VariantDatabases vd = new VariantDatabases();
+		// vd.add(Gpr.HOME + "/snpEff/wgs_test/db/dbSnp.151.vcf.gz", List.of("RS", "CAF"));
+		// vd.add(Gpr.HOME + "/snpEff/wgs_test/db/cosmic-v92.vcf.gz", List.of("CNT", "LEGACY_ID"));
+		// vd.add(Gpr.HOME + "/snpEff/wgs_test/db/clinvar.vcf.gz", List.of("CLNSIG", "CLNDN"));
+		// vd.add(Gpr.HOME + "/snpEff/wgs_test/db/gnomad.genomes.v4.1.sites.chr21.vcf.gz", List.of("AF", "AF_grpmax", "AC_grpmax", "AN_grpmax"));
+		// vd.create();
+
+		// // Annotate
+		// var inputVcf = Gpr.HOME + "/snpEff/wgs_test/test.vcf";
+		// vd.annotate(inputVcf);
 	}
 
 	public Zzz() {

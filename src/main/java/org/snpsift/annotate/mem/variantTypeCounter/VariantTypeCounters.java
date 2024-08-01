@@ -9,6 +9,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.snpeff.fileIterator.VcfFileIterator;
+import org.snpeff.util.Log;
 import org.snpeff.vcf.VcfEntry;
 import org.snpeff.vcf.VcfInfoType;
 import org.snpsift.util.ShowProgress;
@@ -51,7 +52,7 @@ public class VariantTypeCounters {
 	 * Count the number of variants in a VCF file
 	 */
 	public void count(String vcfFileName) {
-		System.out.println("Counting number of variants in " + vcfFileName);
+		Log.info("Counting number of variants in '" + vcfFileName + "'");
 		var vcfFile = new VcfFileIterator(vcfFileName);
 		var progress = new ShowProgress();
 		int i = 0;
@@ -61,7 +62,7 @@ public class VariantTypeCounters {
 			progress.tick(i, vcfEntry); // Show progress
 		}
 		vcfFile.close();
-		System.out.println("\nDone, " + i + " VCF entries in " + progress.elapsedSec() +" secs\n" + this);
+		Log.info("\nDone, " + i + " VCF entries in " + progress.elapsedSec() + " secs\n");
 	}
 
 	/**

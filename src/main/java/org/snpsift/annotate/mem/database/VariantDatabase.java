@@ -1,5 +1,6 @@
 package org.snpsift.annotate.mem.database;
 
+import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -138,7 +139,7 @@ public class VariantDatabase {
 	public void create(String databaseFileName, String dfDir) {
 		this.dfDir = dfDir;
 		// Create directory
-		var dir = new java.io.File(dfDir);
+		var dir = new File(dfDir);
 		if(!dir.exists()) dir.mkdirs();
 		// Get column types
 		fields2type = columnTypes(databaseFileName); 
