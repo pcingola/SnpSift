@@ -1,7 +1,12 @@
 package org.snpsift.tests.unit;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+
 import org.junit.jupiter.api.Test;
 import org.snpeff.vcf.VcfInfoType;
+import org.snpsift.annotate.mem.VariantCategory;
+import org.snpsift.annotate.mem.dataFrame.DataFrameRow;
+import org.snpsift.annotate.mem.database.VariantDataFrame;
 import org.snpsift.annotate.mem.database.VariantDatabase;
 
 public class TestCasesVariantDatabase {
@@ -29,17 +34,18 @@ public class TestCasesVariantDatabase {
         assertEquals(VcfInfoType.Integer, fields2type.get("FIELD_INT"));
         assertEquals(VcfInfoType.Float, fields2type.get("FIELD_FLOAT"));
         assertEquals(VcfInfoType.Flag, fields2type.get("FIELD_FLAG"));
-        // // Check that the dataframe was created
-        // VariantDataFrame df = variantDatabase.get("1");
-        // assertNotNull(df);
-        // // Check that the dataframe was added to the database
-        // var dfSnpT = df.getDataFrameByCategory(VariantCategory.SNP_T);
-        // assertNotNull(dfSnpT);
-        // // Check that we can retrieve the row
-        // DataFrameRow dfrow = dfSnpT.getRow(1000, "A", "T");
-        // assertNotNull(dfrow);
-        // // Check that the value is correct
-        // assertEquals("Value1", dfrow.getDataFrameValue("FIELD_STRING"));
+        // Check that the dataframe was created
+        VariantDataFrame df = variantDatabase.get("1");
+        assertNotNull(df);
+        System.out.println(df);
+        // Check that the dataframe was added to the database
+        var dfSnpT = df.getDataFrameByCategory(VariantCategory.SNP_T);
+        assertNotNull(dfSnpT);
+        // Check that we can retrieve the row
+        DataFrameRow dfrow = dfSnpT.getRow(999, "A", "T"); // Position is 0-based
+        assertNotNull(dfrow);
+        // Check that the value is correct
+        assertEquals("Value1", dfrow.getDataFrameValue("FIELD_STRING"));
     }
 
     // @Test
