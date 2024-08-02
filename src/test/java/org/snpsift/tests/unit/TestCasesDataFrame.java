@@ -2,6 +2,9 @@ package org.snpsift.tests.unit;
 import org.junit.jupiter.api.Assertions;
 import org.snpeff.util.Tuple;
 import org.snpeff.vcf.VcfInfoType;
+import org.snpeff.vcf.VcfHeaderInfo.VcfInfoNumber;
+import org.snpsift.annotate.mem.Field;
+import org.snpsift.annotate.mem.Fields;
 import org.snpsift.annotate.mem.VariantCategory;
 import org.snpsift.annotate.mem.dataFrame.DataFrame;
 import org.snpsift.annotate.mem.dataFrame.DataFrameMnp;
@@ -12,9 +15,7 @@ import org.snpsift.util.RandomUtil;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
 
 public class TestCasesDataFrame {
@@ -104,17 +105,17 @@ public class TestCasesDataFrame {
     }
 
     VariantTypeCounter variantTypeCounter(int size, int memSize) {
-        Map<String, VcfInfoType> fields2type = new HashMap<>();
-        fields2type.put("field_bool", VcfInfoType.Flag);
-        fields2type.put("field_char", VcfInfoType.Character);
-        fields2type.put("field_int", VcfInfoType.Integer);
-        fields2type.put("field_float", VcfInfoType.Float);
-        fields2type.put("field_string", VcfInfoType.Float);
-        fields2type.put("field_string_2", VcfInfoType.Float);
+        Fields fields = new Fields();
+        fields.add(new Field("field_bool", VcfInfoType.Flag, VcfInfoNumber.NUMBER));
+        fields.add(new Field("field_char", VcfInfoType.Character, VcfInfoNumber.NUMBER));
+        fields.add(new Field("field_int", VcfInfoType.Integer, VcfInfoNumber.NUMBER));
+        fields.add(new Field("field_float", VcfInfoType.Float, VcfInfoNumber.NUMBER));
+        fields.add(new Field("field_string", VcfInfoType.Float, VcfInfoNumber.NUMBER));
+        fields.add(new Field("field_string_2", VcfInfoType.Float, VcfInfoNumber.NUMBER));
 
-        for( String field: FIELDS_STRING) fields2type.put(field, VcfInfoType.String);
+        for(String field: FIELDS_STRING) fields.add(new Field(field, VcfInfoType.String, VcfInfoNumber.NUMBER));
 
-        VariantTypeCounter variantTypeCounter = new VariantTypeCounter(fields2type);
+        VariantTypeCounter variantTypeCounter = new VariantTypeCounter(fields);
 
         // Set size and memory size for each category
         for(VariantCategory category: VariantCategory.values()) {

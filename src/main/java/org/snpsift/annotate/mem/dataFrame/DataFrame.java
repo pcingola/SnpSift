@@ -5,6 +5,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.snpeff.vcf.VcfInfoType;
+import org.snpsift.annotate.mem.Field;
+import org.snpsift.annotate.mem.Fields;
 import org.snpsift.annotate.mem.VariantCategory;
 import org.snpsift.annotate.mem.arrays.PosIndex;
 import org.snpsift.annotate.mem.arrays.StringArray;
@@ -34,7 +36,7 @@ public class DataFrame implements Serializable {
 	StringArray refs;	// Reference allele.
 	StringArray alts;	// Alternative allele.
 	Map<String, DataFrameColumn<?>> columns;	// Data columns
-	Map<String, VcfInfoType> fields2type; // Fields to create or annotate
+	Fields fields; // Fields to create or annotate
 
 	public DataFrame(VariantTypeCounter variantTypeCounter, VariantCategory variantCategory, boolean hasRefs, boolean hasAlts) {
 		this.variantTypeCounter = variantTypeCounter;
@@ -42,7 +44,7 @@ public class DataFrame implements Serializable {
 		int size = variantTypeCounter.getCount(variantCategory);
 		posIndex = new PosIndex(size);
 		columns = new HashMap<>();
-		this.fields2type = variantTypeCounter.getFields2type();
+		this.fields = variantTypeCounter.getFields();
 		createColumns();
 		if(hasRefs) refs = new StringArray(size, stringArrayMemSize(variantCategory, VariantTypeCounter.REF));
 		if(hasAlts) alts = new StringArray(size, stringArrayMemSize(variantCategory, VariantTypeCounter.ALT));
@@ -84,22 +86,23 @@ public class DataFrame implements Serializable {
 	/**
 	 * Create a column of a given type
 	 */
-	protected DataFrameColumn<?> createColumn(String field, VcfInfoType type) {
+	protected DataFrameColumn<?> createColumn(Field field) {
 		int numEntries = variantTypeCounter.getCount(variantCategory);
-		switch (type) {
+		var fieldName = field.getName();
+		switch (field.getType()) {
 			case Flag:
-				return new DataFrameColumnBool(field, numEntries);
+				return new DataFrameColumnBool(fieldName, numEntries);
 			case Integer:
-				return new DataFrameColumnInt(field, numEntries);
+				return new DataFrameColumnInt(fieldName, numEntries);
 			case Float:
-				return new DataFrameColumnDouble(field, numEntries);
+				return new DataFrameColumnDouble(fieldName, numEntries);
 			case Character:
-				return new DataFrameColumnChar(field, numEntries);
+				return new DataFrameColumnChar(fieldName, numEntries);
 			case String:
-				int memSize = stringArrayMemSize(variantCategory, field);
-				return new DataFrameColumnString(field, numEntries, memSize);
+				int memSize = stringArrayMemSize(variantCategory, fieldName);
+				return new DataFrameColumnString(fieldName, numEntries, memSize);
 			default:
-				throw new RuntimeException("Unimplemented type: " + type);
+				throw new RuntimeException("Unimplemented type: " + field.getType());
 		}
 	}
 
@@ -107,9 +110,9 @@ public class DataFrame implements Serializable {
 	 * Create columns based on fields
 	*/
 	protected void createColumns() {
-		for(var field: fields2type.keySet()) {
-			var column = createColumn(field, fields2type.get(field));
-			add(field, column);
+		for(var field: fields) {
+			var column = createColumn(field);
+			add(field.getName(), column);
 		}
 	}
 
@@ -225,8 +228,8 @@ public class DataFrame implements Serializable {
 		sb.append(", current index: " + currentIdx);
 		sb.append(", memory: " + FormatUtil.formatBytes(sizeBytes()) + "\n");
 		sb.append("\tField types:\n");
-		for(var field: fields2type.keySet())
-			sb.append("\t\t" + field + " : " + fields2type.get(field) + "\n");
+		for(var field: fields)
+			sb.append("\t\t" + field + "\n");
 		
 		// Show columns as a table
 		int rowToShow = Math.min(posIndex.size(), MAX_ROWS_TO_SHOW);

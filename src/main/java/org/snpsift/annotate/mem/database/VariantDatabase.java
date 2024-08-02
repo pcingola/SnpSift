@@ -1,17 +1,17 @@
 package org.snpsift.annotate.mem.database;
 
 import java.io.File;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.snpeff.fileIterator.VcfFileIterator;
 import org.snpeff.interval.Marker;
 import org.snpeff.util.Log;
 import org.snpeff.vcf.VariantVcfEntry;
 import org.snpeff.vcf.VcfEntry;
-import org.snpeff.vcf.VcfHeaderInfo;
-import org.snpeff.vcf.VcfHeaderInfo.VcfInfoNumber;
-import org.snpeff.vcf.VcfInfoType;
+import org.snpsift.annotate.mem.Field;
+import org.snpsift.annotate.mem.Fields;
 import org.snpsift.annotate.mem.SortedVariantsVcfIterator;
 import org.snpsift.annotate.mem.variantTypeCounter.VariantTypeCounters;
 import org.snpsift.util.FormatUtil;
@@ -32,28 +32,28 @@ public class VariantDatabase {
 	String chr; // Current chromosome
 	String dfDir; // Directory where databases are stored
 	boolean emptyIfNotFound; // If a database file is not found, create an empty one
-	String[] fields; // Fields to create or annotate
-	Map<String, VcfInfoType> fields2type; // Fields to create or annotate
+	Fields fields; // Fields to create or annotate
+	String fieldNames[]; // Fields to create or annotate
 	Marker currentInterval; // Current interval
 	VariantDataFrame variantDataFrame; // Database for current chromosome
 	VariantTypeCounters variantTypeCounters; // Counters per chromosome
 
 	public VariantDatabase() {
-		this.fields = null;
 		this.chr = null;
 		this.dfDir = null;
 		this.variantDataFrame = null;
 		this.currentInterval = null;
-		this.fields2type = null;
+		this.fieldNames = null;
+		this.fields = null;
 		this.variantTypeCounters = null;
 	}
 
 	/**
 	 * Constructor used to create a database
 	 */
-	public VariantDatabase(String[] fields) {
+	public VariantDatabase(String[] fieldNames) {
 		this();
-		this.fields = fields;
+		this.fieldNames = fieldNames;
 	}
 
 	public VariantDatabase(String dfDir, boolean emptyIfNotFound) {
@@ -90,38 +90,22 @@ public class VariantDatabase {
 	}
 
 	/**
-	 * Decide which column data type we'll use for a VcfField
-	 * If it's a single value we can use a "primitive" type DataColumn, otherwise we'll use a "StrignColumn"
-	 */
-	VcfInfoType columnType(VcfHeaderInfo vcfInfo) {
-		VcfInfoType vcfFieldType = vcfInfo.getVcfInfoType();
-		Log.debug("COLUMN TYPE: " + vcfInfo);
-		// Multiple values? => Use a "StringColumn"
-		if (vcfInfo.getVcfInfoNumber() != VcfInfoNumber.NUMBER || vcfInfo.getNumber() > 1) return VcfInfoType.String;
-		// Unknown type? => Use a "StringColumn"
-		if (vcfInfo.getVcfInfoType() == VcfInfoType.UNKNOWN) return VcfInfoType.String;
-		// Single value, we can use a "primitive" type DataColumn
-		return vcfFieldType;
-	}
-
-	/**
 	 * Read VCF header and get columns data types
 	 * @param databaseFileName
 	 */
-	protected Map<String, VcfInfoType>  columnTypes(String databaseFileName) {
+	protected Fields parseFields(String databaseFileName) {
 		var vcfFile = new VcfFileIterator(databaseFileName);
-		return columnTypes(vcfFile);
+		return parseFields(vcfFile);
 	}
 
 	/**
 	 * Read VCF header and get columns data types
 	 * @param databaseFileName
 	 */
-	protected Map<String, VcfInfoType>  columnTypes(VcfFileIterator vcfFileIterator) {
-		// Initialize fields, add type (default is 'string')
-		Map<String, VcfInfoType> fields2type = new HashMap<>();
-		for(String field: fields) 
-			fields2type.put(field, VcfInfoType.String);
+	protected Fields parseFields(VcfFileIterator vcfFileIterator) {
+		var fields = new Fields();
+		var fnames = Arrays.asList(fieldNames);
+		Set<String> fieldNamesSet = new HashSet<String>(fnames);
 		// Read VCF header
 		var vcfHeader = vcfFileIterator.readHeader();
 		// For each field in the VCF header, decide which column type we'll use
@@ -129,12 +113,12 @@ public class VariantDatabase {
 			// Skip implicit fields
 			if(vcfInfo.isImplicit()) continue;
 			// Check if field name is in the list of fields to extract. if not found, skip this field
-			if(! fields2type.containsKey(vcfInfo.getId())) continue;
+			if(! fieldNamesSet.contains(vcfInfo.getId())) continue;
 			// Add field
-			fields2type.put(vcfInfo.getId(), columnType(vcfInfo));
+			fields.add(new Field(vcfInfo));
 		}
 		vcfFileIterator.close();
-		return fields2type;
+		return fields;
 	}
 
 	/**
@@ -143,9 +127,9 @@ public class VariantDatabase {
 	 */
 	public void create(String vcfContents) {
 		// Get column types
-		fields2type = columnTypes(FormatUtil.lines2VcfFileIterator(vcfContents));
+		fields = parseFields(FormatUtil.lines2VcfFileIterator(vcfContents));
 		// Count variants
-		variantTypeCounters = new VariantTypeCounters(fields2type);
+		variantTypeCounters = new VariantTypeCounters(fields);
 		variantTypeCounters.count(FormatUtil.lines2VcfFileIterator(vcfContents));
 		// Load data
 		var sortedVariants = SortedVariantsVcfIterator.lines2SortedVariantsVcfIterator(vcfContents);
@@ -162,9 +146,9 @@ public class VariantDatabase {
 		var dir = new File(dfDir);
 		if(!dir.exists()) dir.mkdirs();
 		// Get column types
-		fields2type = columnTypes(databaseFileName); 
+		fields = parseFields(databaseFileName); 
 		// Count the number of entries in the VCF file		
-		variantTypeCounters = new VariantTypeCounters(fields2type);
+		variantTypeCounters = new VariantTypeCounters(fields);
 		variantTypeCounters.count(databaseFileName);
 		// Load data
 		Log.info("Creating variant database from file '" + databaseFileName + "'");
@@ -203,8 +187,8 @@ public class VariantDatabase {
 		return variantDataFrame;
 	}
 
-	public Map<String, VcfInfoType> getFields2type() {
-		return fields2type;
+	public Fields getFields() {
+		return fields;
 	}
 
 	public VariantTypeCounters getVariantTypeCounters() {

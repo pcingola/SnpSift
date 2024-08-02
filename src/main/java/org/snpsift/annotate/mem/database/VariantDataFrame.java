@@ -5,8 +5,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.util.HashMap;
-
+import java.io.Serializable;
 import org.snpeff.interval.Variant;
 import org.snpeff.util.Log;
 import org.snpeff.vcf.VariantVcfEntry;
@@ -21,6 +20,8 @@ import org.snpsift.annotate.mem.dataFrame.DataFrameRow;
 import org.snpsift.annotate.mem.dataFrame.DataFrameSnp;
 import org.snpsift.annotate.mem.variantTypeCounter.VariantTypeCounter;
 import org.snpsift.util.FormatUtil;
+import org.snpsift.annotate.mem.Field;
+import org.snpsift.annotate.mem.Fields;
 import org.snpsift.annotate.mem.VariantCategory;
 
 /**
@@ -29,9 +30,9 @@ import org.snpsift.annotate.mem.VariantCategory;
  * We create an "DataFrame" for each variant type: SNP(A), SNP(C), SNP(G), SNP(T), INS, DEL, MNP, MIXED, OTHER.
  * Each DataFrame is indexed by chromosome position. DataFrames have columns for each field to annotate.
  */
-public class VariantDataFrame implements java.io.Serializable {
+public class VariantDataFrame implements Serializable {
 
-	String[] fields;	// Fields to annotate
+	Fields fields;	// Fields to annotate
 	DataFrame dataFrames[]; // Each dataFrame indexed by variant type
 	VariantTypeCounter variantTypeCounter;
 
@@ -43,7 +44,7 @@ public class VariantDataFrame implements java.io.Serializable {
 			if(!file.exists()) {
 				if(emptyIfNotFound) {
 					Log.warning("File not found: '" + fileName + "'. Returning empty VariantDataFrame");
-					return new VariantDataFrame(new VariantTypeCounter(new HashMap<>()));
+					return new VariantDataFrame(new VariantTypeCounter(new Fields()));
 				}
 				throw new RuntimeException("File not found: '" + fileName + "'");
 			}
@@ -59,7 +60,7 @@ public class VariantDataFrame implements java.io.Serializable {
 
 	public VariantDataFrame(VariantTypeCounter variantTypeCounter) {
 		this.variantTypeCounter = variantTypeCounter;
-		this.fields = variantTypeCounter.getFields2type().keySet().toArray(new String[0]);
+		this.fields = variantTypeCounter.getFields();
 		// Create data sets according to the variant type, and counters for each variant type
 		dataFrames = new DataFrame[VariantCategory.size()];
 		dataFrames[VariantCategory.SNP_A.ordinal()] = new DataFrameSnp(variantTypeCounter, VariantCategory.SNP_A);
@@ -82,8 +83,8 @@ public class VariantDataFrame implements java.io.Serializable {
 		DataFrameRow row = new DataFrameRow(dataFrame, variantVcfEntry.getStart(), variantVcfEntry.getReference(), variantVcfEntry.getAlt());
 		// Add fields
 		var vcfEntry = variantVcfEntry.getVcfEntry();
-		for(var field : fields) {
-			Object value = getFieldValue(vcfEntry, field);
+		for(var field : fields.getNames()) {
+			Object value = getFieldValue(vcfEntry, field, variantVcfEntry.getAlt());
 			row.set(field, value);
 		}
 		try {
@@ -134,9 +135,10 @@ public class VariantDataFrame implements java.io.Serializable {
 	/**
 	 * Get a field value from a VCF entry
 	 */
-	Object getFieldValue(VcfEntry vcfEntry, String field) {
-		var type = variantTypeCounter.getFields2type().get(field);
-		var valueStr = vcfEntry.getInfo(field);
+	Object getFieldValue(VcfEntry vcfEntry, String fieldName, String alt) {
+		Field field = fields.get(fieldName);
+		var type = field.getType();
+		var valueStr = vcfEntry.getInfo(fieldName);
 		if (valueStr == null) return null;
 		switch(type) {
 			case Flag:

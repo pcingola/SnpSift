@@ -10,6 +10,8 @@ import org.snpeff.vcf.VcfEntry;
 import org.snpeff.vcf.VcfHeader;
 import org.snpeff.vcf.VcfHeaderInfo;
 import org.snpeff.vcf.VcfInfoType;
+import org.snpsift.annotate.mem.Field;
+import org.snpsift.annotate.mem.Fields;
 import org.snpsift.annotate.mem.VariantCategory;
 import org.snpsift.util.FormatUtil;
 
@@ -24,7 +26,7 @@ public class VariantTypeCounter implements Serializable{
 	public static final String REF = "REF";
 	public static final String ALT = "ALT";
 
-	protected Map<String, VcfInfoType> fields2type; // Fields to create or annotate
+	protected Fields fields; // Fields to create or annotate
 	protected String[] fieldsString; // Fields to create or annotate
 	protected int countByCategory[]; // Count by category
 	protected long countVcfEntries = 0;
@@ -40,25 +42,25 @@ public class VariantTypeCounter implements Serializable{
         VcfHeader vcfHeader = FormatUtil.lines2VcfFileIterator(vcfLines).readHeader(); // Skip header
 
         // Create a map of names to types
-        Map<String, VcfInfoType> fields2type = new HashMap<>();
+        Fields fields = new Fields();
         for(VcfHeaderInfo vi : vcfHeader.getVcfHeaderInfo()) {
-            if( ! vi.isImplicit() ) fields2type.put(vi.getId(), vi.getVcfInfoType());
+            if( ! vi.isImplicit() ) fields.add(new Field(vi));
         }
 
         // Create a variant type counter and count variants
-        var variantTypeCounter = new VariantTypeCounter(fields2type);
+        var variantTypeCounter = new VariantTypeCounter(fields);
         for(VcfEntry vcfEntry : FormatUtil.lines2VcfFileIterator(vcfLines)) {
             variantTypeCounter.count(vcfEntry);
         }
         return variantTypeCounter;
     }
 
-	public VariantTypeCounter(Map<String, VcfInfoType> fields2type) {
-		this.fields2type = fields2type;
+	public VariantTypeCounter(Fields fields) {
+		this.fields = fields;
 		// Get all 'string' fields
 		var fieldsStringList = new ArrayList<>();
-		for(var field: fields2type.keySet()) {
-			if(fields2type.get(field) == VcfInfoType.String) fieldsStringList.add(field);
+		for(var field: fields.getNames()) {
+			if(fields.get(field).getType() == VcfInfoType.String) fieldsStringList.add(field);
 		}
 		fieldsString = fieldsStringList.toArray(new String[0]);
 		// Initialize counters
@@ -105,8 +107,8 @@ public class VariantTypeCounter implements Serializable{
 		return countByCategory;
 	}
 
-	public Map<String, VcfInfoType> getFields2type() {
-		return fields2type;
+	public Fields getFields() {
+		return fields;
 	}
 
 	/**
