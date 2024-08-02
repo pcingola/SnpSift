@@ -84,7 +84,6 @@ public class VariantDataFrame implements Serializable {
 		if(dataFrame == null) throw new RuntimeException("Cannot find data frame for variant: " + variantVcfEntry.toString());
 		DataFrameRow row = new DataFrameRow(dataFrame, variantVcfEntry.getStart(), variantVcfEntry.getReference(), variantVcfEntry.getAlt());
 		// Add fields
-		var vcfEntry = variantVcfEntry.getVcfEntry();
 		for(var field : fields) {
 			Object value = getFieldValue(field, variantVcfEntry);
 			row.set(field.getId(), value);

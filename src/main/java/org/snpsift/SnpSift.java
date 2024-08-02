@@ -702,6 +702,7 @@ public class SnpSift implements VcfAnnotator {
 				+ "\nCommand is one of:" //
 				+ "\n\talleleMat     : Create an allele matrix output." //
 				+ "\n\tannotate      : Annotate 'ID' from a database (e.g. dbSnp). Assumes entries are sorted." //
+				+ "\n\tannotateMem   : Annotate form a database (created from a VCF file)." //
 				+ "\n\tcaseControl   : Compare how many variants are in 'case' and in 'control' groups; calculate p-values." //
 				+ "\n\tccs           : Case control summary. Case and control summaries by region, allele frequency and variant's functional effect." //
 				+ "\n\tconcordance   : Concordance metrics between two VCF files." //

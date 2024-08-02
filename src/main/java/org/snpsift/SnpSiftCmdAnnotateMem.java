@@ -50,10 +50,12 @@ public class SnpSiftCmdAnnotateMem extends SnpSift {
 	 * Add a database file, and the fields to use
 	 */
 	public void add(String dbFileName, String[] fields) {
-		dbFileNames.add(dbFileName);
-		String dbDir = dbDir(dbFileName, false);
-		Log.info("Adding database direcory: " + dbDir);
-		variantDatabases.add(new VariantDatabase(dbDir, emptyIfNotFound));
+		if( !dbFileNames.contains(dbFileName) ) {
+			dbFileNames.add(dbFileName);
+			String dbDir = dbDir(dbFileName, false);
+			Log.info("Adding database direcory: " + dbDir);
+			variantDatabases.add(new VariantDatabase(dbDir, emptyIfNotFound));
+		}
 		if(fields != null) dbfile2fields.put(dbFileName, fields);
 	}
 
@@ -259,6 +261,7 @@ public class SnpSiftCmdAnnotateMem extends SnpSift {
 					case "-dbfile":
 						if (args.length > (i + 1)) {
 							latestDbName = args[++i];
+							add(latestDbName);
 						} else usage("Missing parameter for '-dbfile'");
 						break;
 
