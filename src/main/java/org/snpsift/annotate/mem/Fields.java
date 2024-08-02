@@ -1,12 +1,13 @@
 package org.snpsift.annotate.mem;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
 import org.snpeff.vcf.VcfHeaderInfo;
 
-public class Fields implements Iterable<VcfHeaderInfo> {
+public class Fields implements Iterable<VcfHeaderInfo>, Serializable {
     
     String[] fieldNames; // Fields to create or annotate
     Map<String, VcfHeaderInfo> fieldByName; // Fields to create or annotate
