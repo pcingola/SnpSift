@@ -11,6 +11,8 @@ import org.snpeff.util.Log;
 import org.snpeff.vcf.VariantVcfEntry;
 import org.snpeff.vcf.VcfEntry;
 import org.snpeff.vcf.VcfHeaderInfo;
+import org.snpeff.vcf.VcfInfoType;
+import org.snpeff.vcf.VcfHeaderInfo.VcfInfoNumber;
 import org.snpsift.annotate.mem.dataFrame.DataFrame;
 import org.snpsift.annotate.mem.dataFrame.DataFrameDel;
 import org.snpsift.annotate.mem.dataFrame.DataFrameIns;
@@ -83,9 +85,9 @@ public class VariantDataFrame implements Serializable {
 		DataFrameRow row = new DataFrameRow(dataFrame, variantVcfEntry.getStart(), variantVcfEntry.getReference(), variantVcfEntry.getAlt());
 		// Add fields
 		var vcfEntry = variantVcfEntry.getVcfEntry();
-		for(var field : fields.getNames()) {
-			Object value = getFieldValue(vcfEntry, field, variantVcfEntry.getAlt());
-			row.set(field, value);
+		for(var field : fields) {
+			Object value = getFieldValue(field, variantVcfEntry);
+			row.set(field.getId(), value);
 		}
 		try {
 			dataFrame.add(row);
@@ -135,20 +137,43 @@ public class VariantDataFrame implements Serializable {
 	/**
 	 * Get a field value from a VCF entry
 	 */
-	Object getFieldValue(VcfEntry vcfEntry, String fieldName, String alt) {
-		VcfHeaderInfo vcfHeaderInfo = fields.get(fieldName);
+	Object getFieldValue(VcfHeaderInfo vcfHeaderInfo, VariantVcfEntry varVcfEntry) {
 		var type = vcfHeaderInfo.getVcfInfoType();
-		var valueStr = vcfEntry.getInfo(fieldName);
-		if (valueStr == null) return null;
+		var vcfEntry = varVcfEntry.getVcfEntry();
+		String valueStr;
+		// Do we need to annotate for a specific "ALT"?
+		var vin = vcfHeaderInfo.getVcfInfoNumber();
+		// Get 'ALT' dependent values?
+		if((vin == VcfInfoNumber.ALLELE || vin == VcfInfoNumber.ALL_ALLELES)	// Is this a field that depends on the ALT?
+			&& (type != VcfInfoType.Flag)	// 'Flag' fields are either present or not, so they are not dependent on the ALT
+			) {
+			valueStr = vcfEntry.getInfo(vcfHeaderInfo.getId(), varVcfEntry.getAlt());
+		} else {
+			valueStr = vcfEntry.getInfo(vcfHeaderInfo.getId());
+		}
+		// Convert the value to the appropriate type (handle missing values)
 		switch(type) {
 			case Flag:
-				return Boolean.TRUE;	// If the field is present, it's true
+				System.out.println("valueStr: " + valueStr);
+				return (valueStr != null); // Flag is present
 			case Integer:
-				return Integer.parseInt(valueStr);
+				if (valueStr == null) return null;
+				try {
+					return Integer.parseInt(valueStr);
+				} catch (Exception e) {
+					Log.warning("Could not pase field '" + vcfHeaderInfo.getId() + "', value '" + valueStr + "' as integer for field '" + vcfHeaderInfo.getId() + "' in VCF entry: " + vcfEntry.getChromosomeNameOri() + ":" + (vcfEntry.getStart() + 1));
+					return null;
+				}
 			case Float:
-				return Double.parseDouble(valueStr);
+				if (valueStr == null) return null;
+				try {
+					return Double.parseDouble(valueStr);
+				} catch (Exception e) {
+					Log.warning("Could not pase field '" + vcfHeaderInfo.getId() + "', value '" + valueStr + "' as float for field '" + vcfHeaderInfo.getId() + "' in VCF entry: " + vcfEntry.getChromosomeNameOri() + ":" + (vcfEntry.getStart() + 1));
+					return null;
+				}				
 			case Character:
-				return valueStr.charAt(0);
+				return (valueStr != null) && valueStr.length() > 0 ? valueStr.charAt(0) : null;
 			case String:
 				return valueStr;
 			default:

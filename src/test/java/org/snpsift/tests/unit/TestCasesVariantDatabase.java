@@ -107,7 +107,8 @@ public class TestCasesVariantDatabase {
             + "##INFO=<ID=FIELD_STRING,Number=A,Type=String,Description=\"Test INFO field string\">\n" //
             + "##INFO=<ID=FIELD_INT,Number=A,Type=Integer,Description=\"Test INFO field int\">\n" //
             + "##INFO=<ID=FIELD_FLOAT,Number=A,Type=Float,Description=\"Test INFO field float\">\n" //
-            + "1\t1000\t.\tA\tC,G,T\t.\t.\tFIELD_STRING=Value_C,Value_G,Value_T;FIELD_INT=1,2,3;FIELD_FLOAT=1.1,2.2,3.3\n" //
+            + "##INFO=<ID=FIELD_FLAG,Number=A,Type=Flag,Description=\"Test INFO field flag\">\n" //
+            + "1\t1000\t.\tA\tC,G,T\t.\t.\tFIELD_STRING=Value_C,Value_G,Value_T;FIELD_INT=1,2,3;FIELD_FLOAT=1.1,2.2,3.3;FIELD_FLAG\n" //
             ;
 
         // Create a database
@@ -132,20 +133,19 @@ public class TestCasesVariantDatabase {
         String[] fieldString = { "Value_C", "Value_G", "Value_T" };
         int[] fieldInt = { 1, 2, 3 };
         double[] fieldFloat = { 1.1, 2.2, 3.3 };
+        boolean[] fieldFlag = { true, true, true };
         Chromosome chr1 = new Chromosome(null, 0, 0, "1"); 
         for (int i = 0; i < refs.length; i++) {
             Variant variant = new Variant(chr1, 999, refs[i], alts[i]);
             VariantCategory variantCategory = VariantCategory.of(variant);
             var df = vdf.getDataFrameByCategory(variantCategory);
             assertNotNull(df);
-            System.out.println(df);
             DataFrameRow dfrow = df.getRow(999, refs[i], alts[i]);
             assertNotNull(dfrow);
             assertEquals(fieldString[i], dfrow.getDataFrameValue("FIELD_STRING"));
             assertEquals(fieldInt[i], dfrow.getDataFrameValue("FIELD_INT"));
             assertEquals(fieldFloat[i], dfrow.getDataFrameValue("FIELD_FLOAT"));
+            assertEquals(fieldFlag[i], dfrow.getDataFrameValue("FIELD_FLAG"));
         }
     }
-
-
 }
