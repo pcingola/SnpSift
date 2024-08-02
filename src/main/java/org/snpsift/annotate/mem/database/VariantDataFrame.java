@@ -10,6 +10,7 @@ import org.snpeff.interval.Variant;
 import org.snpeff.util.Log;
 import org.snpeff.vcf.VariantVcfEntry;
 import org.snpeff.vcf.VcfEntry;
+import org.snpeff.vcf.VcfHeaderInfo;
 import org.snpsift.annotate.mem.dataFrame.DataFrame;
 import org.snpsift.annotate.mem.dataFrame.DataFrameDel;
 import org.snpsift.annotate.mem.dataFrame.DataFrameIns;
@@ -20,7 +21,6 @@ import org.snpsift.annotate.mem.dataFrame.DataFrameRow;
 import org.snpsift.annotate.mem.dataFrame.DataFrameSnp;
 import org.snpsift.annotate.mem.variantTypeCounter.VariantTypeCounter;
 import org.snpsift.util.FormatUtil;
-import org.snpsift.annotate.mem.Field;
 import org.snpsift.annotate.mem.Fields;
 import org.snpsift.annotate.mem.VariantCategory;
 
@@ -136,8 +136,8 @@ public class VariantDataFrame implements Serializable {
 	 * Get a field value from a VCF entry
 	 */
 	Object getFieldValue(VcfEntry vcfEntry, String fieldName, String alt) {
-		Field field = fields.get(fieldName);
-		var type = field.getType();
+		VcfHeaderInfo vcfHeaderInfo = fields.get(fieldName);
+		var type = vcfHeaderInfo.getVcfInfoType();
 		var valueStr = vcfEntry.getInfo(fieldName);
 		if (valueStr == null) return null;
 		switch(type) {

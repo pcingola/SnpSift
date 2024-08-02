@@ -10,7 +10,6 @@ import org.snpeff.interval.Marker;
 import org.snpeff.util.Log;
 import org.snpeff.vcf.VariantVcfEntry;
 import org.snpeff.vcf.VcfEntry;
-import org.snpsift.annotate.mem.Field;
 import org.snpsift.annotate.mem.Fields;
 import org.snpsift.annotate.mem.SortedVariantsVcfIterator;
 import org.snpsift.annotate.mem.variantTypeCounter.VariantTypeCounters;
@@ -115,7 +114,7 @@ public class VariantDatabase {
 			// Check if field name is in the list of fields to extract. if not found, skip this field
 			if(! fieldNamesSet.contains(vcfInfo.getId())) continue;
 			// Add field
-			fields.add(new Field(vcfInfo));
+			fields.add(vcfInfo);
 		}
 		vcfFileIterator.close();
 		return fields;

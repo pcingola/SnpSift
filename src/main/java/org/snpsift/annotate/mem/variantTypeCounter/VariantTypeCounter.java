@@ -10,7 +10,6 @@ import org.snpeff.vcf.VcfEntry;
 import org.snpeff.vcf.VcfHeader;
 import org.snpeff.vcf.VcfHeaderInfo;
 import org.snpeff.vcf.VcfInfoType;
-import org.snpsift.annotate.mem.Field;
 import org.snpsift.annotate.mem.Fields;
 import org.snpsift.annotate.mem.VariantCategory;
 import org.snpsift.util.FormatUtil;
@@ -44,7 +43,7 @@ public class VariantTypeCounter implements Serializable{
         // Create a map of names to types
         Fields fields = new Fields();
         for(VcfHeaderInfo vi : vcfHeader.getVcfHeaderInfo()) {
-            if( ! vi.isImplicit() ) fields.add(new Field(vi));
+            if( ! vi.isImplicit() ) fields.add(vi);
         }
 
         // Create a variant type counter and count variants
@@ -60,7 +59,7 @@ public class VariantTypeCounter implements Serializable{
 		// Get all 'string' fields
 		var fieldsStringList = new ArrayList<>();
 		for(var field: fields.getNames()) {
-			if(fields.get(field).getType() == VcfInfoType.String) fieldsStringList.add(field);
+			if(fields.get(field).getVcfInfoType() == VcfInfoType.String) fieldsStringList.add(field);
 		}
 		fieldsString = fieldsStringList.toArray(new String[0]);
 		// Initialize counters

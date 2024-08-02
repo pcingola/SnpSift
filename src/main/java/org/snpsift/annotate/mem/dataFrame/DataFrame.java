@@ -4,8 +4,7 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.snpeff.vcf.VcfInfoType;
-import org.snpsift.annotate.mem.Field;
+import org.snpeff.vcf.VcfHeaderInfo;
 import org.snpsift.annotate.mem.Fields;
 import org.snpsift.annotate.mem.VariantCategory;
 import org.snpsift.annotate.mem.arrays.PosIndex;
@@ -86,10 +85,10 @@ public class DataFrame implements Serializable {
 	/**
 	 * Create a column of a given type
 	 */
-	protected DataFrameColumn<?> createColumn(Field field) {
+	protected DataFrameColumn<?> createColumn(VcfHeaderInfo vcfHeaderInfo) {
 		int numEntries = variantTypeCounter.getCount(variantCategory);
-		var fieldName = field.getName();
-		switch (field.getType()) {
+		var fieldName = vcfHeaderInfo.getId();
+		switch (vcfHeaderInfo.getVcfInfoType()) {
 			case Flag:
 				return new DataFrameColumnBool(fieldName, numEntries);
 			case Integer:
@@ -102,7 +101,7 @@ public class DataFrame implements Serializable {
 				int memSize = stringArrayMemSize(variantCategory, fieldName);
 				return new DataFrameColumnString(fieldName, numEntries, memSize);
 			default:
-				throw new RuntimeException("Unimplemented type: " + field.getType());
+				throw new RuntimeException("Unimplemented type: " + vcfHeaderInfo.getVcfInfoType());
 		}
 	}
 
@@ -112,7 +111,7 @@ public class DataFrame implements Serializable {
 	protected void createColumns() {
 		for(var field: fields) {
 			var column = createColumn(field);
-			add(field.getName(), column);
+			add(field.getId(), column);
 		}
 	}
 

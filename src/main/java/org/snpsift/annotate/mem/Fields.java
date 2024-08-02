@@ -4,21 +4,23 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-public class Fields implements Iterable<Field> {
+import org.snpeff.vcf.VcfHeaderInfo;
+
+public class Fields implements Iterable<VcfHeaderInfo> {
     
     String[] fieldNames; // Fields to create or annotate
-    Map<String, Field> fieldByName; // Fields to create or annotate
+    Map<String, VcfHeaderInfo> fieldByName; // Fields to create or annotate
 
     public Fields() {
         this.fieldByName = new HashMap<>();
     }
 
-    public void add(Field field) {
-        fieldByName.put(field.getName(), field);
+    public void add(VcfHeaderInfo field) {
+        fieldByName.put(field.getId(), field);
         fieldNames = null;
     }
 
-    public Field get(String name) {
+    public VcfHeaderInfo get(String name) {
         return fieldByName.get(name);
     }
 
@@ -30,7 +32,7 @@ public class Fields implements Iterable<Field> {
     }
 
     @Override
-    public Iterator<Field> iterator() {
+    public Iterator<VcfHeaderInfo> iterator() {
         return fieldByName.values().iterator();
     }
 

@@ -1,9 +1,9 @@
 package org.snpsift.tests.unit;
 import org.junit.jupiter.api.Assertions;
 import org.snpeff.util.Tuple;
+import org.snpeff.vcf.VcfHeaderInfo;
 import org.snpeff.vcf.VcfInfoType;
 import org.snpeff.vcf.VcfHeaderInfo.VcfInfoNumber;
-import org.snpsift.annotate.mem.Field;
 import org.snpsift.annotate.mem.Fields;
 import org.snpsift.annotate.mem.VariantCategory;
 import org.snpsift.annotate.mem.dataFrame.DataFrame;
@@ -106,14 +106,14 @@ public class TestCasesDataFrame {
 
     VariantTypeCounter variantTypeCounter(int size, int memSize) {
         Fields fields = new Fields();
-        fields.add(new Field("field_bool", VcfInfoType.Flag, VcfInfoNumber.NUMBER));
-        fields.add(new Field("field_char", VcfInfoType.Character, VcfInfoNumber.NUMBER));
-        fields.add(new Field("field_int", VcfInfoType.Integer, VcfInfoNumber.NUMBER));
-        fields.add(new Field("field_float", VcfInfoType.Float, VcfInfoNumber.NUMBER));
-        fields.add(new Field("field_string", VcfInfoType.Float, VcfInfoNumber.NUMBER));
-        fields.add(new Field("field_string_2", VcfInfoType.Float, VcfInfoNumber.NUMBER));
+        fields.add(new VcfHeaderInfo("field_bool", VcfInfoType.Flag, VcfInfoNumber.NUMBER.toString(), ""));
+        fields.add(new VcfHeaderInfo("field_char", VcfInfoType.Character, VcfInfoNumber.NUMBER.toString(), ""));
+        fields.add(new VcfHeaderInfo("field_int", VcfInfoType.Integer, VcfInfoNumber.NUMBER.toString(), ""));
+        fields.add(new VcfHeaderInfo("field_float", VcfInfoType.Float, VcfInfoNumber.NUMBER.toString(), ""));
+        fields.add(new VcfHeaderInfo("field_string", VcfInfoType.Float, VcfInfoNumber.NUMBER.toString(), ""));
+        fields.add(new VcfHeaderInfo("field_string_2", VcfInfoType.Float, VcfInfoNumber.NUMBER.toString(), ""));
 
-        for(String field: FIELDS_STRING) fields.add(new Field(field, VcfInfoType.String, VcfInfoNumber.NUMBER));
+        for(String field: FIELDS_STRING) fields.add(new VcfHeaderInfo(field, VcfInfoType.String, VcfInfoNumber.NUMBER.toString(), ""));
 
         VariantTypeCounter variantTypeCounter = new VariantTypeCounter(fields);
 

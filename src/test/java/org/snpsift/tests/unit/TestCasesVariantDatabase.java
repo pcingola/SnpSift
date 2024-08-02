@@ -31,10 +31,10 @@ public class TestCasesVariantDatabase {
 
         // Check the fields' types
         var fields = variantDatabase.getFields();
-        assertEquals(VcfInfoType.String, fields.get("FIELD_STRING").getType());
-        assertEquals(VcfInfoType.Integer, fields.get("FIELD_INT").getType());
-        assertEquals(VcfInfoType.Float, fields.get("FIELD_FLOAT").getType());
-        assertEquals(VcfInfoType.Flag, fields.get("FIELD_FLAG").getType());
+        assertEquals(VcfInfoType.String, fields.get("FIELD_STRING").getVcfInfoType());
+        assertEquals(VcfInfoType.Integer, fields.get("FIELD_INT").getVcfInfoType());
+        assertEquals(VcfInfoType.Float, fields.get("FIELD_FLOAT").getVcfInfoType());
+        assertEquals(VcfInfoType.Flag, fields.get("FIELD_FLAG").getVcfInfoType());
         // Check that the dataframe was created
         VariantDataFrame df = variantDatabase.get("1");
         assertNotNull(df);
@@ -70,10 +70,10 @@ public class TestCasesVariantDatabase {
 
         // Check the fields' types
         var fields = variantDatabase.getFields();
-        assertEquals(VcfInfoType.String, fields.get("FIELD_STRING").getType());
-        assertEquals(VcfInfoType.Integer, fields.get("FIELD_INT").getType());
-        assertEquals(VcfInfoType.Float, fields.get("FIELD_FLOAT").getType());
-        assertEquals(VcfInfoType.Flag, fields.get("FIELD_FLAG").getType());
+        assertEquals(VcfInfoType.String, fields.get("FIELD_STRING").getVcfInfoType());
+        assertEquals(VcfInfoType.Integer, fields.get("FIELD_INT").getVcfInfoType());
+        assertEquals(VcfInfoType.Float, fields.get("FIELD_FLOAT").getVcfInfoType());
+        assertEquals(VcfInfoType.Flag, fields.get("FIELD_FLAG").getVcfInfoType());
 
         // Get VariantDataFrame
         VariantDataFrame vdf = variantDatabase.get("1");
@@ -117,10 +117,10 @@ public class TestCasesVariantDatabase {
 
         // Check the fields' types
         var fields = variantDatabase.getFields();
-        assertEquals(VcfInfoType.String, fields.get("FIELD_STRING").getType());
-        assertEquals(VcfInfoType.Integer, fields.get("FIELD_INT").getType());
-        assertEquals(VcfInfoType.Float, fields.get("FIELD_FLOAT").getType());
-        assertEquals(VcfInfoType.Flag, fields.get("FIELD_FLAG").getType());
+        assertEquals(VcfInfoType.String, fields.get("FIELD_STRING").getVcfInfoType());
+        assertEquals(VcfInfoType.Integer, fields.get("FIELD_INT").getVcfInfoType());
+        assertEquals(VcfInfoType.Float, fields.get("FIELD_FLOAT").getVcfInfoType());
+        assertEquals(VcfInfoType.Flag, fields.get("FIELD_FLAG").getVcfInfoType());
 
         // Get VariantDataFrame
         VariantDataFrame vdf = variantDatabase.get("1");
