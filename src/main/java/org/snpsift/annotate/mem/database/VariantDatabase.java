@@ -118,26 +118,22 @@ public class VariantDatabase {
 	 * @param databaseFileName
 	 */
 	protected Map<String, VcfInfoType>  columnTypes(VcfFileIterator vcfFileIterator) {
-		// Initialize fields, add type 'null'
+		// Initialize fields, add type (default is 'string')
 		Map<String, VcfInfoType> fields2type = new HashMap<>();
 		for(String field: fields) 
-			fields2type.put(field, null);
+			fields2type.put(field, VcfInfoType.String);
 		// Read VCF header
 		var vcfHeader = vcfFileIterator.readHeader();
 		// For each field in the VCF header, decide which column type we'll use
 		for(var vcfInfo : vcfHeader.getVcfHeaderInfo()) {
 			// Skip implicit fields
-			if(!vcfInfo.isImplicit()) continue;
+			if(vcfInfo.isImplicit()) continue;
 			// Check if field name is in the list of fields to extract. if not found, skip this field
 			if(! fields2type.containsKey(vcfInfo.getId())) continue;
 			// Add field
 			fields2type.put(vcfInfo.getId(), columnType(vcfInfo));
 		}
 		vcfFileIterator.close();
-		// If the fields type is still 'null', set it to 'String'
-		for(String field: fields) {
-			if(fields2type.get(field) == null) fields2type.put(field, VcfInfoType.String);
-		}
 		return fields2type;
 	}
 

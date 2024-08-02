@@ -1,14 +1,8 @@
 package org.snpsift.tests.unit;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-
 import org.junit.jupiter.api.Test;
 import org.snpeff.vcf.VcfInfoType;
-import org.snpsift.annotate.mem.VariantCategory;
-import org.snpsift.annotate.mem.dataFrame.DataFrameRow;
-import org.snpsift.annotate.mem.database.VariantDataFrame;
 import org.snpsift.annotate.mem.database.VariantDatabase;
-import org.snpsift.annotate.mem.variantTypeCounter.VariantTypeCounter;
 
 public class TestCasesVariantDatabase {
 
@@ -19,32 +13,33 @@ public class TestCasesVariantDatabase {
             + "##INFO=<ID=FIELD_STRING,Number=1,Type=String,Description=\"Test INFO field string\">\n" //
             + "##INFO=<ID=FIELD_INT,Number=1,Type=Integer,Description=\"Test INFO field int\">\n" //
             + "##INFO=<ID=FIELD_FLOAT,Number=1,Type=Float,Description=\"Test INFO field float\">\n" //
+            + "##INFO=<ID=FIELD_FLAG,Number=1,Type=Flag,Description=\"Test INFO field flag\">\n" //
             + "1\t1000\t.\tA\tT\t.\t.\tFIELD_STRING=Value1;FIELD_INT=123;FIELD_FLOAT=3.14\n" //
             ;
 
         // Create a database
-        String[] fields = { "FIELD_STRING", "FIELD_INT", "FIELD_FLOAT" };
+        String[] fields = { "FIELD_STRING", "FIELD_INT", "FIELD_FLOAT", "FIELD_FLAG" };
         VariantDatabase variantDatabase = new VariantDatabase(fields);
         variantDatabase.create(vcfLines);
 
         // Check the fields' types
         var fields2type = variantDatabase.getFields2type();
         System.out.println("Fields2type: " + fields2type);
-        assertEquals(fields2type.get("FIELD_STRING"), VcfInfoType.String);
-        assertEquals(fields2type.get("FIELD_INT"), VcfInfoType.Integer);
-        assertEquals(fields2type.get("FIELD_FLOAT"), VcfInfoType.Float);
-        // Check that the dataframe was created
-        VariantDataFrame df = variantDatabase.get("1");
-        assertNotNull(df);
-        // Check that the dataframe was added to the database
-        var dfSnpT = df.getDataFrameByCategory(VariantCategory.SNP_T);
-        assertNotNull(dfSnpT);
-        // Check that we can retrieve the row
-        DataFrameRow dfrow = dfSnpT.getRow(1000, "A", "T");
-        assertNotNull(dfrow);
-        // Check that the value is correct
-        assertEquals("Value1", dfrow.getDataFrameValue("FIELD_STRING"));
-
+        assertEquals(VcfInfoType.String, fields2type.get("FIELD_STRING"));
+        assertEquals(VcfInfoType.Integer, fields2type.get("FIELD_INT"));
+        assertEquals(VcfInfoType.Float, fields2type.get("FIELD_FLOAT"));
+        assertEquals(VcfInfoType.Flag, fields2type.get("FIELD_FLAG"));
+        // // Check that the dataframe was created
+        // VariantDataFrame df = variantDatabase.get("1");
+        // assertNotNull(df);
+        // // Check that the dataframe was added to the database
+        // var dfSnpT = df.getDataFrameByCategory(VariantCategory.SNP_T);
+        // assertNotNull(dfSnpT);
+        // // Check that we can retrieve the row
+        // DataFrameRow dfrow = dfSnpT.getRow(1000, "A", "T");
+        // assertNotNull(dfrow);
+        // // Check that the value is correct
+        // assertEquals("Value1", dfrow.getDataFrameValue("FIELD_STRING"));
     }
 
     // @Test

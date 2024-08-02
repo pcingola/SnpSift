@@ -144,7 +144,7 @@ public class VariantDataFrame implements java.io.Serializable {
 			case Integer:
 				return Integer.parseInt(valueStr);
 			case Float:
-				return Float.parseFloat(valueStr);
+				return Double.parseDouble(valueStr);
 			case Character:
 				return valueStr.charAt(0);
 			case String:
