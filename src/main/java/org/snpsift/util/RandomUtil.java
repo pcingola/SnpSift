@@ -1,5 +1,6 @@
 package org.snpsift.util;
 
+import java.util.ArrayList;
 import java.util.Random;
 
 import org.snpeff.util.Tuple;
@@ -65,9 +66,7 @@ public class RandomUtil {
     }
 
     public Boolean randBoolOrNull() {
-        if (rand.nextDouble() < nullRatio)
-            return null;
-        return randBool();
+        return rand.nextDouble() < nullRatio ? null : randBool();
     }
 
     public char randChar() {
@@ -75,10 +74,7 @@ public class RandomUtil {
     }
 
     public Character randCharOrNull() {
-        if (rand.nextDouble() < nullRatio)
-            return null;
-        var n = rand.nextInt(1000);
-        return randChar();
+        return rand.nextDouble() < nullRatio ? null : randChar();
     }
 
     public double randDouble(double maxDouble) {
@@ -86,9 +82,15 @@ public class RandomUtil {
     }
 
     public Double randDoubleOrNull() {
-        if (rand.nextDouble() < nullRatio)
-            return null;
-        return rand.nextDouble();
+        return rand.nextDouble() < nullRatio ? null : rand.nextDouble();
+    }
+
+    public String randEnum(ArrayList<String> enumStrings) {
+        int ord = randInt(enumStrings.size());
+        return enumStrings.get(ord);
+    }
+    public String randEnumOrNull(ArrayList<String> enumStrings) {
+        return rand.nextDouble() < nullRatio ? null : randEnum(enumStrings);
     }
 
     public int randInt() {
@@ -100,15 +102,11 @@ public class RandomUtil {
     }
 
     public Integer randIntOrNull() {
-        if (rand.nextDouble() < nullRatio)
-            return null;
-        return rand.nextInt();
+        return rand.nextDouble() < nullRatio ? null : rand.nextInt();
     }
 
     public Integer randIntOrNull(int maxInt) {
-        if (rand.nextDouble() < nullRatio)
-            return null;
-        return randInt(maxInt);
+        return rand.nextDouble() < nullRatio ? null : randInt(maxInt);
     }
 
     public long randLong() {
@@ -120,15 +118,11 @@ public class RandomUtil {
     }
 
     public Long randLongOrNull() {
-        if (rand.nextDouble() < nullRatio)
-            return null;
-        return randLong();
+        return rand.nextDouble() < nullRatio ? null : randLong();
     }
 
     public Long randLongOrNull(long maxLong) {
-        if (rand.nextDouble() < nullRatio)
-            return null;
-        return randLong(maxLong);
+        return rand.nextDouble() < nullRatio ? null : randLong(maxLong);
     }
 
     public String randString(int maxLen) {
@@ -147,9 +141,7 @@ public class RandomUtil {
     }
 
     public String randStringOrNull(int maxLen) {
-        if (rand.nextDouble() < nullRatio)
-            return null;
-        return randString(maxLen);
+        return rand.nextDouble() < nullRatio ? null : randString(maxLen);
     }
 
     public Tuple<String, String> randVariant(VariantCategory variantCategory) {

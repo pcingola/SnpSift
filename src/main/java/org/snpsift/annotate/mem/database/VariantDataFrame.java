@@ -153,7 +153,6 @@ public class VariantDataFrame implements Serializable {
 		// Convert the value to the appropriate type (handle missing values)
 		switch(type) {
 			case Flag:
-				System.out.println("valueStr: " + valueStr);
 				return (valueStr != null); // Flag is present
 			case Integer:
 				if (valueStr == null) return null;

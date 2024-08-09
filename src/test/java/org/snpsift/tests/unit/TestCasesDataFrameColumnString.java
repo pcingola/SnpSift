@@ -1,5 +1,7 @@
 package org.snpsift.tests.unit;
 import org.junit.jupiter.api.Test;
+import org.snpsift.annotate.mem.arrays.EnumArray;
+import org.snpsift.annotate.mem.arrays.StringArrayBase;
 import org.snpsift.annotate.mem.dataFrame.dataFrameColumn.DataFrameColumnString;
 import org.snpsift.util.RandomUtil;
 
@@ -44,19 +46,71 @@ public class TestCasesDataFrameColumnString {
             }
 
             // Create a StringArray with random strings
-            DataFrameColumnString sarray = new DataFrameColumnString("test", numStrings + 1, size + numStrings);
+            DataFrameColumnString stringColumn = new DataFrameColumnString("test", numStrings + 1, size + numStrings);
             ru.reset();
             for(int i = 0; i < numStrings; i++) {
-                sarray.set(i, ru.randStringOrNull());
+                stringColumn.set(i, ru.randStringOrNull());
             }
 
             // Check that all strings match
             ru.reset();
             for(int i = 0; i < numStrings; i++) {
                 var exp = ru.randStringOrNull();
-                assertEquals(exp, sarray.get(i), "Mismatch at iteration " + iter + ", index " + i + ": " + sarray.get(i) + " != " + exp);
+                assertEquals(exp, stringColumn.get(i), "Mismatch at iteration " + iter + ", index " + i + ": " + stringColumn.get(i) + " != " + exp);
             }
         }
     }
 
+    @Test
+    public void testResize01() {
+        String[] strings = {"one", "two", "three", "four", "five"};
+        DataFrameColumnString stringColumn = DataFrameColumnString.of("Test", strings);
+        // Test that the column before resize is a StringArray
+        assertTrue(stringColumn.getData() instanceof StringArrayBase);
+        // Test contents of the column before resize
+        for (int i = 0; i < strings.length; i++) {
+            assertEquals(strings[i], stringColumn.get(i));
+        }
+        stringColumn.resize();
+        // Test that the column after resize is an EnumArray
+        assertTrue(stringColumn.getData() instanceof EnumArray);
+        // Test contents of the column after resize
+        for (int i = 0; i < strings.length; i++) {
+            assertEquals(strings[i], stringColumn.get(i));
+        }
+    }
+
+
+    @Test
+    public void testResize02() {
+        RandomUtil ru = new RandomUtil();
+
+        var numStrings = ru.randInt(100000);
+
+        // Calculate the size of the StringArray
+        var size = 0;
+        ru.reset();
+        for(int i = 0; i < numStrings; i++) {
+            var r = ru.randStringOrNull();
+            size += r == null ? 0 : r.length();
+        }
+
+        // Create a StringArray with random strings
+        DataFrameColumnString stringColumn = new DataFrameColumnString("test", numStrings + 1, size + numStrings);
+        ru.reset();
+        for(int i = 0; i < numStrings; i++) {
+            stringColumn.set(i, ru.randStringOrNull());
+        }
+
+        assertTrue(stringColumn.getData() instanceof StringArrayBase);
+        stringColumn.resize();
+        assertTrue(stringColumn.getData() instanceof StringArrayBase);
+
+        // Check that all strings match
+        ru.reset();
+        for(int i = 0; i < numStrings; i++) {
+            var exp = ru.randStringOrNull();
+            assertEquals(exp, stringColumn.get(i), "Mismatch at index " + i + ": " + stringColumn.get(i) + " != " + exp);
+        }
+}
 }

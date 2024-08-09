@@ -91,7 +91,6 @@ public class TestCasesVariantDatabase {
             VariantCategory variantCategory = VariantCategory.of(variant);
             var df = vdf.getDataFrameByCategory(variantCategory);
             assertNotNull(df);
-            System.out.println(df);
             DataFrameRow dfrow = df.getRow(999, refs[i], alts[i]);
             assertNotNull(dfrow);
             assertEquals(fieldString[i], dfrow.getDataFrameValue("FIELD_STRING"));

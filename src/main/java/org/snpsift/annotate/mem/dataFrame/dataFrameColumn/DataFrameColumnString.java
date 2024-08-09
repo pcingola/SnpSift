@@ -1,10 +1,16 @@
 package org.snpsift.annotate.mem.dataFrame.dataFrameColumn;
 
+import java.util.HashSet;
+import java.util.Set;
+
+import org.snpeff.util.Log;
+import org.snpsift.annotate.mem.arrays.EnumArray;
 import org.snpsift.annotate.mem.arrays.StringArray;
+import org.snpsift.annotate.mem.arrays.StringArrayBase;
 
 public class DataFrameColumnString extends DataFrameColumn<String> {
 	
-	StringArray data;
+	StringArrayBase data;
 
 	/**
 	 * Create a StringColumn from an array of strings
@@ -32,6 +38,40 @@ public class DataFrameColumnString extends DataFrameColumn<String> {
 	@Override
 	protected String getData(int i) {
 		return data.get(i);
+	}
+
+	/**
+	 * Get the data, used for testing
+	 */
+	public StringArrayBase getData() {
+		return data;
+	}
+
+	/**
+	 * Resize and memory optimize the data
+	 */
+	public void resize() {
+		// If the number of different strings is small, we could use an EnumArray
+		// Count the number of different strings
+		Set<String> set = new HashSet<>();		
+		boolean useEnumArray = true;
+		for (int i = 0; i < data.length(); i++) {
+			if( set.add(data.get(i)) ) {
+				// Too many different strings
+				if(set.size() > EnumArray.MAX_NUMBER_OF_ENUM_VALUES) {
+					useEnumArray = false;
+					break;
+				}
+			}
+		}
+		
+		if(useEnumArray) {
+			// Create an EnumArray
+			EnumArray ea = new EnumArray(data.size());
+			for (String str : data)
+				ea.add(str);
+			data = ea;
+		}
 	}
 
 	@Override

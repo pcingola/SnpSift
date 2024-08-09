@@ -1,15 +1,16 @@
 package org.snpsift.annotate.mem.arrays;
 
-import java.io.Serializable;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Iterator;
 
 /**
  * Implement a memory efficient array of strings
  * It only stores bytes (i.e. UTF-8 encoding) and uses a single byte to mark the end of a string ('\0')
  */
-public class StringArray implements Serializable {
+public class StringArray extends StringArrayBase {
+
     private static final long serialVersionUID = 2024073106L;
 
     /**
@@ -38,7 +39,6 @@ public class StringArray implements Serializable {
     
     protected byte[] data; // Raw data as a byte array
     protected int[] index2offset; // Convert array index to data offset
-    protected int currentIndex; // Index of latest element added
     protected int offset; // Current offset in the data array
 
     /**
@@ -67,21 +67,13 @@ public class StringArray implements Serializable {
      * @param size : Initial size of the array
      */
     public StringArray(int numElements, int size) {
+        super();
         offset = 0;
-        currentIndex = 0;
         // Initialize arrays
         data = new byte[size];
         Arrays.fill(data, (byte) 0);
         index2offset = new int[numElements];
         Arrays.fill(index2offset, -1);
-    }
-
-    /**
-     * Add a string to the array
-     * WARNING: Typically you use either 'add' or 'set', but not both
-     */
-    public void add(String str) {
-        set(currentIndex++, str);
     }
 
     /**
@@ -112,20 +104,14 @@ public class StringArray implements Serializable {
     }
 
     /**
-     * Number of ellements in the array
-     */
-    public int length() {
-        return currentIndex;
-    }
-
-    /**
      * Add a string to the array
      * WARNING: Typically you use either 'add' or 'set', but not both
      */
-    public void set(int i, String str) {
+    public int set(int i, String str) {
         // Store the offset
         if( index2offset[i] != -1) throw new RuntimeException("Index already set: " + i);
         index2offset[i] = offset;
+        currentIndex = i + 1;
         // Null string is converted to an empty string
         if (str == null) str = "";
         // Copy non-empty strings
@@ -138,6 +124,7 @@ public class StringArray implements Serializable {
         }
         // Null terminated string
         data[offset++] = 0; 
+        return currentIndex;
     }
 
     /**
@@ -156,12 +143,13 @@ public class StringArray implements Serializable {
 
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        sb.append("StringArray(" + index2offset.length + ", " + data.length + ")");
+        sb.append("StringArray(length: " + currentIndex + " / " + index2offset.length + ", sizeBytes: " + offset + " / " + data.length + ")");
         if (currentIndex > 0 ) sb.append(":\n");
         for (int i = 0; i < currentIndex && i < MAX_NUM_STRING_TO_SHOW; i++) {
-            sb.append("\t" + i + ": ' " + get(i) + "'\n");
+            sb.append("\t" + i + ": '" + get(i) + "'\n");
         }
         return sb.toString();
     }
+
 
 }
