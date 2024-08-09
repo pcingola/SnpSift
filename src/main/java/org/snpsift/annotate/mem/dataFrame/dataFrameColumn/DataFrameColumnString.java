@@ -7,6 +7,7 @@ import org.snpeff.util.Log;
 import org.snpsift.annotate.mem.arrays.EnumArray;
 import org.snpsift.annotate.mem.arrays.StringArray;
 import org.snpsift.annotate.mem.arrays.StringArrayBase;
+import org.snpsift.util.FormatUtil;
 
 public class DataFrameColumnString extends DataFrameColumn<String> {
 	
@@ -70,6 +71,11 @@ public class DataFrameColumnString extends DataFrameColumn<String> {
 			EnumArray ea = new EnumArray(data.size());
 			for (String str : data)
 				ea.add(str);
+			Log.info("Converting column '" + name + "' to EnumArray." //
+						+ " Found " + ea.numEnums() + " enums found." // 
+						+ " Size before: " + FormatUtil.formatBytes(data.sizeBytes()) //
+						+ ", after: " + FormatUtil.formatBytes(ea.sizeBytes()) //
+						);
 			data = ea;
 		}
 	}

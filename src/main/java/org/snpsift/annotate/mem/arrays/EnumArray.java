@@ -109,7 +109,10 @@ public class EnumArray extends StringArrayBase {
 
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        sb.append("EnumArray: length: " + currentIndex + ", sizeBytes: " + sizeBytes() + ", number of enums: " + numEnums() + "\n");
+        sb.append("EnumArray: " //
+                    + "length: " + currentIndex + " / " + data.length //
+                    + ", number of enums: " + numEnums() + "\n" //
+                    );
         for (int i = 0; i < currentIndex && i < MAX_NUM_STRING_TO_SHOW; i++) {
             sb.append("\t" + i + ": '" + get(i) + "' (" + getOrd(i) + ")\n");
         }

@@ -131,7 +131,7 @@ public class StringArray extends StringArrayBase {
      * Size of the data array (capacity of number of bytes)
      */
     public int size() {
-        return data.length;
+        return index2offset.length;
     }
 
     /**
