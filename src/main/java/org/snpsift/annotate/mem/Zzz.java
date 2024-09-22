@@ -5,9 +5,7 @@ import org.snpeff.fileIterator.VcfFileIterator;
 /***
  * Test: This class loaads a "database" VCF file and then annotates another VCF file.
  * 
- * 
  * Chromosome aliases file: http://hgdownload.soe.ucsc.edu/goldenPath/hg38/database/chromAlias.txt.gz
- * 
  */
 public class Zzz {
 

@@ -25,9 +25,17 @@ public class VariantTypeCounters {
 	VariantTypeCounter latestCounter = null; // Counter for the latest chromosome
 	VariantTypeCounter counterAll; // Count all variants
 	int count = 0;	// Total number of variants
+	boolean verbose = false;
 
-	public VariantTypeCounters(Fields fields) {
+	public VariantTypeCounters(boolean verbose) {
+		this.verbose = verbose;
+		this.fields = new Fields();
+		counterAll = new VariantTypeCounter(fields);
+	}
+
+	public VariantTypeCounters(Fields fields, boolean verbose) {
         this.fields = fields;
+		this.verbose = verbose;
 		counterAll = new VariantTypeCounter(fields);
     }
 
@@ -52,7 +60,7 @@ public class VariantTypeCounters {
 	 * Count the number of variants in a VCF file
 	 */
 	public void count(String vcfFileName) {
-		Log.info("Counting number of variants in '" + vcfFileName + "'");
+		if( verbose ) Log.info("Counting number of variants in '" + vcfFileName + "'");
 		count(new VcfFileIterator(vcfFileName));
 	}
 	
@@ -65,7 +73,7 @@ public class VariantTypeCounters {
 			progress.tick(i, vcfEntry); // Show progress
 		}
 		vcfFile.close();
-		Log.info("\nDone, " + i + " VCF entries in " + progress.elapsedSec() + " secs\n");
+		if( verbose ) Log.info("\nDone, " + i + " VCF entries in " + progress.elapsedSec() + " secs\n");
 	}
 
 	/**
@@ -109,6 +117,10 @@ public class VariantTypeCounters {
 		} catch (Exception e) {
 			throw new RuntimeException("Cannot save to file '" + fileName + "'", e);
 		}
+	}
+
+	public void setVerbose(boolean verbose) {
+		this.verbose = verbose;
 	}
 
 	public String toString() {

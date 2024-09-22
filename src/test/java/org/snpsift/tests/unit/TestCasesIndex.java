@@ -63,9 +63,9 @@ public class TestCasesIndex {
                     // Check that result does intersect query
                     assertTrue(ve.intersects(veIdx)//
                             , "Selected interval does not intersect marker form file!" //
-                                    + "\n\tVcfEntry            : " + ve //
-                                    + "\n\tVariant             : " + var //
-                                    + "\n\tResult              : " + res //
+                                    + "\n\tVcfEntry            : " + ve.getChromosomeName() + ":" + ve.getStart() + "-" + ve.getEnd() + "\t" + ve //
+                                    + "\n\tVariant             : " + var.getChromosomeName() + ":" + var.getStart() + "-" + var.getEnd() + "\t" + var //
+                                    + "\n\tResult              : " + res.getChromosomeName() + ":" + res.getStart() + "-" + res.getEnd() + "\t" + res //
                                     + "\n\tVcfEntry from result:" + veIdx //
                     );
                 }

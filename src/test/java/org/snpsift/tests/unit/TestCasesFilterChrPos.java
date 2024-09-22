@@ -50,7 +50,7 @@ public class TestCasesFilterChrPos {
      * Filter
      */
     public List<VcfEntry> filter(String chrPosFileName, String vcfFileName, String[] extraArgs, int expectedCount) {
-        System.out.println("Annotate: " + chrPosFileName + "\t" + vcfFileName);
+        if(verbose) System.out.println("Annotate: " + chrPosFileName + "\t" + vcfFileName);
 
         // Create command line
         String[] args = argsList(chrPosFileName, vcfFileName, extraArgs);

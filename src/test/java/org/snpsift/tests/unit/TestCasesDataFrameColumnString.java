@@ -22,7 +22,6 @@ public class TestCasesDataFrameColumnString {
     public void testGetNull() {
         String[] strings = {"Value1", "Value2", "Value3", null, "Value4"};
         DataFrameColumnString stringColumn = DataFrameColumnString.of("Test", strings);
-        System.err.println("STRING COLUMN: " + stringColumn);
         assertEquals("Value1", stringColumn.get(0));
         assertEquals("Value2", stringColumn.get(1));
         assertEquals("Value3", stringColumn.get(2));
@@ -79,7 +78,6 @@ public class TestCasesDataFrameColumnString {
             assertEquals(strings[i], stringColumn.get(i));
         }
     }
-
 
     @Test
     public void testResize02() {

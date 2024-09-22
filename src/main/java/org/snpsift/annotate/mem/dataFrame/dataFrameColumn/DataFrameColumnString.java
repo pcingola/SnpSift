@@ -71,7 +71,7 @@ public class DataFrameColumnString extends DataFrameColumn<String> {
 			EnumArray ea = new EnumArray(data.size());
 			for (String str : data)
 				ea.add(str);
-			Log.info("Converting column '" + name + "' to EnumArray." //
+			Log.debug("Converting column '" + name + "' to EnumArray." //
 						+ " Found " + ea.numEnums() + " enums found." // 
 						+ " Size before: " + FormatUtil.formatBytes(data.sizeBytes()) //
 						+ ", after: " + FormatUtil.formatBytes(ea.sizeBytes()) //

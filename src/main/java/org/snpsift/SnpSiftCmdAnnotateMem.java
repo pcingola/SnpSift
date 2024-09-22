@@ -54,7 +54,9 @@ public class SnpSiftCmdAnnotateMem extends SnpSift {
 			dbFileNames.add(dbFileName);
 			String dbDir = dbDir(dbFileName, false);
 			Log.info("Adding database direcory: " + dbDir);
-			variantDatabases.add(new VariantDatabase(dbDir, emptyIfNotFound));
+			var variantDb = new VariantDatabase(dbDir, emptyIfNotFound);
+			variantDb.setVerbose(verbose);
+			variantDatabases.add(variantDb);
 		}
 		if(fields != null) dbfile2fields.put(dbFileName, fields);
 	}
@@ -162,7 +164,9 @@ public class SnpSiftCmdAnnotateMem extends SnpSift {
 		List<VariantDatabase> variantDatabases = new ArrayList<>();
 		for(String dbFile: dbFileNames) {
 			String dbDir = dbDir(dbFile, true);
-			variantDatabases.add(new VariantDatabase(dbDir, emptyIfNotFound));
+			var variantDb = new VariantDatabase(dbDir, emptyIfNotFound);
+			variantDb.setVerbose(verbose);
+			variantDatabases.add(variantDb);
 		}
 		return true;
 	}
@@ -183,6 +187,7 @@ public class SnpSiftCmdAnnotateMem extends SnpSift {
 			}
 			// Create database
 			var variantDatabase = new VariantDatabase(fields);
+			variantDatabase.setVerbose(verbose);
 			variantDatabase.create(dbFileName, dbDir);
 			}
 		Log.info("Create databases: Done!");

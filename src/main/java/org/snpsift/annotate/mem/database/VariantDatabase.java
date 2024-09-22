@@ -13,10 +13,7 @@ import org.snpeff.vcf.VcfEntry;
 import org.snpsift.annotate.mem.Fields;
 import org.snpsift.annotate.mem.SortedVariantsVcfIterator;
 import org.snpsift.annotate.mem.variantTypeCounter.VariantTypeCounters;
-import org.snpsift.util.FormatUtil;
 import org.snpsift.util.ShowProgress;
-
-import htsjdk.variant.vcf.VCFIterator;
 
 /**
  * A database of variant's data used to annotate a VCF file (i.e. VCF entries).
@@ -38,6 +35,7 @@ public class VariantDatabase {
 	Marker currentInterval; // Current interval
 	VariantDataFrame variantDataFrame; // Database for current chromosome
 	VariantTypeCounters variantTypeCounters; // Counters per chromosome
+	boolean verbose = false; // Be verbose
 
 	public VariantDatabase() {
 		this.chr = null;
@@ -130,7 +128,7 @@ public class VariantDatabase {
 		// Get column types
 		fields = parseFields(VcfFileIterator.fromString(vcfContents));
 		// Count variants
-		variantTypeCounters = new VariantTypeCounters(fields);
+		variantTypeCounters = new VariantTypeCounters(fields, verbose);
 		variantTypeCounters.count(VcfFileIterator.fromString(vcfContents));
 		// Load data
 		var sortedVariants = SortedVariantsVcfIterator.lines2SortedVariantsVcfIterator(vcfContents);
@@ -149,10 +147,10 @@ public class VariantDatabase {
 		// Get column types
 		fields = parseFields(databaseFileName); 
 		// Count the number of entries in the VCF file		
-		variantTypeCounters = new VariantTypeCounters(fields);
+		variantTypeCounters = new VariantTypeCounters(fields, verbose);
 		variantTypeCounters.count(databaseFileName);
 		// Load data
-		Log.info("Creating variant database from file '" + databaseFileName + "'");
+		if( verbose ) Log.info("Creating variant database from file '" + databaseFileName + "'");
 		var sortedVariants = new SortedVariantsVcfIterator(databaseFileName);
 		createFromVcf(sortedVariants);
 		sortedVariants.close();
@@ -172,7 +170,7 @@ public class VariantDatabase {
 			i++;
 			progress.tick(i, variantVcf); // Show progress
 		}
-		Log.info("\nDone: " + i + " variants in " + progress.elapsedSec() + " seconds.");
+		if( verbose ) Log.info("\nDone: " + i + " variants in " + progress.elapsedSec() + " seconds.");
 	}
 
 	/**
@@ -183,7 +181,7 @@ public class VariantDatabase {
 		// Load from database file
 		this.chr = chr;
 		var variantDataFrameFile = dfDir + "/" + chr + '.' + VARIANT_DATAFRAME_EXT;
-		Log.info("Loading data frame from file: " + variantDataFrameFile);
+		if( verbose ) Log.info("Loading data frame from file: " + variantDataFrameFile);
 		variantDataFrame = VariantDataFrame.load(variantDataFrameFile, emptyIfNotFound);
 		return variantDataFrame;
 	}
@@ -194,6 +192,10 @@ public class VariantDatabase {
 
 	public VariantTypeCounters getVariantTypeCounters() {
 		return variantTypeCounters;
+	}
+
+	public void setVerbose(boolean verbose) {
+		this.verbose = verbose;
 	}
 
 	public String toString() {
