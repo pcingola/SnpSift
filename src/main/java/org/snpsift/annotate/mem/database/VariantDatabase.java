@@ -55,9 +55,10 @@ public class VariantDatabase {
 		this.fieldNames = fieldNames;
 	}
 
-	public VariantDatabase(String dfDir, boolean emptyIfNotFound) {
+	public VariantDatabase(String dfDir, String[] fieldNames, boolean emptyIfNotFound) {
 		this();
 		this.dfDir = dfDir;
+		this.fieldNames = fieldNames;
 		this.emptyIfNotFound = emptyIfNotFound;
 	}
 
@@ -85,7 +86,8 @@ public class VariantDatabase {
 	public int annotate(VcfEntry vcfEntry) {
 		var chr = vcfEntry.getChromosomeName();
 		var db = get(chr);
-		return db.annotate(vcfEntry);
+		// return db.annotate(vcfEntry);
+		return db.annotate(vcfEntry, fieldNames);
 	}
 
 	/**

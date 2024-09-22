@@ -54,7 +54,7 @@ public class SnpSiftCmdAnnotateMem extends SnpSift {
 			dbFileNames.add(dbFileName);
 			String dbDir = dbDir(dbFileName, false);
 			Log.info("Adding database direcory: " + dbDir);
-			var variantDb = new VariantDatabase(dbDir, emptyIfNotFound);
+			var variantDb = new VariantDatabase(dbDir, fields, emptyIfNotFound);
 			variantDb.setVerbose(verbose);
 			variantDatabases.add(variantDb);
 		}
@@ -62,20 +62,7 @@ public class SnpSiftCmdAnnotateMem extends SnpSift {
 	}
 
 	/**
-	 * Get the database directory name from a database file name
-	 */
-	String dbDir(String dbFileName, boolean check) {
-		String dbDir = dbFileName + '_' + VariantDatabase.VARIANT_DATAFRAME_EXT;
-		if(check) {
-			var dbDirFile =  new File(dbDir);
-			if( !dbDirFile.exists() ) throw new RuntimeException("Database directory not found: '" + dbDir + "', directory path inferred from database file: '" + dbFileName + "'");
-		}
-		return dbDir;
-	}
-
-		/**
 	 * Annotate VCF file
-	 *
 	 * @param createList : If true, return a list with all annotated entries (used for test cases & debugging)
 	 */
 	ArrayList<VcfEntry> annotate(boolean createList) {
@@ -124,6 +111,18 @@ public class SnpSiftCmdAnnotateMem extends SnpSift {
 		return list;
 	}
 
+	/**
+	 * Get the database directory name from a database file name
+	 */
+	String dbDir(String dbFileName, boolean check) {
+		String dbDir = dbFileName + '_' + VariantDatabase.VARIANT_DATAFRAME_EXT;
+		if(check) {
+			var dbDirFile =  new File(dbDir);
+			if( !dbDirFile.exists() ) throw new RuntimeException("Database directory not found: '" + dbDir + "', directory path inferred from database file: '" + dbFileName + "'");
+		}
+		return dbDir;
+	}
+
 	@Override
 	public boolean annotate(VcfEntry vcfEntry) {
 		var annotations = 0;
@@ -164,7 +163,8 @@ public class SnpSiftCmdAnnotateMem extends SnpSift {
 		List<VariantDatabase> variantDatabases = new ArrayList<>();
 		for(String dbFile: dbFileNames) {
 			String dbDir = dbDir(dbFile, true);
-			var variantDb = new VariantDatabase(dbDir, emptyIfNotFound);
+			String[] fields = dbfile2fields.get(dbFileName);
+			var variantDb = new VariantDatabase(dbDir, fields, emptyIfNotFound);
 			variantDb.setVerbose(verbose);
 			variantDatabases.add(variantDb);
 		}
@@ -178,7 +178,7 @@ public class SnpSiftCmdAnnotateMem extends SnpSift {
 		Log.info("Create databases. " + dbFileNames.size() + " databases to create: " + dbFileNames);
 		for(String dbFileName : dbFileNames) {
 			String[] fields = dbfile2fields.get(dbFileName);
-			Log.info("Create database from file '" + dbFileName + "', fields: " + Arrays.toString(fields));
+			if( verbose) Log.info("Create database from file '" + dbFileName + "', fields: " + Arrays.toString(fields));
 			// Does the directory exists and it is non-empty?
 			var dbDir = dbDir(dbFileName, false);
 			var dir = new File(dbDir);
@@ -189,9 +189,9 @@ public class SnpSiftCmdAnnotateMem extends SnpSift {
 			var variantDatabase = new VariantDatabase(fields);
 			variantDatabase.setVerbose(verbose);
 			variantDatabase.create(dbFileName, dbDir);
-			}
-		Log.info("Create databases: Done!");
 		}
+		if( verbose) Log.info("Create databases: Done!");
+	}
 
 	/**
 	 * Build headers to add
@@ -343,14 +343,14 @@ public class SnpSiftCmdAnnotateMem extends SnpSift {
 		System.err.println("\t             -dbfile database_N.vcf -fields field_1,field_2,...,field_N");
 		System.err.println("\n\tAnnotate:");
 		System.err.println("\t           java -jar " + SnpSift.class.getSimpleName() + ".jar " + command + " \\");
-		System.err.println("\t             -dbfile database_1.vcf \\");
-		System.err.println("\t             -dbfile database_2.vcf \\");
-		System.err.println("\t             -dbfile database_N.vcf \\");
+		System.err.println("\t             -dbfile database_1.vcf -fields field_1,field_2,...,field_N \\");
+		System.err.println("\t             -dbfile database_2.vcf -fields field_1,field_2,...,field_N \\");
+		System.err.println("\t             -dbfile database_N.vcf -fields field_1,field_2,...,field_N");
 		System.err.println("\t             [input.vcf] > output.vcf \\");
 		System.err.println("\nCommand Options:");
-		System.err.println("\t-create                       : Create a database from the VCF file.");
+		System.err.println("\t-create                       : Create one or more database/s from the VCF file/s using specific field/s for each database.");
 		System.err.println("\t-dbfile file.vcf              : Use VCF file (either to create a database or to annotate).");
-		System.err.println("\t-fields field_1,..,field_N    : Use VCF info fields when creating the database. Comma separated list, no spaces. Only for create command.");
+		System.err.println("\t-fields field_1,..,field_N    : Use VCF info fields when creating/annotating. Comma separated list, no spaces. Only for create command.");
 		System.err.println("Note: When annotating, if 'input.vcf' is not provided, reads from STDIN.");
 		System.err.println("Note: VCF files can be compressed with Gzip / Bgzip");
 		System.exit(1);

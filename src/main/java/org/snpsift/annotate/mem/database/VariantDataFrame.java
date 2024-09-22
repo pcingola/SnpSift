@@ -102,7 +102,7 @@ public class VariantDataFrame implements Serializable {
 	/**
 	 * Annotate a VCF entry with the fields in this VariantDataFrame
 	 */
-	public int annotate(VcfEntry vcfEntry) {
+	public int annotate(VcfEntry vcfEntry, String[] fieldNames) {
 		int found = 0;
 		for(var variant: vcfEntry.variants()) {
 			var dataFrame = getDataFrameByVariantType(variant);
@@ -112,12 +112,24 @@ public class VariantDataFrame implements Serializable {
 			DataFrameRow row = dataFrame.getRow(variant.getStart(), variant.getReference(), variant.getAlt());
 			if(row == null) continue;	// No data for this variant
 
-			// Add all fields to the VCF entry
-			for(var field : row) {
-				var value = row.getDataFrameValue(field);
-				if(value != null) {
-					vcfEntry.addInfo(field, value.toString());
-					found++;
+			// Add fields to the VCF entry
+			if( fields != null ) {
+				// Add only the requested fields to the VCF entry
+				for(var field : fieldNames) {
+					var value = row.getDataFrameValue(field);
+					if(value != null) {
+						vcfEntry.addInfo(field, value.toString());
+						found++;
+					}
+				}
+			} else {
+				// Add all fields to the VCF entry
+				for(var field : row) {
+					var value = row.getDataFrameValue(field);
+					if(value != null) {
+						vcfEntry.addInfo(field, value.toString());
+						found++;
+					}
 				}
 			}
 		}

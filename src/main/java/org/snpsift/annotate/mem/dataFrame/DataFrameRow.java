@@ -13,7 +13,7 @@ import java.util.Map;
  * 		- Use 'getDataFrame / setDataFrame' to get/set data to/from the dataFrame (lazy evaluation).
  * 		- Use 'get' / 'set' to get/set a single value from this intermediate object (not the dataframe)
  */
-public class DataFrameRow implements java.io.Serializable, Iterable<String> {
+public class DataFrameRow implements java.io.Serializable,Iterable<String> {
 
 	DataFrame dataFrame; // Parent data frame
 	int pos; // Position
