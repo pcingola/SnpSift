@@ -16,6 +16,8 @@ import org.snpsift.annotate.mem.variantTypeCounter.VariantTypeCounters;
 import org.snpsift.util.FormatUtil;
 import org.snpsift.util.ShowProgress;
 
+import htsjdk.variant.vcf.VCFIterator;
+
 /**
  * A database of variant's data used to annotate a VCF file (i.e. VCF entries).
  * The database only loads one chromosome at a time, to speed up the process while fitting in memory.
@@ -126,10 +128,10 @@ public class VariantDatabase {
 	 */
 	public void create(String vcfContents) {
 		// Get column types
-		fields = parseFields(FormatUtil.lines2VcfFileIterator(vcfContents));
+		fields = parseFields(VcfFileIterator.fromString(vcfContents));
 		// Count variants
 		variantTypeCounters = new VariantTypeCounters(fields);
-		variantTypeCounters.count(FormatUtil.lines2VcfFileIterator(vcfContents));
+		variantTypeCounters.count(VcfFileIterator.fromString(vcfContents));
 		// Load data
 		var sortedVariants = SortedVariantsVcfIterator.lines2SortedVariantsVcfIterator(vcfContents);
 		createFromVcf(sortedVariants);

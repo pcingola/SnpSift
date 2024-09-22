@@ -6,13 +6,13 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.snpeff.fileIterator.VcfFileIterator;
 import org.snpeff.vcf.VcfEntry;
 import org.snpeff.vcf.VcfHeader;
 import org.snpeff.vcf.VcfHeaderInfo;
 import org.snpeff.vcf.VcfInfoType;
 import org.snpsift.annotate.mem.Fields;
 import org.snpsift.annotate.mem.VariantCategory;
-import org.snpsift.util.FormatUtil;
 
 /**
  * Count different types of variants
@@ -38,7 +38,7 @@ public class VariantTypeCounter implements Serializable{
 	 * This is used for testing
      */
     public static VariantTypeCounter countVariants(String vcfLines) {
-        VcfHeader vcfHeader = FormatUtil.lines2VcfFileIterator(vcfLines).readHeader(); // Skip header
+        VcfHeader vcfHeader = VcfFileIterator.fromString(vcfLines).readHeader(); // Skip header
 
         // Create a map of names to types
         Fields fields = new Fields();
@@ -48,7 +48,7 @@ public class VariantTypeCounter implements Serializable{
 
         // Create a variant type counter and count variants
         var variantTypeCounter = new VariantTypeCounter(fields);
-        for(VcfEntry vcfEntry : FormatUtil.lines2VcfFileIterator(vcfLines)) {
+        for(VcfEntry vcfEntry : VcfFileIterator.fromString(vcfLines)) {
             variantTypeCounter.count(vcfEntry);
         }
         return variantTypeCounter;
