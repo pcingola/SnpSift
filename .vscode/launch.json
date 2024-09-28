@@ -9,7 +9,9 @@
             "name": "Current File",
             "request": "launch",
             "mainClass": "${file}",
-            "args": "annmem -create -dbfile '/Users/kqrw311/snpEff/wgs_test/db/clinvar.vcf.gz' -fields 'CLNSIG,CLNDN' -dbfile /Users/kqrw311/snpEff/wgs_test/db/dbSnp.151.vcf.gz -fields 'RS,CAF,COMMON' -dbfile '/Users/kqrw311/snpEff/wgs_test/db/cosmic-v92.vcf.gz' -fields 'CNT,LEGACY_ID'"
+            "args": "annmem -dbfile '/Users/kqrw311/snpEff/wgs_test/db/clinvar.vcf.gz' -fields 'CLNSIG,CLNDN' -prefix 'ZZZ_' /Users/kqrw311/snpEff/wgs_test/zzz.vcf"
+            // "args": "annmem -create -dbfile '/Users/kqrw311/snpEff/wgs_test/db/clinvar.vcf.gz' -fields 'CLNSIG,CLNDN'"
+            // "args": "annmem -create -dbfile '/Users/kqrw311/snpEff/wgs_test/db/clinvar.vcf.gz' -fields 'CLNSIG,CLNDN' -dbfile /Users/kqrw311/snpEff/wgs_test/db/dbSnp.151.vcf.gz -fields 'RS,CAF,COMMON' -dbfile '/Users/kqrw311/snpEff/wgs_test/db/cosmic-v92.vcf.gz' -fields 'CNT,LEGACY_ID'"
         },
         {
             "type": "java",

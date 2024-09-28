@@ -36,6 +36,7 @@ public class VariantDataFrame implements Serializable {
 
 	Fields fields;	// Fields to annotate
 	DataFrame dataFrames[]; // Each dataFrame indexed by variant type
+	String prefix; // Prefix for inf field names added
 	VariantTypeCounter variantTypeCounter;
 
 
@@ -113,12 +114,13 @@ public class VariantDataFrame implements Serializable {
 			if(row == null) continue;	// No data for this variant
 
 			// Add fields to the VCF entry
-			if( fields != null ) {
+			if( fieldNames != null ) {
 				// Add only the requested fields to the VCF entry
 				for(var field : fieldNames) {
 					var value = row.getDataFrameValue(field);
 					if(value != null) {
-						vcfEntry.addInfo(field, value.toString());
+						String outFieldName = (prefix != null ? prefix + field : field );
+						vcfEntry.addInfo(outFieldName, value.toString());
 						found++;
 					}
 				}
@@ -127,7 +129,8 @@ public class VariantDataFrame implements Serializable {
 				for(var field : row) {
 					var value = row.getDataFrameValue(field);
 					if(value != null) {
-						vcfEntry.addInfo(field, value.toString());
+						String outFieldName = (prefix != null ? prefix + field : field );
+						vcfEntry.addInfo(outFieldName, value.toString());
 						found++;
 					}
 				}
@@ -227,6 +230,10 @@ public class VariantDataFrame implements Serializable {
 		} catch (Exception e) {
 			throw new RuntimeException("Cannot save to file '" + fileName + "'", e);
 		}
+	}
+
+	public void setPrefix(String prefix) {
+		this.prefix = prefix;
 	}
 
 	public long sizeBytes() {

@@ -3,6 +3,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import org.junit.jupiter.api.Test;
+import org.snpeff.fileIterator.VcfFileIterator;
 import org.snpeff.interval.Chromosome;
 import org.snpeff.interval.Variant;
 import org.snpeff.vcf.VcfInfoType;
@@ -13,8 +14,7 @@ import org.snpsift.annotate.mem.database.VariantDatabase;
 
 public class TestCasesVariantDatabase {
 
-    @Test
-    public void testCount01Snp() {
+    VariantDatabase createDb01() {
         // Create some VCF lines, create a string buffer reader and a VcfFileIterator
         var vcfLines = "" //
             + "##INFO=<ID=FIELD_STRING,Number=1,Type=String,Description=\"Test INFO field string\">\n" //
@@ -26,8 +26,52 @@ public class TestCasesVariantDatabase {
 
         // Create a database
         String[] fieldNames = { "FIELD_STRING", "FIELD_INT", "FIELD_FLOAT", "FIELD_FLAG" };
-        VariantDatabase variantDatabase = new VariantDatabase(fieldNames);
+        VariantDatabase variantDatabase = new VariantDatabase(null, null, fieldNames);
         variantDatabase.create(vcfLines);
+        return variantDatabase;
+    }
+
+    VariantDatabase createDb02() {
+        // Create some VCF lines, create a string buffer reader and a VcfFileIterator
+        var vcfLines = "" //
+            + "##INFO=<ID=FIELD_STRING,Number=1,Type=String,Description=\"Test INFO field string\">\n" //
+            + "##INFO=<ID=FIELD_INT,Number=1,Type=Integer,Description=\"Test INFO field int\">\n" //
+            + "##INFO=<ID=FIELD_FLOAT,Number=1,Type=Float,Description=\"Test INFO field float\">\n" //
+            + "##INFO=<ID=FIELD_FLAG,Number=1,Type=Flag,Description=\"Test INFO field flag\">\n" //
+            + "1\t999\t.\tA\tAC\t.\t.\tFIELD_STRING=Value_INS_A;FIELD_INT=4;FIELD_FLOAT=4.4\n" //
+            + "1\t999\t.\tAC\tA\t.\t.\tFIELD_STRING=Value_DEL_A;FIELD_INT=5;FIELD_FLOAT=5.5\n" //
+            + "1\t1000\t.\tA\tC\t.\t.\tFIELD_STRING=Value_C;FIELD_INT=1;FIELD_FLOAT=1.1\n" //
+            + "1\t1000\t.\tA\tG\t.\t.\tFIELD_STRING=Value_G;FIELD_INT=2;FIELD_FLOAT=2.2\n" //
+            + "1\t1000\t.\tA\tT\t.\t.\tFIELD_STRING=Value_T;FIELD_INT=3;FIELD_FLOAT=3.3\n" //
+            ;
+
+        // Create a database
+        String[] fieldNames = { "FIELD_STRING", "FIELD_INT", "FIELD_FLOAT", "FIELD_FLAG" };
+        VariantDatabase variantDatabase = new VariantDatabase(null, null, fieldNames);
+        variantDatabase.create(vcfLines);
+        return variantDatabase;
+    }
+
+    VariantDatabase createDb03() {
+        // Create some VCF lines, create a string buffer reader and a VcfFileIterator
+        var vcfLines = "" //
+            + "##INFO=<ID=FIELD_STRING,Number=A,Type=String,Description=\"Test INFO field string\">\n" //
+            + "##INFO=<ID=FIELD_INT,Number=A,Type=Integer,Description=\"Test INFO field int\">\n" //
+            + "##INFO=<ID=FIELD_FLOAT,Number=A,Type=Float,Description=\"Test INFO field float\">\n" //
+            + "##INFO=<ID=FIELD_FLAG,Number=A,Type=Flag,Description=\"Test INFO field flag\">\n" //
+            + "1\t1000\t.\tA\tC,G,T\t.\t.\tFIELD_STRING=Value_C,Value_G,Value_T;FIELD_INT=1,2,3;FIELD_FLOAT=1.1,2.2,3.3;FIELD_FLAG\n" //
+            ;
+
+        // Create a database
+        String[] fieldNames = { "FIELD_STRING", "FIELD_INT", "FIELD_FLOAT", "FIELD_FLAG" };
+        VariantDatabase variantDatabase = new VariantDatabase(null, null, fieldNames);
+        variantDatabase.create(vcfLines);
+        return variantDatabase;
+    }
+
+    @Test
+    public void testCount01Snp() {
+        var variantDatabase = createDb01();
 
         // Check the fields' types
         var fields = variantDatabase.getFields();
@@ -50,23 +94,7 @@ public class TestCasesVariantDatabase {
 
     @Test
     public void testCount02SnpsInDel() {
-        // Create some VCF lines, create a string buffer reader and a VcfFileIterator
-        var vcfLines = "" //
-            + "##INFO=<ID=FIELD_STRING,Number=1,Type=String,Description=\"Test INFO field string\">\n" //
-            + "##INFO=<ID=FIELD_INT,Number=1,Type=Integer,Description=\"Test INFO field int\">\n" //
-            + "##INFO=<ID=FIELD_FLOAT,Number=1,Type=Float,Description=\"Test INFO field float\">\n" //
-            + "##INFO=<ID=FIELD_FLAG,Number=1,Type=Flag,Description=\"Test INFO field flag\">\n" //
-            + "1\t999\t.\tA\tAC\t.\t.\tFIELD_STRING=Value_INS_A;FIELD_INT=4;FIELD_FLOAT=4.4\n" //
-            + "1\t999\t.\tAC\tA\t.\t.\tFIELD_STRING=Value_DEL_A;FIELD_INT=5;FIELD_FLOAT=5.5\n" //
-            + "1\t1000\t.\tA\tC\t.\t.\tFIELD_STRING=Value_C;FIELD_INT=1;FIELD_FLOAT=1.1\n" //
-            + "1\t1000\t.\tA\tG\t.\t.\tFIELD_STRING=Value_G;FIELD_INT=2;FIELD_FLOAT=2.2\n" //
-            + "1\t1000\t.\tA\tT\t.\t.\tFIELD_STRING=Value_T;FIELD_INT=3;FIELD_FLOAT=3.3\n" //
-            ;
-
-        // Create a database
-        String[] fieldNames = { "FIELD_STRING", "FIELD_INT", "FIELD_FLOAT", "FIELD_FLAG" };
-        VariantDatabase variantDatabase = new VariantDatabase(fieldNames);
-        variantDatabase.create(vcfLines);
+        VariantDatabase variantDatabase = createDb02();
 
         // Check the fields' types
         var fields = variantDatabase.getFields();
@@ -101,19 +129,7 @@ public class TestCasesVariantDatabase {
 
     @Test
     public void testCount03NumberA() {
-        // Create some VCF lines, create a string buffer reader and a VcfFileIterator
-        var vcfLines = "" //
-            + "##INFO=<ID=FIELD_STRING,Number=A,Type=String,Description=\"Test INFO field string\">\n" //
-            + "##INFO=<ID=FIELD_INT,Number=A,Type=Integer,Description=\"Test INFO field int\">\n" //
-            + "##INFO=<ID=FIELD_FLOAT,Number=A,Type=Float,Description=\"Test INFO field float\">\n" //
-            + "##INFO=<ID=FIELD_FLAG,Number=A,Type=Flag,Description=\"Test INFO field flag\">\n" //
-            + "1\t1000\t.\tA\tC,G,T\t.\t.\tFIELD_STRING=Value_C,Value_G,Value_T;FIELD_INT=1,2,3;FIELD_FLOAT=1.1,2.2,3.3;FIELD_FLAG\n" //
-            ;
-
-        // Create a database
-        String[] fieldNames = { "FIELD_STRING", "FIELD_INT", "FIELD_FLOAT", "FIELD_FLAG" };
-        VariantDatabase variantDatabase = new VariantDatabase(fieldNames);
-        variantDatabase.create(vcfLines);
+        var variantDatabase = createDb03();
 
         // Check the fields' types
         var fields = variantDatabase.getFields();
@@ -147,4 +163,82 @@ public class TestCasesVariantDatabase {
             assertEquals(fieldFlag[i], dfrow.getDataFrameValue("FIELD_FLAG"));
         }
     }
+
+    @Test
+    public void testCount04CreateAndCheckFields() {
+        var variantDatabase = createDb01();
+        String[] fieldNames = { "FIELD_STRING", "FIELD_INT", "FIELD_FLOAT", "FIELD_FLAG" };
+        variantDatabase.checkFields(fieldNames, true);
+   }
+
+   @Test
+   public void testCount05CreateAndAnnotate() {
+        var variantDatabase = createDb01();
+
+        // Set the fields we want to annotate: null means "all fields"
+        variantDatabase.setFieldNamesAnnotate(null);
+        
+        // Annotate a VCF line
+        var vcfLines = "1\t1000\t.\tA\tT\t.\t.\t.\n";
+        var vcfEntry = VcfFileIterator.fromString(vcfLines).next();
+        variantDatabase.annotate(vcfEntry);
+        // Check values
+        assertEquals("Value1", vcfEntry.getInfo("FIELD_STRING"));
+        assertEquals("3.14", vcfEntry.getInfo("FIELD_FLOAT"));
+        assertEquals(3.14, vcfEntry.getInfoFloat("FIELD_FLOAT"));
+        assertEquals(true, vcfEntry.getInfoFlag("FIELD_FLAG"));
+        assertEquals("123", vcfEntry.getInfo("FIELD_INT"));
+        assertEquals(123, vcfEntry.getInfoInt("FIELD_INT"));
+  }
+
+   @Test
+   public void testCount06CreateAndAnnotate() {
+        var variantDatabase = createDb01();
+
+        // Set the fields we want to annotate
+        String[] fieldNames = { "FIELD_STRING", "FIELD_INT"};
+        variantDatabase.setFieldNamesAnnotate(fieldNames);
+        
+        // Annotate a VCF line
+        var vcfLines = "1\t1000\t.\tA\tT\t.\t.\t.\n";
+        var vcfEntry = VcfFileIterator.fromString(vcfLines).next();
+        variantDatabase.annotate(vcfEntry);
+        // Check values
+        assertEquals("Value1", vcfEntry.getInfo("FIELD_STRING"));
+        assertEquals("123", vcfEntry.getInfo("FIELD_INT"));
+        assertEquals(123, vcfEntry.getInfoInt("FIELD_INT"));
+        // These should NOT be annotated
+        assertEquals(null, vcfEntry.getInfo("FIELD_FLOAT"));
+        assertEquals(null, vcfEntry.getInfo("FIELD_FLAG"));
+        assertEquals(false, vcfEntry.getInfoFlag("FIELD_FLAG"));
+  }
+
+   @Test
+   public void testCount05CreateAndAnnotatePrefix() {
+        var variantDatabase = createDb01();
+
+        // Set a prefix for all the fields to annotate
+        variantDatabase.setPrefix("ZZZ_");
+        
+        // Annotate a VCF line
+        var vcfLines = "1\t1000\t.\tA\tT\t.\t.\t.\n";
+        var vcfEntry = VcfFileIterator.fromString(vcfLines).next();
+        variantDatabase.annotate(vcfEntry);
+        System.out.println(vcfEntry);
+        // Check values
+        assertEquals("Value1", vcfEntry.getInfo("ZZZ_FIELD_STRING"));
+        assertEquals("3.14", vcfEntry.getInfo("ZZZ_FIELD_FLOAT"));
+        assertEquals(3.14, vcfEntry.getInfoFloat("ZZZ_FIELD_FLOAT"));
+        assertEquals(true, vcfEntry.getInfoFlag("ZZZ_FIELD_FLAG"));
+        assertEquals("123", vcfEntry.getInfo("ZZZ_FIELD_INT"));
+        assertEquals(123, vcfEntry.getInfoInt("ZZZ_FIELD_INT"));
+    }
+
+  @Test
+  public void testCount06CreateAndAnnotateCheckHeader() {
+      // Only annotate with some fields using a prefix, check that the header is added
+
+      throw new RuntimeException("Not implemented");
+ }
+
 }
