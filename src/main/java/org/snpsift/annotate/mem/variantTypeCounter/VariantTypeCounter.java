@@ -18,7 +18,7 @@ import org.snpsift.annotate.mem.VariantCategory;
  * Count different types of variants
  * These statistics are used to create data sets
  */
-public class VariantTypeCounter implements Serializable{
+public class VariantTypeCounter implements Serializable {
 
 	private static final long serialVersionUID = 2024073102L;
 

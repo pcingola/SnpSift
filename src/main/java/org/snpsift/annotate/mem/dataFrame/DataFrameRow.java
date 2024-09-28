@@ -15,6 +15,8 @@ import java.util.Map;
  */
 public class DataFrameRow implements java.io.Serializable,Iterable<String> {
 
+	private static final long serialVersionUID = 2024073108L;
+
 	DataFrame dataFrame; // Parent data frame
 	int pos; // Position
 	String ref; // Reference allele

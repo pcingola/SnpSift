@@ -18,6 +18,8 @@ import org.snpeff.vcf.VcfHeaderEntry;
 import org.snpeff.vcf.VcfHeaderInfo;
 
 public class Fields implements Iterable<VcfHeaderInfo>, Serializable {
+
+	private static final long serialVersionUID = 2024092801L;
     
     String[] fieldNames; // Fields to create or annotate
     Map<String, VcfHeaderInfo> fieldByName; // Fields to create or annotate

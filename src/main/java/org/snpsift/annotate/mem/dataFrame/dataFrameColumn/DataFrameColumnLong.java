@@ -2,6 +2,8 @@ package org.snpsift.annotate.mem.dataFrame.dataFrameColumn;
 
 public class DataFrameColumnLong extends DataFrameColumn<Long> {
 	
+	private static final long serialVersionUID = 202407310305L;
+	
 	long[] data;
 
 	public DataFrameColumnLong(String name, int size) {

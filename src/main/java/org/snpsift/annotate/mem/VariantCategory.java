@@ -3,6 +3,7 @@ package org.snpsift.annotate.mem;
 import org.snpeff.interval.Variant;
 
 public enum VariantCategory {
+
 	SNP_A, SNP_C, SNP_G, SNP_T, INS, DEL, MNP, MIXED, OTHER;
 
 	public static VariantCategory of(Variant variant) {

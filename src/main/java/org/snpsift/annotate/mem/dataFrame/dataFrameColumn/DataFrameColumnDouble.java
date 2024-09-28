@@ -1,7 +1,9 @@
 package org.snpsift.annotate.mem.dataFrame.dataFrameColumn;
 
 public class DataFrameColumnDouble extends DataFrameColumn<Double> {
-	
+
+	private static final long serialVersionUID = 202407310303L;
+
 	double[] data;
 
 	public DataFrameColumnDouble(String name, int size) {

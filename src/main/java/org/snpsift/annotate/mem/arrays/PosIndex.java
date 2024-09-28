@@ -6,6 +6,7 @@ import java.util.Arrays;
  * An index by possition
  */
 public class PosIndex implements java.io.Serializable {
+	
 	private static final long serialVersionUID = 2024073105L;
 
 	int[] positions;	// Chromosome positions of each entry

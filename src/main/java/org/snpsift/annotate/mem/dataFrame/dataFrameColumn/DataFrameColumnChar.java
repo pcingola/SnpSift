@@ -1,6 +1,8 @@
 package org.snpsift.annotate.mem.dataFrame.dataFrameColumn;
 
 public class DataFrameColumnChar extends DataFrameColumn<Character> {
+
+	private static final long serialVersionUID = 202407310302L;
 	
 	char[] data;
 

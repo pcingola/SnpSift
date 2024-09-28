@@ -3,7 +3,6 @@ package org.snpsift.annotate.mem.arrays;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Iterator;
 
 /**
  * Implement a memory efficient array of strings

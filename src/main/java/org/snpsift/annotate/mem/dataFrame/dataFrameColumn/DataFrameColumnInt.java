@@ -2,6 +2,8 @@ package org.snpsift.annotate.mem.dataFrame.dataFrameColumn;
 
 public class DataFrameColumnInt extends DataFrameColumn<Integer> {
 	
+	private static final long serialVersionUID = 202407310304L;
+
 	int[] data;
 
 	public DataFrameColumnInt(String name, int size) {

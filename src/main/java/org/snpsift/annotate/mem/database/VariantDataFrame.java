@@ -34,6 +34,8 @@ import org.snpsift.annotate.mem.VariantCategory;
  */
 public class VariantDataFrame implements Serializable {
 
+	private static final long serialVersionUID = 2024092701L;
+
 	Fields fields;	// Fields to annotate
 	DataFrame dataFrames[]; // Each dataFrame indexed by variant type
 	String prefix; // Prefix for inf field names added

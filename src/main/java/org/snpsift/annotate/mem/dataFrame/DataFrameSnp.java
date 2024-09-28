@@ -9,7 +9,9 @@ import org.snpsift.annotate.mem.variantTypeCounter.VariantTypeCounter;
  * This is used to store data for a chromosome
  */
 public class DataFrameSnp extends DataFrame {
-	
+
+	private static final long serialVersionUID = 2024073109L;
+
 	String alt;	// Alternative allele, i.e. one of 'A', 'C', 'G', 'T'
 
 	public DataFrameSnp(VariantTypeCounter variantTypeCounter, VariantCategory variantCategory) {

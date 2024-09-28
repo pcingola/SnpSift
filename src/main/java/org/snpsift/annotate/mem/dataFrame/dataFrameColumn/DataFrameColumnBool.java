@@ -7,7 +7,9 @@ import org.snpsift.annotate.mem.arrays.BoolArray;
  * The bollean values are stored in a BoolArray
  */
 public class DataFrameColumnBool extends DataFrameColumn<Boolean> {
-	
+
+	private static final long serialVersionUID = 202407310301L;
+
 	BoolArray data;
 
 	public DataFrameColumnBool(String name, int size) {

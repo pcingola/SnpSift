@@ -11,6 +11,8 @@ import org.snpsift.util.FormatUtil;
 
 public class DataFrameColumnString extends DataFrameColumn<String> {
 	
+	private static final long serialVersionUID = 202407310306L;
+
 	StringArrayBase data;
 
 	/**

@@ -4,7 +4,6 @@ import java.io.File;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 import org.snpeff.fileIterator.VcfFileIterator;
@@ -13,7 +12,6 @@ import org.snpeff.util.Log;
 import org.snpeff.vcf.VariantVcfEntry;
 import org.snpeff.vcf.VcfEntry;
 import org.snpeff.vcf.VcfHeaderEntry;
-import org.snpeff.vcf.VcfHeaderInfo;
 import org.snpsift.annotate.mem.Fields;
 import org.snpsift.annotate.mem.SortedVariantsVcfIterator;
 import org.snpsift.annotate.mem.variantTypeCounter.VariantTypeCounters;
