@@ -157,7 +157,7 @@ public class SnpSift implements VcfAnnotator {
 
 		case "annmem":
 		case "annotatemem":
-			return new SnpSiftCmdAnnotateMem();
+			return new SnpSiftCmdAnnotateDf();
 	
 		case "ca":
 		case "casecontrol":

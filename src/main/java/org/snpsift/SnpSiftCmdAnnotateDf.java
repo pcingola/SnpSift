@@ -11,19 +11,17 @@ import org.snpeff.fileIterator.VcfFileIterator;
 import org.snpeff.util.Log;
 import org.snpeff.vcf.VcfEntry;
 import org.snpeff.vcf.VcfHeaderEntry;
-import org.snpeff.vcf.VcfHeaderInfo;
-import org.snpsift.annotate.mem.Fields;
 import org.snpsift.annotate.mem.database.VariantDatabase;
 import org.snpsift.util.ShowProgress;
 
 
 /**
- * Annotate a VCF file from another VCF file (database)
+ * Annotate a VCF file from another VCF file (database) by creating "DataFrames" for each chromosome.
  * The database file is loaded into memory.
  *
  * @author pcingola
  */
-public class SnpSiftCmdAnnotateMem extends SnpSift {
+public class SnpSiftCmdAnnotateDf extends SnpSift {
 
 	boolean create; // Create database
 	boolean emptyIfNotFound; // If a database file is not found, create an empty database
@@ -35,11 +33,11 @@ public class SnpSiftCmdAnnotateMem extends SnpSift {
 	ShowProgress progress; // Show progress
 
 
-	public SnpSiftCmdAnnotateMem() {
+	public SnpSiftCmdAnnotateDf() {
 		super();
 	}
 
-	public SnpSiftCmdAnnotateMem(String args[]) {
+	public SnpSiftCmdAnnotateDf(String args[]) {
 		super(args);
 	}
 
@@ -157,7 +155,7 @@ public class SnpSiftCmdAnnotateMem extends SnpSift {
 
 			// Load db and check fields
 			variantDb.load();
-			variantDb.checkFields(fieldNames, true);
+			if(fieldNames != null) variantDb.checkFields(fieldNames, true);
 
 			// Add to the list
 			variantDatabases.add(variantDb);
