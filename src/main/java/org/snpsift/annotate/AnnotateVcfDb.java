@@ -351,8 +351,8 @@ public abstract class AnnotateVcfDb {
             VcfHeaderInfo vcfInfo = dbVcf.getVcfHeader().getVcfHeaderInfo(fieldName);
             boolean isPerAlleleRef = (vcfInfo != null && vcfInfo.isNumberAllAlleles());
             vcfInfoPerAlleleRef.put(fieldName, isPerAlleleRef);
-
-            hasVcfInfoPerAlleleRef |= isPerAlleleRef; // Do we have any INFO field requiring 'REF' annotation?
+            // Do we have any INFO field requiring 'REF' annotation?
+            hasVcfInfoPerAlleleRef |= isPerAlleleRef;
         }
 
         return vcfInfoPerAlleleRef.get(fieldName);

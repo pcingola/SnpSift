@@ -1,2 +1,5 @@
 /db
 /target
+.venv
+*.sidx
+**/*.sidx

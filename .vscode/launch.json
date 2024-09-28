@@ -1,0 +1,31 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "java",
+            "name": "Current File",
+            "request": "launch",
+            "mainClass": "${file}",
+            "args": "annmem -dbfile '/Users/kqrw311/snpEff/wgs_test/db/clinvar.vcf.gz' -fields 'CLNSIG,CLNDN' -prefix 'ZZZ_' /Users/kqrw311/snpEff/wgs_test/zzz.vcf"
+            // "args": "annmem -create -dbfile '/Users/kqrw311/snpEff/wgs_test/db/clinvar.vcf.gz' -fields 'CLNSIG,CLNDN'"
+            // "args": "annmem -create -dbfile '/Users/kqrw311/snpEff/wgs_test/db/clinvar.vcf.gz' -fields 'CLNSIG,CLNDN' -dbfile /Users/kqrw311/snpEff/wgs_test/db/dbSnp.151.vcf.gz -fields 'RS,CAF,COMMON' -dbfile '/Users/kqrw311/snpEff/wgs_test/db/cosmic-v92.vcf.gz' -fields 'CNT,LEGACY_ID'"
+        },
+        {
+            "type": "java",
+            "name": "SnpSift",
+            "request": "launch",
+            "mainClass": "org.snpsift.SnpSift",
+            "projectName": "SnpSift"
+        },
+        {
+            "type": "java",
+            "name": "Zzz",
+            "request": "launch",
+            "mainClass": "org.snpsift.annotate.mem.Zzz",
+            "projectName": "SnpSift"
+        },
+    ]
+}

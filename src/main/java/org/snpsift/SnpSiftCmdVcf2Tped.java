@@ -11,7 +11,6 @@ import org.snpeff.ped.PedPedigree;
 import org.snpeff.ped.TfamEntry;
 import org.snpeff.util.Gpr;
 import org.snpeff.util.Log;
-import org.snpeff.util.Timer;
 import org.snpeff.vcf.VcfEntry;
 import org.snpeff.vcf.VcfGenotype;
 

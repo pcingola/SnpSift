@@ -11,7 +11,6 @@ import org.snpeff.probablility.CochranArmitageTest;
 import org.snpeff.probablility.FisherExactTest;
 import org.snpeff.util.Gpr;
 import org.snpeff.util.Log;
-import org.snpeff.util.Timer;
 import org.snpeff.vcf.VcfEntry;
 import org.snpeff.vcf.VcfGenotype;
 import org.snpeff.vcf.VcfHeaderEntry;

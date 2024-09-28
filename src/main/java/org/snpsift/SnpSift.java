@@ -9,7 +9,6 @@ import org.snpeff.SnpEff;
 import org.snpeff.fileIterator.VcfFileIterator;
 import org.snpeff.snpEffect.Config;
 import org.snpeff.snpEffect.VcfAnnotator;
-import org.snpeff.snpEffect.commandLine.CommandLine;
 import org.snpeff.util.Download;
 import org.snpeff.util.Gpr;
 import org.snpeff.util.Log;
@@ -23,7 +22,7 @@ import org.snpsift.hwe.SnpSiftCmdHwe;
  *
  * @author pablocingolani
  */
-public class SnpSift implements VcfAnnotator, CommandLine {
+public class SnpSift implements VcfAnnotator {
 
 	// Version info (in sync with SnpEff)
 	public static final String BUILD = SnpEff.BUILD;
@@ -156,6 +155,10 @@ public class SnpSift implements VcfAnnotator, CommandLine {
 		case "annotate":
 			return new SnpSiftCmdAnnotate();
 
+		case "annmem":
+		case "annotatemem":
+			return new SnpSiftCmdAnnotateMem();
+	
 		case "ca":
 		case "casecontrol":
 			return new SnpSiftCmdCaseControl();
@@ -699,6 +702,7 @@ public class SnpSift implements VcfAnnotator, CommandLine {
 				+ "\nCommand is one of:" //
 				+ "\n\talleleMat     : Create an allele matrix output." //
 				+ "\n\tannotate      : Annotate 'ID' from a database (e.g. dbSnp). Assumes entries are sorted." //
+				+ "\n\tannotateMem   : Annotate form a database (created from a VCF file)." //
 				+ "\n\tcaseControl   : Compare how many variants are in 'case' and in 'control' groups; calculate p-values." //
 				+ "\n\tccs           : Case control summary. Case and control summaries by region, allele frequency and variant's functional effect." //
 				+ "\n\tconcordance   : Concordance metrics between two VCF files." //
