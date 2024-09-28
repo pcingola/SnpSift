@@ -2,6 +2,8 @@ package org.snpsift.tests.unit;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
+import java.util.stream.Collectors;
+
 import org.junit.jupiter.api.Test;
 import org.snpeff.fileIterator.VcfFileIterator;
 import org.snpeff.interval.Chromosome;
@@ -214,7 +216,7 @@ public class TestCasesVariantDatabase {
   }
 
    @Test
-   public void testCount05CreateAndAnnotatePrefix() {
+   public void testCount07CreateAndAnnotatePrefix() {
         var variantDatabase = createDb01();
 
         // Set a prefix for all the fields to annotate
@@ -234,11 +236,35 @@ public class TestCasesVariantDatabase {
         assertEquals(123, vcfEntry.getInfoInt("ZZZ_FIELD_INT"));
     }
 
-  @Test
-  public void testCount06CreateAndAnnotateCheckHeader() {
-      // Only annotate with some fields using a prefix, check that the header is added
+    @Test
+    public void testCount08CreateAndAnnotateCheckHeader() {
+        var variantDatabase = createDb01();
+        // Check headers
+        var headers = variantDatabase.vcfHeaders();
+        assertEquals(4, headers.size());
+        // Convert headers to a Set<String>
+        var headerSet = headers.stream().map(h -> h.getId()).collect(Collectors.toSet());
+        System.out.println(headerSet);
+        assert(headerSet.contains("FIELD_STRING"));
+        assert(headerSet.contains("FIELD_INT"));
+        assert(headerSet.contains("FIELD_FLOAT"));
+        assert(headerSet.contains("FIELD_FLAG"));
+    }
 
-      throw new RuntimeException("Not implemented");
- }
-
+    @Test
+    public void testCount09CreateAndAnnotateCheckHeaderPrefix() {
+          var variantDatabase = createDb01();
+          variantDatabase.setPrefix("ZZZ_");
+          // Check headers
+          var headers = variantDatabase.vcfHeaders();
+          assertEquals(4, headers.size());
+          // Convert headers to a Set<String>
+          var headerSet = headers.stream().map(h -> h.getId()).collect(Collectors.toSet());
+          System.out.println(headerSet);
+          assert(headerSet.contains("ZZZ_FIELD_STRING"));
+          assert(headerSet.contains("ZZZ_FIELD_INT"));
+          assert(headerSet.contains("ZZZ_FIELD_FLOAT"));
+          assert(headerSet.contains("ZZZ_FIELD_FLAG"));
+      }
+  
 }

@@ -6,11 +6,15 @@ import java.io.FileOutputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 
 import org.snpeff.util.Log;
+import org.snpeff.vcf.VcfHeaderEntry;
 import org.snpeff.vcf.VcfHeaderInfo;
 
 public class Fields implements Iterable<VcfHeaderInfo>, Serializable {
@@ -74,4 +78,23 @@ public class Fields implements Iterable<VcfHeaderInfo>, Serializable {
 		}
 	}
 
+	/** 
+	 * Get VCF headers
+	 */
+	public Collection<VcfHeaderEntry> vcfHeaders(String prefix) {
+		List<VcfHeaderEntry> headerInfos = new LinkedList<>();
+
+		if( prefix == null ) {
+			// No prefix? Return all fields
+			headerInfos.addAll(fieldByName.values());
+		} else {
+			// We need to add a prefix to the field names, create a new list of VcfHeaderInfo with the prefix
+			for(var field: this) {
+				// Create a new field with a prefix
+				var fieldToAdd = new VcfHeaderInfo(prefix + field.getId(), field.getVcfInfoType(), field.getNumberString(), field.getDescription());
+				headerInfos.add(fieldToAdd);
+			}
+		}
+		return headerInfos;
+	}
 }

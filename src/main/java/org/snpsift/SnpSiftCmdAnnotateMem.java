@@ -11,6 +11,7 @@ import org.snpeff.fileIterator.VcfFileIterator;
 import org.snpeff.util.Log;
 import org.snpeff.vcf.VcfEntry;
 import org.snpeff.vcf.VcfHeaderEntry;
+import org.snpeff.vcf.VcfHeaderInfo;
 import org.snpsift.annotate.mem.Fields;
 import org.snpsift.annotate.mem.database.VariantDatabase;
 import org.snpsift.util.ShowProgress;
@@ -194,20 +195,10 @@ public class SnpSiftCmdAnnotateMem extends SnpSift {
 	 */
 	@Override
 	protected List<VcfHeaderEntry> headers() {
-		List<VcfHeaderEntry> headerInfos = super.headers();
-		
-		for(var db : variantDatabases) {
-			var dbVsfFile = db.getDatabaseVcfFileName();
-			System.out.println("DB.vcfFile: " + dbVsfFile);
-			Fields fields = db.getFields();
-			String prefix = dbfile2prefix.get(dbVsfFile);
-			System.out.println("DB.prefix: " + prefix);
-			for(var field: fields) {
-				System.out.println("\tFIELD: " + field);
-				headerInfos.add(field);
-			}
-		}
-
+		List<VcfHeaderEntry> headerInfos = super.headers();		
+		// Add headers from all databases
+		for(var db : variantDatabases) 
+			headerInfos.addAll(db.vcfHeaders());
 		return headerInfos;
 	}
 
