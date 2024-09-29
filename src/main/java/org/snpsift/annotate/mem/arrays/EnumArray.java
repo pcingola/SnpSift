@@ -72,8 +72,7 @@ public class EnumArray extends StringArrayBase {
      * Get the ordinal at array index 'i'
      */
     public int getOrd(int i) {
-        byte ord = data[i];
-        return ord & 0xFF;
+        return data[i] & 0xFF;
     }
 
     /**

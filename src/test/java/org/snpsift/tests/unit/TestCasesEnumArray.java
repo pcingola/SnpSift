@@ -46,7 +46,24 @@ public class TestCasesEnumArray {
         for(int i = 0; i < strings.length; i++) {
             assertEquals(strings[i], ea.get(i), "String mismatch at index " + i + ": '" + strings[i] + "'' != '" + ea.get(i) + "'");
         }
-        System.out.println(ea);
+    }
+
+    @Test
+    public void test_03() {
+        // Create a StringArray from a collection of strings
+        String[] strings = new String[255];
+        for(int i = 0; i < strings.length; i++)
+            strings[i] = "str" + i;
+        // Create array and add all strings
+        EnumArray ea = new EnumArray(strings.length);
+        for (String str : strings)
+            ea.add(str);
+        // Check size
+        assertEquals(strings.length, ea.size(), "Size mismatch");
+        // Check that all strings match
+        for(int i = 0; i < strings.length; i++) {
+            assertEquals(strings[i], ea.get(i), "String mismatch at index " + i + ": '" + strings[i] + "'' != '" + ea.get(i) + "'");
+        }
     }
 
     @Test
