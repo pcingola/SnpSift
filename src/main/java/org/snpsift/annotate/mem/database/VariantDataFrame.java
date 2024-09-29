@@ -48,7 +48,7 @@ public class VariantDataFrame implements Serializable {
 			var file = new File(fileName);
 			if(!file.exists()) {
 				if(emptyIfNotFound) {
-					Log.warning("File not found: '" + fileName + "'. Returning empty VariantDataFrame");
+					Log.warning("File not found: '" + fileName + "'");
 					return new VariantDataFrame(new VariantTypeCounter(new Fields()));
 				}
 				throw new RuntimeException("File not found: '" + fileName + "'");
