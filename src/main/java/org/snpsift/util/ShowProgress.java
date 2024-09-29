@@ -36,7 +36,7 @@ public class ShowProgress {
 	public void tick(int count, VcfEntry vcfEntry) {
 		if (count % showEvery == 0) {
 			if (count % showEveryLine == 0) {
-				System.err.println(" " + String.format("%,d", count) + ", " 
+				System.err.println(" " + String.format("%,d", count) + " " 
                                     + (vcfEntry != null ? vcfEntry.getChromosomeName() + ":" + vcfEntry.getStart() + "\t" : "")
                 );
 			} else {
