@@ -108,7 +108,6 @@ public class VariantDatabase {
 	public int annotate(VcfEntry vcfEntry) {
 		var chr = vcfEntry.getChromosomeName();
 		VariantDataFrame df = get(chr);
-		// return db.annotate(vcfEntry);
 		return df.annotate(vcfEntry, fieldNamesAnnotate);
 	}
 

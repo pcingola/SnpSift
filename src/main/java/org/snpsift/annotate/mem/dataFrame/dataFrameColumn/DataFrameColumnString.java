@@ -3,11 +3,9 @@ package org.snpsift.annotate.mem.dataFrame.dataFrameColumn;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.snpeff.util.Log;
 import org.snpsift.annotate.mem.arrays.EnumArray;
 import org.snpsift.annotate.mem.arrays.StringArray;
 import org.snpsift.annotate.mem.arrays.StringArrayBase;
-import org.snpsift.util.FormatUtil;
 
 public class DataFrameColumnString extends DataFrameColumn<String> {
 	

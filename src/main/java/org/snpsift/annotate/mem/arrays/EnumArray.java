@@ -64,14 +64,16 @@ public class EnumArray extends StringArrayBase {
      * Get the string at array index 'i'
      */
     public String get(int i) {
-        return ord2enum.get(data[i]);
+        int ord = getOrd(i);
+        return ord2enum.get(ord);
     }
 
     /**
      * Get the ordinal at array index 'i'
      */
     public int getOrd(int i) {
-        return data[i];
+        byte ord = data[i];
+        return ord & 0xFF;
     }
 
     /**

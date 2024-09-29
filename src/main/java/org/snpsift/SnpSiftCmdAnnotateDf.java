@@ -91,6 +91,7 @@ public class SnpSiftCmdAnnotateDf extends SnpSift {
 				chr = vcfEntry.getChromosomeName();
 				pos = vcfEntry.getStart();
 			} catch (Exception e) {
+				Log.error("Error while processing VCF entry: " + vcfEntry);
 				e.printStackTrace();
 			}
 		}

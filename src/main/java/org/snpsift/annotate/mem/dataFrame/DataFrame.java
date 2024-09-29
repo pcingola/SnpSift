@@ -130,7 +130,8 @@ public class DataFrame implements Serializable {
 	 * Note: The value can be null
 	 */
 	protected Object get(String columnName, int idx) {
-		return columns.get(columnName).get(idx);
+		var col = columns.get(columnName);
+		return col.get(idx);
 	}
 
 	/**
