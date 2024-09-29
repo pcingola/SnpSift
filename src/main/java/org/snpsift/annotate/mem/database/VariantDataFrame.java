@@ -42,16 +42,16 @@ public class VariantDataFrame implements Serializable {
 	VariantTypeCounter variantTypeCounter;
 
 
-	public static VariantDataFrame load(String fileName, boolean emptyIfNotFound) {
+	public static VariantDataFrame load(String chr, String fileName, boolean emptyIfNotFound) {
 		// Deserialize data from a file
 		try {
 			var file = new File(fileName);
 			if(!file.exists()) {
 				if(emptyIfNotFound) {
-					Log.warning("File not found: '" + fileName + "'");
+					Log.warning("File not found for chromosome '" + chr + "', file '" + fileName + "'");
 					return new VariantDataFrame(new VariantTypeCounter(new Fields()));
 				}
-				throw new RuntimeException("File not found: '" + fileName + "'");
+				throw new RuntimeException("File not found for chromosome '" + chr + "', '" + fileName + "'");
 			}
 			FileInputStream fis = new FileInputStream(file);
 			ObjectInputStream ois = new ObjectInputStream(fis);
@@ -59,7 +59,7 @@ public class VariantDataFrame implements Serializable {
 			ois.close();
 			return vd;
 		} catch (Exception e) {
-			throw new RuntimeException("Cannot load from file '" + fileName + "'", e);
+			throw new RuntimeException("Cannot load file for chromosome '" + chr + "', file '" + fileName + "'", e);
 		}
 	}
 

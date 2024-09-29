@@ -190,7 +190,7 @@ public class VariantDatabase {
 		this.chr = chr;
 		var variantDataFrameFile = dbDir + "/" + chr + '.' + VARIANT_DATAFRAME_EXT;
 		if( verbose ) Log.info("Loading data frame from file: " + variantDataFrameFile);
-		variantDataFrame = VariantDataFrame.load(variantDataFrameFile, emptyIfNotFound);
+		variantDataFrame = VariantDataFrame.load(chr, variantDataFrameFile, emptyIfNotFound);
 		variantDataFrame.setPrefix(prefix); // Propagate prefix to the df
 		return variantDataFrame;
 	}
