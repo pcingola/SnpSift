@@ -3,4 +3,4 @@
 .venv
 *.sidx
 **/*.sidx
-.vscode
+.vscode/*
