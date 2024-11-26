@@ -286,7 +286,7 @@ public class TestCasesVariantDatabase {
         var variantDatabase = createDb01();
         // Check headers
         var headers = variantDatabase.vcfHeaders();
-        assertEquals(4, headers.size());
+        assertEquals(5, headers.size());
         // Convert headers to a Set<String>
         var headerSet = headers.stream().map(h -> h.getId()).collect(Collectors.toSet());
         System.out.println(headerSet);
@@ -302,7 +302,7 @@ public class TestCasesVariantDatabase {
           variantDatabase.setPrefix("ZZZ_");
           // Check headers
           var headers = variantDatabase.vcfHeaders();
-          assertEquals(4, headers.size());
+          assertEquals(5, headers.size());
           // Convert headers to a Set<String>
           var headerSet = headers.stream().map(h -> h.getId()).collect(Collectors.toSet());
           System.out.println(headerSet);
