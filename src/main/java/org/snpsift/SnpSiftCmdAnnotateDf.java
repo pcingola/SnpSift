@@ -204,7 +204,9 @@ public class SnpSiftCmdAnnotateDf extends SnpSift {
 		for(var db : variantDatabases) 
 			headerInfos.addAll(db.vcfHeaders());
 		// Add 'ANNOTATED' flag
-		if( addAnnotated ) headerInfos.add(new VcfHeaderEntry("##INFO=<ID=ANNOTATED,Number=0,Type=Flag,Description='Variant was annotated'>"));
+		if( addAnnotated ) {
+			headerInfos.add(VcfHeaderEntry.factory("##INFO=<ID=ANNOTATED,Number=0,Type=Flag,Description=\"Variant was annotated\">"));
+		}
 		return headerInfos;
 	}
 
@@ -328,7 +330,7 @@ public class SnpSiftCmdAnnotateDf extends SnpSift {
 		System.err.println("\t             -dbfile database_N.vcf -fields field_1,field_2,...,field_N");
 		System.err.println("\n\tAnnotate:");
 		System.err.println("\t           java -jar " + SnpSift.class.getSimpleName() + ".jar " + command + " \\");
-		System.err.println("\t             [-annotated] \\");
+		System.err.println("\t             [-addAnnotated] \\");
 		System.err.println("\t             -dbfile database_1.vcf -fields field_1,field_2,...,field_N [-prefix prefix_db_1] \\");
 		System.err.println("\t             -dbfile database_2.vcf -fields field_1,field_2,...,field_N [-prefix prefix_db_2] \\");
 		System.err.println("\t             -dbfile database_N.vcf -fields field_1,field_2,...,field_N [-prefix prefix_db_N] ");

@@ -85,7 +85,6 @@ public class VariantDataFrame implements Serializable {
 		// Add fields to the row
 		for(var field : fields) {
 			Object value = Fields.getFieldValue(field, variantVcfEntry);
-			Log.debug("Adding field '" + field.getId() + "' = " + value);
 			row.set(field.getId(), value);
 		}
 		// Add row to dataFrame

@@ -194,7 +194,6 @@ public class VariantDatabase {
 		if( verbose ) Log.info("Loading data frame from file: " + variantDataFrameFile);
 		variantDataFrame = VariantDataFrame.load(chr, variantDataFrameFile, emptyIfNotFound);
 		variantDataFrame.setPrefix(prefix); // Propagate prefix to the df
-		System.err.println("VariantDatabase.get(SNP_G): variantDataFrame = " + variantDataFrame.getDataFrameByCategory(VariantCategory.SNP_G));
 		return variantDataFrame;
 	}
 

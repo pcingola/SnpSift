@@ -10,8 +10,8 @@
             "request": "launch",
             "mainClass": "org.snpsift.SnpSift",
             "projectName": "SnpSift",
-            "args": "annmem -v -d -create -dbfile '/Users/kqrw311/snpEff/wgs_test/db/clinvar_1000.vcf' -fields 'ID,CLNDN'"
-            // "args": "annmem -v -dbfile '/Users/kqrw311/snpEff/wgs_test/db/clinvar.vcf.gz' -fields 'ID,CLNDN' /Users/kqrw311/snpEff/wgs_test/z.vcf"
+            // "args": "annmem -v -d -create -dbfile '/Users/kqrw311/snpEff/wgs_test/db/clinvar_1000.vcf' -fields 'ID,CLNDN'"
+            "args": "annmem -v -addAnnotated -dbfile '/Users/kqrw311/snpEff/wgs_test/db/clinvar_1000.vcf' -fields 'CLNDN,ID' /Users/kqrw311/snpEff/wgs_test/z.vcf"
             // 
             // "args": "annmem -create -dbfile '/Users/kqrw311/snpEff/wgs_test/db/clinvar.vcf.gz' -fields 'CLNSIG,CLNDN'"
             // "args": "annmem -create -dbfile '/Users/kqrw311/snpEff/wgs_test/db/clinvar.vcf.gz' -fields 'CLNSIG,CLNDN' -dbfile /Users/kqrw311/snpEff/wgs_test/db/dbSnp.151.vcf.gz -fields 'RS,CAF,COMMON' -dbfile '/Users/kqrw311/snpEff/wgs_test/db/cosmic-v92.vcf.gz' -fields 'CNT,LEGACY_ID'"
