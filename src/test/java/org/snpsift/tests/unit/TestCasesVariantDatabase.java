@@ -2,12 +2,14 @@ package org.snpsift.tests.unit;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
+import java.io.File;
 import java.util.stream.Collectors;
 
 import org.junit.jupiter.api.Test;
 import org.snpeff.fileIterator.VcfFileIterator;
 import org.snpeff.interval.Chromosome;
 import org.snpeff.interval.Variant;
+import org.snpeff.vcf.VcfHeaderInfo;
 import org.snpeff.vcf.VcfInfoType;
 import org.snpsift.annotate.mem.VariantCategory;
 import org.snpsift.annotate.mem.dataFrame.DataFrameRow;
@@ -16,6 +18,32 @@ import org.snpsift.annotate.mem.database.VariantDatabase;
 
 public class TestCasesVariantDatabase {
 
+    /**
+     * Compare two databases for a chromosome
+     */
+    void compareDataBases(VariantDatabase dbOri, VariantDatabase dbNew, String chr) {
+        // Load dataframe for chromosome 1
+        var df1Ori = dbOri.get(chr);
+        var df1New = dbNew.get(chr);
+
+        // Compare dataframes in all variant categories
+        for(VariantCategory vc : VariantCategory.values()) {
+            var dfcOri = df1Ori.getDataFrameByCategory(vc);
+            var dfcNew = df1New.getDataFrameByCategory(vc);
+            for(VcfHeaderInfo field: dbOri.getFields()) {
+                var fieldName = field.getId();
+                var colOri = dfcOri.getColumn(fieldName);
+                var colNew = dfcNew.getColumn(fieldName);
+                // Compare size
+                assertEquals(colOri.size(), colNew.size(), "Size of columns should be the same for category " + vc + ", column " + fieldName + ", expected: " + colOri.size() + ", found: " + colNew.size());
+                // Compare values in each entry
+                for(int i=0 ; i < colOri.size(); i++) {
+                    assertEquals(colOri.get(i), colNew.get(i), "Values should be the same for category " + vc + ", column " + fieldName + ", entry " + i + ", expected: " + colOri.get(i) + ", found: " + colNew.get(i));
+                }
+            }
+        }
+    }
+
     VariantDatabase createDb01() {
         // Create some VCF lines, create a string buffer reader and a VcfFileIterator
         var vcfLines = "" //
@@ -23,12 +51,13 @@ public class TestCasesVariantDatabase {
             + "##INFO=<ID=FIELD_INT,Number=1,Type=Integer,Description=\"Test INFO field int\">\n" //
             + "##INFO=<ID=FIELD_FLOAT,Number=1,Type=Float,Description=\"Test INFO field float\">\n" //
             + "##INFO=<ID=FIELD_FLAG,Number=1,Type=Flag,Description=\"Test INFO field flag\">\n" //
-            + "1\t1000\t.\tA\tT\t.\t.\tFIELD_STRING=Value1;FIELD_INT=123;FIELD_FLOAT=3.14\n" //
+            + "1\t1000\tID_1234567\tA\tT\t.\t.\tFIELD_STRING=Value1;FIELD_INT=123;FIELD_FLOAT=3.14\n" //
             ;
 
         // Create a database
-        String[] fieldNames = { "FIELD_STRING", "FIELD_INT", "FIELD_FLOAT", "FIELD_FLAG" };
-        VariantDatabase variantDatabase = new VariantDatabase(null, null, fieldNames);
+        String[] fieldNames = { "FIELD_STRING", "FIELD_INT", "FIELD_FLOAT", "FIELD_FLAG", "ID" };
+        String dbDir = System.getProperty("java.io.tmpdir") + "/snpsift.TestCasesVariantDatabase.createDb01";
+        VariantDatabase variantDatabase = new VariantDatabase(null, dbDir, fieldNames);
         variantDatabase.create(vcfLines);
         return variantDatabase;
     }
@@ -49,7 +78,8 @@ public class TestCasesVariantDatabase {
 
         // Create a database
         String[] fieldNames = { "FIELD_STRING", "FIELD_INT", "FIELD_FLOAT", "FIELD_FLAG" };
-        VariantDatabase variantDatabase = new VariantDatabase(null, null, fieldNames);
+        String dbDir = System.getProperty("java.io.tmpdir") + "/snpsift.TestCasesVariantDatabase.createDb02";
+        VariantDatabase variantDatabase = new VariantDatabase(null, dbDir, fieldNames);
         variantDatabase.create(vcfLines);
         return variantDatabase;
     }
@@ -61,12 +91,27 @@ public class TestCasesVariantDatabase {
             + "##INFO=<ID=FIELD_INT,Number=A,Type=Integer,Description=\"Test INFO field int\">\n" //
             + "##INFO=<ID=FIELD_FLOAT,Number=A,Type=Float,Description=\"Test INFO field float\">\n" //
             + "##INFO=<ID=FIELD_FLAG,Number=A,Type=Flag,Description=\"Test INFO field flag\">\n" //
-            + "1\t1000\t.\tA\tC,G,T\t.\t.\tFIELD_STRING=Value_C,Value_G,Value_T;FIELD_INT=1,2,3;FIELD_FLOAT=1.1,2.2,3.3;FIELD_FLAG\n" //
+            + "1\t1000\tID_1234567.\tA\tC,G,T\t.\t.\tFIELD_STRING=Value_C,Value_G,Value_T;FIELD_INT=1,2,3;FIELD_FLOAT=1.1,2.2,3.3;FIELD_FLAG\n" //
             ;
 
         // Create a database
-        String[] fieldNames = { "FIELD_STRING", "FIELD_INT", "FIELD_FLOAT", "FIELD_FLAG" };
-        VariantDatabase variantDatabase = new VariantDatabase(null, null, fieldNames);
+        String[] fieldNames = { "ID", "FIELD_STRING", "FIELD_INT", "FIELD_FLOAT", "FIELD_FLAG" };
+        String dbDir = System.getProperty("java.io.tmpdir") + "/snpsift.TestCasesVariantDatabase.createDb03";
+        VariantDatabase variantDatabase = new VariantDatabase(null, dbDir, fieldNames);
+        variantDatabase.create(vcfLines);
+        return variantDatabase;
+    }
+
+    VariantDatabase createDb04() {
+        // Create some VCF lines, create a string buffer reader and a VcfFileIterator
+        var vcfLines = "" //
+            + "1\t1000\tID_1234567\tA\tT\t.\t.\tFIELD_STRING=Value1;FIELD_INT=123;FIELD_FLOAT=3.14\n" //
+            ;
+
+        // Create a database
+        String[] fieldNames = { "ID" };
+        String dbDir = System.getProperty("java.io.tmpdir") + "/snpsift.TestCasesVariantDatabase.createDb04";
+        VariantDatabase variantDatabase = new VariantDatabase(null, dbDir, fieldNames);
         variantDatabase.create(vcfLines);
         return variantDatabase;
     }
@@ -265,6 +310,44 @@ public class TestCasesVariantDatabase {
           assert(headerSet.contains("ZZZ_FIELD_INT"));
           assert(headerSet.contains("ZZZ_FIELD_FLOAT"));
           assert(headerSet.contains("ZZZ_FIELD_FLAG"));
-      }
-  
+    }
+
+    @Test
+    public void testCount10CreateAndAnnotate() {
+        var variantDatabase = createDb04();
+
+        // Set the fields we want to annotate
+        String[] fieldNames = { "ID" };
+        variantDatabase.setFieldNamesAnnotate(fieldNames);
+        
+        // Annotate a VCF line
+        var vcfLines = "1\t1000\t.\tA\tT\t.\t.\t.\n";
+        var vcfEntry = VcfFileIterator.fromString(vcfLines).next();
+        System.out.println("VCF ENTRY BEFORE: " + vcfEntry);
+        variantDatabase.annotate(vcfEntry);
+        System.out.println("VCF ENTRY AFTER: " + vcfEntry);
+        // Check values
+        assertEquals("ID_1234567", vcfEntry.getInfo("ID"));
+    }
+
+    @Test
+    public void testCount11SaveAndLoad() {
+        // Create and save database
+        var variantDatabase = createDb01();
+        System.out.println(variantDatabase);
+        System.out.println("Saving df:" + variantDatabase.saveCurrentDataFrame());
+        variantDatabase.save();
+
+        // Load database
+        var dbDir = variantDatabase.getDbDir();
+        String[] fields = { "FIELD_STRING", "FIELD_INT", "FIELD_FLOAT", "FIELD_FLAG", "ID" };
+        var varDb = new VariantDatabase("", dbDir, fields, null, false);
+        varDb.load();
+
+        // Compare databases for chromosome 1
+        compareDataBases(variantDatabase, varDb, "1");
+
+        // Clean up (delete temporary directory 'dbDir')
+        new File(dbDir).delete();
+   }
 }

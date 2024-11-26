@@ -43,7 +43,8 @@ public class VariantTypeCounter implements Serializable {
         // Create a map of names to types
         Fields fields = new Fields();
         for(VcfHeaderInfo vi : vcfHeader.getVcfHeaderInfo()) {
-            if( ! vi.isImplicit() ) fields.add(vi);
+			if(vi.isImplicit() && ! Fields.VCF_COLUMN_FIELD_NAMES.contains(vi.getId())) continue;
+            fields.add(vi);
         }
 
         // Create a variant type counter and count variants
@@ -89,7 +90,7 @@ public class VariantTypeCounter implements Serializable {
 			countByCategory[variantCategoryOrd]++;
 			// Size of each 'string' field
 			for(var fieldName: fieldsString) {
-				var fieldValue = vcfEntry.getInfo(fieldName);
+				var fieldValue = Fields.getFieldValueString(fieldName, vcfEntry);
 				updateSizes(variantCategory, fieldName, fieldValue);
 			}
 			// Size of REF and ALT

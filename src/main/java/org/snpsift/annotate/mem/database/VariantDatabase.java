@@ -14,6 +14,7 @@ import org.snpeff.vcf.VcfEntry;
 import org.snpeff.vcf.VcfHeaderEntry;
 import org.snpsift.annotate.mem.Fields;
 import org.snpsift.annotate.mem.SortedVariantsVcfIterator;
+import org.snpsift.annotate.mem.VariantCategory;
 import org.snpsift.annotate.mem.variantTypeCounter.VariantTypeCounters;
 import org.snpsift.util.ShowProgress;
 
@@ -30,6 +31,7 @@ public class VariantDatabase {
 	public static final String VARIANT_DATABASE_EXT = "snpsift.vardb";	// Database file extension
 	public static final String VARIANT_DATAFRAME_EXT = "snpsift.df";	// Database file extension
 	public static final String FIELDS_EXT = "snpsift.db_fields";	// Fields file
+	
 
 	String chr; // Current chromosome
 	Marker currentInterval; // Current interval
@@ -92,7 +94,7 @@ public class VariantDatabase {
 		var chr = variantVcfEntry.getChromosomeName();
 		if(!chr.equals(this.chr)) {
 			// Different chromosome? => Save current database and create a new one
-			if(variantDataFrame != null) variantDataFrame.save(dbDir + "/" + this.chr + '.' + VARIANT_DATAFRAME_EXT);
+			saveCurrentDataFrame();
 			this.chr = chr;
 			var vcounter = variantTypeCounters.get(chr);
 			if(vcounter == null) throw new RuntimeException("Cannot find variant type counters for chromosome: '" + chr + "'");
@@ -161,7 +163,7 @@ public class VariantDatabase {
 		createFromVcf(sortedVariants);
 		sortedVariants.close();
 		// Make sure we save the last dataFrame
-		if(variantDataFrame != null) variantDataFrame.save(dbDir + "/" + chr + '.' + VARIANT_DATAFRAME_EXT);
+		saveCurrentDataFrame();
 		// Save some database parameters
 		save();
 	}
@@ -192,6 +194,7 @@ public class VariantDatabase {
 		if( verbose ) Log.info("Loading data frame from file: " + variantDataFrameFile);
 		variantDataFrame = VariantDataFrame.load(chr, variantDataFrameFile, emptyIfNotFound);
 		variantDataFrame.setPrefix(prefix); // Propagate prefix to the df
+		System.err.println("VariantDatabase.get(SNP_G): variantDataFrame = " + variantDataFrame.getDataFrameByCategory(VariantCategory.SNP_G));
 		return variantDataFrame;
 	}
 
@@ -237,7 +240,7 @@ public class VariantDatabase {
 		// For each field in the VCF header, decide which column type we'll use
 		for(var vcfInfo : vcfHeader.getVcfHeaderInfo()) {
 			// Skip implicit fields
-			if(vcfInfo.isImplicit()) continue;
+			if(vcfInfo.isImplicit() && ! Fields.VCF_COLUMN_FIELD_NAMES.contains(vcfInfo.getId())) continue;
 			// Check if field name is in the list of fields to extract. if not found, skip this field
 			if(! fieldNamesSet.contains(vcfInfo.getId())) continue;
 			// Add field
@@ -249,6 +252,18 @@ public class VariantDatabase {
 
 	public void save() {
 		fields.save(dbDir + "/fields." + FIELDS_EXT);
+	}
+
+	public String saveCurrentDataFrame() {
+		if(variantDataFrame != null) {
+			// Create dbDir if it does not exist
+			var dir = new File(dbDir);
+			if(!dir.exists()) dir.mkdirs();
+			String fileName = dbDir + "/" + this.chr + '.' + VARIANT_DATAFRAME_EXT;
+			variantDataFrame.save(fileName);
+			return fileName;
+		}
+		return null;
 	}
 
 	public void setDbDir(String dbDir) {

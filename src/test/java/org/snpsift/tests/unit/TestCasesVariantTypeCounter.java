@@ -13,7 +13,7 @@ public class TestCasesVariantTypeCounter {
             + "##INFO=<ID=FIELD_STRING,Number=1,Type=String,Description=\"Test INFO field string\">\n" //
             + "##INFO=<ID=FIELD_INT,Number=1,Type=Integer,Description=\"Test INFO field int\">\n" //
             + "##INFO=<ID=FIELD_FLOAT,Number=1,Type=Float,Description=\"Test INFO field float\">\n" //
-            + "1\t1000\t.\tA\tT\t.\t.\tFIELD_STRING=Value1;FIELD_INT=123;FIELD_FLOAT=3.14\n" //
+            + "1\t1000\t\tA\tT\t.\t.\tFIELD_STRING=Value1;FIELD_INT=123;FIELD_FLOAT=3.14\n" //
             ;
         VariantTypeCounter variantTypeCounter = VariantTypeCounter.countVariants(vcfLines);
 
@@ -121,5 +121,32 @@ public class TestCasesVariantTypeCounter {
         assertEquals(7, variantTypeCounter.getSize(VariantCategory.SNP_G, "FIELD_STRING"));
         assertEquals(7, variantTypeCounter.getSize(VariantCategory.SNP_T, "FIELD_STRING"));
     }
+
+    @Test
+    public void testCount06Snp() {
+        // Create some VCF lines that have 'ID' field
+        var vcfLines = "" //
+            + "##INFO=<ID=FIELD_STRING,Number=1,Type=String,Description=\"Test INFO field string\">\n" //
+            + "##INFO=<ID=FIELD_INT,Number=1,Type=Integer,Description=\"Test INFO field int\">\n" //
+            + "##INFO=<ID=FIELD_FLOAT,Number=1,Type=Float,Description=\"Test INFO field float\">\n" //
+            + "1\t1000\tID_1234567\tA\tT\t.\t.\tFIELD_STRING=Value1;FIELD_INT=123;FIELD_FLOAT=3.14\n" //
+            ;
+        VariantTypeCounter variantTypeCounter = VariantTypeCounter.countVariants(vcfLines);
+
+        assertEquals(1, variantTypeCounter.getCount(VariantCategory.SNP_T));
+        // No counter for other categories
+        assertEquals(0, variantTypeCounter.getCount(VariantCategory.SNP_A));
+        assertEquals(0, variantTypeCounter.getCount(VariantCategory.SNP_C));
+        assertEquals(0, variantTypeCounter.getCount(VariantCategory.SNP_G));
+        assertEquals(0, variantTypeCounter.getCount(VariantCategory.INS));
+        assertEquals(0, variantTypeCounter.getCount(VariantCategory.DEL));
+        assertEquals(-1, variantTypeCounter.getSize(VariantCategory.SNP_T, "FIELD_INT"));
+        assertEquals(-1, variantTypeCounter.getSize(VariantCategory.SNP_T, "FIELD_FLOAT"));
+        assertEquals(6, variantTypeCounter.getSize(VariantCategory.SNP_T, "FIELD_STRING"));
+        assertEquals(1, variantTypeCounter.getSize(VariantCategory.SNP_T, VariantTypeCounter.REF));
+        assertEquals(1, variantTypeCounter.getSize(VariantCategory.SNP_T, VariantTypeCounter.ALT));
+        assertEquals(10, variantTypeCounter.getSize(VariantCategory.SNP_T, "ID"));
+    }
+
 
 }

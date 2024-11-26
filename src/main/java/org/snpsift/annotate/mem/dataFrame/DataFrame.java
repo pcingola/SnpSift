@@ -31,7 +31,7 @@ public class DataFrame implements Serializable {
 	VariantTypeCounter variantTypeCounter;
 	VariantCategory variantCategory;
 	int currentIdx = 0;	// Current index
-	PosIndex posIndex;	// Index by position (i.e. chromosome position is transformed into a "column / array index")
+	PosIndex posIndex;	// Index by position (i.e. chromosome position is transformed into a "array index")
 	StringArray refs;	// Reference allele.
 	StringArray alts;	// Alternative allele.
 	Map<String, DataFrameColumn<?>> columns;	// Data columns

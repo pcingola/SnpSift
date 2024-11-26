@@ -10,9 +10,6 @@ import org.snpeff.interval.Variant;
 import org.snpeff.util.Log;
 import org.snpeff.vcf.VariantVcfEntry;
 import org.snpeff.vcf.VcfEntry;
-import org.snpeff.vcf.VcfHeaderInfo;
-import org.snpeff.vcf.VcfInfoType;
-import org.snpeff.vcf.VcfHeaderInfo.VcfInfoNumber;
 import org.snpsift.annotate.mem.dataFrame.DataFrame;
 import org.snpsift.annotate.mem.dataFrame.DataFrameDel;
 import org.snpsift.annotate.mem.dataFrame.DataFrameIns;
@@ -40,7 +37,6 @@ public class VariantDataFrame implements Serializable {
 	DataFrame dataFrames[]; // Each dataFrame indexed by variant type
 	String prefix; // Prefix for inf field names added
 	VariantTypeCounter variantTypeCounter;
-
 
 	public static VariantDataFrame load(String chr, String fileName, boolean emptyIfNotFound) {
 		// Deserialize data from a file
@@ -86,11 +82,13 @@ public class VariantDataFrame implements Serializable {
 		var dataFrame = getDataFrameByVariantType(variantVcfEntry);
 		if(dataFrame == null) throw new RuntimeException("Cannot find data frame for variant: " + variantVcfEntry.toString());
 		DataFrameRow row = new DataFrameRow(dataFrame, variantVcfEntry.getStart(), variantVcfEntry.getReference(), variantVcfEntry.getAlt());
-		// Add fields
+		// Add fields to the row
 		for(var field : fields) {
-			Object value = getFieldValue(field, variantVcfEntry);
+			Object value = Fields.getFieldValue(field, variantVcfEntry);
+			Log.debug("Adding field '" + field.getId() + "' = " + value);
 			row.set(field.getId(), value);
 		}
+		// Add row to dataFrame
 		try {
 			dataFrame.add(row);
 		} catch (Exception e) {
@@ -147,52 +145,6 @@ public class VariantDataFrame implements Serializable {
 	public void check() {
 		for(var dataFrame : dataFrames) {
 			dataFrame.check();
-		}
-	}
-
-	/**
-	 * Get a field value from a VCF entry
-	 */
-	Object getFieldValue(VcfHeaderInfo vcfHeaderInfo, VariantVcfEntry varVcfEntry) {
-		var type = vcfHeaderInfo.getVcfInfoType();
-		var vcfEntry = varVcfEntry.getVcfEntry();
-		String valueStr;
-		// Do we need to annotate for a specific "ALT"?
-		var vin = vcfHeaderInfo.getVcfInfoNumber();
-		// Get 'ALT' dependent values?
-		if((vin == VcfInfoNumber.ALLELE || vin == VcfInfoNumber.ALL_ALLELES)	// Is this a field that depends on the ALT?
-			&& (type != VcfInfoType.Flag)	// 'Flag' fields are either present or not, so they are not dependent on the ALT
-			) {
-			valueStr = vcfEntry.getInfo(vcfHeaderInfo.getId(), varVcfEntry.getAlt());
-		} else {
-			valueStr = vcfEntry.getInfo(vcfHeaderInfo.getId());
-		}
-		// Convert the value to the appropriate type (handle missing values)
-		switch(type) {
-			case Flag:
-				return (valueStr != null); // Flag is present
-			case Integer:
-				if (valueStr == null) return null;
-				try {
-					return Integer.parseInt(valueStr);
-				} catch (Exception e) {
-					Log.warning("Could not pase field '" + vcfHeaderInfo.getId() + "', value '" + valueStr + "' as integer for field '" + vcfHeaderInfo.getId() + "' in VCF entry: " + vcfEntry.getChromosomeNameOri() + ":" + (vcfEntry.getStart() + 1));
-					return null;
-				}
-			case Float:
-				if (valueStr == null) return null;
-				try {
-					return Double.parseDouble(valueStr);
-				} catch (Exception e) {
-					Log.warning("Could not pase field '" + vcfHeaderInfo.getId() + "', value '" + valueStr + "' as float for field '" + vcfHeaderInfo.getId() + "' in VCF entry: " + vcfEntry.getChromosomeNameOri() + ":" + (vcfEntry.getStart() + 1));
-					return null;
-				}				
-			case Character:
-				return (valueStr != null) && valueStr.length() > 0 ? valueStr.charAt(0) : null;
-			case String:
-				return valueStr;
-			default:
-				throw new RuntimeException("Unimplemented type: " + type);
 		}
 	}
 
