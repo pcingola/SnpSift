@@ -3,9 +3,18 @@ package org.snpsift.annotate.mem.arrays;
 import java.io.Serializable;
 import java.util.Iterator;
 
+
 /**
- * Implement a memory efficient array of strings
- * It only stores bytes (i.e. UTF-8 encoding) and uses a single byte to mark the end of a string ('\0')
+ * Abstract base class for a string array that supports iteration and serialization.
+ * This class provides a framework for managing a collection of strings with methods to add, get, and set elements.
+ * 
+ * The class maintains an internal index to keep track of the current position in the array.
+ * It also provides an iterator to traverse the elements in the array.
+ * 
+ * Limitations:
+ *   - The class is abstract and requires concrete implementations to define the storage mechanism for the strings.
+ *   - The 'add' and 'set' methods are not intended to be used together; typically, you should use one or the other.
+ *   - The size of the array is managed by the implementing class, and the memory size calculation is approximate.
  */
 public abstract class StringArrayBase implements Iterable<String>, Serializable {
 

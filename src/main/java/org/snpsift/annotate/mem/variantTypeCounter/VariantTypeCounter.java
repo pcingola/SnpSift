@@ -15,8 +15,18 @@ import org.snpsift.annotate.mem.Fields;
 import org.snpsift.annotate.mem.VariantCategory;
 
 /**
- * Count different types of variants
- * These statistics are used to create data sets
+ * VariantTypeCounter is a class that counts the number of variants in a VCF (Variant Call Format) file.
+ * It also keeps track of the total size (in bytes) of specific fields for each variant category.
+ * 
+ * The class works by iterating through VCF entries and counting the number of variants and their sizes.
+ * It categorizes variants and maintains counts and sizes for each category.
+ * 
+ * Non-obvious limitations:
+ * - The class only tracks the size of fields that are of type String.
+ * - The size of the fields is calculated in bytes using UTF-8 encoding.
+ * - The class assumes that the VCF file contents are provided as a string for testing purposes.
+ * - The class does not handle non-string fields for size calculations.
+ * - The class does not handle multi-threaded access and is not thread-safe.
  */
 public class VariantTypeCounter implements Serializable {
 

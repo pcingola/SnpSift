@@ -28,6 +28,53 @@ import org.snpsift.annotate.mem.VariantCategory;
  * 
  * We create an "DataFrame" for each variant type: SNP(A), SNP(C), SNP(G), SNP(T), INS, DEL, MNP, MIXED, OTHER.
  * Each DataFrame is indexed by chromosome position. DataFrames have columns for each field to annotate.
+ * 
+ * The `VariantDataFrame` class represents a data structure for storing and annotating variant data indexed by variant type and chromosome position.
+ * 
+ * This class manages multiple `DataFrame` objects, each corresponding to a different variant type (e.g., SNP, INS, DEL, MNP, MIXED, OTHER).
+ * Each `DataFrame` is indexed by chromosome position and contains columns for various fields to annotate.
+ * 
+ * Key functionalities of this class include:
+ * 
+ * - Loading and saving `VariantDataFrame` objects from/to files.
+ * - Adding variant data to the appropriate `DataFrame`.
+ * - Annotating VCF entries with fields from the `VariantDataFrame`.
+ * - Checking the integrity of the data frames.
+ * - Resizing and optimizing memory usage of the data frames.
+ * 
+ * The class also provides methods to set a prefix for field names, calculate the total memory size of the data frames, and generate a string representation of the `VariantDataFrame`.
+ * 
+ * The class implements `Serializable` to allow for serialization and deserialization of its instances.
+ * 
+ * Example usage:
+ * 
+ * - Load a `VariantDataFrame` from a file:
+ *   `VariantDataFrame vd = VariantDataFrame.load(chr, fileName, emptyIfNotFound);`
+ * 
+ * - Add a variant to the `VariantDataFrame`:
+ *   `vd.add(variantVcfEntry);`
+ * 
+ * - Annotate a VCF entry:
+ *   `int found = vd.annotate(vcfEntry, fieldNames);`
+ * 
+ * - Save the `VariantDataFrame` to a file:
+ *   `vd.save(fileName);`
+ * 
+ * - Check the integrity of the data frames:
+ *   `vd.check();`
+ * 
+ * - Resize and optimize memory usage:
+ *   `vd.resize();`
+ * 
+ * - Set a prefix for field names:
+ *   `vd.setPrefix(prefix);`
+ * 
+ * - Get the total memory size of the data frames:
+ *   `long size = vd.sizeBytes();`
+ * 
+ * - Get a string representation of the `VariantDataFrame`:
+ *   `String str = vd.toString();`
+ * 
  */
 public class VariantDataFrame implements Serializable {
 

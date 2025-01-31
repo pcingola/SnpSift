@@ -4,8 +4,27 @@ import java.io.Serializable;
 import java.util.Arrays;
 
 /**
- * A "memory efficient" boolean array
- * Is is implemented as an array of bytes, where each bit is a boolean value.
+ * BoolArray is a class that provides a compact representation of a boolean array using a byte array.
+ * Each bit in the byte array represents a boolean value, allowing for efficient storage and manipulation
+ * of boolean values.
+ * 
+ * The class supports operations to set, clear, and check boolean values at specific indices, as well as
+ * methods to fill the array with true values, reset the array to false values, and get the size of the array
+ * in both bits and bytes.
+ * 
+ * The boolean values are stored in a byte array, where each bit in a byte represents a boolean value.
+ * The index of the boolean value is used to determine the corresponding byte and bit position within that byte.
+ * 
+ * Methods:
+ * - BoolArray(int size): Constructor to initialize the byte array with the specified size in bits.
+ * - void clear(int i): Clears the boolean value at the specified index (sets it to false).
+ * - void fill(): Sets all boolean values in the array to true.
+ * - boolean is(int i): Checks if the boolean value at the specified index is true.
+ * - void set(int i): Sets the boolean value at the specified index to true.
+ * - void set(int i, boolean value): Sets the boolean value at the specified index to the specified value.
+ * - void reset(): Resets all boolean values in the array to false.
+ * - int size(): Returns the size of the array in bits.
+ * - int sizeBytes(): Returns the size of the array in bytes.
  */
 public class BoolArray implements Serializable {
 

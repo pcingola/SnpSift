@@ -1,3 +1,4 @@
+
 package org.snpsift.annotate.mem.arrays;
 
 import java.nio.charset.StandardCharsets;
@@ -5,8 +6,20 @@ import java.util.Arrays;
 import java.util.Collection;
 
 /**
- * Implement a memory efficient array of strings
- * It only stores bytes (i.e. UTF-8 encoding) and uses a single byte to mark the end of a string ('\0')
+ * The StringArray class implements a memory-efficient array of strings.
+ * It stores strings as bytes in a byte array, using UTF-8 encoding, and uses a single byte to mark the end of a string ('\0').
+ * 
+ * This class provides methods to calculate the size of strings in memory, create StringArray instances from arrays or collections of strings, 
+ * and retrieve or set strings at specific indices. The internal data structure uses a byte array to store the string data and an integer array 
+ * to map array indices to offsets in the byte array.
+ * 
+ * Limitations:
+ * 
+ * - The class does not support dynamic resizing of the internal byte array, so the initial size must be sufficient to store all strings.
+ * - Once a string is set at a specific index, it cannot be changed or removed.
+ * - The class is not thread-safe and should be used with caution in concurrent environments.
+ * - Adding strings beyond the allocated memory will result in a runtime exception.
+ * 
  */
 public class StringArray extends StringArrayBase {
 

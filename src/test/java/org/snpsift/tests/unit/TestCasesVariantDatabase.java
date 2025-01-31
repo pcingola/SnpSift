@@ -271,7 +271,6 @@ public class TestCasesVariantDatabase {
         var vcfLines = "1\t1000\t.\tA\tT\t.\t.\t.\n";
         var vcfEntry = VcfFileIterator.fromString(vcfLines).next();
         variantDatabase.annotate(vcfEntry);
-        System.out.println(vcfEntry);
         // Check values
         assertEquals("Value1", vcfEntry.getInfo("ZZZ_FIELD_STRING"));
         assertEquals("3.14", vcfEntry.getInfo("ZZZ_FIELD_FLOAT"));
@@ -289,7 +288,6 @@ public class TestCasesVariantDatabase {
         assertEquals(5, headers.size());
         // Convert headers to a Set<String>
         var headerSet = headers.stream().map(h -> h.getId()).collect(Collectors.toSet());
-        System.out.println(headerSet);
         assert(headerSet.contains("FIELD_STRING"));
         assert(headerSet.contains("FIELD_INT"));
         assert(headerSet.contains("FIELD_FLOAT"));
@@ -305,7 +303,6 @@ public class TestCasesVariantDatabase {
           assertEquals(5, headers.size());
           // Convert headers to a Set<String>
           var headerSet = headers.stream().map(h -> h.getId()).collect(Collectors.toSet());
-          System.out.println(headerSet);
           assert(headerSet.contains("ZZZ_FIELD_STRING"));
           assert(headerSet.contains("ZZZ_FIELD_INT"));
           assert(headerSet.contains("ZZZ_FIELD_FLOAT"));
@@ -323,9 +320,7 @@ public class TestCasesVariantDatabase {
         // Annotate a VCF line
         var vcfLines = "1\t1000\t.\tA\tT\t.\t.\t.\n";
         var vcfEntry = VcfFileIterator.fromString(vcfLines).next();
-        System.out.println("VCF ENTRY BEFORE: " + vcfEntry);
         variantDatabase.annotate(vcfEntry);
-        System.out.println("VCF ENTRY AFTER: " + vcfEntry);
         // Check values
         assertEquals("ID_1234567", vcfEntry.getInfo("ID"));
     }
@@ -334,8 +329,6 @@ public class TestCasesVariantDatabase {
     public void testCount11SaveAndLoad() {
         // Create and save database
         var variantDatabase = createDb01();
-        System.out.println(variantDatabase);
-        System.out.println("Saving df:" + variantDatabase.saveCurrentDataFrame());
         variantDatabase.save();
 
         // Load database

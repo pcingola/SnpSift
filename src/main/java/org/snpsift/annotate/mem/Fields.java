@@ -24,6 +24,26 @@ import org.snpeff.vcf.VcfHeaderInfo;
 import org.snpeff.vcf.VcfHeaderInfo.VcfInfoNumber;
 import org.snpeff.vcf.VcfInfoType;
 
+/**
+ * The Fields class represents a collection of VCF (Variant Call Format) header information fields.
+ * These Fields are stored in VariantDatabase / VariantDataFrame objects, that are used to annotate VCF files.
+ * 
+ * It provides methods to manipulate and retrieve field values from VCF entries.
+ * 
+ * This class implements the Iterable interface to allow iteration over VcfHeaderInfo objects.
+ * It also implements Serializable to allow instances to be serialized and deserialized.
+ * 
+ * Fields are stored in a Map with their names as keys and VcfHeaderInfo objects as values.
+ * The class provides methods to add fields, retrieve field values, and save/load the Fields object to/from a file.
+ * 
+ * Limitations:
+ * - The class cannot use REF/ALT fields directly because they are used to separate variant types in the database.
+ * - INFO and FORMAT fields are not appropriate to be stuffed into an INFO field.
+ * - The class assumes that certain VCF columns (e.g., CHROM, POS, ID, QUAL, FILTER) are implicitly present and handles them separately.
+ * - The getFieldValue method handles different VCF info types (Flag, Integer, Float, Character, String) and converts values accordingly.
+ * - The class does not handle all possible VCF info types and throws a RuntimeException for unimplemented types.
+ */
+
 public class Fields implements Iterable<VcfHeaderInfo>, Serializable {
 
 	private static final long serialVersionUID = 2024092801L;

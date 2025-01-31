@@ -1,3 +1,4 @@
+
 package org.snpsift.annotate.mem.arrays;
 
 import java.util.ArrayList;
@@ -5,9 +6,30 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
+
 /**
- * Implement a memory efficient array of enums
- * It only stores bytes (i.e. UTF-8 encoding) and uses a single byte to mark the end of a string ('\0')
+ * The EnumArray class is a specialized array for storing and managing strings as enumerated values.
+ * It uses a byte array to store the ordinal values of the strings, which are mapped to their corresponding
+ * string values using two data structures: an ArrayList for ordinal-to-string mapping and a HashMap for
+ * string-to-ordinal mapping.
+ * 
+ * The class provides methods to add strings to the array, retrieve strings by their index, and manage
+ * the internal mappings between strings and their ordinal values. It also includes methods to get the
+ * size of the array and the approximate memory size of the object.
+ * 
+ * Key features:
+ * - Stores strings as enumerated values using a byte array.
+ * - Supports up to 255 unique strings.
+ * - Provides methods to add, retrieve, and manage strings in the array.
+ * - Ensures consistency between the ordinal-to-string and string-to-ordinal mappings.
+ * - Converts null strings to empty strings when adding to the array.
+ * 
+ * Usage:
+ * - Use the constructor to initialize the array with a specified number of elements or an array of strings.
+ * - Use the addEnum method to add a new string and get its ordinal value.
+ * - Use the get method to retrieve a string by its index.
+ * - Use the set method to add or update a string at a specific index.
+ * - Use the size and sizeBytes methods to get the size of the array and the approximate memory size of the object.
  */
 public class EnumArray extends StringArrayBase {
     private static final long serialVersionUID = 2024080900L;

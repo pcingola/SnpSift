@@ -4,9 +4,18 @@ import org.snpsift.annotate.mem.VariantCategory;
 import org.snpsift.annotate.mem.variantTypeCounter.VariantTypeCounter;
 
 /**
- * A set of DataColumns specific SNP 'alt'  (e.g. Data for SNP "N -> A")
- * A set of DataColumns, indexed by position.
- * This is used to store data for a chromosome
+ * The DataFrameSnp class extends the DataFrame class and represents a specific type of data frame
+ * that deals with single nucleotide polymorphisms (SNPs). Each instance of DataFrameSnp is associated
+ * with a specific alternative allele ('A', 'C', 'G', or 'T') based on the provided variant category.
+ *
+ * This class provides methods to retrieve the alternative allele and to check if a given entry matches
+ * specific position and allele values.
+ *
+ * Limitations:
+ * - The class assumes that the variant category provided during instantiation is one of the SNP categories
+ *   (SNP_A, SNP_C, SNP_G, SNP_T). If an invalid category is provided, a RuntimeException is thrown.
+ * - The eq method assumes that the alternative allele (alt) is always in uppercase. If the provided alt
+ *   parameter in the eq method is not in uppercase, a RuntimeException is thrown.
  */
 public class DataFrameSnp extends DataFrame {
 

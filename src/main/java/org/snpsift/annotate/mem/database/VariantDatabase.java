@@ -14,7 +14,6 @@ import org.snpeff.vcf.VcfEntry;
 import org.snpeff.vcf.VcfHeaderEntry;
 import org.snpsift.annotate.mem.Fields;
 import org.snpsift.annotate.mem.SortedVariantsVcfIterator;
-import org.snpsift.annotate.mem.VariantCategory;
 import org.snpsift.annotate.mem.variantTypeCounter.VariantTypeCounters;
 import org.snpsift.util.ShowProgress;
 
@@ -26,6 +25,19 @@ import org.snpsift.util.ShowProgress;
  * stored in one file per chromosome.
  * 
  * 'VariantDatabase' manages the 'VariantDatabaseChr' files (loading, saving, etc).
+ * 
+ * This class provides methods to:
+ * - Create a variant database from a VCF file or its contents.
+ * - Annotate VCF entries using the database.
+ * - Add VCF entries to the database.
+ * - Check the presence of required fields in the database.
+ * - Load and save the database and its components.
+ * - Handle database directories and file names.
+ * 
+ * The class maintains the current chromosome and interval being processed, and uses a VariantDataFrame to store
+ * the data for the current chromosome. It also uses VariantTypeCounters to count variants per chromosome.
+ * 
+ * The class supports verbose logging and progress display during database creation and annotation.
  */
 public class VariantDatabase {
 	public static final String VARIANT_DATABASE_EXT = "snpsift.vardb";	// Database file extension
