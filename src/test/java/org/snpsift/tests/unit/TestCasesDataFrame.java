@@ -146,7 +146,6 @@ public class TestCasesDataFrame {
             // Add the row to the data frame
             dataFrame.add(dataFrameRow);
         }
-        System.out.println(dataFrame);
 
         // Check data
         var dataFrameExp = new DataFrameMnp(varCounter, variantCategory);
