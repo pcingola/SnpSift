@@ -176,8 +176,8 @@ public class VariantDatabase {
 		sortedVariants.close();
 		// Make sure we save the last dataFrame
 		saveCurrentDataFrame();
-		// Save some database parameters
-		save();
+		// Save database fields
+		saveFields();
 	}
 
 	/**
@@ -261,7 +261,8 @@ public class VariantDatabase {
 		return fields;
 	}
 
-	public void save() {
+	public void saveFields() {
+		(new File(dbDir)).mkdirs();
 		fields.save(dbDir + "/fields." + FIELDS_EXT);
 	}
 

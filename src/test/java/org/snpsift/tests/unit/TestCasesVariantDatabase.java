@@ -56,7 +56,7 @@ public class TestCasesVariantDatabase {
 
         // Create a database
         String[] fieldNames = { "FIELD_STRING", "FIELD_INT", "FIELD_FLOAT", "FIELD_FLAG", "ID" };
-        String dbDir = System.getProperty("java.io.tmpdir") + "/snpsift.TestCasesVariantDatabase.createDb01";
+        String dbDir = System.getProperty("java.io.tmpdir") + "snpsift.TestCasesVariantDatabase.createDb01";
         VariantDatabase variantDatabase = new VariantDatabase(null, dbDir, fieldNames);
         variantDatabase.create(vcfLines);
         return variantDatabase;
@@ -78,7 +78,7 @@ public class TestCasesVariantDatabase {
 
         // Create a database
         String[] fieldNames = { "FIELD_STRING", "FIELD_INT", "FIELD_FLOAT", "FIELD_FLAG" };
-        String dbDir = System.getProperty("java.io.tmpdir") + "/snpsift.TestCasesVariantDatabase.createDb02";
+        String dbDir = System.getProperty("java.io.tmpdir") + "snpsift.TestCasesVariantDatabase.createDb02";
         VariantDatabase variantDatabase = new VariantDatabase(null, dbDir, fieldNames);
         variantDatabase.create(vcfLines);
         return variantDatabase;
@@ -110,7 +110,7 @@ public class TestCasesVariantDatabase {
 
         // Create a database
         String[] fieldNames = { "ID" };
-        String dbDir = System.getProperty("java.io.tmpdir") + "/snpsift.TestCasesVariantDatabase.createDb04";
+        String dbDir = System.getProperty("java.io.tmpdir") + "snpsift.TestCasesVariantDatabase.createDb04";
         VariantDatabase variantDatabase = new VariantDatabase(null, dbDir, fieldNames);
         variantDatabase.create(vcfLines);
         return variantDatabase;
@@ -329,7 +329,8 @@ public class TestCasesVariantDatabase {
     public void testCount11SaveAndLoad() {
         // Create and save database
         var variantDatabase = createDb01();
-        variantDatabase.save();
+        variantDatabase.saveFields();
+        variantDatabase.saveCurrentDataFrame();
 
         // Load database
         var dbDir = variantDatabase.getDbDir();
