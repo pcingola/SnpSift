@@ -25,11 +25,25 @@ import org.snpsift.util.ShowProgress;
  * stored in one file per chromosome.
  * 
  * 'VariantDatabase' manages the 'VariantDatabaseChr' files (loading, saving, etc).
+ * 
+ * This class provides methods to:
+ * - Create a variant database from a VCF file or its contents.
+ * - Annotate VCF entries using the database.
+ * - Add VCF entries to the database.
+ * - Check the presence of required fields in the database.
+ * - Load and save the database and its components.
+ * - Handle database directories and file names.
+ * 
+ * The class maintains the current chromosome and interval being processed, and uses a VariantDataFrame to store
+ * the data for the current chromosome. It also uses VariantTypeCounters to count variants per chromosome.
+ * 
+ * The class supports verbose logging and progress display during database creation and annotation.
  */
 public class VariantDatabase {
 	public static final String VARIANT_DATABASE_EXT = "snpsift.vardb";	// Database file extension
 	public static final String VARIANT_DATAFRAME_EXT = "snpsift.df";	// Database file extension
 	public static final String FIELDS_EXT = "snpsift.db_fields";	// Fields file
+	
 
 	String chr; // Current chromosome
 	Marker currentInterval; // Current interval
@@ -92,7 +106,7 @@ public class VariantDatabase {
 		var chr = variantVcfEntry.getChromosomeName();
 		if(!chr.equals(this.chr)) {
 			// Different chromosome? => Save current database and create a new one
-			if(variantDataFrame != null) variantDataFrame.save(dbDir + "/" + this.chr + '.' + VARIANT_DATAFRAME_EXT);
+			saveCurrentDataFrame();
 			this.chr = chr;
 			var vcounter = variantTypeCounters.get(chr);
 			if(vcounter == null) throw new RuntimeException("Cannot find variant type counters for chromosome: '" + chr + "'");
@@ -161,9 +175,9 @@ public class VariantDatabase {
 		createFromVcf(sortedVariants);
 		sortedVariants.close();
 		// Make sure we save the last dataFrame
-		if(variantDataFrame != null) variantDataFrame.save(dbDir + "/" + chr + '.' + VARIANT_DATAFRAME_EXT);
-		// Save some database parameters
-		save();
+		saveCurrentDataFrame();
+		// Save database fields
+		saveFields();
 	}
 
 	/**
@@ -237,7 +251,7 @@ public class VariantDatabase {
 		// For each field in the VCF header, decide which column type we'll use
 		for(var vcfInfo : vcfHeader.getVcfHeaderInfo()) {
 			// Skip implicit fields
-			if(vcfInfo.isImplicit()) continue;
+			if(vcfInfo.isImplicit() && ! Fields.VCF_COLUMN_FIELD_NAMES.contains(vcfInfo.getId())) continue;
 			// Check if field name is in the list of fields to extract. if not found, skip this field
 			if(! fieldNamesSet.contains(vcfInfo.getId())) continue;
 			// Add field
@@ -247,8 +261,21 @@ public class VariantDatabase {
 		return fields;
 	}
 
-	public void save() {
+	public void saveFields() {
+		(new File(dbDir)).mkdirs();
 		fields.save(dbDir + "/fields." + FIELDS_EXT);
+	}
+
+	public String saveCurrentDataFrame() {
+		if(variantDataFrame != null) {
+			// Create dbDir if it does not exist
+			var dir = new File(dbDir);
+			if(!dir.exists()) dir.mkdirs();
+			String fileName = dbDir + "/" + this.chr + '.' + VARIANT_DATAFRAME_EXT;
+			variantDataFrame.save(fileName);
+			return fileName;
+		}
+		return null;
 	}
 
 	public void setDbDir(String dbDir) {

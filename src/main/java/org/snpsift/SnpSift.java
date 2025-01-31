@@ -88,8 +88,9 @@ public class SnpSift implements VcfAnnotator {
 	 */
 	@Override
 	public boolean addHeaders(VcfFileIterator vcfFile) {
-		for (VcfHeaderEntry hinf : headers())
+		for (VcfHeaderEntry hinf : headers()) {
 			vcfFile.getVcfHeader().add(hinf);
+		}
 
 		return false;
 	}

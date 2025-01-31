@@ -23,6 +23,7 @@ import org.snpsift.util.ShowProgress;
  */
 public class SnpSiftCmdAnnotateDf extends SnpSift {
 
+	boolean addAnnotated; // Add 'ANNOTATED' flag to every INFO field
 	boolean create; // Create database
 	boolean emptyIfNotFound; // If a database file is not found, create an empty database
 	List<String> dbFileNames; // Database file names
@@ -104,9 +105,13 @@ public class SnpSiftCmdAnnotateDf extends SnpSift {
 	@Override
 	public boolean annotate(VcfEntry vcfEntry) {
 		var annotations = 0;
+
 		for(var variantDatabase : variantDatabases) {
 			annotations += variantDatabase.annotate(vcfEntry);
 		}
+
+		// Add 'ANNOTATED' flag?
+		if( addAnnotated ) vcfEntry.addInfo("ANNOTATED", "");	// Add 'ANNOTATED' flag (no value needed)
 
 		// Update counters
 		countVcfEntries++;
@@ -198,6 +203,10 @@ public class SnpSiftCmdAnnotateDf extends SnpSift {
 		// Add headers from all databases
 		for(var db : variantDatabases) 
 			headerInfos.addAll(db.vcfHeaders());
+		// Add 'ANNOTATED' flag
+		if( addAnnotated ) {
+			headerInfos.add(VcfHeaderEntry.factory("##INFO=<ID=ANNOTATED,Number=0,Type=Flag,Description=\"Variant was annotated\">"));
+		}
 		return headerInfos;
 	}
 
@@ -228,6 +237,9 @@ public class SnpSiftCmdAnnotateDf extends SnpSift {
 			// Command line option?
 			if (isOpt(arg)) {
 				switch (arg.toLowerCase()) {
+					case "-addannotated":
+						addAnnotated = true;
+						break;
 					case "-create":
 						create = true;
 						break;
@@ -318,11 +330,13 @@ public class SnpSiftCmdAnnotateDf extends SnpSift {
 		System.err.println("\t             -dbfile database_N.vcf -fields field_1,field_2,...,field_N");
 		System.err.println("\n\tAnnotate:");
 		System.err.println("\t           java -jar " + SnpSift.class.getSimpleName() + ".jar " + command + " \\");
+		System.err.println("\t             [-addAnnotated] \\");
 		System.err.println("\t             -dbfile database_1.vcf -fields field_1,field_2,...,field_N [-prefix prefix_db_1] \\");
 		System.err.println("\t             -dbfile database_2.vcf -fields field_1,field_2,...,field_N [-prefix prefix_db_2] \\");
 		System.err.println("\t             -dbfile database_N.vcf -fields field_1,field_2,...,field_N [-prefix prefix_db_N] ");
 		System.err.println("\t             [input.vcf] > output.vcf \\");
 		System.err.println("\nCommand Options:");
+		System.err.println("\t-addAnnotated                 : When annotating, add 'ANNOTATED' flag to every INFO field (regardless of whether annotations were added or not).");
 		System.err.println("\t-create                       : Create one or more database/s from the VCF file/s using specific field/s for each database.");
 		System.err.println("\t-dbfile file.vcf              : Use VCF file (either to create a database or to annotate).");
 		System.err.println("\t-fields field_1,..,field_N    : Use VCF info fields when creating/annotating. Comma separated list, no spaces.");

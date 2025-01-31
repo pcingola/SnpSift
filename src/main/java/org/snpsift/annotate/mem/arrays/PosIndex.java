@@ -3,7 +3,19 @@ package org.snpsift.annotate.mem.arrays;
 import java.util.Arrays;
 
 /**
- * An index by possition
+ * The PosIndex class is designed to manage and index chromosome positions efficiently converting chromosome positions to zero-based indices.
+ * It stores an array of integer positions and provides methods to manipulate and query these positions.
+ * 
+ * Intended Use:
+ * - This class is used to store chromosome positions and allows for efficient searching and validation.
+ * - It ensures that positions are stored in a non-decreasing order to facilitate binary search operations.
+ * 
+ * How it Works:
+ * - The positions are stored in an integer array, and the size of the array is determined by the number of entries specified during instantiation.
+ * - The class provides methods to set positions, check if positions are sorted, and search for positions using both binary and linear search algorithms.
+ * - The `check` method ensures that all positions are in non-decreasing order.
+ * - The `indexOf` method uses binary search to find the index of a given position (while the `indexOfSlow` method uses a linear search, it's only used for testing and debugging).
+ * - The `size` method returns the number of entries in use, and the `sizeBytes` method returns the approximate memory size of the object in bytes.
  */
 public class PosIndex implements java.io.Serializable {
 	

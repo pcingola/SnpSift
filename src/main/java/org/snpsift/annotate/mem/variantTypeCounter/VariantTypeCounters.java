@@ -15,8 +15,25 @@ import org.snpsift.annotate.mem.Fields;
 import org.snpsift.util.ShowProgress;
 
 /**
- * Variant type counters for each chromosome
-*/
+ * The VariantTypeCounters class is responsible for counting the number of variants in VCF (Variant Call Format) files.
+ * It maintains counters for each chromosome and a counter for all variants combined.
+ * 
+ * The class provides methods to load and save the counters from/to a file, count variants from a VCF file or iterator,
+ * and retrieve counters for specific chromosomes.
+ * 
+ * Usage:
+ * - Create an instance of VariantTypeCounters with or without specifying Fields and verbosity.
+ * - Use the count method to count variants from a VCF file.
+ * - Save the counters to a file using the save method.
+ * - Load the counters from a file using the static load method.
+ * - Retrieve counters for specific chromosomes using the get method.
+ * 
+ * Limitations:
+ * - The class assumes that the VCF file is properly formatted and accessible.
+ * - The class does not handle multi-threaded access; concurrent modifications may lead to inconsistent state.
+ * - The class relies on external classes such as Fields, VariantTypeCounter, VcfFileIterator, VcfEntry, and Log, which are not defined within this class.
+ * - The progress display during counting is managed by the ShowProgress class, which is also not defined within this class.
+ */
 public class VariantTypeCounters {
 
 	Fields fields; // Fields to create or annotate

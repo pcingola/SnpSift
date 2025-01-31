@@ -10,9 +10,6 @@ import org.snpeff.interval.Variant;
 import org.snpeff.util.Log;
 import org.snpeff.vcf.VariantVcfEntry;
 import org.snpeff.vcf.VcfEntry;
-import org.snpeff.vcf.VcfHeaderInfo;
-import org.snpeff.vcf.VcfInfoType;
-import org.snpeff.vcf.VcfHeaderInfo.VcfInfoNumber;
 import org.snpsift.annotate.mem.dataFrame.DataFrame;
 import org.snpsift.annotate.mem.dataFrame.DataFrameDel;
 import org.snpsift.annotate.mem.dataFrame.DataFrameIns;
@@ -31,6 +28,53 @@ import org.snpsift.annotate.mem.VariantCategory;
  * 
  * We create an "DataFrame" for each variant type: SNP(A), SNP(C), SNP(G), SNP(T), INS, DEL, MNP, MIXED, OTHER.
  * Each DataFrame is indexed by chromosome position. DataFrames have columns for each field to annotate.
+ * 
+ * The `VariantDataFrame` class represents a data structure for storing and annotating variant data indexed by variant type and chromosome position.
+ * 
+ * This class manages multiple `DataFrame` objects, each corresponding to a different variant type (e.g., SNP, INS, DEL, MNP, MIXED, OTHER).
+ * Each `DataFrame` is indexed by chromosome position and contains columns for various fields to annotate.
+ * 
+ * Key functionalities of this class include:
+ * 
+ * - Loading and saving `VariantDataFrame` objects from/to files.
+ * - Adding variant data to the appropriate `DataFrame`.
+ * - Annotating VCF entries with fields from the `VariantDataFrame`.
+ * - Checking the integrity of the data frames.
+ * - Resizing and optimizing memory usage of the data frames.
+ * 
+ * The class also provides methods to set a prefix for field names, calculate the total memory size of the data frames, and generate a string representation of the `VariantDataFrame`.
+ * 
+ * The class implements `Serializable` to allow for serialization and deserialization of its instances.
+ * 
+ * Example usage:
+ * 
+ * - Load a `VariantDataFrame` from a file:
+ *   `VariantDataFrame vd = VariantDataFrame.load(chr, fileName, emptyIfNotFound);`
+ * 
+ * - Add a variant to the `VariantDataFrame`:
+ *   `vd.add(variantVcfEntry);`
+ * 
+ * - Annotate a VCF entry:
+ *   `int found = vd.annotate(vcfEntry, fieldNames);`
+ * 
+ * - Save the `VariantDataFrame` to a file:
+ *   `vd.save(fileName);`
+ * 
+ * - Check the integrity of the data frames:
+ *   `vd.check();`
+ * 
+ * - Resize and optimize memory usage:
+ *   `vd.resize();`
+ * 
+ * - Set a prefix for field names:
+ *   `vd.setPrefix(prefix);`
+ * 
+ * - Get the total memory size of the data frames:
+ *   `long size = vd.sizeBytes();`
+ * 
+ * - Get a string representation of the `VariantDataFrame`:
+ *   `String str = vd.toString();`
+ * 
  */
 public class VariantDataFrame implements Serializable {
 
@@ -40,7 +84,6 @@ public class VariantDataFrame implements Serializable {
 	DataFrame dataFrames[]; // Each dataFrame indexed by variant type
 	String prefix; // Prefix for inf field names added
 	VariantTypeCounter variantTypeCounter;
-
 
 	public static VariantDataFrame load(String chr, String fileName, boolean emptyIfNotFound) {
 		// Deserialize data from a file
@@ -86,11 +129,12 @@ public class VariantDataFrame implements Serializable {
 		var dataFrame = getDataFrameByVariantType(variantVcfEntry);
 		if(dataFrame == null) throw new RuntimeException("Cannot find data frame for variant: " + variantVcfEntry.toString());
 		DataFrameRow row = new DataFrameRow(dataFrame, variantVcfEntry.getStart(), variantVcfEntry.getReference(), variantVcfEntry.getAlt());
-		// Add fields
+		// Add fields to the row
 		for(var field : fields) {
-			Object value = getFieldValue(field, variantVcfEntry);
+			Object value = Fields.getFieldValue(field, variantVcfEntry);
 			row.set(field.getId(), value);
 		}
+		// Add row to dataFrame
 		try {
 			dataFrame.add(row);
 		} catch (Exception e) {
@@ -147,52 +191,6 @@ public class VariantDataFrame implements Serializable {
 	public void check() {
 		for(var dataFrame : dataFrames) {
 			dataFrame.check();
-		}
-	}
-
-	/**
-	 * Get a field value from a VCF entry
-	 */
-	Object getFieldValue(VcfHeaderInfo vcfHeaderInfo, VariantVcfEntry varVcfEntry) {
-		var type = vcfHeaderInfo.getVcfInfoType();
-		var vcfEntry = varVcfEntry.getVcfEntry();
-		String valueStr;
-		// Do we need to annotate for a specific "ALT"?
-		var vin = vcfHeaderInfo.getVcfInfoNumber();
-		// Get 'ALT' dependent values?
-		if((vin == VcfInfoNumber.ALLELE || vin == VcfInfoNumber.ALL_ALLELES)	// Is this a field that depends on the ALT?
-			&& (type != VcfInfoType.Flag)	// 'Flag' fields are either present or not, so they are not dependent on the ALT
-			) {
-			valueStr = vcfEntry.getInfo(vcfHeaderInfo.getId(), varVcfEntry.getAlt());
-		} else {
-			valueStr = vcfEntry.getInfo(vcfHeaderInfo.getId());
-		}
-		// Convert the value to the appropriate type (handle missing values)
-		switch(type) {
-			case Flag:
-				return (valueStr != null); // Flag is present
-			case Integer:
-				if (valueStr == null) return null;
-				try {
-					return Integer.parseInt(valueStr);
-				} catch (Exception e) {
-					Log.warning("Could not pase field '" + vcfHeaderInfo.getId() + "', value '" + valueStr + "' as integer for field '" + vcfHeaderInfo.getId() + "' in VCF entry: " + vcfEntry.getChromosomeNameOri() + ":" + (vcfEntry.getStart() + 1));
-					return null;
-				}
-			case Float:
-				if (valueStr == null) return null;
-				try {
-					return Double.parseDouble(valueStr);
-				} catch (Exception e) {
-					Log.warning("Could not pase field '" + vcfHeaderInfo.getId() + "', value '" + valueStr + "' as float for field '" + vcfHeaderInfo.getId() + "' in VCF entry: " + vcfEntry.getChromosomeNameOri() + ":" + (vcfEntry.getStart() + 1));
-					return null;
-				}				
-			case Character:
-				return (valueStr != null) && valueStr.length() > 0 ? valueStr.charAt(0) : null;
-			case String:
-				return valueStr;
-			default:
-				throw new RuntimeException("Unimplemented type: " + type);
 		}
 	}
 

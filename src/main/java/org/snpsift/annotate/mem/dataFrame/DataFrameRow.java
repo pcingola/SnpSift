@@ -5,13 +5,20 @@ import java.util.Iterator;
 import java.util.Map;
 
 /**
- * A DataFrame 'row'.
- * This acts as an intermediate object between a data frame and a row in the data frame.
- * It can:
- * 		- Iterate over all column names in the data frame.
- * 		- Use 'getDataFrame / setDataFrame' to get/set data to/from the dataFrame (lazy evaluation).
- * 		- Use 'getDataFrame / setDataFrame' to get/set data to/from the dataFrame (lazy evaluation).
- * 		- Use 'get' / 'set' to get/set a single value from this intermediate object (not the dataframe)
+ * The DataFrameRow class represents a row in a DataFrame. It implements the Serializable and Iterable<String> interfaces.
+ * Each DataFrameRow object holds a reference to its parent DataFrame, its position, reference allele, alternative allele, 
+ * and an index within the DataFrame. It also maintains a map of values for each column in the DataFrame.
+ *
+ * The class provides methods to:
+ * - Retrieve all data for the row from the DataFrame.
+ * - Get and set values for specific columns.
+ * - Populate the DataFrame with values from the row.
+ * - Iterate over the column names of the DataFrame.
+ *
+ * Non-obvious limitations:
+ * - The values map is lazily initialized when getDataFrameValues() is called for the first time.
+ * - The get() method assumes that the values map has been populated, either by calling getDataFrameValues() or by setting values explicitly.
+ * - The setDataFrame() methods update the DataFrame with values from the row, but do not automatically synchronize changes made directly to the DataFrame.
  */
 public class DataFrameRow implements java.io.Serializable,Iterable<String> {
 

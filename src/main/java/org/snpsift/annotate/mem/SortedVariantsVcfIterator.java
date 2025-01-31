@@ -15,11 +15,34 @@ import org.snpeff.vcf.VcfEntry;
 
 /**
  * This is a class that reads a VCF file and returns the variants in sorted order.
+ * 
+ * The SortedVariantsVcfIterator class provides an iterator to traverse through
+ * VCF (Variant Call Format) entries in a sorted manner. It implements both
+ * Iterator and Iterable interfaces for VariantVcfEntry objects.
+ *
+ * This class reads VCF entries from a file or a string containing VCF lines,
+ * and ensures that the variants are returned in a sorted order based on their
+ * positions. It uses a priority queue (min-heap) to keep track of the next
+ * variant to be returned.
+ *
+ * How it works:
  * It uses a min heap to keep track of the next variant to be returned.
  * The min heap is populated with the first variant from each chromosome.
  * The next variant to be returned is the one with the smallest position.
  * When a variant is returned, the min heap is updated with the next variant from the same chromosome.
  * The process continues until all variants have been returned.
+ * 
+ * The class handles edge cases such as:
+ * - Variants from different chromosomes.
+ * - Ensuring that the VCF file is sorted.
+ * - Handling pending VcfEntries that belong to a different chromosome.
+ *
+ * Limitations:
+ * - The VCF file must be sorted by chromosome and position. If the file is not
+ *   sorted, a RuntimeException will be thrown.
+ * - The class assumes that the input VCF lines or file are in a valid format.
+ * - The class does not handle multi-threaded access and should be used in a
+ *   single-threaded context.
  */
 public class SortedVariantsVcfIterator implements Iterator<VariantVcfEntry>, Iterable<VariantVcfEntry> {
 

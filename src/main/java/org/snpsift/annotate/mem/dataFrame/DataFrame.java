@@ -1,3 +1,5 @@
+/**
+ */
 package org.snpsift.annotate.mem.dataFrame;
 
 import java.io.Serializable;
@@ -19,8 +21,43 @@ import org.snpsift.annotate.mem.variantTypeCounter.VariantTypeCounter;
 import org.snpsift.util.FormatUtil;
 
 /**
- * A set of DataColumns, indexed by position
- * This is used to store data for a chromosome
+ * A set of DataColumns, indexed by position.
+ * This class is used to store data for a chromosome.
+ * 
+ * The DataFrame class manages a collection of data columns, each represented by a DataFrameColumn object.
+ * It provides methods to add rows, retrieve rows, and perform various operations on the data.
+ * 
+ * The data is indexed by position using a PosIndex object, and can optionally include reference and alternative alleles.
+ * The class also supports creating columns based on VCF header information and resizing the data for memory optimization.
+ * 
+ * The main components of the DataFrame class are:
+ * - VariantTypeCounter variantTypeCounter: Keeps track of variant types and their counts.
+ * - VariantCategory variantCategory: Represents the category of variants.
+ * - int currentIdx: The current index for adding new rows.
+ * - PosIndex posIndex: Indexes the data by chromosome position.
+ * - StringArray refs: Stores reference alleles.
+ * - StringArray alts: Stores alternative alleles.
+ * - Map<String, DataFrameColumn<?>> columns: A map of column names to DataFrameColumn objects.
+ * - Fields fields: Represents the fields to create or annotate.
+ * 
+ * The class provides the following key methods:
+ * - add(String name, DataFrameColumn<?> column): Adds a column to the DataFrame.
+ * - add(DataFrameRow row): Adds a row to the DataFrame.
+ * - check(): Checks the integrity of the data.
+ * - columnNames(): Returns an iterable of column names.
+ * - createColumn(VcfHeaderInfo vcfHeaderInfo): Creates a column based on VCF header information.
+ * - createColumns(): Creates columns based on the fields.
+ * - eq(int idx, int pos, String ref, String alt): Checks if the entry at the given index matches the specified position, reference, and alternative alleles.
+ * - get(String columnName, int idx): Retrieves data from a column by index.
+ * - getColumn(String name): Retrieves a column by name.
+ * - getRow(int pos, String ref, String alt): Retrieves a row based on position, reference, and alternative alleles.
+ * - find(int pos, String ref, String alt): Finds the index of a row based on position, reference, and alternative alleles.
+ * - hasEntry(int pos, String ref, String alt): Checks if an entry exists for the specified position, reference, and alternative alleles.
+ * - resize(): Resizes and optimizes the memory usage of the data.
+ * - set(String columnName, int idx, Object value): Sets data in a column.
+ * - sizeBytes(): Returns the memory size of the DataFrame.
+ * - stringArrayMemSize(VariantCategory variantCategory, String field): Calculates the memory size for a string array.
+ * - toString(): Returns a string representation of the DataFrame.
  */
 public class DataFrame implements Serializable {
 
@@ -31,7 +68,7 @@ public class DataFrame implements Serializable {
 	VariantTypeCounter variantTypeCounter;
 	VariantCategory variantCategory;
 	int currentIdx = 0;	// Current index
-	PosIndex posIndex;	// Index by position (i.e. chromosome position is transformed into a "column / array index")
+	PosIndex posIndex;	// Index by position (i.e. chromosome position is transformed into a "array index")
 	StringArray refs;	// Reference allele.
 	StringArray alts;	// Alternative allele.
 	Map<String, DataFrameColumn<?>> columns;	// Data columns
