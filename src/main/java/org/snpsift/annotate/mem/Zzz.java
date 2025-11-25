@@ -2,6 +2,23 @@ package org.snpsift.annotate.mem;
 
 import org.snpeff.fileIterator.VcfFileIterator;
 
+// class VCFDataFrameSnp {
+//     private String chromosome;  	// One value
+//     private int[] position;
+//     private String[] id;
+// 	// private String[] reference;	// We don't need this
+//     private String alternate;	 	// One value
+//     private double[] quality;
+//     private String[] filter;
+//     private String[] info;
+
+// 	public String toString() {
+// 		return "VCFDatabase [chromosome=" + chromosome + ", position=" + position + ", id=" + id + ", reference="
+// 				+ reference + ", alternate=" + alternate + ", quality=" + quality + ", filter=" + filter + ", info="
+// 				+ info + "]";
+// 	}
+// }
+
 /***
  * Test: This class loaads a "database" VCF file and then annotates another VCF file.
  * 

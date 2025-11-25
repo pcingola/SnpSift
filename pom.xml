@@ -3,7 +3,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.snpsift</groupId>
   <artifactId>SnpSift</artifactId>
-  <version>5.2</version>
+  <version>5.4</version>
   <packaging>jar</packaging>
   <name>SnpSift</name>
   <description>SnpSift is a collection of tools for variant filtering and annotation.</description>
@@ -38,7 +38,7 @@
     <dependency>
       <groupId>org.snpeff</groupId>
       <artifactId>SnpEff</artifactId>
-      <version>5.2</version>
+      <version>5.4</version>
     </dependency>
     <dependency>
       <groupId>org.antlr</groupId>
