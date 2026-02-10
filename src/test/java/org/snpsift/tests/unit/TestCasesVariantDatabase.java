@@ -378,6 +378,62 @@ public class TestCasesVariantDatabase {
         assertEquals("0.01,1.0001", vcfEntry.getInfo("CAF"), "Number=R Float field should store full comma-separated value");
     }
 
+    /**
+     * Bug: DEL (TG->T) with Number=A CAF field: annotation output has no CAF at all.
+     * The database has CAF=0.861 (Number=A) for the DEL variant, yet annotation produces no CAF.
+     */
+    @Test
+    public void testCount14DelNumberA() {
+        var vcfLines = "" //
+            + "##INFO=<ID=RS,Number=1,Type=Integer,Description=\"dbSNP ID\">\n" //
+            + "##INFO=<ID=CAF,Number=A,Type=Float,Description=\"Allele frequencies\">\n" //
+            + "chr13\t21172461\trs151272242\tTG\tT\t.\t.\tRS=151272242;CAF=0.861\n" //
+            ;
+
+        String[] fieldNames = { "RS", "CAF" };
+        String dbDir = System.getProperty("java.io.tmpdir") + "/snpsift.TestCasesVariantDatabase.test_14";
+        VariantDatabase variantDatabase = new VariantDatabase(null, dbDir, fieldNames);
+        variantDatabase.create(vcfLines);
+        variantDatabase.setFieldNamesAnnotate(fieldNames);
+
+        // Annotate a VCF entry for the same DEL
+        var inputVcf = "chr13\t21172461\t.\tTG\tT\t.\t.\t.\n";
+        var vcfEntry = VcfFileIterator.fromString(inputVcf).next();
+        variantDatabase.annotate(vcfEntry);
+
+        assertEquals("151272242", vcfEntry.getInfo("RS"), "RS annotation missing for DEL");
+        assertNotNull(vcfEntry.getInfo("CAF"), "CAF annotation missing for DEL with Number=A");
+        assertEquals("0.861", vcfEntry.getInfo("CAF"), "Number=A CAF value wrong for DEL");
+    }
+
+    /**
+     * Bug: DEL (TG->T) with Number=R CAF field: annotation output has no CAF at all.
+     * The database has CAF=0.861,0.139 (Number=R) for the DEL variant.
+     */
+    @Test
+    public void testCount15DelNumberR() {
+        var vcfLines = "" //
+            + "##INFO=<ID=RS,Number=1,Type=Integer,Description=\"dbSNP ID\">\n" //
+            + "##INFO=<ID=CAF,Number=R,Type=Float,Description=\"Allele frequencies\">\n" //
+            + "chr13\t21172461\trs151272242\tTG\tT\t.\t.\tRS=151272242;CAF=0.861,0.139\n" //
+            ;
+
+        String[] fieldNames = { "RS", "CAF" };
+        String dbDir = System.getProperty("java.io.tmpdir") + "/snpsift.TestCasesVariantDatabase.test_15";
+        VariantDatabase variantDatabase = new VariantDatabase(null, dbDir, fieldNames);
+        variantDatabase.create(vcfLines);
+        variantDatabase.setFieldNamesAnnotate(fieldNames);
+
+        // Annotate a VCF entry for the same DEL
+        var inputVcf = "chr13\t21172461\t.\tTG\tT\t.\t.\t.\n";
+        var vcfEntry = VcfFileIterator.fromString(inputVcf).next();
+        variantDatabase.annotate(vcfEntry);
+
+        assertEquals("151272242", vcfEntry.getInfo("RS"), "RS annotation missing for DEL");
+        assertNotNull(vcfEntry.getInfo("CAF"), "CAF annotation missing for DEL with Number=R");
+        assertEquals("0.861,0.139", vcfEntry.getInfo("CAF"), "Number=R CAF value wrong for DEL");
+    }
+
     @Test
     public void testCount11SaveAndLoad() {
         // Create and save database

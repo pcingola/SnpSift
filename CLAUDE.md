@@ -92,27 +92,39 @@ The `annmem` command (`SnpSiftCmdAnnotateDf`) annotates VCF files using another 
 **Key classes in `org.snpsift.annotate.mem`:**
 - `VariantDatabase`: Top-level orchestrator, manages per-chromosome `VariantDataFrame` objects and handles disk I/O.
 - `VariantDataFrame`: Container for one chromosome's data, holds 9 variant-type-specific `DataFrame` instances.
-- `DataFrame` (and subclasses `DataFrameSnp`, `DataFrameIns`, `DataFrameDel`, `DataFrameMnp`, `DataFrameMixed`, `DataFrameOther`): Columnar storage indexed by position via `PosIndex`. Each DataFrame contains typed columns (`DataFrameColumnBool`, `DataFrameColumnInt`, `DataFrameColumnDouble`, `DataFrameColumnChar`, `DataFrameColumnString`).
+- `DataFrame` (and subclasses `DataFrameSnp`, `DataFrameIns`, `DataFrameDel`, `DataFrameMnp`, `DataFrameMixed`, `DataFrameOther`): Columnar storage indexed by position via `PosIndex`. Each DataFrame contains typed columns (`DataFrameColumnBool`, `DataFrameColumnInt`, `DataFrameColumnLong`, `DataFrameColumnDouble`, `DataFrameColumnChar`, `DataFrameColumnString`), located in the `dataFrame.dataFrameColumn` subpackage.
 - `DataFrameRow`: Represents a single variant, provides access to column values.
-- `Fields`: Stores VCF header info and field-to-type mappings.
+- `Fields`: Stores VCF header info and field-to-type mappings. Handles Number=A (one value per ALT allele) and Number=R (one value per allele including REF) field semantics when extracting values from VCF entries.
 - `VariantCategory`: Enum that categorizes variants by type and (for SNPs) alternative allele base.
 - `VariantTypeCounters` / `VariantTypeCounter`: Pre-count variants per chromosome/type for memory pre-allocation.
 - `SortedVariantsVcfIterator`: Priority-queue-based iterator that yields variants in sorted order across chromosomes.
+
+**Array types in `org.snpsift.annotate.mem.arrays`:**
 - `PosIndex`: Integer array of chromosome positions with binary search for O(log n) lookups.
+- `BoolArray`: Byte-backed boolean array for compact storage.
+- `EnumArray`: Stores enumerated strings as byte indices (up to 255 unique values).
+- `StringArray` / `StringArrayBase`: Compact string array implementations.
 
 ### Key Packages
 
-- `org.snpsift`: Main command implementations
+- `org.snpsift`: Main command implementations (`SnpSiftCmd*` classes)
 - `org.snpsift.lang`: Expression language compiler (`LangFactory`) - converts ANTLR AST to `Expression` objects
 - `org.snpsift.lang.expression`: Expression tree nodes (binary/unary operators, literals, field access) using Composite pattern
 - `org.snpsift.lang.function`: Built-in functions (`countHom`, `isHet`, `isVariant`)
 - `org.snpsift.annotate`: Database annotation infrastructure with strategy pattern for different database types
-- `org.snpsift.annotate.mem`: In-memory annotation with columnar DataFrames, typed columns, and position-based indexing (see `annmem` section above)
-- `org.snpsift.annotate.mem.dataFrame`: DataFrame implementations per variant type, columnar storage, and `PosIndex`
+- `org.snpsift.annotate.mem`: In-memory annotation core (`Fields`, `VariantCategory`, `SortedVariantsVcfIterator`)
+- `org.snpsift.annotate.mem.arrays`: Compact array types (`PosIndex`, `BoolArray`, `EnumArray`, `StringArray`)
+- `org.snpsift.annotate.mem.dataFrame`: DataFrame implementations per variant type and `DataFrameRow`
+- `org.snpsift.annotate.mem.dataFrame.dataFrameColumn`: Typed column classes (`DataFrameColumnBool`, `Int`, `Long`, `Double`, `Char`, `String`)
 - `org.snpsift.annotate.mem.database`: `VariantDatabase` and `VariantDataFrame` for database lifecycle management
 - `org.snpsift.annotate.mem.variantTypeCounter`: Variant counting for memory pre-allocation
 - `org.snpsift.fileIterator`: Parsers for dbNSFP, GWAS catalog
 - `org.snpsift.caseControl`: Case-control statistical analysis
+- `org.snpsift.gwasCatalog`: GWAS catalog data structures
+- `org.snpsift.hwe`: Hardy-Weinberg equilibrium calculations
+- `org.snpsift.pedigree`: Pedigree file handling
+- `org.snpsift.phatsCons`: PhastCons conservation score support
+- `org.snpsift.util`: Utilities (`FastaSample`, `FormatUtil`, `RandomUtil`, `ShowProgress`)
 - `org.snpsift.antlr`: ANTLR-generated lexer/parser
 
 ### VCF Processing Flow
@@ -148,11 +160,11 @@ Filter expressions are parsed using ANTLR4 (`antlr/SnpSift.g`). The `LangFactory
 
 ## Testing
 
-Tests use JUnit 5 and are located in `src/test/java/org/snpsift/tests/unit/`. Test data files are in `test/` directory (300+ VCF files for various scenarios).
+Tests use JUnit 5 and are located in `src/test/java/org/snpsift/tests/unit/` (43 test classes). Test data files are in `test/` directory (300+ VCF files for various scenarios, including `test/ann/` for annotation tests).
 
 Test naming convention: `TestCases<Feature>.java` with methods `test<Feature><Number>()`.
 
-The `TestSuiteAll.java` runs all tests. Individual test classes can be run via Maven's `-Dtest` parameter.
+`TestSuiteAll.java` (in `src/test/java/org/snpsift/tests/`) runs all tests. Individual test classes can be run via Maven's `-Dtest` parameter.
 
 ## Configuration
 
@@ -173,3 +185,31 @@ Project uses ISO-8859-1 encoding (specified in pom.xml) for both source files an
 - **Trove4j 3.0.2**: Optimized primitive collections for memory efficiency
 - **Commons-math3 3.6.1**: Statistical functions
 - **JUnit 5**: Testing framework
+
+## SnpEff Sibling Project (`~/workspace/SnpEff/`)
+
+SnpSift depends heavily on classes from the SnpEff library (same version 5.4, Java 21, Maven, ISO-8859-1 encoding). Source is at `src/main/java/org/snpEff/`. Key packages and classes used by SnpSift:
+
+### VCF Processing (`org.snpeff.vcf`)
+
+`VcfEntry` is the central class representing a VCF line with variant and genotype data. It extends `Marker` and handles parsing of all VCF columns (CHROM, POS, REF, ALT, QUAL, FILTER, INFO, FORMAT, genotypes). `VcfFileIterator` opens and iterates VCF files, parsing lines into `VcfEntry` objects and managing header parsing. `VcfHeader` stores INFO/FORMAT field definitions. `VcfHeaderInfo` represents a single INFO field definition with type and description. `VcfEffect` parses the ANN annotation field.
+
+### Configuration (`org.snpeff.snpEffect`)
+
+`Config` is the central configuration class. Loads from `snpEff.config` (Java properties format), manages genome versions, data directories, codon tables, and flags (verbose, debug, quiet, hgvs). Accessible via `Config.get()` singleton.
+
+### Genomic Interval Model (`org.snpeff.interval`)
+
+Hierarchical model: `Genome` contains `Chromosome` objects, which contain `Gene`, `Transcript`, `Exon`, and other feature intervals. `Marker` (base class) represents a genomic interval with an `EffectType`. `Variant` represents a genetic variant with type (SNP, MNP, INS, DEL, BND, INV, DUP), position, and ref/alt alleles. Interval trees (`org.snpeff.interval.tree`) provide fast spatial lookups of overlapping features.
+
+### Effect Prediction (`org.snpeff.snpEffect`)
+
+`SnpEffectPredictor` is the main prediction engine. `VariantEffect` represents the predicted effect of a variant on a gene/transcript, tracking effect type, impact (HIGH/MODERATE/LOW/MODIFIER), codon and amino acid changes, and cDNA/CDS positions. `EffectType` is an enum with 100+ effect types sorted by impact.
+
+### File Iterators (`org.snpeff.fileIterator`)
+
+`FileIterator` is the abstract base for all parsers. Subclasses include `VcfFileIterator`, `BedFileIterator`, `FastaFileIterator`, `Gff3FileIterator`, and 30+ others. All use the iterator pattern for memory-efficient streaming of large files.
+
+### Utilities (`org.snpeff.util`)
+
+`Gpr` provides general-purpose file I/O, string parsing, and math utilities. `Log` handles logging. `GprSeq` provides sequence utilities (reverse complement, IUPAC codes, codon translation).

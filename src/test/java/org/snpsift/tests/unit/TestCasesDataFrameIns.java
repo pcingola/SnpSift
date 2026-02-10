@@ -2,7 +2,7 @@ package org.snpsift.tests.unit;
 import org.junit.jupiter.api.Test;
 import org.snpsift.annotate.mem.VariantCategory;
 import org.snpsift.annotate.mem.dataFrame.DataFrameRow;
-import org.snpsift.annotate.mem.dataFrame.DataFrameMnp;
+import org.snpsift.annotate.mem.dataFrame.DataFrameIns;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
@@ -11,7 +11,7 @@ public class TestCasesDataFrameIns extends TestCasesDataFrame {
     @Test
     public void testDataFrame01() {
         var varCounter = variantTypeCounter(10, 100);
-        var dataFrame = new DataFrameMnp(varCounter, VariantCategory.INS);
+        var dataFrame = new DataFrameIns(varCounter, VariantCategory.INS);
 
         int pos = 5;
         String ref = "";

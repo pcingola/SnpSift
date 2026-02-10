@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.snpeff.interval.Variant;
 import org.snpeff.util.Log;
 import org.snpeff.vcf.VariantVcfEntry;
 import org.snpeff.vcf.VcfEntry;
@@ -72,7 +73,7 @@ public class Fields implements Iterable<VcfHeaderInfo>, Serializable {
 		if(vin == VcfInfoNumber.ALLELE	// Number=A: one value per ALT allele
 			&& (type != VcfInfoType.Flag)	// 'Flag' fields are either present or not, so they are not dependent on the ALT
 			) {
-			valueStr = vcfEntry.getInfo(fieldName, varVcfEntry.getAlt());
+			valueStr = vcfEntry.getInfo(fieldName, (Variant) varVcfEntry);
 		} else if(vin == VcfInfoNumber.ALL_ALLELES	// Number=R: one value per allele including REF (comma-separated)
 			&& (type != VcfInfoType.Flag)
 			) {

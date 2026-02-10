@@ -7,8 +7,13 @@ import org.snpeff.vcf.VcfHeaderInfo.VcfInfoNumber;
 import org.snpsift.annotate.mem.Fields;
 import org.snpsift.annotate.mem.VariantCategory;
 import org.snpsift.annotate.mem.dataFrame.DataFrame;
+import org.snpsift.annotate.mem.dataFrame.DataFrameDel;
+import org.snpsift.annotate.mem.dataFrame.DataFrameIns;
+import org.snpsift.annotate.mem.dataFrame.DataFrameMixed;
 import org.snpsift.annotate.mem.dataFrame.DataFrameMnp;
+import org.snpsift.annotate.mem.dataFrame.DataFrameOther;
 import org.snpsift.annotate.mem.dataFrame.DataFrameRow;
+import org.snpsift.annotate.mem.dataFrame.DataFrameSnp;
 import org.snpsift.annotate.mem.variantTypeCounter.VariantTypeCounter;
 import org.snpsift.util.RandomUtil;
 
@@ -128,9 +133,31 @@ public class TestCasesDataFrame {
         return variantTypeCounter;
     }
 
+    protected DataFrame createDataFrame(VariantTypeCounter varCounter, VariantCategory variantCategory) {
+        switch (variantCategory) {
+            case SNP_A:
+            case SNP_C:
+            case SNP_G:
+            case SNP_T:
+                return new DataFrameSnp(varCounter, variantCategory);
+            case INS:
+                return new DataFrameIns(varCounter, variantCategory);
+            case DEL:
+                return new DataFrameDel(varCounter, variantCategory);
+            case MNP:
+                return new DataFrameMnp(varCounter, variantCategory);
+            case MIXED:
+                return new DataFrameMixed(varCounter, variantCategory);
+            case OTHER:
+                return new DataFrameOther(varCounter, variantCategory);
+            default:
+                throw new RuntimeException("Unimplemented for variant category " + variantCategory);
+        }
+    }
+
     public void testDataFrame(VariantCategory variantCategory, int size, int stringMaxLen) {
         var varCounter = variantTypeCounter(size, size * stringMaxLen);
-        var dataFrame = new DataFrameMnp(varCounter, variantCategory);
+        var dataFrame = createDataFrame(varCounter, variantCategory);
 
         // Create random data, 'size' rows
         int pos = 0, maxPos = 0;
@@ -148,7 +175,7 @@ public class TestCasesDataFrame {
         }
 
         // Check data
-        var dataFrameExp = new DataFrameMnp(varCounter, variantCategory);
+        var dataFrameExp = createDataFrame(varCounter, variantCategory);
         randUtil.reset();   // Initialize random seed
         pos = 0;
         for(int i=0; i < size; i++) {
