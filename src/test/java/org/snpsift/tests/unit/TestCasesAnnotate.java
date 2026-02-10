@@ -880,4 +880,29 @@ public class TestCasesAnnotate {
         assertEquals(expectedValue, value);
     }
 
+    /**
+     * Annotate Number=R field with -name prefix (bug: Number=R fields not annotated)
+     */
+    @Test
+    public void test_46_annotate_number_R_with_name_prefix() {
+        Log.debug("Test");
+        String dbFileName = "./test/db_test_46.vcf";
+        String fileName = "./test/annotate_46.vcf";
+        String extraArgs[] = {"-name", "DBSNP_"};
+        List<VcfEntry> results = annotate(dbFileName, fileName, extraArgs);
+
+        VcfEntry ve = results.get(0);
+        if (verbose) Log.info(ve);
+
+        // Check that DBSNP_CAF annotation is present (Number=R field)
+        String caf = ve.getInfo("DBSNP_CAF");
+        assertNotNull(caf, "DBSNP_CAF annotation missing for Number=R field");
+        assertEquals("0.861,0.139", caf);
+
+        // Also verify RS field is annotated
+        String rs = ve.getInfo("DBSNP_RS");
+        assertNotNull(rs, "DBSNP_RS annotation missing");
+        assertEquals("151272242", rs);
+    }
+
 }

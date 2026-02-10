@@ -10,6 +10,7 @@ import org.snpeff.fileIterator.VcfFileIterator;
 import org.snpeff.vcf.VcfEntry;
 import org.snpeff.vcf.VcfHeader;
 import org.snpeff.vcf.VcfHeaderInfo;
+import org.snpeff.vcf.VcfHeaderInfo.VcfInfoNumber;
 import org.snpeff.vcf.VcfInfoType;
 import org.snpsift.annotate.mem.Fields;
 import org.snpsift.annotate.mem.VariantCategory;
@@ -67,10 +68,13 @@ public class VariantTypeCounter implements Serializable {
 
 	public VariantTypeCounter(Fields fields) {
 		this.fields = fields;
-		// Get all 'string' fields
+		// Get all fields stored as strings: Type=String, or Number=R non-Flag (comma-separated values)
 		var fieldsStringList = new ArrayList<>();
 		for(var field: fields.getNames()) {
-			if(fields.get(field).getVcfInfoType() == VcfInfoType.String) fieldsStringList.add(field);
+			var vcfHeaderInfo = fields.get(field);
+			boolean isString = vcfHeaderInfo.getVcfInfoType() == VcfInfoType.String;
+			boolean isNumberR = vcfHeaderInfo.getVcfInfoNumber() == VcfInfoNumber.ALL_ALLELES && vcfHeaderInfo.getVcfInfoType() != VcfInfoType.Flag;
+			if(isString || isNumberR) fieldsStringList.add(field);
 		}
 		fieldsString = fieldsStringList.toArray(new String[0]);
 		// Initialize counters

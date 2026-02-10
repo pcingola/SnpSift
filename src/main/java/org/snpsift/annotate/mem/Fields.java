@@ -69,10 +69,14 @@ public class Fields implements Iterable<VcfHeaderInfo>, Serializable {
 		// Do we need to annotate for a specific "ALT"?
 		var vin = vcfHeaderInfo.getVcfInfoNumber();
 		// Get 'ALT' dependent values?
-		if((vin == VcfInfoNumber.ALLELE || vin == VcfInfoNumber.ALL_ALLELES)	// Is this a field that depends on the ALT?
+		if(vin == VcfInfoNumber.ALLELE	// Number=A: one value per ALT allele
 			&& (type != VcfInfoType.Flag)	// 'Flag' fields are either present or not, so they are not dependent on the ALT
 			) {
 			valueStr = vcfEntry.getInfo(fieldName, varVcfEntry.getAlt());
+		} else if(vin == VcfInfoNumber.ALL_ALLELES	// Number=R: one value per allele including REF (comma-separated)
+			&& (type != VcfInfoType.Flag)
+			) {
+			return getFieldValueString(fieldName, vcfEntry);
 		} else {
 			valueStr = getFieldValueString(fieldName, vcfEntry);
 		}

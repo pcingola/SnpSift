@@ -1,0 +1,5 @@
+##fileformat=VCFv4.2
+##INFO=<ID=RS,Number=1,Type=Integer,Description="dbSNP ID">
+##INFO=<ID=CAF,Number=R,Type=String,Description="An ordered list of allele frequencies from 1000Genomes, starting with the reference allele">
+#CHROM	POS	ID	REF	ALT	QUAL	FILTER	INFO
+chr13	21172461	rs151272242	TG	T	.	.	RS=151272242;CAF=0.861,0.139

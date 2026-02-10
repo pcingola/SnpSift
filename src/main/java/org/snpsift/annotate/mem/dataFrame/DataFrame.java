@@ -7,6 +7,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.snpeff.vcf.VcfHeaderInfo;
+import org.snpeff.vcf.VcfHeaderInfo.VcfInfoNumber;
+import org.snpeff.vcf.VcfInfoType;
 import org.snpsift.annotate.mem.Fields;
 import org.snpsift.annotate.mem.VariantCategory;
 import org.snpsift.annotate.mem.arrays.PosIndex;
@@ -125,6 +127,11 @@ public class DataFrame implements Serializable {
 	protected DataFrameColumn<?> createColumn(VcfHeaderInfo vcfHeaderInfo) {
 		int numEntries = variantTypeCounter.getCount(variantCategory);
 		var fieldName = vcfHeaderInfo.getId();
+		// Number=R fields store comma-separated values (REF,ALT1,...), always use String column
+		if(vcfHeaderInfo.getVcfInfoNumber() == VcfInfoNumber.ALL_ALLELES && vcfHeaderInfo.getVcfInfoType() != VcfInfoType.Flag) {
+			int memSize = stringArrayMemSize(variantCategory, fieldName);
+			return new DataFrameColumnString(fieldName, numEntries, memSize);
+		}
 		switch (vcfHeaderInfo.getVcfInfoType()) {
 			case Flag:
 				return new DataFrameColumnBool(fieldName, numEntries);

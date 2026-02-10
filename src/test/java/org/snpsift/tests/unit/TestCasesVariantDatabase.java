@@ -325,6 +325,59 @@ public class TestCasesVariantDatabase {
         assertEquals("ID_1234567", vcfEntry.getInfo("ID"));
     }
 
+    /**
+     * Bug: SNP with Number=R field stores only the ALT value instead of REF,ALT.
+     * For T->A with CAF=0.01,1.0001 (Number=R), annotation should give "CAF=0.01,1.0001" not "CAF=1.0001".
+     */
+    @Test
+    public void testCount12SnpNumberR() {
+        // Database with Number=R field (one value per REF + each ALT)
+        var vcfLines = "" //
+            + "##INFO=<ID=RS,Number=1,Type=Integer,Description=\"dbSNP ID\">\n" //
+            + "##INFO=<ID=CAF,Number=R,Type=String,Description=\"Allele frequencies, REF then ALTs\">\n" //
+            + "chr13\t21172461\trs151272242\tT\tA\t.\t.\tRS=151272242;CAF=0.01,1.0001\n" //
+            ;
+
+        String[] fieldNames = { "RS", "CAF" };
+        String dbDir = System.getProperty("java.io.tmpdir") + "/snpsift.TestCasesVariantDatabase.test_12";
+        VariantDatabase variantDatabase = new VariantDatabase(null, dbDir, fieldNames);
+        variantDatabase.create(vcfLines);
+        variantDatabase.setFieldNamesAnnotate(fieldNames);
+
+        // Annotate a VCF entry for the same SNP
+        var inputVcf = "chr13\t21172461\t.\tT\tA\t.\t.\t.\n";
+        var vcfEntry = VcfFileIterator.fromString(inputVcf).next();
+        variantDatabase.annotate(vcfEntry);
+
+        // Number=R: both REF and ALT values must be present
+        assertEquals("0.01,1.0001", vcfEntry.getInfo("CAF"), "Number=R field should contain both REF and ALT values");
+        assertEquals("151272242", vcfEntry.getInfo("RS"));
+    }
+
+    /**
+     * Bug: Same as testCount12 but with Type=Float instead of Type=String.
+     * Number=R with numeric type should still store the full comma-separated value as a String.
+     */
+    @Test
+    public void testCount13SnpNumberRFloat() {
+        var vcfLines = "" //
+            + "##INFO=<ID=CAF,Number=R,Type=Float,Description=\"Allele frequencies\">\n" //
+            + "chr13\t21172461\trs151272242\tT\tA\t.\t.\tCAF=0.01,1.0001\n" //
+            ;
+
+        String[] fieldNames = { "CAF" };
+        String dbDir = System.getProperty("java.io.tmpdir") + "/snpsift.TestCasesVariantDatabase.test_13";
+        VariantDatabase variantDatabase = new VariantDatabase(null, dbDir, fieldNames);
+        variantDatabase.create(vcfLines);
+        variantDatabase.setFieldNamesAnnotate(fieldNames);
+
+        var inputVcf = "chr13\t21172461\t.\tT\tA\t.\t.\t.\n";
+        var vcfEntry = VcfFileIterator.fromString(inputVcf).next();
+        variantDatabase.annotate(vcfEntry);
+
+        assertEquals("0.01,1.0001", vcfEntry.getInfo("CAF"), "Number=R Float field should store full comma-separated value");
+    }
+
     @Test
     public void testCount11SaveAndLoad() {
         // Create and save database
