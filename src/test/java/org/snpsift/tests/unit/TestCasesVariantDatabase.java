@@ -434,6 +434,237 @@ public class TestCasesVariantDatabase {
         assertEquals("0.861,0.139", vcfEntry.getInfo("CAF"), "Number=R CAF value wrong for DEL");
     }
 
+    /**
+     * INS (T->TA) with Number=A field: verify CAF is annotated correctly.
+     * INS normalization strips common prefix, giving ref="" alt="A".
+     */
+    @Test
+    public void testCount16InsNumberA() {
+        var vcfLines = "" //
+            + "##INFO=<ID=RS,Number=1,Type=Integer,Description=\"dbSNP ID\">\n" //
+            + "##INFO=<ID=CAF,Number=A,Type=Float,Description=\"Allele frequencies\">\n" //
+            + "chr13\t21172461\trs151272242\tT\tTA\t.\t.\tRS=151272242;CAF=0.123\n" //
+            ;
+
+        String[] fieldNames = { "RS", "CAF" };
+        String dbDir = System.getProperty("java.io.tmpdir") + "/snpsift.TestCasesVariantDatabase.test_16";
+        VariantDatabase variantDatabase = new VariantDatabase(null, dbDir, fieldNames);
+        variantDatabase.create(vcfLines);
+        variantDatabase.setFieldNamesAnnotate(fieldNames);
+
+        var inputVcf = "chr13\t21172461\t.\tT\tTA\t.\t.\t.\n";
+        var vcfEntry = VcfFileIterator.fromString(inputVcf).next();
+        variantDatabase.annotate(vcfEntry);
+
+        assertEquals("151272242", vcfEntry.getInfo("RS"), "RS annotation missing for INS");
+        assertNotNull(vcfEntry.getInfo("CAF"), "CAF annotation missing for INS with Number=A");
+        assertEquals("0.123", vcfEntry.getInfo("CAF"), "Number=A CAF value wrong for INS");
+    }
+
+    /**
+     * INS (T->TA) with Number=R field: verify both REF and ALT values are annotated.
+     */
+    @Test
+    public void testCount17InsNumberR() {
+        var vcfLines = "" //
+            + "##INFO=<ID=RS,Number=1,Type=Integer,Description=\"dbSNP ID\">\n" //
+            + "##INFO=<ID=CAF,Number=R,Type=Float,Description=\"Allele frequencies\">\n" //
+            + "chr13\t21172461\trs151272242\tT\tTA\t.\t.\tRS=151272242;CAF=0.877,0.123\n" //
+            ;
+
+        String[] fieldNames = { "RS", "CAF" };
+        String dbDir = System.getProperty("java.io.tmpdir") + "/snpsift.TestCasesVariantDatabase.test_17";
+        VariantDatabase variantDatabase = new VariantDatabase(null, dbDir, fieldNames);
+        variantDatabase.create(vcfLines);
+        variantDatabase.setFieldNamesAnnotate(fieldNames);
+
+        var inputVcf = "chr13\t21172461\t.\tT\tTA\t.\t.\t.\n";
+        var vcfEntry = VcfFileIterator.fromString(inputVcf).next();
+        variantDatabase.annotate(vcfEntry);
+
+        assertEquals("151272242", vcfEntry.getInfo("RS"), "RS annotation missing for INS");
+        assertNotNull(vcfEntry.getInfo("CAF"), "CAF annotation missing for INS with Number=R");
+        assertEquals("0.877,0.123", vcfEntry.getInfo("CAF"), "Number=R CAF value wrong for INS");
+    }
+
+    /**
+     * MNP (AC->TG) with Number=A field.
+     */
+    @Test
+    public void testCount18MnpNumberA() {
+        var vcfLines = "" //
+            + "##INFO=<ID=RS,Number=1,Type=Integer,Description=\"dbSNP ID\">\n" //
+            + "##INFO=<ID=CAF,Number=A,Type=Float,Description=\"Allele frequencies\">\n" //
+            + "chr13\t21172461\trs151272242\tAC\tTG\t.\t.\tRS=151272242;CAF=0.456\n" //
+            ;
+
+        String[] fieldNames = { "RS", "CAF" };
+        String dbDir = System.getProperty("java.io.tmpdir") + "/snpsift.TestCasesVariantDatabase.test_18";
+        VariantDatabase variantDatabase = new VariantDatabase(null, dbDir, fieldNames);
+        variantDatabase.create(vcfLines);
+        variantDatabase.setFieldNamesAnnotate(fieldNames);
+
+        var inputVcf = "chr13\t21172461\t.\tAC\tTG\t.\t.\t.\n";
+        var vcfEntry = VcfFileIterator.fromString(inputVcf).next();
+        variantDatabase.annotate(vcfEntry);
+
+        assertEquals("151272242", vcfEntry.getInfo("RS"), "RS annotation missing for MNP");
+        assertNotNull(vcfEntry.getInfo("CAF"), "CAF annotation missing for MNP with Number=A");
+        assertEquals("0.456", vcfEntry.getInfo("CAF"), "Number=A CAF value wrong for MNP");
+    }
+
+    /**
+     * MNP (AC->TG) with Number=R field.
+     */
+    @Test
+    public void testCount19MnpNumberR() {
+        var vcfLines = "" //
+            + "##INFO=<ID=RS,Number=1,Type=Integer,Description=\"dbSNP ID\">\n" //
+            + "##INFO=<ID=CAF,Number=R,Type=Float,Description=\"Allele frequencies\">\n" //
+            + "chr13\t21172461\trs151272242\tAC\tTG\t.\t.\tRS=151272242;CAF=0.544,0.456\n" //
+            ;
+
+        String[] fieldNames = { "RS", "CAF" };
+        String dbDir = System.getProperty("java.io.tmpdir") + "/snpsift.TestCasesVariantDatabase.test_19";
+        VariantDatabase variantDatabase = new VariantDatabase(null, dbDir, fieldNames);
+        variantDatabase.create(vcfLines);
+        variantDatabase.setFieldNamesAnnotate(fieldNames);
+
+        var inputVcf = "chr13\t21172461\t.\tAC\tTG\t.\t.\t.\n";
+        var vcfEntry = VcfFileIterator.fromString(inputVcf).next();
+        variantDatabase.annotate(vcfEntry);
+
+        assertEquals("151272242", vcfEntry.getInfo("RS"), "RS annotation missing for MNP");
+        assertNotNull(vcfEntry.getInfo("CAF"), "CAF annotation missing for MNP with Number=R");
+        assertEquals("0.544,0.456", vcfEntry.getInfo("CAF"), "Number=R CAF value wrong for MNP");
+    }
+
+    /**
+     * MIXED (AC->T) with Number=A field.
+     * MIXED: ref and alt have different lengths, and neither starts with the other.
+     */
+    @Test
+    public void testCount20MixedNumberA() {
+        var vcfLines = "" //
+            + "##INFO=<ID=RS,Number=1,Type=Integer,Description=\"dbSNP ID\">\n" //
+            + "##INFO=<ID=CAF,Number=A,Type=Float,Description=\"Allele frequencies\">\n" //
+            + "chr13\t21172461\trs151272242\tAC\tT\t.\t.\tRS=151272242;CAF=0.321\n" //
+            ;
+
+        String[] fieldNames = { "RS", "CAF" };
+        String dbDir = System.getProperty("java.io.tmpdir") + "/snpsift.TestCasesVariantDatabase.test_20";
+        VariantDatabase variantDatabase = new VariantDatabase(null, dbDir, fieldNames);
+        variantDatabase.create(vcfLines);
+        variantDatabase.setFieldNamesAnnotate(fieldNames);
+
+        var inputVcf = "chr13\t21172461\t.\tAC\tT\t.\t.\t.\n";
+        var vcfEntry = VcfFileIterator.fromString(inputVcf).next();
+        variantDatabase.annotate(vcfEntry);
+
+        assertEquals("151272242", vcfEntry.getInfo("RS"), "RS annotation missing for MIXED");
+        assertNotNull(vcfEntry.getInfo("CAF"), "CAF annotation missing for MIXED with Number=A");
+        assertEquals("0.321", vcfEntry.getInfo("CAF"), "Number=A CAF value wrong for MIXED");
+    }
+
+    /**
+     * MIXED (AC->T) with Number=R field.
+     */
+    @Test
+    public void testCount21MixedNumberR() {
+        var vcfLines = "" //
+            + "##INFO=<ID=RS,Number=1,Type=Integer,Description=\"dbSNP ID\">\n" //
+            + "##INFO=<ID=CAF,Number=R,Type=Float,Description=\"Allele frequencies\">\n" //
+            + "chr13\t21172461\trs151272242\tAC\tT\t.\t.\tRS=151272242;CAF=0.679,0.321\n" //
+            ;
+
+        String[] fieldNames = { "RS", "CAF" };
+        String dbDir = System.getProperty("java.io.tmpdir") + "/snpsift.TestCasesVariantDatabase.test_21";
+        VariantDatabase variantDatabase = new VariantDatabase(null, dbDir, fieldNames);
+        variantDatabase.create(vcfLines);
+        variantDatabase.setFieldNamesAnnotate(fieldNames);
+
+        var inputVcf = "chr13\t21172461\t.\tAC\tT\t.\t.\t.\n";
+        var vcfEntry = VcfFileIterator.fromString(inputVcf).next();
+        variantDatabase.annotate(vcfEntry);
+
+        assertEquals("151272242", vcfEntry.getInfo("RS"), "RS annotation missing for MIXED");
+        assertNotNull(vcfEntry.getInfo("CAF"), "CAF annotation missing for MIXED with Number=R");
+        assertEquals("0.679,0.321", vcfEntry.getInfo("CAF"), "Number=R CAF value wrong for MIXED");
+    }
+
+    /**
+     * Database has a Number=A field for one variant but not another at the same position.
+     * Verify that the variant without a value does not get a spurious annotation.
+     */
+    @Test
+    public void testCount22NumberAMissingValue() {
+        var vcfLines = "" //
+            + "##INFO=<ID=RS,Number=1,Type=Integer,Description=\"dbSNP ID\">\n" //
+            + "##INFO=<ID=CAF,Number=A,Type=Float,Description=\"Allele frequencies\">\n" //
+            + "chr13\t21172461\trs111\tT\tA\t.\t.\tRS=111;CAF=0.5\n" //
+            + "chr13\t21172461\trs222\tT\tG\t.\t.\tRS=222\n" // No CAF for this variant
+            ;
+
+        String[] fieldNames = { "RS", "CAF" };
+        String dbDir = System.getProperty("java.io.tmpdir") + "/snpsift.TestCasesVariantDatabase.test_22";
+        VariantDatabase variantDatabase = new VariantDatabase(null, dbDir, fieldNames);
+        variantDatabase.create(vcfLines);
+        variantDatabase.setFieldNamesAnnotate(fieldNames);
+
+        // Variant with CAF
+        var inputVcf1 = "chr13\t21172461\t.\tT\tA\t.\t.\t.\n";
+        var vcfEntry1 = VcfFileIterator.fromString(inputVcf1).next();
+        variantDatabase.annotate(vcfEntry1);
+        assertEquals("111", vcfEntry1.getInfo("RS"));
+        assertEquals("0.5", vcfEntry1.getInfo("CAF"), "Number=A CAF should be present for T->A");
+
+        // Variant without CAF
+        var inputVcf2 = "chr13\t21172461\t.\tT\tG\t.\t.\t.\n";
+        var vcfEntry2 = VcfFileIterator.fromString(inputVcf2).next();
+        variantDatabase.annotate(vcfEntry2);
+        assertEquals("222", vcfEntry2.getInfo("RS"));
+        assertEquals(null, vcfEntry2.getInfo("CAF"), "Number=A CAF should be null for T->G (not in database)");
+    }
+
+    /**
+     * Multiple variant types at the same position: SNP + DEL + INS, all with Number=A.
+     * Verify each is annotated independently with the correct value.
+     */
+    @Test
+    public void testCount23MultipleVariantTypesNumberA() {
+        var vcfLines = "" //
+            + "##INFO=<ID=RS,Number=1,Type=Integer,Description=\"dbSNP ID\">\n" //
+            + "##INFO=<ID=CAF,Number=A,Type=Float,Description=\"Allele frequencies\">\n" //
+            + "chr13\t21172461\trs111\tT\tA\t.\t.\tRS=111;CAF=0.1\n" //   SNP
+            + "chr13\t21172461\trs222\tTG\tT\t.\t.\tRS=222;CAF=0.2\n" //  DEL
+            + "chr13\t21172461\trs333\tT\tTA\t.\t.\tRS=333;CAF=0.3\n" //  INS
+            ;
+
+        String[] fieldNames = { "RS", "CAF" };
+        String dbDir = System.getProperty("java.io.tmpdir") + "/snpsift.TestCasesVariantDatabase.test_23";
+        VariantDatabase variantDatabase = new VariantDatabase(null, dbDir, fieldNames);
+        variantDatabase.create(vcfLines);
+        variantDatabase.setFieldNamesAnnotate(fieldNames);
+
+        // SNP
+        var vcfEntry = VcfFileIterator.fromString("chr13\t21172461\t.\tT\tA\t.\t.\t.\n").next();
+        variantDatabase.annotate(vcfEntry);
+        assertEquals("111", vcfEntry.getInfo("RS"));
+        assertEquals("0.1", vcfEntry.getInfo("CAF"));
+
+        // DEL
+        vcfEntry = VcfFileIterator.fromString("chr13\t21172461\t.\tTG\tT\t.\t.\t.\n").next();
+        variantDatabase.annotate(vcfEntry);
+        assertEquals("222", vcfEntry.getInfo("RS"));
+        assertEquals("0.2", vcfEntry.getInfo("CAF"));
+
+        // INS
+        vcfEntry = VcfFileIterator.fromString("chr13\t21172461\t.\tT\tTA\t.\t.\t.\n").next();
+        variantDatabase.annotate(vcfEntry);
+        assertEquals("333", vcfEntry.getInfo("RS"));
+        assertEquals("0.3", vcfEntry.getInfo("CAF"));
+    }
+
     @Test
     public void testCount11SaveAndLoad() {
         // Create and save database
