@@ -372,6 +372,14 @@ public abstract class AnnotateVcfDb {
                 if (var.getReference().equalsIgnoreCase(dbEntry.getReference()) //
                         && var.getAlt().equalsIgnoreCase(dbEntry.getAlt()) //
                 ) return true;
+                // check if the db is represeting the same variant using a longer Ref
+                // (can be the case when the db is not normalized or if the db contains multiple alleles and some of them are longer)
+                if (dbEntry.getReference().length() > var.getReference().length()) {
+                    String extraRefStr = dbEntry.getReference().substring(var.getReference().length(), dbEntry.getReference().length());
+                    if (var.getReference().concat(extraRefStr).equalsIgnoreCase(dbEntry.getReference()) //
+                        && var.getAlt().concat(extraRefStr).equalsIgnoreCase(dbEntry.getAlt()) //
+                    ) return true;
+                }
             } else {
                 // No need to use Ref & Alt, it's a match
                 return true;
